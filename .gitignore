@@ -1,0 +1,14 @@
+.plan/
+example.data/
+
+# .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+
+# Pak backups created by the app
+*.baseline
+*.backup-*
+initial.pak.backup-*

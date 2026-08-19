@@ -1,0 +1,6 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/SnowRunnerTuningShop.Core/SnowRunnerTuningShop.Core.csproj" />
+    <Project Path="src/SnowRunnerTuningShop/SnowRunnerTuningShop.csproj" />
+  </Folder>
+</Solution>

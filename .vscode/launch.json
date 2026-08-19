@@ -1,0 +1,14 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "SnowRunner Tuning Shop",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/src/SnowRunnerTuningShop/bin/Debug/net10.0-windows/SnowRunnerTuningShop.dll",
+      "cwd": "${workspaceFolder}/src/SnowRunnerTuningShop",
+      "stopAtEntry": false
+    }
+  ]
+}
