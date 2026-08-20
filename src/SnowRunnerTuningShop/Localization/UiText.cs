@@ -2,16 +2,22 @@ namespace SnowRunnerTuningShop.Localization;
 
 public static class UiText
 {
+    public static class Nav
+    {
+        public const string Home = "Home";
+        public const string Parts = "Parts";
+        public const string Vehicles = "Vehicles";
+        public const string Settings = "Settings";
+    }
+
     public static class Main
     {
-        public const string Subtitle = "Fine-tune initial.pak — starting with winches";
+        public const string Subtitle = "Fine-tune SnowRunner initial.pak";
         public const string NoPakSelected = "No initial.pak selected";
         public const string Browse = "Browse...";
         public const string Load = "Load";
-        public const string TabOverview = "Overview";
-        public const string TabWinch = "Winch";
         public const string OverviewTitle = "Overview";
-        public const string OverviewPlaceholder = "Open an initial.pak file to get started.";
+        public const string OverviewPlaceholder = "Load an initial.pak file to see an overview.";
         public const string CategoriesTitle = "Tuning categories";
         public const string CategoryColumn = "Category";
         public const string FilesColumn = "Files";
@@ -24,9 +30,10 @@ public static class UiText
         public const string LoadingPakStatus = "Loading pak...";
         public const string LoadFailedOverview = "Failed to load pak.";
         public const string LoadErrorTitle = "Load error";
+        public const string BaselineFileTitle = "Baseline / pak file";
 
         public static string LoadSuccessStatus(int entryCount) =>
-            $"Loaded successfully: {entryCount:N0} entries. Winch data is ready.";
+            $"Loaded successfully: {entryCount:N0} entries.";
 
         public static string ErrorStatus(string message) => $"Error: {message}";
 
@@ -46,6 +53,37 @@ public static class UiText
             $"Unpacked: {uncompressedSize}{Environment.NewLine}{Environment.NewLine}" +
             $"Top level:{Environment.NewLine}" +
             string.Join(Environment.NewLine, topLevelFolders.Select(folder => $"• {folder}"));
+    }
+
+    public static class Parts
+    {
+        public const string Winch = "Winch";
+        public const string Engine = "Engine";
+        public const string Gearbox = "Gearbox";
+        public const string Suspension = "Suspension";
+        public const string ComingSoon = "Coming soon.";
+        public const string LoadPakHint = "Load an initial.pak on the Home page first.";
+    }
+
+    public static class Vehicles
+    {
+        public const string All = "All";
+        public const string Highway = "Highway";
+        public const string HeavyDuty = "Heavy Duty";
+        public const string Heavy = "Heavy";
+        public const string Offroad = "Offroad";
+        public const string Scout = "Scout";
+        public const string BackToList = "← Back to list";
+        public const string DetailPlaceholder =
+            "Per-vehicle tuning will go here (fuel, steering, drive layout, etc.).";
+        public const string CatalogMissing = "Vehicle catalog assets were not found.";
+        public static string CountLabel(int count) => $"{count} vehicles";
+    }
+
+    public static class Settings
+    {
+        public const string Title = "Settings";
+        public const string Placeholder = "App settings will go here (language, paths, theme).";
     }
 
     public static class Winch

@@ -16,8 +16,8 @@
         </Grid.RowDefinitions>
 
         <Border Grid.Row="0"
-                Background="#FFF7ED"
-                BorderBrush="#FDBA74"
+                Background="{DynamicResource SystemFillColorCautionBackgroundBrush}"
+                BorderBrush="{DynamicResource SystemFillColorCautionBrush}"
                 BorderThickness="1"
                 CornerRadius="8"
                 Padding="16"
@@ -25,10 +25,11 @@
             <StackPanel>
                 <TextBlock Text="{x:Static loc:UiText+Winch.BaselineTitle}"
                            FontWeight="SemiBold"
+                           Foreground="{DynamicResource TextFillColorPrimaryBrush}"
                            Margin="0,0,0,8"/>
                 <TextBlock x:Name="BaselineStatusTextBlock"
                            TextWrapping="Wrap"
-                           Foreground="#9A3412"
+                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                            Margin="0,0,0,10"/>
                 <StackPanel Orientation="Horizontal">
                     <Button Content="{x:Static loc:UiText+Winch.SetBaselineFromFile}"
@@ -59,8 +60,8 @@
         </Border>
 
         <Border Grid.Row="1"
-                Background="#F9FAFB"
-                BorderBrush="#E5E7EB"
+                Background="{DynamicResource CardBackgroundFillColorSecondaryBrush}"
+                BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
                 BorderThickness="1"
                 CornerRadius="8"
                 Padding="16"
@@ -81,11 +82,13 @@
                            Grid.ColumnSpan="3"
                            Text="{x:Static loc:UiText+Winch.GlobalMultipliersTitle}"
                            FontWeight="SemiBold"
+                           Foreground="{DynamicResource TextFillColorPrimaryBrush}"
                            Margin="0,0,0,12"/>
 
                 <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,12,0">
                     <TextBlock x:Name="LengthMultiplierLabel"
-                               Text="{x:Static loc:UiText+Winch.LengthMultiplierDefault}"/>
+                               Text="{x:Static loc:UiText+Winch.LengthMultiplierDefault}"
+                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
                     <Slider x:Name="LengthMultiplierSlider"
                             Minimum="0"
                             Maximum="8"
@@ -97,7 +100,8 @@
 
                 <StackPanel Grid.Row="1" Grid.Column="1" Margin="12,0,12,0">
                     <TextBlock x:Name="StrengthMultiplierLabel"
-                               Text="{x:Static loc:UiText+Winch.StrengthMultiplierDefault}"/>
+                               Text="{x:Static loc:UiText+Winch.StrengthMultiplierDefault}"
+                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
                     <Slider x:Name="StrengthMultiplierSlider"
                             Minimum="0"
                             Maximum="8"
@@ -139,7 +143,7 @@
                   IsReadOnly="False"
                   HeadersVisibility="Column"
                   GridLinesVisibility="Horizontal"
-                  BorderBrush="#E5E7EB"
+                  BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
                   BorderThickness="1">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="{x:Static loc:UiText+Winch.CategoryColumn}" Binding="{Binding Category}" Width="90" IsReadOnly="True"/>
@@ -153,7 +157,7 @@
         <TextBlock x:Name="WinchInfoTextBlock"
                    Grid.Row="3"
                    Margin="0,10,0,0"
-                   Foreground="#6B7280"
+                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                    Text="{x:Static loc:UiText+Winch.NoData}"/>
     </Grid>
 </UserControl>

@@ -1,102 +1,66 @@
 ﻿using System.Windows;
-using Microsoft.Win32;
-using SnowRunnerTuningShop.Core.Pak;
+using System.Windows.Controls;
 using SnowRunnerTuningShop.Localization;
 
 namespace SnowRunnerTuningShop;
 
 public partial class MainWindow : Window
 {
+    private readonly AppSession _session = new();
+
     public MainWindow()
     {
         InitializeComponent();
-        WinchTuningView.StatusChanged += (_, message) => SetStatus(message);
 
-        var examplePak = AppPaths.TryFindExamplePak();
-        if (examplePak is not null)
-        {
-            PakPathTextBox.Text = examplePak;
-            SetStatus(UiText.Main.ExamplePakDetected);
-        }
-    }
+        HomeView.AttachSession(_session);
+        PartsView.AttachSession(_session);
 
-    private void BrowseButton_Click(object sender, RoutedEventArgs e)
-    {
-        var dialog = new OpenFileDialog
+        HomeView.StatusChanged += (_, message) => SetStatus(message);
+        PartsView.StatusChanged += (_, message) => SetStatus(message);
+
+        Loaded += (_, _) =>
         {
-            Title = UiText.Main.BrowseDialogTitle,
-            Filter = UiText.Main.BrowseDialogFilter,
-            CheckFileExists = true,
+            NavHome.IsChecked = true;
+            ShowPage(HomeView);
         };
+    }
 
-        if (dialog.ShowDialog() == true)
+    private void Nav_Checked(object sender, RoutedEventArgs e)
+    {
+        if (!IsLoaded || sender is not RadioButton { IsChecked: true } radio)
         {
-            PakPathTextBox.Text = dialog.FileName;
-            SetStatus(UiText.Main.FileSelectedStatus);
+            return;
+        }
+
+        if (ReferenceEquals(radio, NavHome))
+        {
+            ShowPage(HomeView);
+        }
+        else if (ReferenceEquals(radio, NavParts))
+        {
+            ShowPage(PartsView);
+        }
+        else if (ReferenceEquals(radio, NavVehicles))
+        {
+            ShowPage(VehiclesView);
+        }
+        else if (ReferenceEquals(radio, NavSettings))
+        {
+            ShowPage(SettingsView);
         }
     }
 
-    private void LoadButton_Click(object sender, RoutedEventArgs e)
+    private void ShowPage(UIElement page)
     {
-        var pakPath = PakPathTextBox.Text.Trim();
-
-        try
-        {
-            SetStatus(UiText.Main.LoadingPakStatus);
-            var summary = InitialPakReader.ReadSummary(pakPath);
-
-            OverviewTextBlock.Text = UiText.Main.OverviewDetails(
-                summary.FilePath,
-                FormatBytes(summary.FileSizeBytes),
-                summary.TotalEntries,
-                summary.XmlEntries,
-                summary.DlcPackages,
-                FormatBytes(summary.UncompressedBytes),
-                summary.TopLevelFolders);
-
-            CategoriesListView.ItemsSource = summary.TuningCategories
-                .Select(category => new CategoryRowViewModel(
-                    category.Name,
-                    category.FileCount,
-                    category.SampleFiles.FirstOrDefault() ?? "-"))
-                .ToList();
-
-            WinchTuningView.LoadFromPak(pakPath);
-            SetStatus(UiText.Main.LoadSuccessStatus(summary.TotalEntries));
-        }
-        catch (Exception ex)
-        {
-            OverviewTextBlock.Text = UiText.Main.LoadFailedOverview;
-            CategoriesListView.ItemsSource = null;
-            WinchTuningView.Clear();
-            SetStatus(UiText.Main.ErrorStatus(ex.Message));
-            MessageBox.Show(
-                ex.Message,
-                UiText.Main.LoadErrorTitle,
-                MessageBoxButton.OK,
-                MessageBoxImage.Error);
-        }
+        HomeView.Visibility = Visibility.Collapsed;
+        PartsView.Visibility = Visibility.Collapsed;
+        VehiclesView.Visibility = Visibility.Collapsed;
+        SettingsView.Visibility = Visibility.Collapsed;
+        page.Visibility = Visibility.Visible;
     }
 
     private void SetStatus(string message)
     {
         StatusTextBlock.Text = message;
     }
-
-    private static string FormatBytes(long bytes)
-    {
-        string[] units = ["B", "KB", "MB", "GB"];
-        double size = bytes;
-        var unitIndex = 0;
-
-        while (size >= 1024 && unitIndex < units.Length - 1)
-        {
-            size /= 1024;
-            unitIndex++;
-        }
-
-        return $"{size:0.##} {units[unitIndex]}";
-    }
-
-    private sealed record CategoryRowViewModel(string Name, int FileCount, string SampleFile);
 }

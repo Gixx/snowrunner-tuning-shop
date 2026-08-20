@@ -1,0 +1,814 @@
+﻿[
+    {
+        "file":  "Store_fclt9000.png",
+        "sourceWikiFile":  "Store_fclt9000.png",
+        "displayName":  "Ford CLT9000",
+        "bytes":  318103,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/e/e6/Store_fclt9000.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Store_gmh9500.png",
+        "sourceWikiFile":  "Store_gmh9500.png",
+        "displayName":  "GMC MH9500",
+        "bytes":  317037,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/2/25/Store_gmh9500.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Store_hibbm816.png",
+        "sourceWikiFile":  "Store_hibbm816.png",
+        "displayName":  "HIB Billert M816",
+        "bytes":  376637,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/0/06/Store_hibbm816.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Transtar.png",
+        "sourceWikiFile":  "Transtar.jpg",
+        "displayName":  "International Transtar 4070A",
+        "bytes":  287961,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/7/78/Transtar.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Store_kt880.png",
+        "sourceWikiFile":  "Store_kt880.png",
+        "displayName":  "Kenworth T880",
+        "bytes":  325581,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/e/ea/Store_kt880.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Store_kw990.png",
+        "sourceWikiFile":  "Store_kw990.png",
+        "displayName":  "Kenworth W990",
+        "bytes":  319754,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/4/46/Store_kw990.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Store_mtp.png",
+        "sourceWikiFile":  "Store_mtp.jpg",
+        "displayName":  "Mack TerraPro",
+        "bytes":  352574,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/6/6f/Store_mtp.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Western_star_57x.png",
+        "sourceWikiFile":  "Western_star_57x.png",
+        "displayName":  "Western Star 57X",
+        "bytes":  136862,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/d/d5/Western_star_57x.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Store_cct680.png",
+        "sourceWikiFile":  "Store_cct680.png",
+        "displayName":  "Caterpillar CT680",
+        "bytes":  283902,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/f/f9/Store_cct680.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "CT681.png",
+        "sourceWikiFile":  "CT681.png",
+        "displayName":  "Caterpillar CT681",
+        "bytes":  316042,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/4/46/CT681.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Kodiak.png",
+        "sourceWikiFile":  "Kodiak.jpg",
+        "displayName":  "Chevrolet Kodiak C70",
+        "bytes":  344468,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/7/7d/Kodiak.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Fleetstar.png",
+        "sourceWikiFile":  "Fleetstar.jpg",
+        "displayName":  "Fleetstar F2070A",
+        "bytes":  313002,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/a/a0/Fleetstar.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Store_ffld120_sr.png",
+        "sourceWikiFile":  "Store_ffld120_sr.jpg",
+        "displayName":  "Freightliner FLD120",
+        "bytes":  334306,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/1/14/Store_ffld120_sr.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "GMC_8000.png",
+        "sourceWikiFile":  "GMC_8000.png",
+        "displayName":  "GMC Brigadier 8000",
+        "bytes":  361409,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/7/73/GMC_8000.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "International_HX520.png",
+        "sourceWikiFile":  "International_HX520.png",
+        "displayName":  "International HX 520",
+        "bytes":  365376,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/7/74/International_HX520.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Store_kc500.png",
+        "sourceWikiFile":  "Store_kc500.png",
+        "displayName":  "Kenworth C500",
+        "bytes":  385593,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/1/1d/Store_kc500.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Store_mp.png",
+        "sourceWikiFile":  "Store_mp.jpg",
+        "displayName":  "Mack Pinnacle",
+        "bytes":  396748,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/1/10/Store_mp.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Store_pstd4.png",
+        "sourceWikiFile":  "Store_pstd4.jpg",
+        "displayName":  "Padera STD-4",
+        "bytes":  356760,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/e/ec/Store_pstd4.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Store_vg5352.png",
+        "sourceWikiFile":  "Store_vg5352.png",
+        "displayName":  "Voron G-5352",
+        "bytes":  434579,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/1/12/Store_vg5352.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Store_wws4964.png",
+        "sourceWikiFile":  "Store_wws4964.png",
+        "displayName":  "White Western Star 4964",
+        "bytes":  334249,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/6/6f/Store_wws4964.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Aramatsu_forester_store.png",
+        "sourceWikiFile":  "Aramatsu_forester_store.png",
+        "displayName":  "Aramatsu Forester",
+        "bytes":  129907,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/8/83/Aramatsu_forester_store.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Store_aa15.png",
+        "sourceWikiFile":  "Store_aa15.jpg",
+        "displayName":  "AVENHORN A15",
+        "bytes":  351970,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/4/4f/Store_aa15.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "42-20.png",
+        "sourceWikiFile":  "42-20.jpg",
+        "displayName":  "Azov 42-20 Antarctic",
+        "bytes":  350495,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/4/48/42-20.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Store_a67096a.png",
+        "sourceWikiFile":  "Store_a67096a.png",
+        "displayName":  "Azov 67096 \"Atom\"",
+        "bytes":  292895,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/1/14/Store_a67096a.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Azov-73210.png",
+        "sourceWikiFile":  "Azov-73210.jpg",
+        "displayName":  "Azov 73210",
+        "bytes":  332736,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/c/c5/Azov-73210.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Boar_store_image.png",
+        "sourceWikiFile":  "Boar_store_image.jpg",
+        "displayName":  "BOAR 45318",
+        "bytes":  358210,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/9/92/Boar_store_image.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Store_c745c.png",
+        "sourceWikiFile":  "Store_c745c.png",
+        "displayName":  "Caterpillar 745C",
+        "bytes":  324875,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/4/4a/Store_c745c.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "96320.png",
+        "sourceWikiFile":  "96320.jpg",
+        "displayName":  "DAN 96320",
+        "bytes":  353939,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/3/30/96320.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "3194.png",
+        "sourceWikiFile":  "3194.jpg",
+        "displayName":  "Derry Longhorn 3194",
+        "bytes":  351229,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/4/4b/3194.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "4520.png",
+        "sourceWikiFile":  "4520.jpg",
+        "displayName":  "Derry Longhorn 4520",
+        "bytes":  341852,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/c/ca/4520.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Store_DerrySpecial.png",
+        "sourceWikiFile":  "Store_DerrySpecial.png",
+        "displayName":  "Derry Special 15C-177",
+        "bytes":  117532,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/3/3a/Store_DerrySpecial.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Store_femm7at.png",
+        "sourceWikiFile":  "Store_femm7at.png",
+        "displayName":  "FEMM 37-AT",
+        "bytes":  169885,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/2/27/Store_femm7at.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Store_f7290ra.png",
+        "sourceWikiFile":  "Store_f7290ra.jpg",
+        "displayName":  "Futom 7290RA",
+        "bytes":  388111,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/7/75/Store_f7290ra.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Paystar_5600TS_store_image.png",
+        "sourceWikiFile":  "Paystar_5600TS_store_image.jpg",
+        "displayName":  "International Paystar 5600TS",
+        "bytes":  299053,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/1/1b/Paystar_5600TS_store_image.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Store_k963.png",
+        "sourceWikiFile":  "Store_k963.png",
+        "displayName":  "Kenworth 963",
+        "bytes":  160342,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/9/99/Store_k963.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "K700sr.png",
+        "sourceWikiFile":  "K700sr.png",
+        "displayName":  "Kirovets K-700",
+        "bytes":  302236,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/5/5b/K700sr.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Img_k7m.png",
+        "sourceWikiFile":  "Img_k7m.png",
+        "displayName":  "Kirovets K-7M",
+        "bytes":  324199,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/e/e5/Img_k7m.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "74760.png",
+        "sourceWikiFile":  "74760.jpg",
+        "displayName":  "KOLOB 74760",
+        "bytes":  278638,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/7/7b/74760.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "74941.png",
+        "sourceWikiFile":  "74941.jpg",
+        "displayName":  "KOLOB 74941",
+        "bytes":  317045,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/4/4e/74941.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Navistar.png",
+        "sourceWikiFile":  "Navistar.jpg",
+        "displayName":  "Navistar 5000-MV",
+        "bytes":  328835,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/5/5c/Navistar.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Store_pp12.png",
+        "sourceWikiFile":  "Store_pp12.png",
+        "displayName":  "Pacific P12",
+        "bytes":  307753,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/6/65/Store_pp12.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Store_pp16.png",
+        "sourceWikiFile":  "Store_pp16.png",
+        "displayName":  "Pacific P16",
+        "bytes":  360040,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/1/1a/Store_pp16.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Store_pp512pf.png",
+        "sourceWikiFile":  "Store_pp512pf.png",
+        "displayName":  "Pacific P512 PF",
+        "bytes":  160111,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/3/32/Store_pp512pf.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Store_p450.png",
+        "sourceWikiFile":  "Store_p450.jpg",
+        "displayName":  "PLAD 450",
+        "bytes":  321979,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/4/41/Store_p450.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Store_smfk816e.png",
+        "sourceWikiFile":  "Store_smfk816e.jpg",
+        "displayName":  "Sleiter ST 816 \"Elephant\"",
+        "bytes":  364761,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/9/95/Store_smfk816e.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Store_sst833c.png",
+        "sourceWikiFile":  "Store_sst833c.jpg",
+        "displayName":  "Sleiter ST 833 \"Chimera\"",
+        "bytes":  396918,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/c/c8/Store_sst833c.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Tatra_force.png",
+        "sourceWikiFile":  "Tatra_force.png",
+        "displayName":  "Tatra FORCE T815-7",
+        "bytes":  308813,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/b/b5/Tatra_force.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Tatra_T813.png",
+        "sourceWikiFile":  "Tatra_T813.png",
+        "displayName":  "Tatra T813",
+        "bytes":  321319,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/3/36/Tatra_T813.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Western_star_47x_nf_1424.png",
+        "sourceWikiFile":  "Western_star_47x_nf_1424.png",
+        "displayName":  "Western Star 47X NF 1424",
+        "bytes":  129173,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/1/13/Western_star_47x_nf_1424.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Western_star_47x_nf_1430.png",
+        "sourceWikiFile":  "Western_star_47x_nf_1430.png",
+        "displayName":  "Western Star 47X NF 1430",
+        "bytes":  152536,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/0/0b/Western_star_47x_nf_1430.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Western_star_49x.png",
+        "sourceWikiFile":  "Western_star_49x.png",
+        "displayName":  "Western Star 49X",
+        "bytes":  343514,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/5/54/Western_star_49x.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Store_ws6900ts.png",
+        "sourceWikiFile":  "Store_ws6900ts.png",
+        "displayName":  "Western Star 6900 TwinSteer",
+        "bytes":  337637,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/a/a8/Store_ws6900ts.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Store_ws6900xd_sr.png",
+        "sourceWikiFile":  "Store_ws6900xd_sr.jpg",
+        "displayName":  "Western Star 6900XD",
+        "bytes":  387455,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/b/bc/Store_ws6900xd_sr.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "ZiKZ_605R_store_image.png",
+        "sourceWikiFile":  "ZiKZ_605R_store_image.png",
+        "displayName":  "ZiKZ 605R",
+        "bytes":  315245,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/2/2d/ZiKZ_605R_store_image.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Store_Z612H.png",
+        "sourceWikiFile":  "Store_Z612H.png",
+        "displayName":  "ZiKZ 612H",
+        "bytes":  314517,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/c/c3/Store_Z612H.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Mk38.png",
+        "sourceWikiFile":  "Mk38.jpg",
+        "displayName":  "ANK MK38",
+        "bytes":  272573,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/3/3d/Mk38.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "ANK_MK38_civilian_store.png",
+        "sourceWikiFile":  "ANK_MK38_civilian_store.png",
+        "displayName":  "ANK MK38 CIVILIAN",
+        "bytes":  162706,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/4/4d/ANK_MK38_civilian_store.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Store_a1160.png",
+        "sourceWikiFile":  "Store_a1160.jpg",
+        "displayName":  "Ankatra 1160",
+        "bytes":  363078,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/5/57/Store_a1160.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "43191_Sprinter_store_image.png",
+        "sourceWikiFile":  "43191_Sprinter_store_image.png",
+        "displayName":  "Azov 43-191 \"Sprinter\"",
+        "bytes":  296495,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/5/5e/43191_Sprinter_store_image.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "5319_nara.png",
+        "sourceWikiFile":  "5319_nara.jpg",
+        "displayName":  "Azov 5319",
+        "bytes":  340997,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/f/ff/5319_nara.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "64131.png",
+        "sourceWikiFile":  "64131.jpg",
+        "displayName":  "Azov 64131",
+        "bytes":  322644,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/c/c5/64131.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "114sd.png",
+        "sourceWikiFile":  "114sd.jpg",
+        "displayName":  "Freightliner 114SD",
+        "bytes":  343139,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/1/11/114sd.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "M916a1.png",
+        "sourceWikiFile":  "M916a1.jpg",
+        "displayName":  "Freightliner M916A1",
+        "bytes":  292805,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/c/c9/M916a1.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Store_hibb1980.png",
+        "sourceWikiFile":  "Store_hibb1980.jpg",
+        "displayName":  "HIB Billert 1980",
+        "bytes":  360181,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/e/e0/Store_hibb1980.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Paystar.png",
+        "sourceWikiFile":  "Paystar.jpg",
+        "displayName":  "International Paystar 5070",
+        "bytes":  307118,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/9/99/Paystar.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Store_jrx600.png",
+        "sourceWikiFile":  "Store_jrx600.png",
+        "displayName":  "Jangsu RX600",
+        "bytes":  436945,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/f/fd/Store_jrx600.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Bandit.png",
+        "sourceWikiFile":  "Bandit.jpg",
+        "displayName":  "KRS 58 \"Bandit\"",
+        "bytes":  287756,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/4/46/Bandit.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Store_mdm917.png",
+        "sourceWikiFile":  "Store_mdm917.png",
+        "displayName":  "Mack Defense M917",
+        "bytes":  148362,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/b/b6/Store_mdm917.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Store_mba3332.png",
+        "sourceWikiFile":  "Store_mba3332.png",
+        "displayName":  "Mercedes-Benz Actros 3332",
+        "bytes":  435195,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/4/47/Store_mba3332.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Store_mbz_ingame.png",
+        "sourceWikiFile":  "Store_mbz_ingame.png",
+        "displayName":  "Mercedes-Benz Zetros",
+        "bytes":  386269,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/8/87/Store_mbz_ingame.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Store_mk520.png",
+        "sourceWikiFile":  "Store_mk520.jpg",
+        "displayName":  "Mercer K520",
+        "bytes":  374090,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/6/6e/Store_mk520.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Store_mr230.png",
+        "sourceWikiFile":  "Store_mr230.png",
+        "displayName":  "Mercer R230",
+        "bytes":  394003,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/1/1e/Store_mr230.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Store_p440b.png",
+        "sourceWikiFile":  "Store_p440b.jpg",
+        "displayName":  "PLAD 440 \"BUDDY\"",
+        "bytes":  366199,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/6/66/Store_p440b.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Bm17.png",
+        "sourceWikiFile":  "Bm17.jpg",
+        "displayName":  "Royal BM17",
+        "bytes":  293296,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/5/5d/Bm17.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "310e.png",
+        "sourceWikiFile":  "310e.jpg",
+        "displayName":  "Step 310E",
+        "bytes":  313006,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/0/05/310e.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "3364_store_image.png",
+        "sourceWikiFile":  "3364_store_image.png",
+        "displayName":  "Step 33-64 \"Crocodile\"",
+        "bytes":  156228,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/d/d0/3364_store_image.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Steppike.png",
+        "sourceWikiFile":  "Steppike.png",
+        "displayName":  "Step 39331 \"Pike\"",
+        "bytes":  140211,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/d/d6/Steppike.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Tatra_phoenix.png",
+        "sourceWikiFile":  "Tatra_phoenix.png",
+        "displayName":  "Tatra PHOENIX",
+        "bytes":  300067,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/7/7f/Tatra_phoenix.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "6436.png",
+        "sourceWikiFile":  "6436.jpg",
+        "displayName":  "Tayga 6436",
+        "bytes":  319488,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/3/34/6436.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Tayga_6455B_store.png",
+        "sourceWikiFile":  "Tayga_6455B_store.png",
+        "displayName":  "Tayga 6455B",
+        "bytes":  142094,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/f/fb/Tayga_6455B_store.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Tuz_108.png",
+        "sourceWikiFile":  "Tuz_108.jpg",
+        "displayName":  "TUZ 108 \"Warthog\"",
+        "bytes":  326920,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/9/9f/Tuz_108.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Actaeon.png",
+        "sourceWikiFile":  "Actaeon.jpg",
+        "displayName":  "TUZ 16 \"Actaeon\"",
+        "bytes":  321786,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/4/4d/Actaeon.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Ae4380.png",
+        "sourceWikiFile":  "Ae4380.jpg",
+        "displayName":  "Voron AE-4380",
+        "bytes":  251642,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/1/1b/Ae4380.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "D53233.png",
+        "sourceWikiFile":  "D53233.jpg",
+        "displayName":  "Voron D-53233",
+        "bytes":  316810,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/c/c7/D53233.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Grad.png",
+        "sourceWikiFile":  "Grad.jpg",
+        "displayName":  "Voron Grad",
+        "bytes":  279061,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/d/d2/Grad.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "5368.png",
+        "sourceWikiFile":  "5368.jpg",
+        "displayName":  "ZiKZ 5368",
+        "bytes":  299177,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/f/f9/5368.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Store_ZiKZ556A.png",
+        "sourceWikiFile":  "Store_ZiKZ556A.png",
+        "displayName":  "ZiKZ 566A",
+        "bytes":  102133,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/9/95/Store_ZiKZ556A.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Store_aac58dw.png",
+        "sourceWikiFile":  "Store_aac58dw.jpg",
+        "displayName":  "AAC-58DW",
+        "bytes":  332047,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/a/a2/Store_aac58dw.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Store_b6x6.png",
+        "sourceWikiFile":  "Store_b6x6.png",
+        "displayName":  "Burlak 6x6",
+        "bytes":  148583,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/c/ca/Store_b6x6.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Store_cth357.png",
+        "sourceWikiFile":  "Store_cth357.png",
+        "displayName":  "Caterpillar TH357",
+        "bytes":  317430,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/8/8b/Store_cth357.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Chevrolet-apache.png",
+        "sourceWikiFile":  "Chevrolet-apache.jpg",
+        "displayName":  "Chevrolet Apache",
+        "bytes":  347956,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/b/b2/Chevrolet-apache.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Ck1500.png",
+        "sourceWikiFile":  "Ck1500.jpg",
+        "displayName":  "Chevrolet CK1500",
+        "bytes":  264623,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/4/4c/Ck1500.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "D71.png",
+        "sourceWikiFile":  "D71.jpg",
+        "displayName":  "DON 71",
+        "bytes":  349087,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/f/fc/D71.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Store_elti.png",
+        "sourceWikiFile":  "Store_elti.jpg",
+        "displayName":  "EarthRoamer LTi",
+        "bytes":  379548,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/1/16/Store_elti.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Store_esx.png",
+        "sourceWikiFile":  "Store_esx.jpg",
+        "displayName":  "EarthRoamer SX",
+        "bytes":  319292,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/a/a5/Store_esx.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Store_ff750.png",
+        "sourceWikiFile":  "Store_ff750.png",
+        "displayName":  "Ford F 750",
+        "bytes":  335983,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/e/e6/Store_ff750.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "BY4_store_image.png",
+        "sourceWikiFile":  "BY4_store_image.png",
+        "displayName":  "Gor BY-4",
+        "bytes":  281335,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/b/b5/BY4_store_image.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "H2.png",
+        "sourceWikiFile":  "H2.jpg",
+        "displayName":  "Hummer H2",
+        "bytes":  343755,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/4/44/H2.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Loadstar.png",
+        "sourceWikiFile":  "Loadstar.jpg",
+        "displayName":  "International Loadstar 1700",
+        "bytes":  293932,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/6/6c/Loadstar.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Store_jcj7r.png",
+        "sourceWikiFile":  "Store_jcj7r.png",
+        "displayName":  "Jeep CJ7 Renegade",
+        "bytes":  328795,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/9/9f/Store_jcj7r.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Store_jw.png",
+        "sourceWikiFile":  "Store_jw.png",
+        "displayName":  "Jeep Wrangler",
+        "bytes":  350355,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/3/36/Store_jw.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "KHAN_sentinel.png",
+        "sourceWikiFile":  "KHAN_sentinel.png",
+        "displayName":  "KHAN 317 Sentinel",
+        "bytes":  294587,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/a/a7/KHAN_sentinel.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Marshall.png",
+        "sourceWikiFile":  "Marshall.jpg",
+        "displayName":  "KHAN 39 Marshall",
+        "bytes":  295014,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/c/c9/Marshall.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Loaf.png",
+        "sourceWikiFile":  "Loaf.jpg",
+        "displayName":  "KHAN Lo4F",
+        "bytes":  277678,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/c/c7/Loaf.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Landroverdefender110.png",
+        "sourceWikiFile":  "Landroverdefender110.jpeg",
+        "displayName":  "Land Rover Defender 110",
+        "bytes":  337115,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/2/2a/Landroverdefender110.jpeg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Landroverdefender90.png",
+        "sourceWikiFile":  "Landroverdefender90.jpg",
+        "displayName":  "Land Rover Defender 90",
+        "bytes":  296655,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/a/ac/Landroverdefender90.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Store_mtb8106rg.png",
+        "sourceWikiFile":  "Store_mtb8106rg.png",
+        "displayName":  "MTB 8106 (Rock Grinder)",
+        "bytes":  182811,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/1/1f/Store_mtb8106rg.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Store_nf2000.png",
+        "sourceWikiFile":  "Store_nf2000.png",
+        "displayName":  "Neo Falcon 2000",
+        "bytes":  129514,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/3/3f/Store_nf2000.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Rezvani-hercules-6x6.png",
+        "sourceWikiFile":  "Rezvani-hercules-6x6.jpg",
+        "displayName":  "Rezvani Hercules 6x6",
+        "bytes":  306395,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/6/62/Rezvani-hercules-6x6.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Store_rt.png",
+        "sourceWikiFile":  "Store_rt.jpg",
+        "displayName":  "Rezvani Tank",
+        "bytes":  370694,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/2/22/Store_rt.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Scout800.png",
+        "sourceWikiFile":  "Scout800.jpg",
+        "displayName":  "Scout 800",
+        "bytes":  327945,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/8/82/Scout800.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Tatra_805.png",
+        "sourceWikiFile":  "Tatra_805.png",
+        "displayName":  "Tatra 805",
+        "bytes":  310506,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/a/a7/Tatra_805.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "166.png",
+        "sourceWikiFile":  "166.jpg",
+        "displayName":  "TUZ 166",
+        "bytes":  320326,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/8/8f/166.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Tatarin.png",
+        "sourceWikiFile":  "Tatarin.jpg",
+        "displayName":  "TUZ 420 \"Tatarin\"",
+        "bytes":  333985,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/d/da/Tatarin.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Yar87.png",
+        "sourceWikiFile":  "Yar87.jpg",
+        "displayName":  "YAR 87",
+        "bytes":  359075,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/1/13/Yar87.jpg/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Veh_c770g_alt.png",
+        "sourceWikiFile":  "Veh_c770g_alt.png",
+        "displayName":  "Caterpillar 770G",
+        "bytes":  321206,
+        "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/7/72/Veh_c770g_alt.png/revision/latest/scale-to-width-down/512?format=original"
+    }
+]
