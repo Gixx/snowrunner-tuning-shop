@@ -1,0 +1,698 @@
+﻿[
+    {
+        "id":  "fclt9000",
+        "displayName":  "Ford CLT9000",
+        "category":  "Highway",
+        "imageFile":  "Store_fclt9000.png"
+    },
+    {
+        "id":  "gmh9500",
+        "displayName":  "GMC MH9500",
+        "category":  "Highway",
+        "imageFile":  "Store_gmh9500.png"
+    },
+    {
+        "id":  "hibbm816",
+        "displayName":  "HIB Billert M816",
+        "category":  "Highway",
+        "imageFile":  "Store_hibbm816.png"
+    },
+    {
+        "id":  "transtar",
+        "displayName":  "International Transtar 4070A",
+        "category":  "Highway",
+        "imageFile":  "Transtar.png"
+    },
+    {
+        "id":  "kt880",
+        "displayName":  "Kenworth T880",
+        "category":  "Highway",
+        "imageFile":  "Store_kt880.png"
+    },
+    {
+        "id":  "kw990",
+        "displayName":  "Kenworth W990",
+        "category":  "Highway",
+        "imageFile":  "Store_kw990.png"
+    },
+    {
+        "id":  "mtp",
+        "displayName":  "Mack TerraPro",
+        "category":  "Highway",
+        "imageFile":  "Store_mtp.png"
+    },
+    {
+        "id":  "western_star_57x",
+        "displayName":  "Western Star 57X",
+        "category":  "Highway",
+        "imageFile":  "Western_star_57x.png"
+    },
+    {
+        "id":  "cct680",
+        "displayName":  "Caterpillar CT680",
+        "category":  "Heavy Duty",
+        "imageFile":  "Store_cct680.png"
+    },
+    {
+        "id":  "ct681",
+        "displayName":  "Caterpillar CT681",
+        "category":  "Heavy Duty",
+        "imageFile":  "CT681.png"
+    },
+    {
+        "id":  "kodiak",
+        "displayName":  "Chevrolet Kodiak C70",
+        "category":  "Heavy Duty",
+        "imageFile":  "Kodiak.png"
+    },
+    {
+        "id":  "fleetstar",
+        "displayName":  "Fleetstar F2070A",
+        "category":  "Heavy Duty",
+        "imageFile":  "Fleetstar.png"
+    },
+    {
+        "id":  "ffld120",
+        "displayName":  "Freightliner FLD120",
+        "category":  "Heavy Duty",
+        "imageFile":  "Store_ffld120_sr.png"
+    },
+    {
+        "id":  "gmc_8000",
+        "displayName":  "GMC Brigadier 8000",
+        "category":  "Heavy Duty",
+        "imageFile":  "GMC_8000.png"
+    },
+    {
+        "id":  "international_hx520",
+        "displayName":  "International HX 520",
+        "category":  "Heavy Duty",
+        "imageFile":  "International_HX520.png"
+    },
+    {
+        "id":  "kc500",
+        "displayName":  "Kenworth C500",
+        "category":  "Heavy Duty",
+        "imageFile":  "Store_kc500.png"
+    },
+    {
+        "id":  "mp",
+        "displayName":  "Mack Pinnacle",
+        "category":  "Heavy Duty",
+        "imageFile":  "Store_mp.png"
+    },
+    {
+        "id":  "pstd4",
+        "displayName":  "Padera STD-4",
+        "category":  "Heavy Duty",
+        "imageFile":  "Store_pstd4.png"
+    },
+    {
+        "id":  "vg5352",
+        "displayName":  "Voron G-5352",
+        "category":  "Heavy Duty",
+        "imageFile":  "Store_vg5352.png"
+    },
+    {
+        "id":  "wws4964",
+        "displayName":  "White Western Star 4964",
+        "category":  "Heavy Duty",
+        "imageFile":  "Store_wws4964.png"
+    },
+    {
+        "id":  "aramatsu_forester",
+        "displayName":  "Aramatsu Forester",
+        "category":  "Heavy",
+        "imageFile":  "Aramatsu_forester_store.png"
+    },
+    {
+        "id":  "aa15",
+        "displayName":  "AVENHORN A15",
+        "category":  "Heavy",
+        "imageFile":  "Store_aa15.png"
+    },
+    {
+        "id":  "42-20",
+        "displayName":  "Azov 42-20 Antarctic",
+        "category":  "Heavy",
+        "imageFile":  "42-20.png"
+    },
+    {
+        "id":  "a67096a",
+        "displayName":  "Azov 67096 \"Atom\"",
+        "category":  "Heavy",
+        "imageFile":  "Store_a67096a.png"
+    },
+    {
+        "id":  "azov-73210",
+        "displayName":  "Azov 73210",
+        "category":  "Heavy",
+        "imageFile":  "Azov-73210.png"
+    },
+    {
+        "id":  "boar",
+        "displayName":  "BOAR 45318",
+        "category":  "Heavy",
+        "imageFile":  "Boar_store_image.png"
+    },
+    {
+        "id":  "c745c",
+        "displayName":  "Caterpillar 745C",
+        "category":  "Heavy",
+        "imageFile":  "Store_c745c.png"
+    },
+    {
+        "id":  "96320",
+        "displayName":  "DAN 96320",
+        "category":  "Heavy",
+        "imageFile":  "96320.png"
+    },
+    {
+        "id":  "3194",
+        "displayName":  "Derry Longhorn 3194",
+        "category":  "Heavy",
+        "imageFile":  "3194.png"
+    },
+    {
+        "id":  "4520",
+        "displayName":  "Derry Longhorn 4520",
+        "category":  "Heavy",
+        "imageFile":  "4520.png"
+    },
+    {
+        "id":  "derryspecial",
+        "displayName":  "Derry Special 15C-177",
+        "category":  "Heavy",
+        "imageFile":  "Store_DerrySpecial.png"
+    },
+    {
+        "id":  "femm7at",
+        "displayName":  "FEMM 37-AT",
+        "category":  "Heavy",
+        "imageFile":  "Store_femm7at.png"
+    },
+    {
+        "id":  "f7290ra",
+        "displayName":  "Futom 7290RA",
+        "category":  "Heavy",
+        "imageFile":  "Store_f7290ra.png"
+    },
+    {
+        "id":  "paystar_5600ts",
+        "displayName":  "International Paystar 5600TS",
+        "category":  "Heavy",
+        "imageFile":  "Paystar_5600TS_store_image.png"
+    },
+    {
+        "id":  "k963",
+        "displayName":  "Kenworth 963",
+        "category":  "Heavy",
+        "imageFile":  "Store_k963.png"
+    },
+    {
+        "id":  "k700sr",
+        "displayName":  "Kirovets K-700",
+        "category":  "Heavy",
+        "imageFile":  "K700sr.png"
+    },
+    {
+        "id":  "img_k7m",
+        "displayName":  "Kirovets K-7M",
+        "category":  "Heavy",
+        "imageFile":  "Img_k7m.png"
+    },
+    {
+        "id":  "74760",
+        "displayName":  "KOLOB 74760",
+        "category":  "Heavy",
+        "imageFile":  "74760.png"
+    },
+    {
+        "id":  "74941",
+        "displayName":  "KOLOB 74941",
+        "category":  "Heavy",
+        "imageFile":  "74941.png"
+    },
+    {
+        "id":  "navistar",
+        "displayName":  "Navistar 5000-MV",
+        "category":  "Heavy",
+        "imageFile":  "Navistar.png"
+    },
+    {
+        "id":  "pp12",
+        "displayName":  "Pacific P12",
+        "category":  "Heavy",
+        "imageFile":  "Store_pp12.png"
+    },
+    {
+        "id":  "pp16",
+        "displayName":  "Pacific P16",
+        "category":  "Heavy",
+        "imageFile":  "Store_pp16.png"
+    },
+    {
+        "id":  "pp512pf",
+        "displayName":  "Pacific P512 PF",
+        "category":  "Heavy",
+        "imageFile":  "Store_pp512pf.png"
+    },
+    {
+        "id":  "p450",
+        "displayName":  "PLAD 450",
+        "category":  "Heavy",
+        "imageFile":  "Store_p450.png"
+    },
+    {
+        "id":  "smfk816e",
+        "displayName":  "Sleiter ST 816 \"Elephant\"",
+        "category":  "Heavy",
+        "imageFile":  "Store_smfk816e.png"
+    },
+    {
+        "id":  "sst833c",
+        "displayName":  "Sleiter ST 833 \"Chimera\"",
+        "category":  "Heavy",
+        "imageFile":  "Store_sst833c.png"
+    },
+    {
+        "id":  "tatra_force",
+        "displayName":  "Tatra FORCE T815-7",
+        "category":  "Heavy",
+        "imageFile":  "Tatra_force.png"
+    },
+    {
+        "id":  "tatra_t813",
+        "displayName":  "Tatra T813",
+        "category":  "Heavy",
+        "imageFile":  "Tatra_T813.png"
+    },
+    {
+        "id":  "western_star_47x_nf_1424",
+        "displayName":  "Western Star 47X NF 1424",
+        "category":  "Heavy",
+        "imageFile":  "Western_star_47x_nf_1424.png"
+    },
+    {
+        "id":  "western_star_47x_nf_1430",
+        "displayName":  "Western Star 47X NF 1430",
+        "category":  "Heavy",
+        "imageFile":  "Western_star_47x_nf_1430.png"
+    },
+    {
+        "id":  "western_star_49x",
+        "displayName":  "Western Star 49X",
+        "category":  "Heavy",
+        "imageFile":  "Western_star_49x.png"
+    },
+    {
+        "id":  "ws6900ts",
+        "displayName":  "Western Star 6900 TwinSteer",
+        "category":  "Heavy",
+        "imageFile":  "Store_ws6900ts.png"
+    },
+    {
+        "id":  "ws6900xd",
+        "displayName":  "Western Star 6900XD",
+        "category":  "Heavy",
+        "imageFile":  "Store_ws6900xd_sr.png"
+    },
+    {
+        "id":  "zikz_605r",
+        "displayName":  "ZiKZ 605R",
+        "category":  "Heavy",
+        "imageFile":  "ZiKZ_605R_store_image.png"
+    },
+    {
+        "id":  "z612h",
+        "displayName":  "ZiKZ 612H",
+        "category":  "Heavy",
+        "imageFile":  "Store_Z612H.png"
+    },
+    {
+        "id":  "mk38",
+        "displayName":  "ANK MK38",
+        "category":  "Offroad",
+        "imageFile":  "Mk38.png"
+    },
+    {
+        "id":  "ank_mk38_civilian",
+        "displayName":  "ANK MK38 CIVILIAN",
+        "category":  "Offroad",
+        "imageFile":  "ANK_MK38_civilian_store.png"
+    },
+    {
+        "id":  "a1160",
+        "displayName":  "Ankatra 1160",
+        "category":  "Offroad",
+        "imageFile":  "Store_a1160.png"
+    },
+    {
+        "id":  "43191_sprinter",
+        "displayName":  "Azov 43-191 \"Sprinter\"",
+        "category":  "Offroad",
+        "imageFile":  "43191_Sprinter_store_image.png"
+    },
+    {
+        "id":  "5319_nara",
+        "displayName":  "Azov 5319",
+        "category":  "Offroad",
+        "imageFile":  "5319_nara.png"
+    },
+    {
+        "id":  "64131",
+        "displayName":  "Azov 64131",
+        "category":  "Offroad",
+        "imageFile":  "64131.png"
+    },
+    {
+        "id":  "114sd",
+        "displayName":  "Freightliner 114SD",
+        "category":  "Offroad",
+        "imageFile":  "114sd.png"
+    },
+    {
+        "id":  "m916a1",
+        "displayName":  "Freightliner M916A1",
+        "category":  "Offroad",
+        "imageFile":  "M916a1.png"
+    },
+    {
+        "id":  "hibb1980",
+        "displayName":  "HIB Billert 1980",
+        "category":  "Offroad",
+        "imageFile":  "Store_hibb1980.png"
+    },
+    {
+        "id":  "paystar",
+        "displayName":  "International Paystar 5070",
+        "category":  "Offroad",
+        "imageFile":  "Paystar.png"
+    },
+    {
+        "id":  "jrx600",
+        "displayName":  "Jangsu RX600",
+        "category":  "Offroad",
+        "imageFile":  "Store_jrx600.png"
+    },
+    {
+        "id":  "bandit",
+        "displayName":  "KRS 58 \"Bandit\"",
+        "category":  "Offroad",
+        "imageFile":  "Bandit.png"
+    },
+    {
+        "id":  "mdm917",
+        "displayName":  "Mack Defense M917",
+        "category":  "Offroad",
+        "imageFile":  "Store_mdm917.png"
+    },
+    {
+        "id":  "mba3332",
+        "displayName":  "Mercedes-Benz Actros 3332",
+        "category":  "Offroad",
+        "imageFile":  "Store_mba3332.png"
+    },
+    {
+        "id":  "mbz",
+        "displayName":  "Mercedes-Benz Zetros",
+        "category":  "Offroad",
+        "imageFile":  "Store_mbz_ingame.png"
+    },
+    {
+        "id":  "mk520",
+        "displayName":  "Mercer K520",
+        "category":  "Offroad",
+        "imageFile":  "Store_mk520.png"
+    },
+    {
+        "id":  "mr230",
+        "displayName":  "Mercer R230",
+        "category":  "Offroad",
+        "imageFile":  "Store_mr230.png"
+    },
+    {
+        "id":  "p440b",
+        "displayName":  "PLAD 440 \"BUDDY\"",
+        "category":  "Offroad",
+        "imageFile":  "Store_p440b.png"
+    },
+    {
+        "id":  "bm17",
+        "displayName":  "Royal BM17",
+        "category":  "Offroad",
+        "imageFile":  "Bm17.png"
+    },
+    {
+        "id":  "310e",
+        "displayName":  "Step 310E",
+        "category":  "Offroad",
+        "imageFile":  "310e.png"
+    },
+    {
+        "id":  "3364",
+        "displayName":  "Step 33-64 \"Crocodile\"",
+        "category":  "Offroad",
+        "imageFile":  "3364_store_image.png"
+    },
+    {
+        "id":  "steppike",
+        "displayName":  "Step 39331 \"Pike\"",
+        "category":  "Offroad",
+        "imageFile":  "Steppike.png"
+    },
+    {
+        "id":  "tatra_phoenix",
+        "displayName":  "Tatra PHOENIX",
+        "category":  "Offroad",
+        "imageFile":  "Tatra_phoenix.png"
+    },
+    {
+        "id":  "6436",
+        "displayName":  "Tayga 6436",
+        "category":  "Offroad",
+        "imageFile":  "6436.png"
+    },
+    {
+        "id":  "tayga_6455b",
+        "displayName":  "Tayga 6455B",
+        "category":  "Offroad",
+        "imageFile":  "Tayga_6455B_store.png"
+    },
+    {
+        "id":  "tuz_108",
+        "displayName":  "TUZ 108 \"Warthog\"",
+        "category":  "Offroad",
+        "imageFile":  "Tuz_108.png"
+    },
+    {
+        "id":  "actaeon",
+        "displayName":  "TUZ 16 \"Actaeon\"",
+        "category":  "Offroad",
+        "imageFile":  "Actaeon.png"
+    },
+    {
+        "id":  "ae4380",
+        "displayName":  "Voron AE-4380",
+        "category":  "Offroad",
+        "imageFile":  "Ae4380.png"
+    },
+    {
+        "id":  "d53233",
+        "displayName":  "Voron D-53233",
+        "category":  "Offroad",
+        "imageFile":  "D53233.png"
+    },
+    {
+        "id":  "grad",
+        "displayName":  "Voron Grad",
+        "category":  "Offroad",
+        "imageFile":  "Grad.png"
+    },
+    {
+        "id":  "5368",
+        "displayName":  "ZiKZ 5368",
+        "category":  "Offroad",
+        "imageFile":  "5368.png"
+    },
+    {
+        "id":  "zikz556a",
+        "displayName":  "ZiKZ 566A",
+        "category":  "Offroad",
+        "imageFile":  "Store_ZiKZ556A.png"
+    },
+    {
+        "id":  "aac58dw",
+        "displayName":  "AAC-58DW",
+        "category":  "Scout",
+        "imageFile":  "Store_aac58dw.png"
+    },
+    {
+        "id":  "b6x6",
+        "displayName":  "Burlak 6x6",
+        "category":  "Scout",
+        "imageFile":  "Store_b6x6.png"
+    },
+    {
+        "id":  "cth357",
+        "displayName":  "Caterpillar TH357",
+        "category":  "Scout",
+        "imageFile":  "Store_cth357.png"
+    },
+    {
+        "id":  "chevrolet-apache",
+        "displayName":  "Chevrolet Apache",
+        "category":  "Scout",
+        "imageFile":  "Chevrolet-apache.png"
+    },
+    {
+        "id":  "ck1500",
+        "displayName":  "Chevrolet CK1500",
+        "category":  "Scout",
+        "imageFile":  "Ck1500.png"
+    },
+    {
+        "id":  "d71",
+        "displayName":  "DON 71",
+        "category":  "Scout",
+        "imageFile":  "D71.png"
+    },
+    {
+        "id":  "elti",
+        "displayName":  "EarthRoamer LTi",
+        "category":  "Scout",
+        "imageFile":  "Store_elti.png"
+    },
+    {
+        "id":  "esx",
+        "displayName":  "EarthRoamer SX",
+        "category":  "Scout",
+        "imageFile":  "Store_esx.png"
+    },
+    {
+        "id":  "ff750",
+        "displayName":  "Ford F 750",
+        "category":  "Scout",
+        "imageFile":  "Store_ff750.png"
+    },
+    {
+        "id":  "by4",
+        "displayName":  "Gor BY-4",
+        "category":  "Scout",
+        "imageFile":  "BY4_store_image.png"
+    },
+    {
+        "id":  "h2",
+        "displayName":  "Hummer H2",
+        "category":  "Scout",
+        "imageFile":  "H2.png"
+    },
+    {
+        "id":  "loadstar",
+        "displayName":  "International Loadstar 1700",
+        "category":  "Scout",
+        "imageFile":  "Loadstar.png"
+    },
+    {
+        "id":  "jcj7r",
+        "displayName":  "Jeep CJ7 Renegade",
+        "category":  "Scout",
+        "imageFile":  "Store_jcj7r.png"
+    },
+    {
+        "id":  "jw",
+        "displayName":  "Jeep Wrangler",
+        "category":  "Scout",
+        "imageFile":  "Store_jw.png"
+    },
+    {
+        "id":  "khan_sentinel",
+        "displayName":  "KHAN 317 Sentinel",
+        "category":  "Scout",
+        "imageFile":  "KHAN_sentinel.png"
+    },
+    {
+        "id":  "marshall",
+        "displayName":  "KHAN 39 Marshall",
+        "category":  "Scout",
+        "imageFile":  "Marshall.png"
+    },
+    {
+        "id":  "loaf",
+        "displayName":  "KHAN Lo4F",
+        "category":  "Scout",
+        "imageFile":  "Loaf.png"
+    },
+    {
+        "id":  "landroverdefender110",
+        "displayName":  "Land Rover Defender 110",
+        "category":  "Scout",
+        "imageFile":  "Landroverdefender110.png"
+    },
+    {
+        "id":  "landroverdefender90",
+        "displayName":  "Land Rover Defender 90",
+        "category":  "Scout",
+        "imageFile":  "Landroverdefender90.png"
+    },
+    {
+        "id":  "mtb8106rg",
+        "displayName":  "MTB 8106 (Rock Grinder)",
+        "category":  "Scout",
+        "imageFile":  "Store_mtb8106rg.png"
+    },
+    {
+        "id":  "nf2000",
+        "displayName":  "Neo Falcon 2000",
+        "category":  "Scout",
+        "imageFile":  "Store_nf2000.png"
+    },
+    {
+        "id":  "rezvani-hercules-6x6",
+        "displayName":  "Rezvani Hercules 6x6",
+        "category":  "Scout",
+        "imageFile":  "Rezvani-hercules-6x6.png"
+    },
+    {
+        "id":  "rt",
+        "displayName":  "Rezvani Tank",
+        "category":  "Scout",
+        "imageFile":  "Store_rt.png"
+    },
+    {
+        "id":  "scout800",
+        "displayName":  "Scout 800",
+        "category":  "Scout",
+        "imageFile":  "Scout800.png"
+    },
+    {
+        "id":  "tatra_805",
+        "displayName":  "Tatra 805",
+        "category":  "Scout",
+        "imageFile":  "Tatra_805.png"
+    },
+    {
+        "id":  "166",
+        "displayName":  "TUZ 166",
+        "category":  "Scout",
+        "imageFile":  "166.png"
+    },
+    {
+        "id":  "tatarin",
+        "displayName":  "TUZ 420 \"Tatarin\"",
+        "category":  "Scout",
+        "imageFile":  "Tatarin.png"
+    },
+    {
+        "id":  "yar87",
+        "displayName":  "YAR 87",
+        "category":  "Scout",
+        "imageFile":  "Yar87.png"
+    },
+    {
+        "id":  "veh_c770g_alt",
+        "displayName":  "Caterpillar 770G",
+        "category":  "Heavy",
+        "imageFile":  "Veh_c770g_alt.png"
+    }
+]

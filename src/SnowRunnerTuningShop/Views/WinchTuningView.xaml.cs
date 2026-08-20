@@ -352,7 +352,7 @@ public partial class WinchTuningView : UserControl
         RestoreWinchesButton.IsEnabled = hasBaseline;
         RestorePakButton.IsEnabled = hasBaseline;
 
-        if (!hasBaseline)
+        if (baseline is null)
         {
             BaselineStatusTextBlock.Text = UiText.Winch.BaselineMissing(BuildPythonBackupHint(pythonBackups.Count));
             return;
