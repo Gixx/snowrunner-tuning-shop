@@ -100,9 +100,11 @@ dotnet build src/SnowRunnerTuningShop/SnowRunnerTuningShop.csproj -c Release
 
 ## License
 
-The **compiled application** may be used and shared under the terms in [`LICENSE`](LICENSE).
+This project is licensed under the [MIT License](LICENSE).
 
-**Source code is not open source.** This license does **not** grant rights to copy, modify, or redistribute the source. If you received only binaries, that is intentional.
+SnowRunner and related trademarks are property of their respective owners.
+This project is an unofficial fan tool and is not affiliated with or endorsed
+by the game's publishers or developers.
 
 ---
 
