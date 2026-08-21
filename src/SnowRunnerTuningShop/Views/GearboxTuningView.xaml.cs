@@ -34,6 +34,13 @@ public partial class GearboxTuningView : UserControl
         ReloadGearboxes();
     }
 
+    public async Task LoadFromPakAsync(string pakPath)
+    {
+        PakPath = pakPath;
+        RefreshRestoreButton();
+        await ReloadGearboxesAsync();
+    }
+
     public void Clear()
     {
         PakPath = null;
@@ -172,17 +179,43 @@ public partial class GearboxTuningView : UserControl
 
         try
         {
-            var gearboxes = GearboxService.LoadGearboxes(PakPath, AppLanguage.Current);
-            _gearboxes.Clear();
-            foreach (var gearbox in gearboxes)
-            {
-                _gearboxes.Add(GearboxRowViewModel.FromDefinition(gearbox));
-            }
+            ApplyGearboxes(GearboxService.LoadGearboxes(PakPath, AppLanguage.Current));
         }
         catch (Exception ex)
         {
             Clear();
             MessageBox.Show(ex.Message, UiText.Gearbox.LoadErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    private async Task ReloadGearboxesAsync()
+    {
+        if (string.IsNullOrWhiteSpace(PakPath))
+        {
+            Clear();
+            return;
+        }
+
+        try
+        {
+            var path = PakPath;
+            var language = AppLanguage.Current;
+            var gearboxes = await Task.Run(() => GearboxService.LoadGearboxes(path, language));
+            ApplyGearboxes(gearboxes);
+        }
+        catch (Exception ex)
+        {
+            Clear();
+            MessageBox.Show(ex.Message, UiText.Gearbox.LoadErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    private void ApplyGearboxes(IReadOnlyList<GearboxDefinition> gearboxes)
+    {
+        _gearboxes.Clear();
+        foreach (var gearbox in gearboxes)
+        {
+            _gearboxes.Add(GearboxRowViewModel.FromDefinition(gearbox));
         }
     }
 

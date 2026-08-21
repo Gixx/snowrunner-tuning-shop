@@ -34,6 +34,13 @@ public partial class SuspensionTuningView : UserControl
         ReloadSuspensions();
     }
 
+    public async Task LoadFromPakAsync(string pakPath)
+    {
+        PakPath = pakPath;
+        RefreshRestoreButton();
+        await ReloadSuspensionsAsync();
+    }
+
     public void Clear()
     {
         PakPath = null;
@@ -173,17 +180,43 @@ public partial class SuspensionTuningView : UserControl
 
         try
         {
-            var suspensions = SuspensionService.LoadSuspensions(PakPath, AppLanguage.Current);
-            _suspensions.Clear();
-            foreach (var suspension in suspensions)
-            {
-                _suspensions.Add(SuspensionRowViewModel.FromDefinition(suspension));
-            }
+            ApplySuspensions(SuspensionService.LoadSuspensions(PakPath, AppLanguage.Current));
         }
         catch (Exception ex)
         {
             Clear();
             MessageBox.Show(ex.Message, UiText.Suspension.LoadErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    private async Task ReloadSuspensionsAsync()
+    {
+        if (string.IsNullOrWhiteSpace(PakPath))
+        {
+            Clear();
+            return;
+        }
+
+        try
+        {
+            var path = PakPath;
+            var language = AppLanguage.Current;
+            var suspensions = await Task.Run(() => SuspensionService.LoadSuspensions(path, language));
+            ApplySuspensions(suspensions);
+        }
+        catch (Exception ex)
+        {
+            Clear();
+            MessageBox.Show(ex.Message, UiText.Suspension.LoadErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    private void ApplySuspensions(IReadOnlyList<SuspensionDefinition> suspensions)
+    {
+        _suspensions.Clear();
+        foreach (var suspension in suspensions)
+        {
+            _suspensions.Add(SuspensionRowViewModel.FromDefinition(suspension));
         }
     }
 

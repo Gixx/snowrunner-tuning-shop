@@ -36,6 +36,13 @@ public partial class WinchTuningView : UserControl
         ReloadWinches();
     }
 
+    public async Task LoadFromPakAsync(string pakPath)
+    {
+        PakPath = pakPath;
+        RefreshRestoreButton();
+        await ReloadWinchesAsync();
+    }
+
     public void Clear()
     {
         PakPath = null;
@@ -187,17 +194,43 @@ public partial class WinchTuningView : UserControl
 
         try
         {
-            var winches = WinchService.LoadWinches(PakPath, AppLanguage.Current);
-            _winches.Clear();
-            foreach (var winch in winches)
-            {
-                _winches.Add(WinchRowViewModel.FromDefinition(winch));
-            }
+            ApplyWinches(WinchService.LoadWinches(PakPath, AppLanguage.Current));
         }
         catch (Exception ex)
         {
             Clear();
             MessageBox.Show(ex.Message, UiText.Winch.LoadErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    private async Task ReloadWinchesAsync()
+    {
+        if (string.IsNullOrWhiteSpace(PakPath))
+        {
+            Clear();
+            return;
+        }
+
+        try
+        {
+            var path = PakPath;
+            var language = AppLanguage.Current;
+            var winches = await Task.Run(() => WinchService.LoadWinches(path, language));
+            ApplyWinches(winches);
+        }
+        catch (Exception ex)
+        {
+            Clear();
+            MessageBox.Show(ex.Message, UiText.Winch.LoadErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    private void ApplyWinches(IReadOnlyList<WinchDefinition> winches)
+    {
+        _winches.Clear();
+        foreach (var winch in winches)
+        {
+            _winches.Add(WinchRowViewModel.FromDefinition(winch));
         }
     }
 

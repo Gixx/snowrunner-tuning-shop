@@ -3,56 +3,84 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:views="clr-namespace:SnowRunnerTuningShop.Views"
              xmlns:loc="clr-namespace:SnowRunnerTuningShop.Localization">
-    <TabControl BorderThickness="0" Background="Transparent">
-        <TabItem Header="{x:Static loc:UiText+Parts.Winch}">
-            <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
-                    BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
-                    BorderThickness="1"
-                    CornerRadius="8"
-                    Padding="12"
-                    Margin="0,12,0,0">
-                <views:WinchTuningView x:Name="WinchTuningView"/>
-            </Border>
-        </TabItem>
-        <TabItem Header="{x:Static loc:UiText+Parts.Engine}">
-            <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
-                    BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
-                    BorderThickness="1"
-                    CornerRadius="8"
-                    Padding="12"
-                    Margin="0,12,0,0">
-                <views:EngineTuningView x:Name="EngineTuningView"/>
-            </Border>
-        </TabItem>
-        <TabItem Header="{x:Static loc:UiText+Parts.Gearbox}">
-            <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
-                    BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
-                    BorderThickness="1"
-                    CornerRadius="8"
-                    Padding="12"
-                    Margin="0,12,0,0">
-                <views:GearboxTuningView x:Name="GearboxTuningView"/>
-            </Border>
-        </TabItem>
-        <TabItem Header="{x:Static loc:UiText+Parts.Suspension}">
-            <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
-                    BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
-                    BorderThickness="1"
-                    CornerRadius="8"
-                    Padding="12"
-                    Margin="0,12,0,0">
-                <views:SuspensionTuningView x:Name="SuspensionTuningView"/>
-            </Border>
-        </TabItem>
-        <TabItem Header="{x:Static loc:UiText+Parts.Tires}">
-            <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
-                    BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
-                    BorderThickness="1"
-                    CornerRadius="8"
-                    Padding="12"
-                    Margin="0,12,0,0">
-                <views:TireTuningView x:Name="TireTuningView"/>
-            </Border>
-        </TabItem>
-    </TabControl>
+    <Grid>
+        <TabControl x:Name="PartsTabControl"
+                    BorderThickness="0"
+                    Background="Transparent"
+                    SelectionChanged="PartsTabControl_SelectionChanged">
+            <TabItem x:Name="WinchTab" Header="{x:Static loc:UiText+Parts.Winch}">
+                <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                        BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="12"
+                        Margin="0,12,0,0">
+                    <views:WinchTuningView x:Name="WinchTuningView"/>
+                </Border>
+            </TabItem>
+            <TabItem x:Name="EngineTab" Header="{x:Static loc:UiText+Parts.Engine}">
+                <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                        BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="12"
+                        Margin="0,12,0,0">
+                    <views:EngineTuningView x:Name="EngineTuningView"/>
+                </Border>
+            </TabItem>
+            <TabItem x:Name="GearboxTab" Header="{x:Static loc:UiText+Parts.Gearbox}">
+                <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                        BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="12"
+                        Margin="0,12,0,0">
+                    <views:GearboxTuningView x:Name="GearboxTuningView"/>
+                </Border>
+            </TabItem>
+            <TabItem x:Name="SuspensionTab" Header="{x:Static loc:UiText+Parts.Suspension}">
+                <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                        BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="12"
+                        Margin="0,12,0,0">
+                    <views:SuspensionTuningView x:Name="SuspensionTuningView"/>
+                </Border>
+            </TabItem>
+            <TabItem x:Name="TiresTab" Header="{x:Static loc:UiText+Parts.Tires}">
+                <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                        BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="12"
+                        Margin="0,12,0,0">
+                    <views:TireTuningView x:Name="TireTuningView"/>
+                </Border>
+            </TabItem>
+        </TabControl>
+
+        <Border x:Name="LoadingOverlay"
+                Background="#99000000"
+                Visibility="Collapsed"
+                CornerRadius="8"
+                IsHitTestVisible="True">
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                <Ellipse Width="42"
+                         Height="42"
+                         StrokeThickness="3.5"
+                         StrokeDashArray="3 1.4"
+                         Stroke="{DynamicResource AccentFillColorDefaultBrush}"
+                         RenderTransformOrigin="0.5,0.5">
+                    <Ellipse.RenderTransform>
+                        <RotateTransform x:Name="LoadingSpinnerRotate"/>
+                    </Ellipse.RenderTransform>
+                </Ellipse>
+                <TextBlock Text="{x:Static loc:UiText+Parts.Loading}"
+                           Margin="0,14,0,0"
+                           HorizontalAlignment="Center"
+                           Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+            </StackPanel>
+        </Border>
+    </Grid>
 </UserControl>

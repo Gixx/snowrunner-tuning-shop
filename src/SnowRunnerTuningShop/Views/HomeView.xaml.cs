@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using Microsoft.Win32;
 using SnowRunnerTuningShop.Core.Backup;
 using SnowRunnerTuningShop.Core.Config;
+using SnowRunnerTuningShop.Core.Constants;
 using SnowRunnerTuningShop.Core.Pak;
 using SnowRunnerTuningShop.Localization;
 
@@ -229,7 +230,8 @@ public partial class HomeView : UserControl
 
         CategoriesListView.ItemsSource = summary.TuningCategories
             .Select(category => new CategoryRow(
-                category.Name,
+                PakPaths.FormatTuningCategoryName(category.Name),
+                category.ItemCount,
                 category.FileCount,
                 category.SampleFiles.FirstOrDefault() ?? "-"))
             .ToList();
@@ -249,5 +251,5 @@ public partial class HomeView : UserControl
         return $"{size:0.##} {units[unitIndex]}";
     }
 
-    private sealed record CategoryRow(string Name, int FileCount, string SampleFile);
+    private sealed record CategoryRow(string Name, int ItemCount, int FileCount, string SampleFile);
 }

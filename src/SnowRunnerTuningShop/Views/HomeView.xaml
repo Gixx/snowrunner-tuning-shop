@@ -122,9 +122,10 @@
                               Background="Transparent">
                         <ListView.View>
                             <GridView>
-                                <GridViewColumn Header="{x:Static loc:UiText+Main.CategoryColumn}" Width="140" DisplayMemberBinding="{Binding Name}"/>
+                                <GridViewColumn Header="{x:Static loc:UiText+Main.CategoryColumn}" Width="120" DisplayMemberBinding="{Binding Name}"/>
+                                <GridViewColumn Header="{x:Static loc:UiText+Main.ItemsColumn}" Width="70" DisplayMemberBinding="{Binding ItemCount}"/>
                                 <GridViewColumn Header="{x:Static loc:UiText+Main.FilesColumn}" Width="70" DisplayMemberBinding="{Binding FileCount}"/>
-                                <GridViewColumn Header="{x:Static loc:UiText+Main.SampleFileColumn}" Width="360" DisplayMemberBinding="{Binding SampleFile}"/>
+                                <GridViewColumn Header="{x:Static loc:UiText+Main.SampleFileColumn}" Width="320" DisplayMemberBinding="{Binding SampleFile}"/>
                             </GridView>
                         </ListView.View>
                     </ListView>
