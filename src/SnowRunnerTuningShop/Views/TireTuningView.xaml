@@ -1,4 +1,4 @@
-<UserControl x:Class="SnowRunnerTuningShop.Views.WinchTuningView"
+<UserControl x:Class="SnowRunnerTuningShop.Views.TireTuningView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,7 +6,7 @@
              xmlns:loc="clr-namespace:SnowRunnerTuningShop.Localization"
              mc:Ignorable="d"
              d:DesignHeight="560"
-             d:DesignWidth="900">
+             d:DesignWidth="1100">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -25,6 +25,8 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
@@ -33,43 +35,61 @@
                 </Grid.RowDefinitions>
 
                 <TextBlock Grid.Row="0"
-                           Grid.ColumnSpan="3"
-                           Text="{x:Static loc:UiText+Winch.GlobalMultipliersTitle}"
+                           Grid.ColumnSpan="5"
+                           Text="{x:Static loc:UiText+Tires.GlobalMultipliersTitle}"
                            FontWeight="SemiBold"
                            Foreground="{DynamicResource TextFillColorPrimaryBrush}"
                            Margin="0,0,0,12"/>
 
                 <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,12,0">
-                    <TextBlock x:Name="LengthMultiplierLabel"
-                               Text="{x:Static loc:UiText+Winch.LengthMultiplierDefault}"
+                    <TextBlock x:Name="OnRoadFrictionMultiplierLabel"
+                               Text="{x:Static loc:UiText+Tires.OnRoadFrictionMultiplierDefault}"
                                Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
-                    <Slider x:Name="LengthMultiplierSlider"
+                    <Slider x:Name="OnRoadFrictionMultiplierSlider"
                             Minimum="0"
                             Maximum="8"
                             Value="4"
                             TickFrequency="1"
                             IsSnapToTickEnabled="True"
-                            ValueChanged="LengthMultiplierSlider_ValueChanged"/>
+                            ValueChanged="MultiplierSlider_ValueChanged"/>
                 </StackPanel>
 
                 <StackPanel Grid.Row="1" Grid.Column="1" Margin="12,0,12,0">
-                    <TextBlock x:Name="StrengthMultiplierLabel"
-                               Text="{x:Static loc:UiText+Winch.StrengthMultiplierDefault}"
+                    <TextBlock x:Name="OffRoadFrictionMultiplierLabel"
+                               Text="{x:Static loc:UiText+Tires.OffRoadFrictionMultiplierDefault}"
                                Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
-                    <Slider x:Name="StrengthMultiplierSlider"
+                    <Slider x:Name="OffRoadFrictionMultiplierSlider"
                             Minimum="0"
                             Maximum="8"
                             Value="4"
                             TickFrequency="1"
                             IsSnapToTickEnabled="True"
-                            ValueChanged="StrengthMultiplierSlider_ValueChanged"/>
+                            ValueChanged="MultiplierSlider_ValueChanged"/>
                 </StackPanel>
 
-                <StackPanel Grid.Row="1" Grid.Column="2" VerticalAlignment="Center">
-                    <CheckBox x:Name="AutonomousAllCheckBox"
-                              Content="{x:Static loc:UiText+Winch.AutonomousAll}"
-                              Margin="0,0,0,8"/>
-                    <Button Content="{x:Static loc:UiText+Winch.Apply}"
+                <StackPanel Grid.Row="1" Grid.Column="2" Margin="12,0,12,0">
+                    <TextBlock x:Name="MudFrictionMultiplierLabel"
+                               Text="{x:Static loc:UiText+Tires.MudFrictionMultiplierDefault}"
+                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                    <Slider x:Name="MudFrictionMultiplierSlider"
+                            Minimum="0"
+                            Maximum="8"
+                            Value="4"
+                            TickFrequency="1"
+                            IsSnapToTickEnabled="True"
+                            ValueChanged="MultiplierSlider_ValueChanged"/>
+                </StackPanel>
+
+                <CheckBox x:Name="GlobalIgnoreIceCheckBox"
+                          Grid.Row="1"
+                          Grid.Column="3"
+                          Content="{x:Static loc:UiText+Tires.IgnoreIceAll}"
+                          VerticalAlignment="Center"
+                          Margin="12,0,16,0"
+                          Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+
+                <StackPanel Grid.Row="1" Grid.Column="4" VerticalAlignment="Center">
+                    <Button Content="{x:Static loc:UiText+Tires.Apply}"
                             Padding="14,8"
                             Click="ApplyMultipliersButton_Click"/>
                 </StackPanel>
@@ -90,16 +110,16 @@
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <Button Content="{x:Static loc:UiText+Winch.SaveIndividualChanges}"
+                    <Button Content="{x:Static loc:UiText+Tires.SaveIndividualChanges}"
                             Padding="14,8"
                             Margin="0,0,8,0"
                             Click="SaveIndividualButton_Click"/>
-                    <Button x:Name="RestoreWinchesButton"
-                            Content="{x:Static loc:UiText+Winch.RestoreWinchesToBaseline}"
+                    <Button x:Name="RestoreTiresButton"
+                            Content="{x:Static loc:UiText+Tires.RestoreTiresToBaseline}"
                             Padding="14,8"
                             Margin="0,0,8,0"
-                            Click="RestoreWinchesButton_Click"/>
-                    <Button Content="{x:Static loc:UiText+Winch.RefreshList}"
+                            Click="RestoreTiresButton_Click"/>
+                    <Button Content="{x:Static loc:UiText+Tires.RefreshList}"
                             Padding="14,8"
                             Click="ReloadButton_Click"/>
                 </StackPanel>
@@ -110,7 +130,7 @@
                              VerticalContentAlignment="Center"
                              TextChanged="FilterTextBox_TextChanged"/>
                     <TextBlock x:Name="FilterPlaceholder"
-                               Text="{x:Static loc:UiText+Winch.FilterPlaceholder}"
+                               Text="{x:Static loc:UiText+Tires.FilterPlaceholder}"
                                Margin="14,0,0,0"
                                VerticalAlignment="Center"
                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
@@ -119,7 +139,7 @@
             </Grid>
         </Border>
 
-        <DataGrid x:Name="WinchesGrid"
+        <DataGrid x:Name="TiresGrid"
                   Grid.Row="2"
                   AutoGenerateColumns="False"
                   CanUserAddRows="False"
@@ -128,24 +148,31 @@
                   HeadersVisibility="Column"
                   GridLinesVisibility="Horizontal">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="{x:Static loc:UiText+Winch.CategoryColumn}" Binding="{Binding Category}" Width="90" IsReadOnly="True"
+                <DataGridTextColumn Header="{x:Static loc:UiText+Tires.CategoryColumn}" Binding="{Binding Category}" Width="70" IsReadOnly="True"
                                     ElementStyle="{StaticResource TuningGridTextElementStyle}"/>
-                <DataGridTextColumn Header="{x:Static loc:UiText+Winch.NameColumn}" Binding="{Binding DisplayName}" Width="220" IsReadOnly="True"
+                <DataGridTextColumn Header="{x:Static loc:UiText+Tires.NameColumn}" Binding="{Binding DisplayName}" Width="160" IsReadOnly="True"
                                     ElementStyle="{StaticResource TuningGridTextElementStyle}"/>
-                <DataGridTextColumn Header="{x:Static loc:UiText+Winch.PriceColumn}" Binding="{Binding Price}" Width="80" IsReadOnly="True"
+                <DataGridTextColumn Header="{x:Static loc:UiText+Tires.UsedByColumn}" Binding="{Binding UsedBy}" Width="200" MinWidth="120" IsReadOnly="True">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock" BasedOn="{StaticResource TuningGridTextElementStyle}">
+                            <Setter Property="ToolTip" Value="{Binding UsedByTooltip}"/>
+                            <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="{x:Static loc:UiText+Tires.PriceColumn}" Binding="{Binding Price}" Width="80" IsReadOnly="True"
                                     ElementStyle="{StaticResource TuningGridTextElementStyle}"/>
-                <DataGridTextColumn Header="{x:Static loc:UiText+Winch.LengthColumn}"
-                                    Binding="{Binding Length, StringFormat=0.##, UpdateSourceTrigger=PropertyChanged}"
-                                    Width="90"
+                <DataGridTextColumn Header="{x:Static loc:UiText+Tires.OnRoadFrictionColumn}" Binding="{Binding OnRoadFriction, StringFormat=0.##, UpdateSourceTrigger=PropertyChanged}" Width="90"
                                     ElementStyle="{StaticResource TuningGridTextElementStyle}"
                                     EditingElementStyle="{StaticResource TuningGridTextEditingStyle}"/>
-                <DataGridTextColumn Header="{x:Static loc:UiText+Winch.StrengthColumn}"
-                                    Binding="{Binding StrengthMult, StringFormat=0.##, UpdateSourceTrigger=PropertyChanged}"
-                                    Width="80"
+                <DataGridTextColumn Header="{x:Static loc:UiText+Tires.OffRoadFrictionColumn}" Binding="{Binding OffRoadFriction, StringFormat=0.##, UpdateSourceTrigger=PropertyChanged}" Width="90"
                                     ElementStyle="{StaticResource TuningGridTextElementStyle}"
                                     EditingElementStyle="{StaticResource TuningGridTextEditingStyle}"/>
-                <DataGridCheckBoxColumn Header="{x:Static loc:UiText+Winch.AutonomousColumn}"
-                                       Binding="{Binding IsAutonomous, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                <DataGridTextColumn Header="{x:Static loc:UiText+Tires.MudFrictionColumn}" Binding="{Binding MudFriction, StringFormat=0.##, UpdateSourceTrigger=PropertyChanged}" Width="80"
+                                    ElementStyle="{StaticResource TuningGridTextElementStyle}"
+                                    EditingElementStyle="{StaticResource TuningGridTextEditingStyle}"/>
+                <DataGridCheckBoxColumn Header="{x:Static loc:UiText+Tires.IgnoreIceColumn}"
+                                       Binding="{Binding IgnoreIce, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                        Width="100"
                                        ElementStyle="{StaticResource TuningGridCheckBoxElementStyle}"
                                        EditingElementStyle="{StaticResource TuningGridCheckBoxElementStyle}"/>

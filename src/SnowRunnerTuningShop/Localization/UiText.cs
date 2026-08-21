@@ -13,29 +13,81 @@ public static class UiText
     public static class Main
     {
         public const string Subtitle = "Fine-tune SnowRunner initial.pak";
-        public const string NoPakSelected = "No initial.pak selected";
-        public const string Browse = "Browse...";
-        public const string Load = "Load";
         public const string OverviewTitle = "Overview";
-        public const string OverviewPlaceholder = "Load an initial.pak file to see an overview.";
+        public const string OverviewPlaceholder =
+            "Set a baseline from your original initial.pak to load the workspace.";
         public const string CategoriesTitle = "Tuning categories";
         public const string CategoryColumn = "Category";
         public const string FilesColumn = "Files";
         public const string SampleFileColumn = "Sample file";
-        public const string ReadyStatus = "Ready. Select an initial.pak file.";
-        public const string ExamplePakDetected = "Example initial.pak detected in the example.data folder.";
-        public const string BrowseDialogTitle = "Select initial.pak";
         public const string BrowseDialogFilter = "SnowRunner pak (*.pak)|*.pak|All files (*.*)|*.*";
-        public const string FileSelectedStatus = "File selected. Click Load.";
         public const string LoadingPakStatus = "Loading pak...";
-        public const string LoadFailedOverview = "Failed to load pak.";
         public const string LoadErrorTitle = "Load error";
-        public const string BaselineFileTitle = "Baseline / pak file";
+
+        public const string BaselineTitle = "Baseline required";
+        public const string BaselineWarning =
+            "Choose your unmodified original initial.pak (Steam, GOG, Epic, Xbox, etc.). " +
+            "The app saves a read-only baseline for that edition and remembers this file as the one you will edit.";
+        public const string BaselineReadyTitle = "Baseline ready";
+        public const string BaselineReadyNote =
+            "Baseline is healthy and ready. Keep the baseline file read-only.";
+        public const string BaselineMissingShort =
+            "Baseline is not set. On Home, use Set baseline from original.";
+        public const string SetBaselineFromOriginal = "Set baseline from original...";
+        public const string ChangeLocation = "Change location...";
+        public const string RestoreFullBaseline = "Restore full baseline";
+        public const string SelectOriginalPakDialogTitle = "Select unmodified original initial.pak";
+        public const string ChangeLocationDialogTitle = "Select initial.pak for another store/location";
+        public const string BaselineUpdatedTitle = "Baseline set";
+        public const string LocationChangedTitle = "Location changed";
+        public const string BaselineErrorTitle = "Baseline error";
+        public const string RestoreFullBaselineConfirmTitle = "Restore full baseline?";
+        public const string RestoreFullBaselineConfirmMessage =
+            "This replaces the entire working initial.pak with the read-only baseline copy. " +
+            "All tuning changes in the pak will be lost. This cannot be undone from inside the tuner.";
+        public const string RestoreFullBaselineSuccessTitle = "Pak restored";
 
         public static string LoadSuccessStatus(int entryCount) =>
             $"Loaded successfully: {entryCount:N0} entries.";
 
         public static string ErrorStatus(string message) => $"Error: {message}";
+
+        public static string AutoLoadedStatus(string editionDisplayName) =>
+            $"Loaded saved {editionDisplayName} workspace.";
+
+        public static string BaselineSetStatus(string editionDisplayName) =>
+            $"Baseline set for {editionDisplayName}.";
+
+        public static string LocationChangedStatus(string editionDisplayName) =>
+            $"Switched to {editionDisplayName}.";
+
+        public static string BaselineCreatedMessage(
+            string editionDisplayName,
+            string workingPakPath,
+            string baselinePath) =>
+            $"Baseline created for {editionDisplayName}.{Environment.NewLine}{Environment.NewLine}" +
+            $"Working pak:{Environment.NewLine}{workingPakPath}{Environment.NewLine}{Environment.NewLine}" +
+            $"Read-only baseline:{Environment.NewLine}{baselinePath}";
+
+        public static string LocationChangedMessage(
+            string editionDisplayName,
+            string workingPakPath,
+            string baselinePath,
+            bool baselineCreated) =>
+            $"Now editing the {editionDisplayName} edition.{Environment.NewLine}{Environment.NewLine}" +
+            $"Working pak:{Environment.NewLine}{workingPakPath}{Environment.NewLine}{Environment.NewLine}" +
+            (baselineCreated
+                ? $"No previous baseline existed for this edition, so a new read-only baseline was created:{Environment.NewLine}{baselinePath}"
+                : $"Using the existing read-only baseline for this edition:{Environment.NewLine}{baselinePath}");
+
+        public static string BaselineReadyStatus(string editionDisplayName, string fileName, DateTime lastWriteUtc) =>
+            $"Baseline OK for {editionDisplayName} ({fileName}, {lastWriteUtc.ToLocalTime():yyyy-MM-dd HH:mm}).";
+
+        public static string WorkingPakStatus(string editionDisplayName, string workingPakPath) =>
+            $"Editing ({editionDisplayName}): {workingPakPath}";
+
+        public const string RestoreFullBaselineMessage =
+            "The entire initial.pak was restored from the baseline.";
 
         public static string OverviewDetails(
             string filePath,
@@ -61,6 +113,7 @@ public static class UiText
         public const string Engine = "Engine";
         public const string Gearbox = "Gearbox";
         public const string Suspension = "Suspension";
+        public const string Tires = "Tires";
         public const string ComingSoon = "Coming soon.";
         public const string LoadPakHint = "Load an initial.pak on the Home page first.";
     }
@@ -86,17 +139,201 @@ public static class UiText
         public const string Placeholder = "App settings will go here (language, paths, theme).";
     }
 
+    public static class Engine
+    {
+        public const string GlobalMultipliersTitle = "Global multipliers (relative to the baseline values)";
+        public const string TorqueMultiplierDefault = "Torque: 1 (baseline)";
+        public const string FuelMultiplierDefault = "Fuel consumption: 1 (baseline)";
+        public const string DamageMultiplierDefault = "Damage capacity: 1 (baseline)";
+        public const string ResponsivenessMultiplierDefault = "Responsiveness: 1 (baseline)";
+        public const string Apply = "Apply";
+        public const string SaveIndividualChanges = "Save individual changes";
+        public const string RestoreEnginesToBaseline = "Restore engines to baseline";
+        public const string RefreshList = "Refresh list";
+        public const string FilterPlaceholder = "Filter category, name, set, used by…";
+        public const string CategoryColumn = "Category";
+        public const string NameColumn = "Name";
+        public const string UsedByColumn = "Used by";
+        public const string PriceColumn = "Price";
+        public const string TorqueColumn = "Torque";
+        public const string FuelColumn = "Fuel";
+        public const string DamageColumn = "Damage";
+        public const string ResponsivenessColumn = "Responsiveness";
+        public const string NoData = "No engine data loaded.";
+        public const string LoadPakFirst = "Load an initial.pak file first.";
+        public const string SaveSuccessTitle = "Saved successfully";
+        public const string SaveErrorTitle = "Save error";
+        public const string LoadErrorTitle = "Load error";
+        public const string RestoreEnginesSuccessTitle = "Engines restored";
+
+        public static string LoadedCount(int count) => $"{count} engines loaded from pak.";
+
+        public static string LoadedStatus(int count) => $"{count} engines loaded.";
+
+        public static string LoadErrorStatus(string message) => $"Engine load error: {message}";
+
+        public static string MultipliersAppliedStatus(int changedEngines, int updatedFiles) =>
+            $"Multipliers applied. Updated engines: {changedEngines}, files: {updatedFiles}.";
+
+        public static string MultipliersSavedMessage(int changedEngines, int updatedFiles) =>
+            $"Engine settings saved.{Environment.NewLine}{Environment.NewLine}" +
+            $"Updated engines: {changedEngines}{Environment.NewLine}" +
+            $"Updated files: {updatedFiles}";
+
+        public static string IndividualSavedStatus(int changedEngines, int updatedFiles) =>
+            $"Individual changes saved. Engines: {changedEngines}, files: {updatedFiles}.";
+
+        public static string IndividualSavedMessage(int changedEngines) =>
+            $"Individual engine changes saved.{Environment.NewLine}{Environment.NewLine}" +
+            $"Updated engines: {changedEngines}";
+
+        public static string RestoreEnginesMessage(int changedEngines, int updatedFiles) =>
+            $"Engine values were restored from the baseline.{Environment.NewLine}{Environment.NewLine}" +
+            $"Updated engines: {changedEngines}{Environment.NewLine}" +
+            $"Updated files: {updatedFiles}";
+    }
+
+    public static class Gearbox
+    {
+        public const string GlobalMultipliersTitle = "Global multipliers (relative to the baseline values)";
+        public const string FuelMultiplierDefault = "Fuel consumption: 1 (baseline)";
+        public const string IdleMultiplierDefault = "Idle fuel modifier: 1 (baseline)";
+        public const string AwdMultiplierDefault = "AWD fuel penalty: 1 (baseline)";
+        public const string Apply = "Apply";
+        public const string SaveIndividualChanges = "Save individual changes";
+        public const string RestoreGearboxesToBaseline = "Restore gearboxes to baseline";
+        public const string RefreshList = "Refresh list";
+        public const string FilterPlaceholder = "Filter category, name, set, used by…";
+        public const string CategoryColumn = "Category";
+        public const string NameColumn = "Name";
+        public const string UsedByColumn = "Used by";
+        public const string PriceColumn = "Price";
+        public const string FuelColumn = "Fuel";
+        public const string IdleColumn = "Idle";
+        public const string AwdColumn = "AWD";
+        public const string NoData = "No gearbox data loaded.";
+        public const string LoadPakFirst = "Load an initial.pak file first.";
+        public const string SaveSuccessTitle = "Saved successfully";
+        public const string SaveErrorTitle = "Save error";
+        public const string LoadErrorTitle = "Load error";
+        public const string RestoreGearboxesSuccessTitle = "Gearboxes restored";
+
+        public static string LoadedCount(int count) => $"{count} gearboxes loaded from pak.";
+
+        public static string MultipliersSavedMessage(int changedGearboxes, int updatedFiles) =>
+            $"Gearbox settings saved.{Environment.NewLine}{Environment.NewLine}" +
+            $"Updated gearboxes: {changedGearboxes}{Environment.NewLine}" +
+            $"Updated files: {updatedFiles}";
+
+        public static string IndividualSavedMessage(int changedGearboxes) =>
+            $"Individual gearbox changes saved.{Environment.NewLine}{Environment.NewLine}" +
+            $"Updated gearboxes: {changedGearboxes}";
+
+        public static string RestoreGearboxesMessage(int changedGearboxes, int updatedFiles) =>
+            $"Gearbox values were restored from the baseline.{Environment.NewLine}{Environment.NewLine}" +
+            $"Updated gearboxes: {changedGearboxes}{Environment.NewLine}" +
+            $"Updated files: {updatedFiles}";
+    }
+
+    public static class Suspension
+    {
+        public const string GlobalMultipliersTitle = "Global multipliers (relative to the baseline values)";
+        public const string HeightMultiplierDefault = "Height: 1 (baseline)";
+        public const string StrengthMultiplierDefault = "Strength: 1 (baseline)";
+        public const string DampingMultiplierDefault = "Damping: 1 (baseline)";
+        public const string DamageMultiplierDefault = "Damage capacity: 1 (baseline)";
+        public const string Apply = "Apply";
+        public const string SaveIndividualChanges = "Save individual changes";
+        public const string RestoreSuspensionsToBaseline = "Restore suspensions to baseline";
+        public const string RefreshList = "Refresh list";
+        public const string FilterPlaceholder = "Filter category, name, set, used by…";
+        public const string CategoryColumn = "Category";
+        public const string NameColumn = "Name";
+        public const string UsedByColumn = "Used by";
+        public const string PriceColumn = "Price";
+        public const string DamageColumn = "Damage";
+        public const string FrontHeightColumn = "F Height";
+        public const string FrontStrengthColumn = "F Strength";
+        public const string FrontDampingColumn = "F Damping";
+        public const string RearHeightColumn = "R Height";
+        public const string RearStrengthColumn = "R Strength";
+        public const string RearDampingColumn = "R Damping";
+        public const string LoadPakFirst = "Load an initial.pak file first.";
+        public const string SaveSuccessTitle = "Saved successfully";
+        public const string SaveErrorTitle = "Save error";
+        public const string LoadErrorTitle = "Load error";
+        public const string RestoreSuspensionsSuccessTitle = "Suspensions restored";
+
+        public static string MultipliersSavedMessage(int changedSuspensions, int updatedFiles) =>
+            $"Suspension settings saved.{Environment.NewLine}{Environment.NewLine}" +
+            $"Updated suspensions: {changedSuspensions}{Environment.NewLine}" +
+            $"Updated files: {updatedFiles}";
+
+        public static string IndividualSavedMessage(int changedSuspensions) =>
+            $"Individual suspension changes saved.{Environment.NewLine}{Environment.NewLine}" +
+            $"Updated suspensions: {changedSuspensions}";
+
+        public static string RestoreSuspensionsMessage(int changedSuspensions, int updatedFiles) =>
+            $"Suspension values were restored from the baseline.{Environment.NewLine}{Environment.NewLine}" +
+            $"Updated suspensions: {changedSuspensions}{Environment.NewLine}" +
+            $"Updated files: {updatedFiles}";
+    }
+
+    public static class Tires
+    {
+        public const string GlobalMultipliersTitle = "Global multipliers (relative to the baseline values)";
+        public const string OnRoadFrictionMultiplierDefault = "On-road: 1 (baseline)";
+        public const string OffRoadFrictionMultiplierDefault = "Off-road: 1 (baseline)";
+        public const string MudFrictionMultiplierDefault = "Mud: 1 (baseline)";
+        public const string IgnoreIceAll = "Ignore ice on all tires";
+        public const string Apply = "Apply";
+        public const string SaveIndividualChanges = "Save individual changes";
+        public const string RestoreTiresToBaseline = "Restore tires to baseline";
+        public const string RefreshList = "Refresh list";
+        public const string FilterPlaceholder = "Filter category, name, set, used by…";
+        public const string CategoryColumn = "Category";
+        public const string NameColumn = "Name";
+        public const string UsedByColumn = "Used by";
+        public const string PriceColumn = "Price";
+        public const string OnRoadFrictionColumn = "On-road";
+        public const string OffRoadFrictionColumn = "Off-road";
+        public const string MudFrictionColumn = "Mud";
+        public const string IgnoreIceColumn = "Ignore ice";
+        public const string LoadPakFirst = "Load an initial.pak file first.";
+        public const string SaveSuccessTitle = "Saved successfully";
+        public const string SaveErrorTitle = "Save error";
+        public const string LoadErrorTitle = "Load error";
+        public const string RestoreTiresSuccessTitle = "Tires restored";
+
+        public static string MultipliersSavedMessage(int changedTires, int updatedFiles) =>
+            $"Tire settings saved.{Environment.NewLine}{Environment.NewLine}" +
+            $"Updated tires: {changedTires}{Environment.NewLine}" +
+            $"Updated files: {updatedFiles}";
+
+        public static string IndividualSavedMessage(int changedTires) =>
+            $"Individual tire changes saved.{Environment.NewLine}{Environment.NewLine}" +
+            $"Updated tires: {changedTires}";
+
+        public static string RestoreTiresMessage(int changedTires, int updatedFiles) =>
+            $"Tire values were restored from the baseline.{Environment.NewLine}{Environment.NewLine}" +
+            $"Updated tires: {changedTires}{Environment.NewLine}" +
+            $"Updated files: {updatedFiles}";
+    }
+
     public static class Winch
     {
         public const string GlobalMultipliersTitle = "Global multipliers (relative to the baseline values)";
         public const string LengthMultiplierDefault = "Length multiplier: 1 (baseline)";
         public const string StrengthMultiplierDefault = "Strength multiplier: 1 (baseline)";
         public const string AutonomousAll = "Autonomous all";
-        public const string ApplyMultipliers = "Apply multipliers";
+        public const string Apply = "Apply";
         public const string SaveIndividualChanges = "Save individual changes";
+        public const string RestoreWinchesToBaseline = "Restore winches to baseline";
         public const string RefreshList = "Refresh list";
+        public const string FilterPlaceholder = "Filter category, name…";
         public const string CategoryColumn = "Category";
         public const string NameColumn = "Name";
+        public const string PriceColumn = "Price";
         public const string LengthColumn = "Length (m)";
         public const string StrengthColumn = "Strength";
         public const string AutonomousColumn = "Autonomous";
@@ -105,38 +342,7 @@ public static class UiText
         public const string SaveSuccessTitle = "Saved successfully";
         public const string SaveErrorTitle = "Save error";
         public const string LoadErrorTitle = "Load error";
-        public const string BaselineTitle = "Baseline reference";
-        public const string SetBaselineFromFile = "Set baseline from file...";
-        public const string ImportPythonBaseline = "Import Python editor backup";
-        public const string ClearBaseline = "Clear baseline";
-        public const string RestoreWinchesToBaseline = "Restore winches to baseline";
-        public const string RestorePakToBaseline = "Restore entire pak...";
-        public const string RestorePakConfirmTitle = "Restore entire pak?";
-        public const string RestorePakConfirmMessage =
-            "This replaces the entire initial.pak with the baseline copy. " +
-            "All tuning changes in the pak will be lost, not just winches.";
         public const string RestoreWinchesSuccessTitle = "Winches restored";
-        public const string RestorePakSuccessTitle = "Pak restored";
-        public const string SelectBaselineDialogTitle = "Select unmodified initial.pak";
-        public const string BaselineUpdatedTitle = "Baseline updated";
-
-        public static string BaselineMissing(string? pythonHint) =>
-            "Baseline not set. Global multipliers need a clean reference initial.pak." +
-            (string.IsNullOrWhiteSpace(pythonHint) ? "" : $"{Environment.NewLine}{pythonHint}");
-
-        public static string BaselineReady(string sourceDescription, string fileName, DateTime lastWriteUtc) =>
-            $"Baseline: {sourceDescription} ({fileName}, {lastWriteUtc.ToLocalTime():yyyy-MM-dd HH:mm})";
-
-        public static string PythonBackupsFound(int count) =>
-            $"Found {count} Python editor backup(s). The oldest one is usually the stock file.";
-
-        public const string PythonBackupsMissing =
-            "No Python editor backups were found for this initial.pak.";
-
-        public static string BaselineImportedMessage(string sourceDescription, string baselinePath) =>
-            $"Baseline imported.{Environment.NewLine}{Environment.NewLine}" +
-            $"Source: {sourceDescription}{Environment.NewLine}" +
-            $"Saved as: {baselinePath}";
 
         public static string LoadedCount(int count) => $"{count} winches loaded from pak.";
 
@@ -144,31 +350,26 @@ public static class UiText
 
         public static string LoadErrorStatus(string message) => $"Winch load error: {message}";
 
-        public static string MultipliersAppliedStatus(int changedWinches, int updatedFiles, string backupFileName) =>
-            $"Multipliers applied. Updated winches: {changedWinches}, files: {updatedFiles}. Backup: {backupFileName}";
+        public static string MultipliersAppliedStatus(int changedWinches, int updatedFiles) =>
+            $"Multipliers applied. Updated winches: {changedWinches}, files: {updatedFiles}.";
 
-        public static string MultipliersSavedMessage(int changedWinches, int updatedFiles, string backupPath) =>
+        public static string MultipliersSavedMessage(int changedWinches, int updatedFiles) =>
             $"Winch settings saved.{Environment.NewLine}{Environment.NewLine}" +
             $"Updated winches: {changedWinches}{Environment.NewLine}" +
-            $"Updated files: {updatedFiles}{Environment.NewLine}" +
-            $"Backup: {backupPath}";
+            $"Updated files: {updatedFiles}";
 
         public static string IndividualSavedStatus(int changedWinches, int updatedFiles) =>
             $"Individual changes saved. Winches: {changedWinches}, files: {updatedFiles}.";
 
-        public static string IndividualSavedMessage(int changedWinches, string backupPath) =>
-            $"Individual winch changes saved.{Environment.NewLine}{Environment.NewLine}" +
-            $"Updated winches: {changedWinches}{Environment.NewLine}" +
-            $"Backup: {backupPath}";
+        public static string IndividualSavedMessage(int changedWinches) =>
+            changedWinches <= 0
+                ? "No winch changes were detected to save."
+                : $"Individual winch changes saved.{Environment.NewLine}{Environment.NewLine}" +
+                  $"Updated winches: {changedWinches}";
 
-        public static string RestoreWinchesMessage(int changedWinches, int updatedFiles, string backupPath) =>
+        public static string RestoreWinchesMessage(int changedWinches, int updatedFiles) =>
             $"Winch values were restored from the baseline.{Environment.NewLine}{Environment.NewLine}" +
             $"Updated winches: {changedWinches}{Environment.NewLine}" +
-            $"Updated files: {updatedFiles}{Environment.NewLine}" +
-            $"Backup: {backupPath}";
-
-        public static string RestorePakMessage(string backupPath) =>
-            $"The entire initial.pak was restored from the baseline.{Environment.NewLine}{Environment.NewLine}" +
-            $"Backup of the previous file: {backupPath}";
+            $"Updated files: {updatedFiles}";
     }
 }

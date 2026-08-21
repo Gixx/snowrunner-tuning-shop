@@ -8,7 +8,7 @@ namespace SnowRunnerTuningShop.Core.Strings;
 public static class GameStringsReader
 {
     private static readonly Regex StringEntryRegex = new(
-        @"(?<key>UI_[A-Z0-9_]+)\s+""(?<value>(?:\\.|[^""])*)""",
+        @"(?<key>UI_[A-Za-z0-9_]+)\s+""(?<value>(?:\\.|[^""])*)""",
         RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
     public static IReadOnlyDictionary<string, string> LoadFromPak(string pakPath, string language = "english")

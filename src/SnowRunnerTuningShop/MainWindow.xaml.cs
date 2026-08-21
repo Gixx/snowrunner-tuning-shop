@@ -1,6 +1,5 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using SnowRunnerTuningShop.Localization;
 
 namespace SnowRunnerTuningShop;
 
@@ -14,9 +13,6 @@ public partial class MainWindow : Window
 
         HomeView.AttachSession(_session);
         PartsView.AttachSession(_session);
-
-        HomeView.StatusChanged += (_, message) => SetStatus(message);
-        PartsView.StatusChanged += (_, message) => SetStatus(message);
 
         Loaded += (_, _) =>
         {
@@ -57,10 +53,5 @@ public partial class MainWindow : Window
         VehiclesView.Visibility = Visibility.Collapsed;
         SettingsView.Visibility = Visibility.Collapsed;
         page.Visibility = Visibility.Visible;
-    }
-
-    private void SetStatus(string message)
-    {
-        StatusTextBlock.Text = message;
     }
 }

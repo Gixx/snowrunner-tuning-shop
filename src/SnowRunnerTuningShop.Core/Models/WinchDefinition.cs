@@ -8,6 +8,7 @@ public sealed class WinchDefinition
     public string DisplayName { get; init; } = "";
     public required string SourceFile { get; init; }
     public required string Category { get; init; }
+    public int Price { get; init; }
     public double Length { get; set; }
     public double StrengthMult { get; set; }
     public bool IsEngineIgnitionRequired { get; set; }

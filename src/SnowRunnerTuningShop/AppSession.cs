@@ -13,6 +13,8 @@ public sealed class AppSession
 
     public event EventHandler? PakChanged;
 
+    public event EventHandler? BaselineChanged;
+
     public void SetPak(string pakPath, PakSummary summary)
     {
         PakPath = pakPath;
@@ -26,4 +28,7 @@ public sealed class AppSession
         Summary = null;
         PakChanged?.Invoke(this, EventArgs.Empty);
     }
+
+    public void NotifyBaselineChanged() =>
+        BaselineChanged?.Invoke(this, EventArgs.Empty);
 }

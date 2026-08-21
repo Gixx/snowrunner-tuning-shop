@@ -15,19 +15,44 @@
             </Border>
         </TabItem>
         <TabItem Header="{x:Static loc:UiText+Parts.Engine}">
-            <TextBlock Text="{x:Static loc:UiText+Parts.ComingSoon}"
-                       Margin="0,24,0,0"
-                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+            <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="12"
+                    Margin="0,12,0,0">
+                <views:EngineTuningView x:Name="EngineTuningView"/>
+            </Border>
         </TabItem>
         <TabItem Header="{x:Static loc:UiText+Parts.Gearbox}">
-            <TextBlock Text="{x:Static loc:UiText+Parts.ComingSoon}"
-                       Margin="0,24,0,0"
-                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+            <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="12"
+                    Margin="0,12,0,0">
+                <views:GearboxTuningView x:Name="GearboxTuningView"/>
+            </Border>
         </TabItem>
         <TabItem Header="{x:Static loc:UiText+Parts.Suspension}">
-            <TextBlock Text="{x:Static loc:UiText+Parts.ComingSoon}"
-                       Margin="0,24,0,0"
-                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+            <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="12"
+                    Margin="0,12,0,0">
+                <views:SuspensionTuningView x:Name="SuspensionTuningView"/>
+            </Border>
+        </TabItem>
+        <TabItem Header="{x:Static loc:UiText+Parts.Tires}">
+            <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="12"
+                    Margin="0,12,0,0">
+                <views:TireTuningView x:Name="TireTuningView"/>
+            </Border>
         </TabItem>
     </TabControl>
 </UserControl>

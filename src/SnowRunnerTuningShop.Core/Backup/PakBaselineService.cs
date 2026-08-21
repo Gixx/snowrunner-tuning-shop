@@ -1,6 +1,4 @@
-using System.Security.Cryptography;
-using System.Text;
-using System.Text.RegularExpressions;
+using SnowRunnerTuningShop.Core.Config;
 
 namespace SnowRunnerTuningShop.Core.Backup;
 
@@ -8,218 +6,241 @@ public sealed record PakBaselineInfo(
     string BaselinePath,
     DateTime LastWriteTimeUtc,
     long FileSizeBytes,
-    string SourceDescription);
+    string SourceDescription,
+    string EditionId,
+    string EditionDisplayName);
 
-public sealed record ExternalPakBackupCandidate(
-    string FilePath,
-    DateTime LastWriteTimeUtc,
-    long FileSizeBytes,
-    string SourceDescription);
+public sealed record WorkspaceActivationResult(
+    string WorkingPakPath,
+    string EditionId,
+    string EditionDisplayName,
+    string BaselinePath,
+    bool BaselineCreated);
 
 public static class PakBaselineService
 {
-    public const string BaselineSuffix = ".baseline";
-    public const string PythonEditorDataDirName = "snowrunner_save_editor_data";
-    public const string PythonInitialPakCategory = "initial_pak";
-    public const string PythonBackupPrefix = "initial_pak__backup-";
+    public const string LegacyBaselineSuffix = ".baseline";
 
-    public static string GetBaselinePath(string pakPath) => pakPath + BaselineSuffix;
-
-    public static bool HasBaseline(string pakPath) => File.Exists(GetBaselinePath(pakPath));
-
-    public static PakBaselineInfo? TryGetBaselineInfo(string pakPath)
+    public static string GetBaselinePathForEdition(string editionId)
     {
-        var baselinePath = GetBaselinePath(pakPath);
+        var id = GameEditionDetector.SanitizeEditionId(editionId);
+        return Path.Combine(
+            WorkspaceConfigStore.GetBaselinesDirectory(),
+            $"initial.baseline.{id}.pak");
+    }
+
+    public static bool HasBaselineForEdition(string editionId) =>
+        File.Exists(GetBaselinePathForEdition(editionId));
+
+    public static bool HasBaseline(string workingPakPath)
+    {
+        var editionId = ResolveEditionId(workingPakPath);
+        return !string.IsNullOrWhiteSpace(editionId) && HasBaselineForEdition(editionId);
+    }
+
+    public static PakBaselineInfo? TryGetBaselineInfo(string workingPakPath)
+    {
+        var editionId = ResolveEditionId(workingPakPath);
+        if (string.IsNullOrWhiteSpace(editionId))
+        {
+            return null;
+        }
+
+        return TryGetBaselineInfoForEdition(editionId);
+    }
+
+    public static PakBaselineInfo? TryGetBaselineInfoForEdition(string editionId)
+    {
+        var baselinePath = GetBaselinePathForEdition(editionId);
         if (!File.Exists(baselinePath))
         {
             return null;
         }
 
+        SetReadOnlyAttribute(baselinePath);
+        var edition = ResolveEditionDisplay(editionId);
         var info = new FileInfo(baselinePath);
         return new PakBaselineInfo(
             info.FullName,
             info.LastWriteTimeUtc,
             info.Length,
-            "App baseline");
+            edition.DisplayName,
+            edition.Id,
+            edition.DisplayName);
     }
 
-    public static string RequireBaseline(string pakPath)
+    public static string RequireBaseline(string workingPakPath)
     {
-        var baselinePath = GetBaselinePath(pakPath);
+        var editionId = ResolveEditionId(workingPakPath)
+            ?? throw new InvalidOperationException(
+                "No baseline is configured. On the Home page, use Set baseline from original.");
+
+        TryMigrateLegacySidecar(workingPakPath, editionId);
+
+        var baselinePath = GetBaselinePathForEdition(editionId);
         if (!File.Exists(baselinePath))
         {
             throw new InvalidOperationException(
-                "No baseline is configured for this initial.pak. " +
-                "Set a baseline from an unmodified initial.pak or import the oldest Python editor backup.");
+                "No baseline is configured for this game edition. " +
+                "On the Home page, use Set baseline from original.");
         }
 
+        SetReadOnlyAttribute(baselinePath);
         return baselinePath;
     }
 
-    public static PakBaselineInfo SetBaselineFromFile(string pakPath, string sourceFilePath)
+    /// <summary>
+    /// First-time / explicit baseline setup: copy the selected original pak into a read-only
+    /// edition baseline and remember it as the working pak path.
+    /// </summary>
+    public static WorkspaceActivationResult SetBaselineFromOriginal(string originalPakPath)
+    {
+        if (!File.Exists(originalPakPath))
+        {
+            throw new FileNotFoundException("Original initial.pak was not found.", originalPakPath);
+        }
+
+        var fullPath = Path.GetFullPath(originalPakPath);
+        var edition = GameEditionDetector.Detect(fullPath);
+        var baselinePath = CreateOrReplaceEditionBaseline(edition.Id, fullPath);
+        WorkspaceConfigStore.SetActiveEdition(edition.Id, edition.DisplayName, fullPath);
+
+        return new WorkspaceActivationResult(
+            fullPath,
+            edition.Id,
+            edition.DisplayName,
+            baselinePath,
+            BaselineCreated: true);
+    }
+
+    /// <summary>
+    /// Switch to another store/location. Creates a baseline for that edition only when missing.
+    /// </summary>
+    public static WorkspaceActivationResult ChangeLocation(string pakPath)
     {
         if (!File.Exists(pakPath))
         {
-            throw new FileNotFoundException("Pak file was not found.", pakPath);
+            throw new FileNotFoundException("initial.pak was not found.", pakPath);
         }
 
+        var fullPath = Path.GetFullPath(pakPath);
+        var edition = GameEditionDetector.Detect(fullPath);
+        var created = false;
+        string baselinePath;
+
+        if (HasBaselineForEdition(edition.Id))
+        {
+            baselinePath = GetBaselinePathForEdition(edition.Id);
+            SetReadOnlyAttribute(baselinePath);
+        }
+        else
+        {
+            baselinePath = CreateOrReplaceEditionBaseline(edition.Id, fullPath);
+            created = true;
+        }
+
+        WorkspaceConfigStore.SetActiveEdition(edition.Id, edition.DisplayName, fullPath);
+        return new WorkspaceActivationResult(
+            fullPath,
+            edition.Id,
+            edition.DisplayName,
+            baselinePath,
+            created);
+    }
+
+    public static void RestorePakFromBaseline(string workingPakPath)
+    {
+        var baselinePath = RequireBaseline(workingPakPath);
+        ClearReadOnlyAttribute(workingPakPath);
+        File.Copy(baselinePath, workingPakPath, overwrite: true);
+    }
+
+    public static string CreateOrReplaceEditionBaseline(string editionId, string sourceFilePath)
+    {
         if (!File.Exists(sourceFilePath))
         {
             throw new FileNotFoundException("Baseline source file was not found.", sourceFilePath);
         }
 
-        var baselinePath = GetBaselinePath(pakPath);
+        var baselinePath = GetBaselinePathForEdition(editionId);
+        ClearReadOnlyAttribute(baselinePath);
         File.Copy(sourceFilePath, baselinePath, overwrite: true);
-
-        var info = new FileInfo(baselinePath);
-        return new PakBaselineInfo(
-            info.FullName,
-            info.LastWriteTimeUtc,
-            info.Length,
-            Path.GetFileName(sourceFilePath));
+        SetReadOnlyAttribute(baselinePath);
+        return baselinePath;
     }
 
-    public static void ClearBaseline(string pakPath)
+    private static string? ResolveEditionId(string workingPakPath)
     {
-        var baselinePath = GetBaselinePath(pakPath);
-        if (File.Exists(baselinePath))
+        var fromConfig = WorkspaceConfigStore.TryResolveEditionId(workingPakPath);
+        if (!string.IsNullOrWhiteSpace(fromConfig))
         {
-            File.Delete(baselinePath);
-        }
-    }
-
-    public static string RestorePakFromBaseline(string pakPath)
-    {
-        var baselinePath = RequireBaseline(pakPath);
-        var backupPath = PakBackupService.CreateBackup(pakPath);
-        File.Copy(baselinePath, pakPath, overwrite: true);
-        return backupPath;
-    }
-
-    public static IReadOnlyList<ExternalPakBackupCandidate> FindPythonEditorBackups(string pakPath)
-    {
-        var results = new List<ExternalPakBackupCandidate>();
-        var seenPaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-
-        foreach (var backupRoot in GetPythonBackupRoots(pakPath))
-        {
-            if (!Directory.Exists(backupRoot))
-            {
-                continue;
-            }
-
-            foreach (var backupFolder in Directory.EnumerateDirectories(backupRoot, $"{PythonBackupPrefix}*"))
-            {
-                var candidatePath = Path.Combine(backupFolder, "initial.pak");
-                if (!File.Exists(candidatePath))
-                {
-                    continue;
-                }
-
-                try
-                {
-                    candidatePath = Path.GetFullPath(candidatePath);
-                }
-                catch
-                {
-                    continue;
-                }
-
-                if (!seenPaths.Add(candidatePath))
-                {
-                    continue;
-                }
-
-                var info = new FileInfo(candidatePath);
-                results.Add(new ExternalPakBackupCandidate(
-                    info.FullName,
-                    info.LastWriteTimeUtc,
-                    info.Length,
-                    Path.GetFileName(backupFolder)));
-            }
+            return fromConfig;
         }
 
-        return results
-            .OrderBy(candidate => candidate.LastWriteTimeUtc)
-            .ThenBy(candidate => candidate.SourceDescription, StringComparer.OrdinalIgnoreCase)
-            .ToArray();
-    }
-
-    public static ExternalPakBackupCandidate? TryGetOldestPythonEditorBackup(string pakPath)
-    {
-        return FindPythonEditorBackups(pakPath).FirstOrDefault();
-    }
-
-    public static PakBaselineInfo ImportOldestPythonEditorBackup(string pakPath)
-    {
-        var oldest = TryGetOldestPythonEditorBackup(pakPath)
-            ?? throw new FileNotFoundException(
-                "No Python editor initial.pak backups were found for this file.");
-
-        return SetBaselineFromFile(pakPath, oldest.FilePath) with
+        var detected = GameEditionDetector.Detect(workingPakPath);
+        if (HasBaselineForEdition(detected.Id))
         {
-            SourceDescription = $"Python editor backup ({oldest.SourceDescription})",
+            return detected.Id;
+        }
+
+        return detected.Id;
+    }
+
+    private static GameEdition ResolveEditionDisplay(string editionId)
+    {
+        var config = WorkspaceConfigStore.Load();
+        if (config.Editions.TryGetValue(editionId, out var edition)
+            && !string.IsNullOrWhiteSpace(edition.DisplayName))
+        {
+            return new GameEdition(editionId, edition.DisplayName);
+        }
+
+        return editionId switch
+        {
+            "steam" => new GameEdition(editionId, "Steam"),
+            "gog" => new GameEdition(editionId, "GOG"),
+            "epic" => new GameEdition(editionId, "Epic"),
+            "xbox" => new GameEdition(editionId, "Xbox"),
+            _ => new GameEdition(editionId, "Custom"),
         };
     }
 
-    private static IEnumerable<string> GetPythonBackupRoots(string pakPath)
+    private static void TryMigrateLegacySidecar(string workingPakPath, string editionId)
     {
-        var roots = new List<string>();
-        var userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-        if (!string.IsNullOrWhiteSpace(userProfile))
-        {
-            AppendPythonBackupCategoryRoots(
-                roots,
-                Path.Combine(userProfile, PythonEditorDataDirName, PythonInitialPakCategory),
-                pakPath);
-        }
-
-        var pakDirectory = Path.GetDirectoryName(Path.GetFullPath(pakPath));
-        if (!string.IsNullOrWhiteSpace(pakDirectory))
-        {
-            roots.Add(pakDirectory);
-            AppendPythonBackupCategoryRoots(
-                roots,
-                Path.Combine(pakDirectory, "backups", PythonInitialPakCategory),
-                pakPath);
-        }
-
-        return roots.Distinct(StringComparer.OrdinalIgnoreCase);
-    }
-
-    private static void AppendPythonBackupCategoryRoots(List<string> roots, string categoryRoot, string pakPath)
-    {
-        roots.Add(Path.Combine(categoryRoot, CreatePythonSourceLabel(pakPath)));
-        AppendExistingDirectoryRoots(roots, categoryRoot);
-    }
-
-    private static void AppendExistingDirectoryRoots(List<string> roots, string directoryPath)
-    {
-        if (!Directory.Exists(directoryPath))
+        if (HasBaselineForEdition(editionId))
         {
             return;
         }
 
-        roots.Add(directoryPath);
-
-        foreach (var childDirectory in Directory.EnumerateDirectories(directoryPath))
+        var legacyPath = workingPakPath + LegacyBaselineSuffix;
+        if (!File.Exists(legacyPath))
         {
-            roots.Add(childDirectory);
+            return;
+        }
+
+        CreateOrReplaceEditionBaseline(editionId, legacyPath);
+    }
+
+    private static void SetReadOnlyAttribute(string path)
+    {
+        var attributes = File.GetAttributes(path);
+        if ((attributes & FileAttributes.ReadOnly) == 0)
+        {
+            File.SetAttributes(path, attributes | FileAttributes.ReadOnly);
         }
     }
 
-    internal static string CreatePythonSourceLabel(string path)
+    private static void ClearReadOnlyAttribute(string path)
     {
-        var raw = path.Trim();
-        var fullPath = Path.GetFullPath(string.IsNullOrWhiteSpace(raw) ? "source" : raw);
-        var baseName = Path.GetFileName(fullPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar));
-        var safe = Regex.Replace(baseName ?? "source", @"[^A-Za-z0-9_.-]+", "_").Trim('.', '_', '-');
-        if (string.IsNullOrWhiteSpace(safe))
+        if (!File.Exists(path))
         {
-            safe = "source";
+            return;
         }
 
-        var digest = Convert.ToHexString(SHA1.HashData(Encoding.UTF8.GetBytes(fullPath))).ToLowerInvariant()[..12];
-        return $"{safe}_{digest}";
+        var attributes = File.GetAttributes(path);
+        if ((attributes & FileAttributes.ReadOnly) != 0)
+        {
+            File.SetAttributes(path, attributes & ~FileAttributes.ReadOnly);
+        }
     }
 }

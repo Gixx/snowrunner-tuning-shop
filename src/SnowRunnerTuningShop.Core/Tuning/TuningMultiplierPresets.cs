@@ -1,6 +1,6 @@
-namespace SnowRunnerTuningShop.Core.Winch;
+namespace SnowRunnerTuningShop.Core.Tuning;
 
-public static class WinchMultiplierPresets
+public static class TuningMultiplierPresets
 {
     public static readonly double[] Values =
     [
