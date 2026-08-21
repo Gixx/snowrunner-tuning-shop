@@ -1,11 +1,11 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.IO;
 using System.Windows;
 using System.Windows.Controls;
-using Microsoft.Win32;
+using System.Windows.Data;
 using SnowRunnerTuningShop.Core.Backup;
 using SnowRunnerTuningShop.Core.Models;
+using SnowRunnerTuningShop.Core.Tuning;
 using SnowRunnerTuningShop.Core.Winch;
 using SnowRunnerTuningShop.Localization;
 
@@ -14,11 +14,14 @@ namespace SnowRunnerTuningShop.Views;
 public partial class WinchTuningView : UserControl
 {
     private readonly ObservableCollection<WinchRowViewModel> _winches = [];
+    private readonly ICollectionView _winchesView;
 
     public WinchTuningView()
     {
         InitializeComponent();
-        WinchesGrid.ItemsSource = _winches;
+        _winchesView = CollectionViewSource.GetDefaultView(_winches);
+        _winchesView.Filter = MatchesFilter;
+        WinchesGrid.ItemsSource = _winchesView;
         ResetMultiplierSlidersToBaseline();
     }
 
@@ -29,7 +32,7 @@ public partial class WinchTuningView : UserControl
     public void LoadFromPak(string pakPath)
     {
         PakPath = pakPath;
-        RefreshBaselineStatus();
+        RefreshRestoreButton();
         ReloadWinches();
     }
 
@@ -37,94 +40,19 @@ public partial class WinchTuningView : UserControl
     {
         PakPath = null;
         _winches.Clear();
-        BaselineStatusTextBlock.Text = string.Empty;
-        ImportPythonBaselineButton.IsEnabled = false;
         RestoreWinchesButton.IsEnabled = false;
-        RestorePakButton.IsEnabled = false;
-        WinchInfoTextBlock.Text = UiText.Winch.NoData;
+    }
+
+    public void RefreshRestoreButton()
+    {
+        RestoreWinchesButton.IsEnabled = !string.IsNullOrWhiteSpace(PakPath)
+            && PakBaselineService.HasBaseline(PakPath);
     }
 
     private void ReloadButton_Click(object sender, RoutedEventArgs e)
     {
-        RefreshBaselineStatus();
+        RefreshRestoreButton();
         ReloadWinches();
-    }
-
-    private void SetBaselineFromFileButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (string.IsNullOrWhiteSpace(PakPath))
-        {
-            ReportStatus(UiText.Winch.LoadPakFirst);
-            return;
-        }
-
-        var dialog = new OpenFileDialog
-        {
-            Title = UiText.Winch.SelectBaselineDialogTitle,
-            Filter = UiText.Main.BrowseDialogFilter,
-            CheckFileExists = true,
-        };
-
-        if (dialog.ShowDialog() != true)
-        {
-            return;
-        }
-
-        try
-        {
-            var baseline = PakBaselineService.SetBaselineFromFile(PakPath, dialog.FileName);
-            RefreshBaselineStatus();
-            ReportStatus($"Baseline set from {baseline.SourceDescription}.");
-            MessageBox.Show(
-                UiText.Winch.BaselineImportedMessage(baseline.SourceDescription, baseline.BaselinePath),
-                UiText.Winch.BaselineUpdatedTitle,
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
-        }
-        catch (Exception ex)
-        {
-            ReportStatus(UiText.Main.ErrorStatus(ex.Message));
-            MessageBox.Show(ex.Message, UiText.Winch.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
-        }
-    }
-
-    private void ImportPythonBaselineButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (string.IsNullOrWhiteSpace(PakPath))
-        {
-            ReportStatus(UiText.Winch.LoadPakFirst);
-            return;
-        }
-
-        try
-        {
-            var baseline = PakBaselineService.ImportOldestPythonEditorBackup(PakPath);
-            RefreshBaselineStatus();
-            ReportStatus($"Baseline imported from Python editor backup.");
-            MessageBox.Show(
-                UiText.Winch.BaselineImportedMessage(baseline.SourceDescription, baseline.BaselinePath),
-                UiText.Winch.BaselineUpdatedTitle,
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
-        }
-        catch (Exception ex)
-        {
-            ReportStatus(UiText.Main.ErrorStatus(ex.Message));
-            MessageBox.Show(ex.Message, UiText.Winch.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
-        }
-    }
-
-    private void ClearBaselineButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (string.IsNullOrWhiteSpace(PakPath))
-        {
-            ReportStatus(UiText.Winch.LoadPakFirst);
-            return;
-        }
-
-        PakBaselineService.ClearBaseline(PakPath);
-        RefreshBaselineStatus();
-        ReportStatus("Baseline cleared.");
     }
 
     private void RestoreWinchesButton_Click(object sender, RoutedEventArgs e)
@@ -138,8 +66,8 @@ public partial class WinchTuningView : UserControl
         if (!PakBaselineService.HasBaseline(PakPath))
         {
             MessageBox.Show(
-                UiText.Winch.BaselineMissing(BuildPythonBackupHint()),
-                UiText.Winch.BaselineTitle,
+                UiText.Main.BaselineMissingShort,
+                UiText.Main.BaselineTitle,
                 MessageBoxButton.OK,
                 MessageBoxImage.Warning);
             return;
@@ -153,65 +81,13 @@ public partial class WinchTuningView : UserControl
             ReloadWinches();
             ReportStatus(UiText.Winch.MultipliersAppliedStatus(
                 result.ChangedWinches,
-                result.UpdatedFiles,
-                Path.GetFileName(result.BackupPath)));
+                result.UpdatedFiles));
 
             MessageBox.Show(
                 UiText.Winch.RestoreWinchesMessage(
                     result.ChangedWinches,
-                    result.UpdatedFiles,
-                    result.BackupPath),
+                    result.UpdatedFiles),
                 UiText.Winch.RestoreWinchesSuccessTitle,
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
-        }
-        catch (Exception ex)
-        {
-            ReportStatus(UiText.Main.ErrorStatus(ex.Message));
-            MessageBox.Show(ex.Message, UiText.Winch.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
-        }
-    }
-
-    private void RestorePakButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (string.IsNullOrWhiteSpace(PakPath))
-        {
-            ReportStatus(UiText.Winch.LoadPakFirst);
-            return;
-        }
-
-        if (!PakBaselineService.HasBaseline(PakPath))
-        {
-            MessageBox.Show(
-                UiText.Winch.BaselineMissing(BuildPythonBackupHint()),
-                UiText.Winch.BaselineTitle,
-                MessageBoxButton.OK,
-                MessageBoxImage.Warning);
-            return;
-        }
-
-        var confirm = MessageBox.Show(
-            UiText.Winch.RestorePakConfirmMessage,
-            UiText.Winch.RestorePakConfirmTitle,
-            MessageBoxButton.YesNo,
-            MessageBoxImage.Warning);
-
-        if (confirm != MessageBoxResult.Yes)
-        {
-            return;
-        }
-
-        try
-        {
-            var backupPath = PakBaselineService.RestorePakFromBaseline(PakPath);
-            ResetMultiplierSlidersToBaseline();
-            AutonomousAllCheckBox.IsChecked = false;
-            ReloadWinches();
-            ReportStatus($"Entire pak restored from baseline. Backup: {Path.GetFileName(backupPath)}");
-
-            MessageBox.Show(
-                UiText.Winch.RestorePakMessage(backupPath),
-                UiText.Winch.RestorePakSuccessTitle,
                 MessageBoxButton.OK,
                 MessageBoxImage.Information);
         }
@@ -233,8 +109,8 @@ public partial class WinchTuningView : UserControl
         if (!PakBaselineService.HasBaseline(PakPath))
         {
             MessageBox.Show(
-                UiText.Winch.BaselineMissing(BuildPythonBackupHint()),
-                UiText.Winch.BaselineTitle,
+                UiText.Main.BaselineMissingShort,
+                UiText.Main.BaselineTitle,
                 MessageBoxButton.OK,
                 MessageBoxImage.Warning);
             return;
@@ -251,14 +127,12 @@ public partial class WinchTuningView : UserControl
             ReloadWinches();
             ReportStatus(UiText.Winch.MultipliersAppliedStatus(
                 result.ChangedWinches,
-                result.UpdatedFiles,
-                Path.GetFileName(result.BackupPath)));
+                result.UpdatedFiles));
 
             MessageBox.Show(
                 UiText.Winch.MultipliersSavedMessage(
                     result.ChangedWinches,
-                    result.UpdatedFiles,
-                    result.BackupPath),
+                    result.UpdatedFiles),
                 UiText.Winch.SaveSuccessTitle,
                 MessageBoxButton.OK,
                 MessageBoxImage.Information);
@@ -274,12 +148,13 @@ public partial class WinchTuningView : UserControl
     {
         if (string.IsNullOrWhiteSpace(PakPath))
         {
-            ReportStatus(UiText.Winch.LoadPakFirst);
+            MessageBox.Show(UiText.Winch.LoadPakFirst, UiText.Winch.LoadErrorTitle, MessageBoxButton.OK, MessageBoxImage.Information);
             return;
         }
 
         try
         {
+            // Flush checkbox / cell edits before reading the view-models.
             WinchesGrid.CommitEdit(DataGridEditingUnit.Cell, exitEditingMode: true);
             WinchesGrid.CommitEdit(DataGridEditingUnit.Row, exitEditingMode: true);
 
@@ -290,17 +165,14 @@ public partial class WinchTuningView : UserControl
             var result = WinchService.SaveWinchChanges(PakPath, winches);
             ReloadWinches();
 
-            ReportStatus(UiText.Winch.IndividualSavedStatus(result.ChangedWinches, result.UpdatedFiles));
-
             MessageBox.Show(
-                UiText.Winch.IndividualSavedMessage(result.ChangedWinches, result.BackupPath),
+                UiText.Winch.IndividualSavedMessage(result.ChangedWinches),
                 UiText.Winch.SaveSuccessTitle,
                 MessageBoxButton.OK,
                 MessageBoxImage.Information);
         }
         catch (Exception ex)
         {
-            ReportStatus(UiText.Main.ErrorStatus(ex.Message));
             MessageBox.Show(ex.Message, UiText.Winch.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
@@ -321,58 +193,12 @@ public partial class WinchTuningView : UserControl
             {
                 _winches.Add(WinchRowViewModel.FromDefinition(winch));
             }
-
-            WinchInfoTextBlock.Text = UiText.Winch.LoadedCount(winches.Count);
-            ReportStatus(UiText.Winch.LoadedStatus(winches.Count));
         }
         catch (Exception ex)
         {
             Clear();
-            ReportStatus(UiText.Winch.LoadErrorStatus(ex.Message));
             MessageBox.Show(ex.Message, UiText.Winch.LoadErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
         }
-    }
-
-    private void RefreshBaselineStatus()
-    {
-        if (string.IsNullOrWhiteSpace(PakPath))
-        {
-            BaselineStatusTextBlock.Text = string.Empty;
-            ImportPythonBaselineButton.IsEnabled = false;
-            RestoreWinchesButton.IsEnabled = false;
-            RestorePakButton.IsEnabled = false;
-            return;
-        }
-
-        var pythonBackups = PakBaselineService.FindPythonEditorBackups(PakPath);
-        ImportPythonBaselineButton.IsEnabled = pythonBackups.Count > 0;
-
-        var baseline = PakBaselineService.TryGetBaselineInfo(PakPath);
-        var hasBaseline = baseline is not null;
-        RestoreWinchesButton.IsEnabled = hasBaseline;
-        RestorePakButton.IsEnabled = hasBaseline;
-
-        if (baseline is null)
-        {
-            BaselineStatusTextBlock.Text = UiText.Winch.BaselineMissing(BuildPythonBackupHint(pythonBackups.Count));
-            return;
-        }
-
-        BaselineStatusTextBlock.Text = UiText.Winch.BaselineReady(
-            baseline.SourceDescription,
-            Path.GetFileName(baseline.BaselinePath),
-            baseline.LastWriteTimeUtc);
-    }
-
-    private string? BuildPythonBackupHint(int? pythonBackupCount = null)
-    {
-        var count = pythonBackupCount ?? (string.IsNullOrWhiteSpace(PakPath)
-            ? 0
-            : PakBaselineService.FindPythonEditorBackups(PakPath).Count);
-
-        return count > 0
-            ? UiText.Winch.PythonBackupsFound(count)
-            : UiText.Winch.PythonBackupsMissing;
     }
 
     private void LengthMultiplierSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -385,10 +211,24 @@ public partial class WinchTuningView : UserControl
         UpdateMultiplierLabels();
     }
 
+    private void FilterTextBox_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        TuningListFilter.UpdatePlaceholderVisibility(FilterTextBox, FilterPlaceholder);
+        _winchesView.Refresh();
+    }
+
+    private bool MatchesFilter(object item) =>
+        item is WinchRowViewModel row
+        && TuningListFilter.Matches(
+            FilterTextBox.Text,
+            row.Category,
+            row.DisplayName,
+            row.Name);
+
     private void ResetMultiplierSlidersToBaseline()
     {
-        LengthMultiplierSlider.Value = WinchMultiplierPresets.BaselineIndex;
-        StrengthMultiplierSlider.Value = WinchMultiplierPresets.BaselineIndex;
+        LengthMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
+        StrengthMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
         UpdateMultiplierLabels();
     }
 
@@ -399,30 +239,28 @@ public partial class WinchTuningView : UserControl
             return;
         }
 
-        LengthMultiplierLabel.Text = WinchMultiplierPresets.FormatSliderCaption(
+        LengthMultiplierLabel.Text = TuningMultiplierPresets.FormatSliderCaption(
             "Length multiplier",
             GetLengthMultiplierIndex());
-        StrengthMultiplierLabel.Text = WinchMultiplierPresets.FormatSliderCaption(
+        StrengthMultiplierLabel.Text = TuningMultiplierPresets.FormatSliderCaption(
             "Strength multiplier",
             GetStrengthMultiplierIndex());
     }
 
     private int GetLengthMultiplierIndex() =>
-        WinchMultiplierPresets.ClampIndex((int)Math.Round(LengthMultiplierSlider.Value));
+        TuningMultiplierPresets.ClampIndex((int)Math.Round(LengthMultiplierSlider.Value));
 
     private int GetStrengthMultiplierIndex() =>
-        WinchMultiplierPresets.ClampIndex((int)Math.Round(StrengthMultiplierSlider.Value));
+        TuningMultiplierPresets.ClampIndex((int)Math.Round(StrengthMultiplierSlider.Value));
 
     private double GetLengthMultiplier() =>
-        WinchMultiplierPresets.GetValue(GetLengthMultiplierIndex());
+        TuningMultiplierPresets.GetValue(GetLengthMultiplierIndex());
 
     private double GetStrengthMultiplier() =>
-        WinchMultiplierPresets.GetValue(GetStrengthMultiplierIndex());
+        TuningMultiplierPresets.GetValue(GetStrengthMultiplierIndex());
 
-    private void ReportStatus(string message)
-    {
+    private void ReportStatus(string message) =>
         StatusChanged?.Invoke(this, message);
-    }
 
     public sealed class WinchRowViewModel : INotifyPropertyChanged
     {
@@ -435,6 +273,7 @@ public partial class WinchTuningView : UserControl
         public required string DisplayName { get; init; }
         public required string SourceFile { get; init; }
         public required string Category { get; init; }
+        public int Price { get; init; }
 
         public double Length
         {
@@ -507,6 +346,7 @@ public partial class WinchTuningView : UserControl
                 DisplayName = definition.DisplayName,
                 SourceFile = definition.SourceFile,
                 Category = definition.Category,
+                Price = definition.Price,
                 Length = definition.Length,
                 StrengthMult = definition.StrengthMult,
                 IsEngineIgnitionRequired = definition.IsEngineIgnitionRequired,
@@ -517,11 +357,13 @@ public partial class WinchTuningView : UserControl
             {
                 EntryPath = EntryPath,
                 Name = Name,
+                DisplayName = DisplayName,
                 SourceFile = SourceFile,
                 Category = Category,
+                Price = Price,
                 Length = Length,
                 StrengthMult = StrengthMult,
-                IsEngineIgnitionRequired = IsEngineIgnitionRequired,
+                IsEngineIgnitionRequired = !IsAutonomous,
             };
     }
 }

@@ -7,6 +7,8 @@ using SnowRunnerTuningShop.Core.Backup;
 using SnowRunnerTuningShop.Core.Models;
 using SnowRunnerTuningShop.Core.Pak;
 using SnowRunnerTuningShop.Core.Strings;
+using SnowRunnerTuningShop.Core.Tuning;
+using SnowRunnerTuningShop.Core.Xml;
 
 namespace SnowRunnerTuningShop.Core.Winch;
 
@@ -56,7 +58,6 @@ public static class WinchService
         ValidateMultiplier(strengthMultiplier, nameof(strengthMultiplier));
 
         var baselinePath = PakBaselineService.RequireBaseline(pakPath);
-        var backupPath = PakBackupService.CreateBackup(pakPath);
 
         Dictionary<string, byte[]> replacements;
         var changedWinches = 0;
@@ -98,7 +99,7 @@ public static class WinchService
         }
 
         var updatedFiles = InitialPakWriter.ReplaceEntries(pakPath, replacements);
-        return new WinchSaveResult(backupPath, updatedFiles, changedWinches);
+        return new WinchSaveResult(updatedFiles, changedWinches);
     }
 
     public static WinchSaveResult RestoreWinchesFromBaseline(string pakPath) =>
@@ -107,8 +108,6 @@ public static class WinchService
     public static WinchSaveResult SaveWinchChanges(string pakPath, IReadOnlyList<WinchDefinition> winches)
     {
         ArgumentNullException.ThrowIfNull(winches);
-
-        var backupPath = PakBackupService.CreateBackup(pakPath);
 
         Dictionary<string, byte[]> replacements;
         var changedWinches = 0;
@@ -154,8 +153,13 @@ public static class WinchService
             }
         }
 
+        if (replacements.Count == 0)
+        {
+            return new WinchSaveResult(UpdatedFiles: 0, ChangedWinches: 0);
+        }
+
         var updatedFiles = InitialPakWriter.ReplaceEntries(pakPath, replacements);
-        return new WinchSaveResult(backupPath, updatedFiles, changedWinches);
+        return new WinchSaveResult(updatedFiles, changedWinches);
     }
 
     private static bool IsWinchEntry(string entryPath)
@@ -187,6 +191,10 @@ public static class WinchService
                 }
 
                 var uiNameKey = ExtractUiNameKey(element);
+                var priceText = element.Descendants()
+                    .FirstOrDefault(node => node.Name.LocalName.Equals("GameData", StringComparison.OrdinalIgnoreCase))
+                    ?.Attribute("Price")
+                    ?.Value;
                 winches.Add(CreateWinchDefinition(
                     entryPath,
                     name,
@@ -194,7 +202,8 @@ public static class WinchService
                     strings,
                     element.Attribute("Length")?.Value,
                     element.Attribute("StrengthMult")?.Value,
-                    element.Attribute("IsEngineIgnitionRequired")?.Value));
+                    element.Attribute("IsEngineIgnitionRequired")?.Value,
+                    priceText));
             }
 
             return winches;
@@ -210,6 +219,9 @@ public static class WinchService
                 }
 
                 var uiNameKey = ExtractUiNameKeyFromBlock(content, match.Index, name);
+                var nextWinch = content.IndexOf("<Winch", match.Index + 1, StringComparison.OrdinalIgnoreCase);
+                var blockEnd = nextWinch >= 0 ? nextWinch : content.Length;
+                var block = content[match.Index..blockEnd];
                 winches.Add(CreateWinchDefinition(
                     entryPath,
                     name,
@@ -217,7 +229,8 @@ public static class WinchService
                     strings,
                     attrs.GetValueOrDefault("Length"),
                     attrs.GetValueOrDefault("StrengthMult"),
-                    attrs.GetValueOrDefault("IsEngineIgnitionRequired")));
+                    attrs.GetValueOrDefault("IsEngineIgnitionRequired"),
+                    PartXmlHelpers.ExtractPrice(block).ToString(CultureInfo.InvariantCulture)));
             }
 
             return winches;
@@ -231,7 +244,8 @@ public static class WinchService
         IReadOnlyDictionary<string, string>? strings,
         string? lengthValue,
         string? strengthValue,
-        string? engineRequiredValue)
+        string? engineRequiredValue,
+        string? priceValue)
     {
         var key = uiNameKey?.Trim() ?? "";
         var displayName = strings is null
@@ -246,6 +260,9 @@ public static class WinchService
             DisplayName = displayName,
             SourceFile = Path.GetFileName(entryPath.Replace('\\', '/')),
             Category = InferCategory(entryPath, name),
+            Price = int.TryParse(priceValue, NumberStyles.Integer, CultureInfo.InvariantCulture, out var price)
+                ? price
+                : 0,
             Length = ParseDouble(lengthValue, 35),
             StrengthMult = ParseDouble(strengthValue, 10),
             IsEngineIgnitionRequired = ParseBool(engineRequiredValue),
@@ -292,8 +309,8 @@ public static class WinchService
             return backupText;
         }
 
-        var lengthIsBaseline = WinchMultiplierPresets.IsBaselineMultiplier(lengthMultiplier);
-        var strengthIsBaseline = WinchMultiplierPresets.IsBaselineMultiplier(strengthMultiplier);
+        var lengthIsBaseline = TuningMultiplierPresets.IsBaselineMultiplier(lengthMultiplier);
+        var strengthIsBaseline = TuningMultiplierPresets.IsBaselineMultiplier(strengthMultiplier);
         if (lengthIsBaseline && strengthIsBaseline && !forceAutonomousAll)
         {
             return backupText;
@@ -369,7 +386,7 @@ public static class WinchService
 
     private static string ScaleWinchAttributeValue(string? rawValue, double multiplier, bool isStrengthMult)
     {
-        if (WinchMultiplierPresets.IsBaselineMultiplier(multiplier))
+        if (TuningMultiplierPresets.IsBaselineMultiplier(multiplier))
         {
             return rawValue ?? (isStrengthMult ? "1.0" : "14");
         }
@@ -571,4 +588,4 @@ public static class WinchService
     }
 }
 
-public sealed record WinchSaveResult(string BackupPath, int UpdatedFiles, int ChangedWinches);
+public sealed record WinchSaveResult(int UpdatedFiles, int ChangedWinches);

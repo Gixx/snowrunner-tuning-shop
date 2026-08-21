@@ -65,27 +65,10 @@
         </Border>
 
         <Grid Grid.Column="1" Margin="20">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-
-            <Grid Grid.Row="0">
-                <views:HomeView x:Name="HomeView"/>
-                <views:PartsView x:Name="PartsView" Visibility="Collapsed"/>
-                <views:VehiclesView x:Name="VehiclesView" Visibility="Collapsed"/>
-                <views:SettingsView x:Name="SettingsView" Visibility="Collapsed"/>
-            </Grid>
-
-            <Border Grid.Row="1"
-                    Margin="0,16,0,0"
-                    Background="{DynamicResource ControlFillColorSecondaryBrush}"
-                    CornerRadius="8"
-                    Padding="12,10">
-                <TextBlock x:Name="StatusTextBlock"
-                           Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-                           Text="{x:Static loc:UiText+Main.ReadyStatus}"/>
-            </Border>
+            <views:HomeView x:Name="HomeView"/>
+            <views:PartsView x:Name="PartsView" Visibility="Collapsed"/>
+            <views:VehiclesView x:Name="VehiclesView" Visibility="Collapsed"/>
+            <views:SettingsView x:Name="SettingsView" Visibility="Collapsed"/>
         </Grid>
     </Grid>
 </Window>

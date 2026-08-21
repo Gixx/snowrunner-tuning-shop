@@ -1,0 +1,187 @@
+<UserControl x:Class="SnowRunnerTuningShop.Views.EngineTuningView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:loc="clr-namespace:SnowRunnerTuningShop.Localization"
+             mc:Ignorable="d"
+             d:DesignHeight="560"
+             d:DesignWidth="900">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0"
+                Background="{DynamicResource CardBackgroundFillColorSecondaryBrush}"
+                BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="16"
+                Margin="0,0,0,12">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0"
+                           Grid.ColumnSpan="3"
+                           Text="{x:Static loc:UiText+Engine.GlobalMultipliersTitle}"
+                           FontWeight="SemiBold"
+                           Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                           Margin="0,0,0,12"/>
+
+                <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,12,8">
+                    <TextBlock x:Name="TorqueMultiplierLabel"
+                               Text="{x:Static loc:UiText+Engine.TorqueMultiplierDefault}"
+                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                    <Slider x:Name="TorqueMultiplierSlider"
+                            Minimum="0"
+                            Maximum="8"
+                            Value="4"
+                            TickFrequency="1"
+                            IsSnapToTickEnabled="True"
+                            ValueChanged="MultiplierSlider_ValueChanged"/>
+                </StackPanel>
+
+                <StackPanel Grid.Row="1" Grid.Column="1" Margin="12,0,12,8">
+                    <TextBlock x:Name="FuelMultiplierLabel"
+                               Text="{x:Static loc:UiText+Engine.FuelMultiplierDefault}"
+                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                    <Slider x:Name="FuelMultiplierSlider"
+                            Minimum="0"
+                            Maximum="8"
+                            Value="4"
+                            TickFrequency="1"
+                            IsSnapToTickEnabled="True"
+                            ValueChanged="MultiplierSlider_ValueChanged"/>
+                </StackPanel>
+
+                <StackPanel Grid.Row="2" Grid.Column="0" Margin="0,0,12,0">
+                    <TextBlock x:Name="DamageMultiplierLabel"
+                               Text="{x:Static loc:UiText+Engine.DamageMultiplierDefault}"
+                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                    <Slider x:Name="DamageMultiplierSlider"
+                            Minimum="0"
+                            Maximum="8"
+                            Value="4"
+                            TickFrequency="1"
+                            IsSnapToTickEnabled="True"
+                            ValueChanged="MultiplierSlider_ValueChanged"/>
+                </StackPanel>
+
+                <StackPanel Grid.Row="2" Grid.Column="1" Margin="12,0,12,0">
+                    <TextBlock x:Name="ResponsivenessMultiplierLabel"
+                               Text="{x:Static loc:UiText+Engine.ResponsivenessMultiplierDefault}"
+                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                    <Slider x:Name="ResponsivenessMultiplierSlider"
+                            Minimum="0"
+                            Maximum="8"
+                            Value="4"
+                            TickFrequency="1"
+                            IsSnapToTickEnabled="True"
+                            ValueChanged="MultiplierSlider_ValueChanged"/>
+                </StackPanel>
+
+                <StackPanel Grid.Row="1"
+                            Grid.RowSpan="2"
+                            Grid.Column="2"
+                            VerticalAlignment="Center">
+                    <Button Content="{x:Static loc:UiText+Engine.Apply}"
+                            Padding="14,8"
+                            Click="ApplyMultipliersButton_Click"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="1"
+                Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="12"
+                Margin="0,0,0,12">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="280" MinWidth="180"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button Content="{x:Static loc:UiText+Engine.SaveIndividualChanges}"
+                            Padding="14,8"
+                            Margin="0,0,8,0"
+                            Click="SaveIndividualButton_Click"/>
+                    <Button x:Name="RestoreEnginesButton"
+                            Content="{x:Static loc:UiText+Engine.RestoreEnginesToBaseline}"
+                            Padding="14,8"
+                            Margin="0,0,8,0"
+                            Click="RestoreEnginesButton_Click"/>
+                    <Button Content="{x:Static loc:UiText+Engine.RefreshList}"
+                            Padding="14,8"
+                            Click="ReloadButton_Click"/>
+                </StackPanel>
+
+                <Grid Grid.Column="1" Margin="16,0,0,0" VerticalAlignment="Center">
+                    <TextBox x:Name="FilterTextBox"
+                             Padding="10,7"
+                             VerticalContentAlignment="Center"
+                             TextChanged="FilterTextBox_TextChanged"/>
+                    <TextBlock x:Name="FilterPlaceholder"
+                               Text="{x:Static loc:UiText+Engine.FilterPlaceholder}"
+                               Margin="14,0,0,0"
+                               VerticalAlignment="Center"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                               IsHitTestVisible="False"/>
+                </Grid>
+            </Grid>
+        </Border>
+
+        <DataGrid x:Name="EnginesGrid"
+                  Grid.Row="2"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="False"
+                  CanUserDeleteRows="False"
+                  IsReadOnly="False"
+                  HeadersVisibility="Column"
+                  GridLinesVisibility="Horizontal">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="{x:Static loc:UiText+Engine.CategoryColumn}" Binding="{Binding Category}" Width="70" IsReadOnly="True"
+                                    ElementStyle="{StaticResource TuningGridTextElementStyle}"/>
+                <DataGridTextColumn Header="{x:Static loc:UiText+Engine.NameColumn}" Binding="{Binding DisplayName}" Width="180" IsReadOnly="True"
+                                    ElementStyle="{StaticResource TuningGridTextElementStyle}"/>
+                <DataGridTextColumn Header="{x:Static loc:UiText+Engine.UsedByColumn}" Binding="{Binding UsedBy}" Width="200" MinWidth="120" IsReadOnly="True">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock" BasedOn="{StaticResource TuningGridTextElementStyle}">
+                            <Setter Property="ToolTip" Value="{Binding UsedByTooltip}"/>
+                            <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="{x:Static loc:UiText+Engine.PriceColumn}" Binding="{Binding Price}" Width="80" IsReadOnly="True"
+                                    ElementStyle="{StaticResource TuningGridTextElementStyle}"/>
+                <DataGridTextColumn Header="{x:Static loc:UiText+Engine.TorqueColumn}" Binding="{Binding Torque, StringFormat=0.##, UpdateSourceTrigger=PropertyChanged}" Width="100"
+                                    ElementStyle="{StaticResource TuningGridTextElementStyle}"
+                                    EditingElementStyle="{StaticResource TuningGridTextEditingStyle}"/>
+                <DataGridTextColumn Header="{x:Static loc:UiText+Engine.FuelColumn}" Binding="{Binding FuelConsumption, StringFormat=0.##, UpdateSourceTrigger=PropertyChanged}" Width="80"
+                                    ElementStyle="{StaticResource TuningGridTextElementStyle}"
+                                    EditingElementStyle="{StaticResource TuningGridTextEditingStyle}"/>
+                <DataGridTextColumn Header="{x:Static loc:UiText+Engine.DamageColumn}" Binding="{Binding DamageCapacity, StringFormat=0.##, UpdateSourceTrigger=PropertyChanged}" Width="90"
+                                    ElementStyle="{StaticResource TuningGridTextElementStyle}"
+                                    EditingElementStyle="{StaticResource TuningGridTextEditingStyle}"/>
+                <DataGridTextColumn Header="{x:Static loc:UiText+Engine.ResponsivenessColumn}" Binding="{Binding EngineResponsiveness, StringFormat=0.####, UpdateSourceTrigger=PropertyChanged}" Width="110"
+                                    ElementStyle="{StaticResource TuningGridTextElementStyle}"
+                                    EditingElementStyle="{StaticResource TuningGridTextEditingStyle}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>
