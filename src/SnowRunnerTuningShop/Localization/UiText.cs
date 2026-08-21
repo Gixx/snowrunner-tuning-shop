@@ -8,6 +8,9 @@ public static class UiText
         public const string Parts = "Parts";
         public const string Vehicles = "Vehicles";
         public const string Settings = "Settings";
+        public const string OpenMenu = "Menu";
+        public const string PinMenu = "Keep menu open";
+        public const string VersionLabel = "Version 1.0 Beta";
     }
 
     public static class Main
@@ -18,6 +21,7 @@ public static class UiText
             "Set a baseline from your original initial.pak to load the workspace.";
         public const string CategoriesTitle = "Tuning categories";
         public const string CategoryColumn = "Category";
+        public const string ItemsColumn = "Items";
         public const string FilesColumn = "Files";
         public const string SampleFileColumn = "Sample file";
         public const string BrowseDialogFilter = "SnowRunner pak (*.pak)|*.pak|All files (*.*)|*.*";
@@ -116,6 +120,7 @@ public static class UiText
         public const string Tires = "Tires";
         public const string ComingSoon = "Coming soon.";
         public const string LoadPakHint = "Load an initial.pak on the Home page first.";
+        public const string Loading = "Loading…";
     }
 
     public static class Vehicles

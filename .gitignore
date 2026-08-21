@@ -12,3 +12,4 @@ obj/
 *.baseline
 *.backup-*
 initial.pak.backup-*
+artifacts/

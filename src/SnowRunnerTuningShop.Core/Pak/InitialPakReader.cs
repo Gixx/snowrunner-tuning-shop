@@ -79,6 +79,7 @@ public static class InitialPakReader
                 files.Sort(StringComparer.OrdinalIgnoreCase);
                 return new PakCategorySummary(
                     category,
+                    PakTuningItemCounts.Count(pakPath, category),
                     files.Count,
                     files.Take(5).ToArray());
             })

@@ -34,6 +34,13 @@ public partial class TireTuningView : UserControl
         ReloadTires();
     }
 
+    public async Task LoadFromPakAsync(string pakPath)
+    {
+        PakPath = pakPath;
+        RefreshRestoreButton();
+        await ReloadTiresAsync();
+    }
+
     public void Clear()
     {
         PakPath = null;
@@ -175,20 +182,46 @@ public partial class TireTuningView : UserControl
 
         try
         {
-            var tires = TireService.LoadTires(PakPath, AppLanguage.Current);
-            _tires.Clear();
-            foreach (var tire in tires)
-            {
-                _tires.Add(TireRowViewModel.FromDefinition(tire));
-            }
-
-            _tiresView.Refresh();
+            ApplyTires(TireService.LoadTires(PakPath, AppLanguage.Current));
         }
         catch (Exception ex)
         {
             Clear();
             MessageBox.Show(ex.Message, UiText.Tires.LoadErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
         }
+    }
+
+    private async Task ReloadTiresAsync()
+    {
+        if (string.IsNullOrWhiteSpace(PakPath))
+        {
+            Clear();
+            return;
+        }
+
+        try
+        {
+            var path = PakPath;
+            var language = AppLanguage.Current;
+            var tires = await Task.Run(() => TireService.LoadTires(path, language));
+            ApplyTires(tires);
+        }
+        catch (Exception ex)
+        {
+            Clear();
+            MessageBox.Show(ex.Message, UiText.Tires.LoadErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    private void ApplyTires(IReadOnlyList<TireDefinition> tires)
+    {
+        _tires.Clear();
+        foreach (var tire in tires)
+        {
+            _tires.Add(TireRowViewModel.FromDefinition(tire));
+        }
+
+        _tiresView.Refresh();
     }
 
     private void MultiplierSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) =>

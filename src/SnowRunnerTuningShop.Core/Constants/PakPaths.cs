@@ -14,8 +14,11 @@ public static class PakPaths
         "gearboxes",
         "suspensions",
         "wheels",
-        "daytimes",
-        "weather",
-        "cargo_types",
+        "trucks",
     ];
+
+    public static string FormatTuningCategoryName(string categoryId) =>
+        categoryId.Equals("trucks", StringComparison.OrdinalIgnoreCase)
+            ? "vehicles"
+            : categoryId;
 }

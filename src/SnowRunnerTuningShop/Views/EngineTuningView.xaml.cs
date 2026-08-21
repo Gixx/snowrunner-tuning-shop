@@ -36,6 +36,13 @@ public partial class EngineTuningView : UserControl
         ReloadEngines();
     }
 
+    public async Task LoadFromPakAsync(string pakPath)
+    {
+        PakPath = pakPath;
+        RefreshRestoreButton();
+        await ReloadEnginesAsync();
+    }
+
     public void Clear()
     {
         PakPath = null;
@@ -189,17 +196,43 @@ public partial class EngineTuningView : UserControl
 
         try
         {
-            var engines = EngineService.LoadEngines(PakPath, AppLanguage.Current);
-            _engines.Clear();
-            foreach (var engine in engines)
-            {
-                _engines.Add(EngineRowViewModel.FromDefinition(engine));
-            }
+            ApplyEngines(EngineService.LoadEngines(PakPath, AppLanguage.Current));
         }
         catch (Exception ex)
         {
             Clear();
             MessageBox.Show(ex.Message, UiText.Engine.LoadErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    private async Task ReloadEnginesAsync()
+    {
+        if (string.IsNullOrWhiteSpace(PakPath))
+        {
+            Clear();
+            return;
+        }
+
+        try
+        {
+            var path = PakPath;
+            var language = AppLanguage.Current;
+            var engines = await Task.Run(() => EngineService.LoadEngines(path, language));
+            ApplyEngines(engines);
+        }
+        catch (Exception ex)
+        {
+            Clear();
+            MessageBox.Show(ex.Message, UiText.Engine.LoadErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    private void ApplyEngines(IReadOnlyList<EngineDefinition> engines)
+    {
+        _engines.Clear();
+        foreach (var engine in engines)
+        {
+            _engines.Add(EngineRowViewModel.FromDefinition(engine));
         }
     }
 

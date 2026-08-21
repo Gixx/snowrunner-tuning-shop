@@ -7,6 +7,8 @@ public sealed class WorkspaceConfig
 {
     public string? ActiveEditionId { get; set; }
 
+    public bool SidebarPinned { get; set; }
+
     public Dictionary<string, EditionConfig> Editions { get; set; } =
         new(StringComparer.OrdinalIgnoreCase);
 }
@@ -117,6 +119,15 @@ public static class WorkspaceConfigStore
             DisplayName = displayName,
             WorkingPakPath = Path.GetFullPath(workingPakPath),
         };
+        Save(config);
+    }
+
+    public static bool GetSidebarPinned() => Load().SidebarPinned;
+
+    public static void SetSidebarPinned(bool pinned)
+    {
+        var config = Load();
+        config.SidebarPinned = pinned;
         Save(config);
     }
 
