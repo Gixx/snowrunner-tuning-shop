@@ -7,6 +7,7 @@ using SnowRunnerTuningShop.Core.Backup;
 using SnowRunnerTuningShop.Core.Models;
 using SnowRunnerTuningShop.Core.Tires;
 using SnowRunnerTuningShop.Core.Tuning;
+using SnowRunnerTuningShop.Core.Xml;
 using SnowRunnerTuningShop.Localization;
 
 namespace SnowRunnerTuningShop.Views;
@@ -155,7 +156,7 @@ public partial class TireTuningView : UserControl
             TiresGrid.CommitEdit(DataGridEditingUnit.Row, exitEditingMode: true);
 
             var tires = _tires
-                .Select(row => row.ToDefinition())
+                .SelectMany(row => row.ToDefinitions())
                 .ToArray();
 
             var result = TireService.SaveTireChanges(PakPath, tires);
@@ -216,12 +217,39 @@ public partial class TireTuningView : UserControl
     private void ApplyTires(IReadOnlyList<TireDefinition> tires)
     {
         _tires.Clear();
-        foreach (var tire in tires)
+        foreach (var row in GroupTireRows(tires))
         {
-            _tires.Add(TireRowViewModel.FromDefinition(tire));
+            _tires.Add(row);
         }
 
         _tiresView.Refresh();
+    }
+
+    private static IEnumerable<TireRowViewModel> GroupTireRows(IReadOnlyList<TireDefinition> tires)
+    {
+        return tires
+            .GroupBy(TireRowViewModel.CreateGroupKey)
+            .Select(group =>
+            {
+                var instances = group
+                    .Select(TireInstanceRef.FromDefinition)
+                    .ToArray();
+                var vehicleNames = group
+                    .SelectMany(item => item.UsedByVehicles)
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .OrderBy(name => name, StringComparer.OrdinalIgnoreCase)
+                    .ToArray();
+                var first = group.First();
+                var row = TireRowViewModel.FromDefinition(first);
+                row.Instances = instances;
+                row.UsedBy = PartXmlHelpers.FormatUsedBy(vehicleNames);
+                row.UsedByTooltip = PartXmlHelpers.FormatUsedByTooltip(
+                    vehicleNames,
+                    "No trucks reference this wheel set.");
+                return row;
+            })
+            .OrderBy(row => row.Category, StringComparer.OrdinalIgnoreCase)
+            .ThenBy(row => row.DisplayName, StringComparer.OrdinalIgnoreCase);
     }
 
     private void MultiplierSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) =>
@@ -233,17 +261,31 @@ public partial class TireTuningView : UserControl
         _tiresView.Refresh();
     }
 
-    private bool MatchesFilter(object item) =>
-        item is TireRowViewModel row
-        && TuningListFilter.Matches(
-            FilterTextBox.Text,
+    private bool MatchesFilter(object item)
+    {
+        if (item is not TireRowViewModel row)
+        {
+            return false;
+        }
+
+        var extraFields = row.Instances
+            .SelectMany(instance => new[] { instance.SetName, instance.SetId })
+            .ToArray();
+
+        var fields = new List<string?>
+        {
             row.Category,
             row.DisplayName,
             row.Name,
             row.SetName,
             row.SetId,
             row.UsedBy,
-            row.UsedByTooltip);
+            row.UsedByTooltip,
+        };
+        fields.AddRange(extraFields);
+
+        return TuningListFilter.Matches(FilterTextBox.Text, fields.ToArray());
+    }
 
     private void ResetMultiplierSlidersToBaseline()
     {
@@ -292,11 +334,12 @@ public partial class TireTuningView : UserControl
         public required string SourceFile { get; init; }
         public required string SetId { get; init; }
         public required string SetName { get; init; }
-        public required string UsedBy { get; init; }
-        public required string UsedByTooltip { get; init; }
+        public required string UsedBy { get; set; }
+        public required string UsedByTooltip { get; set; }
         public required string Category { get; init; }
         public int Price { get; init; }
         public required string FrictionTemplate { get; init; }
+        public IReadOnlyList<TireInstanceRef> Instances { get; set; } = [];
 
         public double OnRoadFriction
         {
@@ -378,26 +421,73 @@ public partial class TireTuningView : UserControl
                 OffRoadFriction = definition.OffRoadFriction,
                 MudFriction = definition.MudFriction,
                 IgnoreIce = definition.IgnoreIce,
+                Instances = [TireInstanceRef.FromDefinition(definition)],
             };
 
-        public TireDefinition ToDefinition() =>
-            new()
+        internal static TireGroupKey CreateGroupKey(TireDefinition definition) =>
+            new(
+                definition.Category,
+                definition.DisplayName,
+                definition.Price,
+                definition.OnRoadFriction,
+                definition.OffRoadFriction,
+                definition.MudFriction,
+                definition.IgnoreIce);
+
+        public IEnumerable<TireDefinition> ToDefinitions()
+        {
+            var targets = Instances.Count > 0
+                ? Instances
+                : [new TireInstanceRef(EntryPath, Name, SetId, SetName, SourceFile, FrictionTemplate)];
+
+            foreach (var instance in targets)
             {
-                EntryPath = EntryPath,
-                Name = Name,
-                DisplayName = DisplayName,
-                SourceFile = SourceFile,
-                SetId = SetId,
-                SetName = SetName,
-                UsedBy = UsedBy,
-                UsedByTooltip = UsedByTooltip,
-                Category = Category,
-                Price = Price,
-                FrictionTemplate = FrictionTemplate,
-                OnRoadFriction = OnRoadFriction,
-                OffRoadFriction = OffRoadFriction,
-                MudFriction = MudFriction,
-                IgnoreIce = IgnoreIce,
-            };
+                yield return new TireDefinition
+                {
+                    EntryPath = instance.EntryPath,
+                    Name = instance.Name,
+                    DisplayName = DisplayName,
+                    SourceFile = instance.SourceFile,
+                    SetId = instance.SetId,
+                    SetName = instance.SetName,
+                    UsedBy = UsedBy,
+                    UsedByTooltip = UsedByTooltip,
+                    Category = Category,
+                    Price = Price,
+                    FrictionTemplate = instance.FrictionTemplate,
+                    OnRoadFriction = OnRoadFriction,
+                    OffRoadFriction = OffRoadFriction,
+                    MudFriction = MudFriction,
+                    IgnoreIce = IgnoreIce,
+                };
+            }
+        }
+    }
+
+    public readonly record struct TireGroupKey(
+        string Category,
+        string DisplayName,
+        int Price,
+        double OnRoadFriction,
+        double OffRoadFriction,
+        double MudFriction,
+        bool IgnoreIce);
+
+    public readonly record struct TireInstanceRef(
+        string EntryPath,
+        string Name,
+        string SetId,
+        string SetName,
+        string SourceFile,
+        string FrictionTemplate)
+    {
+        public static TireInstanceRef FromDefinition(TireDefinition definition) =>
+            new(
+                definition.EntryPath,
+                definition.Name,
+                definition.SetId,
+                definition.SetName,
+                definition.SourceFile,
+                definition.FrictionTemplate);
     }
 }

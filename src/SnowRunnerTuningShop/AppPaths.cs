@@ -16,6 +16,27 @@ internal static class AppPaths
         return File.Exists(candidate) ? candidate : null;
     }
 
+    public static string? TryFindGeneralAssetsDirectory()
+    {
+        var fromOutput = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "assets", "general"));
+        if (Directory.Exists(fromOutput))
+        {
+            return fromOutput;
+        }
+
+        var root = TryFindRepoRoot();
+        if (root is not null)
+        {
+            var fromRepo = Path.Combine(root, "assets", "general");
+            if (Directory.Exists(fromRepo))
+            {
+                return fromRepo;
+            }
+        }
+
+        return null;
+    }
+
     public static string? TryFindVehiclesAssetsDirectory()
     {
         var root = TryFindRepoRoot();

@@ -12,6 +12,7 @@ public sealed class TireDefinition
     public string SetName { get; init; } = "";
     public string UsedBy { get; init; } = "";
     public string UsedByTooltip { get; init; } = "";
+    public IReadOnlyList<string> UsedByVehicles { get; init; } = [];
     public required string Category { get; init; }
     public int Price { get; init; }
     public string FrictionTemplate { get; init; } = "";

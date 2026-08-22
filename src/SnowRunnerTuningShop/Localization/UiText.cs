@@ -5,12 +5,13 @@ public static class UiText
     public static class Nav
     {
         public const string Home = "Home";
+        public const string General = "General";
         public const string Parts = "Parts";
         public const string Vehicles = "Vehicles";
         public const string Settings = "Settings";
         public const string OpenMenu = "Menu";
         public const string PinMenu = "Keep menu open";
-        public const string VersionLabel = "Version 1.0 Beta";
+        public const string VersionLabel = "Version 1.0.1";
     }
 
     public static class Main
@@ -121,6 +122,36 @@ public static class UiText
         public const string ComingSoon = "Coming soon.";
         public const string LoadPakHint = "Load an initial.pak on the Home page first.";
         public const string Loading = "Loading…";
+    }
+
+    public static class General
+    {
+        public const string Title = "General tuning";
+        public const string LoadPakHint = "Load an initial.pak on the Home page first.";
+        public const string AssetsMissing = "General mod assets were not found.";
+        public const string CameraTitle = "Camera collisions";
+        public const string CameraHint =
+            "Sets ClipCamera on map object models. Pass through stops the chase camera from clipping against buildings, bridges, and similar objects.";
+        public const string CameraModeLabel = "Mode";
+        public const string CameraCollisionsOff = "Pass through objects";
+        public const string CameraCollisionsOn = "Game default (collisions)";
+        public const string ApplyCamera = "Apply camera setting";
+        public const string RestoreCameraBaseline = "Restore camera baseline";
+        public const string RockTitle = "Trail rock size";
+        public const string RockHint =
+            "Adjusts trail pebbles (SmallRock plants: small_rock, small_forest_rock, burnt_small_rock — base game and DLC). Left = no collision; right = vanilla baseline.";
+        public const string RockSizeDefault = "Rock physics: Vanilla (baseline)";
+        public const string ApplyRockSize = "Apply rock size";
+        public const string RestoreRockBaseline = "Restore rock baseline";
+        public const string NoChangesToSave = "No general changes were detected to save.";
+        public const string SaveSuccessTitle = "Saved successfully";
+        public const string SaveErrorTitle = "Save error";
+        public static string CameraSaved(int files) =>
+            $"Camera collisions updated in {files} model file(s). Reload the game to test.";
+        public static string RockSaved(int files) =>
+            $"Trail rock settings updated in {files} pak file(s). Reload the game to test.";
+        public static string LoadedStatus(int cameraModels, double rockScale) =>
+            $"Detected {cameraModels} camera-eligible models; reference rock scale {rockScale:0%}.";
     }
 
     public static class Vehicles

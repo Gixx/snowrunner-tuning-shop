@@ -245,6 +245,7 @@ public static class TireService
                 UsedByTooltip = PartXmlHelpers.FormatUsedByTooltip(
                     usedByNames,
                     "No trucks reference this wheel set."),
+                UsedByVehicles = usedByNames,
                 Category = InferCategory(entryPath),
                 Price = PartXmlHelpers.ExtractPrice(block),
                 FrictionTemplate = frictionTemplate ?? "",

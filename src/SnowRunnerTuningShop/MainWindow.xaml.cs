@@ -17,6 +17,7 @@ public partial class MainWindow : Window
         InitializeComponent();
 
         HomeView.AttachSession(_session);
+        GeneralView.AttachSession(_session);
         PartsView.AttachSession(_session);
         VehiclesView.AttachSession(_session);
 
@@ -107,6 +108,10 @@ public partial class MainWindow : Window
         {
             ShowPage(HomeView);
         }
+        else if (ReferenceEquals(radio, NavGeneral))
+        {
+            ShowPage(GeneralView);
+        }
         else if (ReferenceEquals(radio, NavParts))
         {
             ShowPage(PartsView);
@@ -130,6 +135,7 @@ public partial class MainWindow : Window
     private void ShowPage(UIElement page)
     {
         HomeView.Visibility = Visibility.Collapsed;
+        GeneralView.Visibility = Visibility.Collapsed;
         PartsView.Visibility = Visibility.Collapsed;
         VehiclesView.Visibility = Visibility.Collapsed;
         SettingsView.Visibility = Visibility.Collapsed;
