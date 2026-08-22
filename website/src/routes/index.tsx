@@ -58,7 +58,7 @@ const features = [
   {
     icon: Gauge,
     title: "Steering you can feel",
-    body: "Front steer angle and TruckData responsiveness per vehicle — turn a barge into something that actually corners.",
+    body: "Front steer angle and how quickly the wheel snaps back to center — turn a barge into something that actually corners.",
   },
   {
     icon: Lock,

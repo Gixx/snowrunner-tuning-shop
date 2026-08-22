@@ -96,7 +96,7 @@ export const Route = createRootRoute({
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600&display=swap",
       },
-      { rel: "icon", href: "/snowrunner-tuning-shop/favicon.svg", type: "image/svg+xml" },
+      { rel: "icon", href: "/snowrunner-tuning-shop/favicon.ico", type: "image/x-icon" },
     ],
   }),
   shellComponent: RootShell,
