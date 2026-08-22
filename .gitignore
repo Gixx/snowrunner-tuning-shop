@@ -13,3 +13,10 @@ obj/
 *.backup-*
 initial.pak.backup-*
 artifacts/
+
+# Website (GitHub Pages)
+website/node_modules/
+website/dist/
+website/.output/
+website/.tanstack/
+website/.nitro/

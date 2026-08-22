@@ -79,7 +79,10 @@ src/
   SnowRunnerTuningShop/          # WPF UI
   SnowRunnerTuningShop.Core/     # Pak I/O, parsers, tuning services
 assets/vehicles/                 # Vehicle catalog images + JSON
+website/                         # Landing page (GitHub Pages)
 ```
+
+The site is published by `.github/workflows/pages.yml`. In the repo: **Settings → Pages → Source: GitHub Actions**. Live URL: `https://gixx.github.io/snowrunner-tuning-shop/`
 
 Build:
 

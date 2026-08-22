@@ -1,0 +1,9 @@
+node_modules
+dist
+.output
+.tanstack
+.nitro
+.vinxi
+*.local
+.DS_Store
+Thumbs.db
