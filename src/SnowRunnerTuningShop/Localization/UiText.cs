@@ -11,7 +11,7 @@ public static class UiText
         public const string Settings = "Settings";
         public const string OpenMenu = "Menu";
         public const string PinMenu = "Keep menu open";
-        public const string VersionLabel = "Version 1.0.1";
+        public const string VersionLabel = "Version 1.0.2";
     }
 
     public static class Main
@@ -223,7 +223,24 @@ public static class UiText
     public static class Settings
     {
         public const string Title = "Settings";
-        public const string Placeholder = "App settings will go here (language, paths, theme).";
+        public const string AppearanceTitle = "Appearance";
+        public const string AppearanceHint = "Choose the app color theme. System follows Windows light/dark mode.";
+        public const string ThemeLabel = "Theme";
+        public const string ThemeSystem = "System";
+        public const string ThemeDark = "Dark";
+        public const string ThemeLight = "Light";
+        public const string WorkspaceTitle = "Workspace";
+        public const string WorkspaceHint =
+            "Replace the entire working initial.pak with the read-only baseline copy for this edition.";
+        public const string AboutTitle = "About & support";
+        public const string AboutHint =
+            "Project website, releases, and optional support via PayPal.";
+        public const string OpenWebsite = "Open website";
+        public const string DonatePayPal = "Donate with PayPal";
+        public const string FeedbackTitle = "Feedback";
+        public const string FeedbackHint =
+            "Found a bug or have an idea? Open an issue on the GitHub tracker.";
+        public const string OpenIssueTracker = "Open issue tracker";
     }
 
     public static class Engine

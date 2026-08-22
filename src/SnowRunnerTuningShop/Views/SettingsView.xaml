@@ -1,21 +1,131 @@
 <UserControl x:Class="SnowRunnerTuningShop.Views.SettingsView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:loc="clr-namespace:SnowRunnerTuningShop.Localization">
-    <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
-            BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
-            BorderThickness="1"
-            CornerRadius="8"
-            Padding="20">
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:loc="clr-namespace:SnowRunnerTuningShop.Localization"
+             mc:Ignorable="d"
+             d:DesignHeight="560"
+             d:DesignWidth="900">
+    <Grid>
         <StackPanel>
             <TextBlock Text="{x:Static loc:UiText+Settings.Title}"
                        FontSize="22"
                        FontWeight="SemiBold"
                        Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-                       Margin="0,0,0,12"/>
-            <TextBlock Text="{x:Static loc:UiText+Settings.Placeholder}"
-                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                       TextWrapping="Wrap"/>
+                       Margin="0,0,0,16"/>
+
+            <Border Background="{DynamicResource CardBackgroundFillColorSecondaryBrush}"
+                    BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="16"
+                    Margin="0,0,0,12">
+                <StackPanel>
+                    <TextBlock Text="{x:Static loc:UiText+Settings.AppearanceTitle}"
+                               FontWeight="SemiBold"
+                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                               Margin="0,0,0,8"/>
+                    <TextBlock Text="{x:Static loc:UiText+Settings.AppearanceHint}"
+                               TextWrapping="Wrap"
+                               FontSize="11"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                               Margin="0,0,0,12"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="180"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="{x:Static loc:UiText+Settings.ThemeLabel}"
+                                   VerticalAlignment="Center"
+                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                        <ComboBox x:Name="ThemeCombo"
+                                  Grid.Column="1"
+                                  MaxWidth="320"
+                                  HorizontalAlignment="Left"
+                                  Padding="8,6"
+                                  SelectionChanged="ThemeCombo_SelectionChanged"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <Border Background="{DynamicResource CardBackgroundFillColorSecondaryBrush}"
+                    BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="16"
+                    Margin="0,0,0,12">
+                <StackPanel>
+                    <TextBlock Text="{x:Static loc:UiText+Settings.WorkspaceTitle}"
+                               FontWeight="SemiBold"
+                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                               Margin="0,0,0,8"/>
+                    <TextBlock Text="{x:Static loc:UiText+Settings.WorkspaceHint}"
+                               TextWrapping="Wrap"
+                               FontSize="11"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                               Margin="0,0,0,12"/>
+                    <Button x:Name="RestoreFullBaselineButton"
+                            Content="{x:Static loc:UiText+Main.RestoreFullBaseline}"
+                            HorizontalAlignment="Left"
+                            Padding="14,8"
+                            Background="#C42B1C"
+                            Foreground="White"
+                            BorderBrush="#C42B1C"
+                            Click="RestoreFullBaselineButton_Click"/>
+                </StackPanel>
+            </Border>
+
+            <Border Background="{DynamicResource CardBackgroundFillColorSecondaryBrush}"
+                    BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="16"
+                    Margin="0,0,0,12">
+                <StackPanel>
+                    <TextBlock Text="{x:Static loc:UiText+Settings.AboutTitle}"
+                               FontWeight="SemiBold"
+                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                               Margin="0,0,0,8"/>
+                    <TextBlock Text="{x:Static loc:UiText+Settings.AboutHint}"
+                               TextWrapping="Wrap"
+                               FontSize="11"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                               Margin="0,0,0,12"/>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="{x:Static loc:UiText+Settings.OpenWebsite}"
+                                Padding="14,8"
+                                Margin="0,0,8,0"
+                                Click="OpenWebsiteButton_Click"/>
+                        <Button Content="{x:Static loc:UiText+Settings.DonatePayPal}"
+                                Padding="14,8"
+                                Click="DonatePayPalButton_Click"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <Border Background="{DynamicResource CardBackgroundFillColorSecondaryBrush}"
+                    BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="16"
+                    Margin="0,0,0,12">
+                <StackPanel>
+                    <TextBlock Text="{x:Static loc:UiText+Settings.FeedbackTitle}"
+                               FontWeight="SemiBold"
+                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                               Margin="0,0,0,8"/>
+                    <TextBlock Text="{x:Static loc:UiText+Settings.FeedbackHint}"
+                               TextWrapping="Wrap"
+                               FontSize="11"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                               Margin="0,0,0,12"/>
+                    <Button Content="{x:Static loc:UiText+Settings.OpenIssueTracker}"
+                            HorizontalAlignment="Left"
+                            Padding="14,8"
+                            Click="OpenIssueTrackerButton_Click"/>
+                </StackPanel>
+            </Border>
         </StackPanel>
-    </Border>
+    </Grid>
 </UserControl>

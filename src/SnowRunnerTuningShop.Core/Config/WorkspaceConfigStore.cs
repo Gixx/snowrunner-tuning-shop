@@ -9,8 +9,26 @@ public sealed class WorkspaceConfig
 
     public bool SidebarPinned { get; set; }
 
+    /// <summary>App theme: System, Dark, or Light.</summary>
+    public string ThemeMode { get; set; } = ThemeModes.System;
+
     public Dictionary<string, EditionConfig> Editions { get; set; } =
         new(StringComparer.OrdinalIgnoreCase);
+}
+
+public static class ThemeModes
+{
+    public const string System = "System";
+    public const string Dark = "Dark";
+    public const string Light = "Light";
+
+    public static string Normalize(string? value) =>
+        value switch
+        {
+            Dark => Dark,
+            Light => Light,
+            _ => System,
+        };
 }
 
 public sealed class EditionConfig
@@ -128,6 +146,15 @@ public static class WorkspaceConfigStore
     {
         var config = Load();
         config.SidebarPinned = pinned;
+        Save(config);
+    }
+
+    public static string GetThemeMode() => ThemeModes.Normalize(Load().ThemeMode);
+
+    public static void SetThemeMode(string themeMode)
+    {
+        var config = Load();
+        config.ThemeMode = ThemeModes.Normalize(themeMode);
         Save(config);
     }
 

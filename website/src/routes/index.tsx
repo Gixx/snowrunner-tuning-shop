@@ -263,7 +263,7 @@ function Index() {
               <span className="shine-text">GET THE TUNING SHOP</span>
             </h2>
             <p className="mt-5 text-muted-foreground">
-              Version 1.0.1 · free forever · no account, no telemetry, no launcher.
+              Version 1.0.2 · free forever · no account, no telemetry, no launcher.
             </p>
             <a
               href={RELEASE_URL}
