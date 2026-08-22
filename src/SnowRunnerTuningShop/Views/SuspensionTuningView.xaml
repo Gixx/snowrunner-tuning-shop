@@ -170,22 +170,22 @@
                 <DataGridTextColumn Header="{x:Static loc:UiText+Suspension.DamageColumn}" Binding="{Binding DamageCapacity, StringFormat=0.##, UpdateSourceTrigger=PropertyChanged}" Width="80"
                                     ElementStyle="{StaticResource TuningGridTextElementStyle}"
                                     EditingElementStyle="{StaticResource TuningGridTextEditingStyle}"/>
-                <DataGridTextColumn Header="{x:Static loc:UiText+Suspension.FrontHeightColumn}" Binding="{Binding FrontHeight, StringFormat=0.##, UpdateSourceTrigger=PropertyChanged}" Width="80"
+                <DataGridTextColumn Header="{x:Static loc:UiText+Suspension.FrontHeightColumn}" Binding="{Binding FrontHeight, StringFormat=0.##, TargetNullValue='', UpdateSourceTrigger=PropertyChanged}" Width="80"
                                     ElementStyle="{StaticResource TuningGridTextElementStyle}"
                                     EditingElementStyle="{StaticResource TuningGridTextEditingStyle}"/>
-                <DataGridTextColumn Header="{x:Static loc:UiText+Suspension.FrontStrengthColumn}" Binding="{Binding FrontStrength, StringFormat=0.##, UpdateSourceTrigger=PropertyChanged}" Width="90"
+                <DataGridTextColumn Header="{x:Static loc:UiText+Suspension.FrontStrengthColumn}" Binding="{Binding FrontStrength, StringFormat=0.##, TargetNullValue='', UpdateSourceTrigger=PropertyChanged}" Width="90"
                                     ElementStyle="{StaticResource TuningGridTextElementStyle}"
                                     EditingElementStyle="{StaticResource TuningGridTextEditingStyle}"/>
-                <DataGridTextColumn Header="{x:Static loc:UiText+Suspension.FrontDampingColumn}" Binding="{Binding FrontDamping, StringFormat=0.##, UpdateSourceTrigger=PropertyChanged}" Width="90"
+                <DataGridTextColumn Header="{x:Static loc:UiText+Suspension.FrontDampingColumn}" Binding="{Binding FrontDampingText, UpdateSourceTrigger=LostFocus}" Width="90"
                                     ElementStyle="{StaticResource TuningGridTextElementStyle}"
                                     EditingElementStyle="{StaticResource TuningGridTextEditingStyle}"/>
-                <DataGridTextColumn Header="{x:Static loc:UiText+Suspension.RearHeightColumn}" Binding="{Binding RearHeight, StringFormat=0.##, UpdateSourceTrigger=PropertyChanged}" Width="80"
+                <DataGridTextColumn Header="{x:Static loc:UiText+Suspension.RearHeightColumn}" Binding="{Binding RearHeight, StringFormat=0.##, TargetNullValue='', UpdateSourceTrigger=PropertyChanged}" Width="80"
                                     ElementStyle="{StaticResource TuningGridTextElementStyle}"
                                     EditingElementStyle="{StaticResource TuningGridTextEditingStyle}"/>
-                <DataGridTextColumn Header="{x:Static loc:UiText+Suspension.RearStrengthColumn}" Binding="{Binding RearStrength, StringFormat=0.##, UpdateSourceTrigger=PropertyChanged}" Width="90"
+                <DataGridTextColumn Header="{x:Static loc:UiText+Suspension.RearStrengthColumn}" Binding="{Binding RearStrength, StringFormat=0.##, TargetNullValue='', UpdateSourceTrigger=PropertyChanged}" Width="90"
                                     ElementStyle="{StaticResource TuningGridTextElementStyle}"
                                     EditingElementStyle="{StaticResource TuningGridTextEditingStyle}"/>
-                <DataGridTextColumn Header="{x:Static loc:UiText+Suspension.RearDampingColumn}" Binding="{Binding RearDamping, StringFormat=0.##, UpdateSourceTrigger=PropertyChanged}" Width="90"
+                <DataGridTextColumn Header="{x:Static loc:UiText+Suspension.RearDampingColumn}" Binding="{Binding RearDampingText, UpdateSourceTrigger=LostFocus}" Width="90"
                                     ElementStyle="{StaticResource TuningGridTextElementStyle}"
                                     EditingElementStyle="{StaticResource TuningGridTextEditingStyle}"/>
             </DataGrid.Columns>

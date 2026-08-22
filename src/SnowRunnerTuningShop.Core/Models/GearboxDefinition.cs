@@ -16,6 +16,7 @@ public sealed class GearboxDefinition
     public int Price { get; init; }
     public double FuelConsumption { get; set; }
     public double IdleFuelModifier { get; set; }
-    public double AwdConsumptionModifier { get; set; }
-    public bool HasAwdConsumptionModifier { get; set; }
+    /// <summary>Null when AWDConsumptionModifier is absent in XML.</summary>
+    public double? AwdConsumptionModifier { get; set; }
+    public bool HasAwdConsumptionModifier => AwdConsumptionModifier.HasValue;
 }

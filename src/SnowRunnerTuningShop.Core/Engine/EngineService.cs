@@ -13,6 +13,9 @@ namespace SnowRunnerTuningShop.Core.Engine;
 
 public static class EngineService
 {
+    /// <summary>Saber default when EngineResponsiveness is omitted from XML.</summary>
+    public const double DefaultEngineResponsiveness = 0.04;
+
     private static readonly string[] DamageAndResponsivenessTags =
     [
         "Engine",
@@ -248,7 +251,9 @@ public static class EngineService
                 Torque = ParseDouble(attrs.GetValueOrDefault("Torque"), 0),
                 FuelConsumption = ParseDouble(attrs.GetValueOrDefault("FuelConsumption"), 0),
                 DamageCapacity = ParseDouble(attrs.GetValueOrDefault("DamageCapacity"), 0),
-                EngineResponsiveness = ParseDouble(attrs.GetValueOrDefault("EngineResponsiveness"), 0),
+                EngineResponsiveness = hasResponsiveness
+                    ? ParseDouble(attrs["EngineResponsiveness"], DefaultEngineResponsiveness)
+                    : DefaultEngineResponsiveness,
                 HasEngineResponsiveness = hasResponsiveness,
             });
         }
@@ -372,7 +377,17 @@ public static class EngineService
 
             if (!responsivenessBaseline && IsDamageOrResponsivenessTag(tag))
             {
-                changed |= TryScaleAttribute(ref updatedAttrs, "EngineResponsiveness", engineResponsivenessMultiplier, preferInteger: false);
+                if (!TryScaleAttribute(ref updatedAttrs, "EngineResponsiveness", engineResponsivenessMultiplier, preferInteger: false))
+                {
+                    var scaledDefault = Math.Round(
+                        DefaultEngineResponsiveness * engineResponsivenessMultiplier,
+                        6,
+                        MidpointRounding.AwayFromZero);
+                    changed |= SetOrReplaceAttribute(
+                        ref updatedAttrs,
+                        "EngineResponsiveness",
+                        FormatNumeric(scaledDefault, preferInteger: false));
+                }
             }
 
             if (!changed)
@@ -416,7 +431,7 @@ public static class EngineService
             changed |= SetOrReplaceAttribute(ref updatedAttrs, "FuelConsumption", FormatNumeric(target.FuelConsumption, preferInteger: false));
             changed |= SetOrReplaceAttribute(ref updatedAttrs, "DamageCapacity", FormatNumeric(target.DamageCapacity, preferInteger: true));
 
-            if (target.HasEngineResponsiveness || AttributeExists(updatedAttrs, "EngineResponsiveness"))
+            if (ShouldWriteEngineResponsiveness(target, updatedAttrs))
             {
                 changed |= SetOrReplaceAttribute(
                     ref updatedAttrs,
@@ -442,6 +457,11 @@ public static class EngineService
         changedEngines = localChanged;
         return true;
     }
+
+    private static bool ShouldWriteEngineResponsiveness(EngineAttributeValues target, string attrs) =>
+        target.HasEngineResponsiveness
+        || AttributeExists(attrs, "EngineResponsiveness")
+        || Math.Abs(target.EngineResponsiveness - DefaultEngineResponsiveness) > 1e-6;
 
     private static int CountNamedEngineDifferences(string currentText, string updatedText)
     {

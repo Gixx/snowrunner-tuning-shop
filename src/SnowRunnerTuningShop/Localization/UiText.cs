@@ -132,10 +132,61 @@ public static class UiText
         public const string Offroad = "Offroad";
         public const string Scout = "Scout";
         public const string BackToList = "← Back to list";
-        public const string DetailPlaceholder =
-            "Per-vehicle tuning will go here (fuel, steering, drive layout, etc.).";
+        public const string ManufacturerLabel = "Manufacturer";
+        public const string BasedOnLabel = "Based on";
+        public const string RoleLabel = "Role";
+        public const string YearsLabel = "Years";
+        public const string CountryLabel = "Country";
         public const string CatalogMissing = "Vehicle catalog assets were not found.";
+        public const string SearchPlaceholder = "Search by name…";
+        public const string TuningTitle = "Vehicle tuning";
+        public const string FuelTankLabel = "Fuel tank";
+        public const string FuelUnit = "L";
+        public const string FrontSteerLabel = "Front steer";
+        public const string RearSteerLabel = "Rear steer";
+        public const string SteerAngleUnit = "°";
+        public const string ResponsivenessLabel = "Responsiveness";
+        public const string FrontSteerHint =
+            "Maximum turn for front steering wheels. Applies to all front steer axles. Range: 0° to 90°.";
+        public const string RearSteerHint =
+            "Rear-axle counter-steer (turns opposite to the front). Applies to all rear steer axles. Range: −90° to 0°.";
+        public const string ResponsivenessHint =
+            "How quickly the steering wheel returns to center (TruckData Responsiveness). Range: 0–1; higher = snappier.";
+        public const string DiffLockLabel = "Diff lock";
+        public const string DriveLabel = "Drive";
+        public const string DiffLockAlwaysOn = "Always on";
+        public const string DiffLockSwitchable = "Switchable";
+        public const string DiffLockUpgradeable = "Upgradeable";
+        public const string DiffLockNone = "None";
+        public const string DriveRwd = "RWD";
+        public const string DriveAlwaysAwd = "Always AWD";
+        public const string DriveSelectableAwd = "Selectable AWD";
+        public const string DiffLockHintNative =
+            "Switchable and Upgradeable use the truck's built-in diff-lock upgrade slot.";
+        public const string DiffLockHintSimple =
+            "This truck has no diff-lock upgrade in the game. Only None or Always on can be set.";
+        public const string DriveHint =
+            "Selectable AWD turns on the in-cab AWD switch. It does not add an AWD row in the upgrade list (that requires a transfer-case addon).";
+        public const string SaveChanges = "Save changes";
+        public const string RestoreThisVehicle = "Restore this vehicle to baseline";
+        public const string LoadPakHint = "Load an initial.pak on the Home page first.";
+        public const string TruckNotFound =
+            "This vehicle could not be matched to a truck XML in the loaded pak.";
+        public const string InvalidFuel =
+            "Fuel tank must be a whole number of liters (1–10000).";
+        public const string InvalidResponsiveness =
+            "Responsiveness must be between 0 and 1.";
+        public const string InvalidFrontSteer =
+            "Front steer must be between 0 and 90 degrees.";
+        public const string InvalidRearSteer =
+            "Rear steer must be between -90 and 0 degrees.";
+        public const string SaveSuccessTitle = "Saved successfully";
+        public const string SaveErrorTitle = "Save error";
+        public const string RestoreSuccessTitle = "Vehicle restored";
+        public const string NoChangesToSave = "No vehicle changes were detected to save.";
         public static string CountLabel(int count) => $"{count} vehicles";
+        public static string SavedMessage() => "Vehicle tuning saved.";
+        public static string RestoredMessage() => "This vehicle was restored from the baseline.";
     }
 
     public static class Settings
@@ -263,6 +314,8 @@ public static class UiText
         public const string RearHeightColumn = "R Height";
         public const string RearStrengthColumn = "R Strength";
         public const string RearDampingColumn = "R Damping";
+        /// <summary>Shown when an optional numeric attribute is absent from XML.</summary>
+        public const string MissingValuePlaceholder = "n/a";
         public const string LoadPakFirst = "Load an initial.pak file first.";
         public const string SaveSuccessTitle = "Saved successfully";
         public const string SaveErrorTitle = "Save error";

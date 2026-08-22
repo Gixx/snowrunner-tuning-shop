@@ -140,8 +140,7 @@ public static class GearboxService
                     gearbox => new GearboxAttributeValues(
                         gearbox.FuelConsumption,
                         gearbox.IdleFuelModifier,
-                        gearbox.AwdConsumptionModifier,
-                        gearbox.HasAwdConsumptionModifier),
+                        gearbox.AwdConsumptionModifier),
                     StringComparer.OrdinalIgnoreCase);
 
                 if (!TryApplyUpdatesToText(text, updates, out var updatedText, out var fileChanged))
@@ -227,8 +226,9 @@ public static class GearboxService
                 Price = PartXmlHelpers.ExtractPrice(block),
                 FuelConsumption = ParseDouble(attrs.GetValueOrDefault("FuelConsumption"), 0),
                 IdleFuelModifier = ParseDouble(attrs.GetValueOrDefault("IdleFuelModifier"), 0),
-                AwdConsumptionModifier = ParseDouble(attrs.GetValueOrDefault("AWDConsumptionModifier"), 0),
-                HasAwdConsumptionModifier = hasAwd,
+                AwdConsumptionModifier = hasAwd
+                    ? ParseDouble(attrs["AWDConsumptionModifier"], 0)
+                    : null,
             });
         }
 
@@ -411,12 +411,12 @@ public static class GearboxService
             changed |= SetOrReplaceAttribute(ref updatedAttrs, "FuelConsumption", FormatNumeric(target.FuelConsumption));
             changed |= SetOrReplaceAttribute(ref updatedAttrs, "IdleFuelModifier", FormatNumeric(target.IdleFuelModifier));
 
-            if (target.HasAwdConsumptionModifier || AttributeExists(updatedAttrs, "AWDConsumptionModifier"))
+            if (target.AwdConsumptionModifier.HasValue || AttributeExists(updatedAttrs, "AWDConsumptionModifier"))
             {
                 changed |= SetOrReplaceAttribute(
                     ref updatedAttrs,
                     "AWDConsumptionModifier",
-                    FormatNumeric(target.AwdConsumptionModifier));
+                    FormatNumeric(target.AwdConsumptionModifier ?? 0));
             }
 
             if (!changed)
@@ -454,7 +454,7 @@ public static class GearboxService
 
             if (Math.Abs(existing.FuelConsumption - target.FuelConsumption) > 1e-6
                 || Math.Abs(existing.IdleFuelModifier - target.IdleFuelModifier) > 1e-6
-                || Math.Abs(existing.AwdConsumptionModifier - target.AwdConsumptionModifier) > 1e-6)
+                || !NullableDoubleEquals(existing.AwdConsumptionModifier, target.AwdConsumptionModifier))
             {
                 changed++;
             }
@@ -606,8 +606,22 @@ public static class GearboxService
     private readonly record struct GearboxAttributeValues(
         double FuelConsumption,
         double IdleFuelModifier,
-        double AwdConsumptionModifier,
-        bool HasAwdConsumptionModifier);
+        double? AwdConsumptionModifier);
+
+    private static bool NullableDoubleEquals(double? left, double? right)
+    {
+        if (left is null && right is null)
+        {
+            return true;
+        }
+
+        if (left is null || right is null)
+        {
+            return false;
+        }
+
+        return Math.Abs(left.Value - right.Value) <= 1e-6;
+    }
 }
 
 public sealed record GearboxSaveResult(int UpdatedFiles, int ChangedGearboxes);

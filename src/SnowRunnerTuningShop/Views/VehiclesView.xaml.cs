@@ -1,8 +1,13 @@
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using SnowRunnerTuningShop.Core.Backup;
+using SnowRunnerTuningShop.Core.Models;
+using SnowRunnerTuningShop.Core.Trucks;
 using SnowRunnerTuningShop.Localization;
 using SnowRunnerTuningShop.Vehicles;
 
@@ -12,6 +17,13 @@ public partial class VehiclesView : UserControl
 {
     private readonly List<VehicleCard> _all = [];
     private readonly ObservableCollection<VehicleCard> _visible = [];
+    private IReadOnlyDictionary<string, VehicleMetaInfo> _metadata =
+        new Dictionary<string, VehicleMetaInfo>(StringComparer.OrdinalIgnoreCase);
+    private IReadOnlyList<TruckTuningDefinition> _trucks = [];
+    private string? _trucksPakPath;
+    private AppSession? _session;
+    private VehicleCard? _currentCard;
+    private TruckTuningDefinition? _currentTruck;
     private string _filter = "All";
     private bool _ready;
 
@@ -20,6 +32,26 @@ public partial class VehiclesView : UserControl
         InitializeComponent();
         VehiclesItems.ItemsSource = _visible;
         Loaded += VehiclesView_Loaded;
+
+        DiffLockCombo.DisplayMemberPath = nameof(LabeledValue<TruckDiffLockMode>.Label);
+        DiffLockCombo.SelectedValuePath = nameof(LabeledValue<TruckDiffLockMode>.Value);
+
+        DriveCombo.DisplayMemberPath = nameof(LabeledValue<TruckDriveLayout>.Label);
+        DriveCombo.SelectedValuePath = nameof(LabeledValue<TruckDriveLayout>.Value);
+        DriveCombo.ItemsSource = new LabeledValue<TruckDriveLayout>[]
+        {
+            new(UiText.Vehicles.DriveRwd, TruckDriveLayout.Rwd),
+            new(UiText.Vehicles.DriveAlwaysAwd, TruckDriveLayout.AlwaysAwd),
+            new(UiText.Vehicles.DriveSelectableAwd, TruckDriveLayout.SelectableAwd),
+        };
+    }
+
+    public void AttachSession(AppSession session)
+    {
+        _session = session;
+        _session.PakChanged += (_, _) => OnPakChanged();
+        _session.BaselineChanged += (_, _) => RefreshRestoreButton();
+        OnPakChanged();
     }
 
     private void VehiclesView_Loaded(object sender, RoutedEventArgs e)
@@ -32,11 +64,27 @@ public partial class VehiclesView : UserControl
         _ready = true;
         FilterAll.IsChecked = true;
         LoadCatalog();
+        UpdateSearchPlaceholder();
+    }
+
+    private void OnPakChanged()
+    {
+        _trucks = [];
+        _trucksPakPath = null;
+        if (_currentCard is not null && DetailPanel.Visibility == Visibility.Visible)
+        {
+            LoadTuning(_currentCard);
+        }
+        else
+        {
+            ShowTuningHint(UiText.Vehicles.LoadPakHint);
+        }
     }
 
     private void LoadCatalog()
     {
         _all.Clear();
+        _metadata = VehicleMetadata.Load();
         var entries = VehicleCatalog.Load();
         if (entries.Count == 0)
         {
@@ -44,13 +92,32 @@ public partial class VehiclesView : UserControl
             return;
         }
 
+        var flagCache = new Dictionary<string, BitmapImage?>(StringComparer.OrdinalIgnoreCase);
         foreach (var entry in entries)
         {
+            _metadata.TryGetValue(entry.Id, out var meta);
+            BitmapImage? flag = null;
+            var oval = "";
+            if (meta?.Country is { } country)
+            {
+                oval = country.OvalCode;
+                if (!string.IsNullOrWhiteSpace(country.Code))
+                {
+                    if (!flagCache.TryGetValue(country.Code, out flag))
+                    {
+                        flag = VehicleMetadata.TryLoadImage(country.FlagPath, decodePixelWidth: 56);
+                        flagCache[country.Code] = flag;
+                    }
+                }
+            }
+
             _all.Add(new VehicleCard(
                 entry.Id,
                 entry.DisplayName,
                 entry.Category,
-                VehicleCatalog.TryLoadImage(entry.ImagePath)));
+                VehicleCatalog.TryLoadImage(entry.ImagePath),
+                oval,
+                flag));
         }
 
         ApplyFilter();
@@ -72,6 +139,22 @@ public partial class VehiclesView : UserControl
         ApplyFilter();
     }
 
+    private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        UpdateSearchPlaceholder();
+        if (_ready)
+        {
+            ApplyFilter();
+        }
+    }
+
+    private void UpdateSearchPlaceholder()
+    {
+        SearchPlaceholder.Visibility = string.IsNullOrWhiteSpace(SearchTextBox.Text)
+            ? Visibility.Visible
+            : Visibility.Collapsed;
+    }
+
     private void ApplyFilter()
     {
         if (!_ready)
@@ -79,14 +162,23 @@ public partial class VehiclesView : UserControl
             return;
         }
 
-        _visible.Clear();
+        var search = SearchTextBox.Text?.Trim() ?? "";
+
         IEnumerable<VehicleCard> query = _all;
         if (!string.Equals(_filter, "All", StringComparison.OrdinalIgnoreCase))
         {
-            query = _all.Where(card => card.Category.Equals(_filter, StringComparison.OrdinalIgnoreCase));
+            query = query.Where(card => card.Category.Equals(_filter, StringComparison.OrdinalIgnoreCase));
         }
 
-        foreach (var card in query)
+        if (search.Length > 0)
+        {
+            query = query.Where(card =>
+                card.DisplayName.Contains(search, StringComparison.OrdinalIgnoreCase)
+                || card.Id.Contains(search, StringComparison.OrdinalIgnoreCase));
+        }
+
+        _visible.Clear();
+        foreach (var card in query.OrderBy(card => card.DisplayName, StringComparer.CurrentCultureIgnoreCase))
         {
             _visible.Add(card);
         }
@@ -106,32 +198,399 @@ public partial class VehiclesView : UserControl
 
     private void ShowDetail(VehicleCard card)
     {
+        _currentCard = card;
         DetailTitleText.Text = card.DisplayName;
-        DetailCategoryText.Text = card.Category;
         DetailImage.Source = card.Image;
+
+        _metadata.TryGetValue(card.Id, out var meta);
+        BindDetailMetadata(meta, card.Category);
+        LoadTuning(card);
+
         ListPanel.Visibility = Visibility.Collapsed;
         DetailPanel.Visibility = Visibility.Visible;
     }
 
+    private void BindDetailMetadata(VehicleMetaInfo? meta, string role)
+    {
+        var manufacturer = meta?.Manufacturer;
+        var logo = manufacturer is null
+            ? null
+            : VehicleMetadata.TryLoadImage(manufacturer.LogoPath, decodePixelWidth: 160);
+        DetailManufacturerLogo.Source = logo;
+        ManufacturerLogoPlate.Visibility = logo is null ? Visibility.Collapsed : Visibility.Visible;
+        ManufacturerLogoPlate.ToolTip = manufacturer?.Name;
+
+        var hasBasedOn = !string.IsNullOrWhiteSpace(meta?.BasedOn);
+        var hasRole = !string.IsNullOrWhiteSpace(role);
+        var hasYears = !string.IsNullOrWhiteSpace(meta?.YearDisplay);
+        var hasCountry = meta?.Country is not null;
+        DetailMetaPanel.Visibility = hasBasedOn || hasRole || hasYears || hasCountry
+            ? Visibility.Visible
+            : Visibility.Collapsed;
+
+        BasedOnRow.Visibility = hasBasedOn ? Visibility.Visible : Visibility.Collapsed;
+        DetailBasedOnText.Text = meta?.BasedOn ?? "";
+        BasedOnRow.Margin = hasRole || hasYears || hasCountry ? new Thickness(0, 0, 0, 10) : new Thickness(0);
+
+        RoleRow.Visibility = hasRole ? Visibility.Visible : Visibility.Collapsed;
+        DetailRoleText.Text = role;
+        RoleRow.Margin = hasYears || hasCountry ? new Thickness(0, 0, 0, 10) : new Thickness(0);
+
+        YearsRow.Visibility = hasYears ? Visibility.Visible : Visibility.Collapsed;
+        DetailYearsText.Text = meta?.YearDisplay ?? "";
+        YearsRow.Margin = hasCountry ? new Thickness(0, 0, 0, 10) : new Thickness(0);
+
+        CountryRow.Visibility = hasCountry ? Visibility.Visible : Visibility.Collapsed;
+        if (hasCountry)
+        {
+            var country = meta!.Country!;
+            DetailCountryFlag.Source = VehicleMetadata.TryLoadImage(country.FlagPath, decodePixelWidth: 56);
+            DetailCountryFlag.Visibility = DetailCountryFlag.Source is null
+                ? Visibility.Collapsed
+                : Visibility.Visible;
+            DetailCountryName.Text = country.Name;
+        }
+        else
+        {
+            DetailCountryFlag.Source = null;
+            DetailCountryName.Text = "";
+        }
+    }
+
+    private void LoadTuning(VehicleCard card)
+    {
+        _currentTruck = null;
+        TuningStatusText.Text = "";
+        RefreshRestoreButton();
+
+        if (_session?.HasPak != true || string.IsNullOrWhiteSpace(_session.PakPath))
+        {
+            ShowTuningHint(UiText.Vehicles.LoadPakHint);
+            return;
+        }
+
+        try
+        {
+            EnsureTrucksLoaded(_session.PakPath);
+        }
+        catch (Exception ex)
+        {
+            ShowTuningHint(ex.Message);
+            return;
+        }
+
+        var truck = TruckTuningService.FindByCatalog(_trucks, card.DisplayName, card.Id);
+        if (truck is null)
+        {
+            ShowTuningHint(UiText.Vehicles.TruckNotFound);
+            return;
+        }
+
+        _currentTruck = truck;
+        FuelCapacityTextBox.Text = truck.FuelCapacity.ToString(CultureInfo.InvariantCulture);
+        ResponsivenessTextBox.Text = truck.Responsiveness.ToString("0.######", CultureInfo.InvariantCulture);
+        FrontSteerRow.Visibility = truck.HasFrontSteer ? Visibility.Visible : Visibility.Collapsed;
+        FrontSteerHintText.Visibility = truck.HasFrontSteer ? Visibility.Visible : Visibility.Collapsed;
+        if (truck.HasFrontSteer && truck.FrontSteerAngle is { } frontAngle)
+        {
+            FrontSteerTextBox.Text = frontAngle.ToString("0.######", CultureInfo.InvariantCulture);
+        }
+        else
+        {
+            FrontSteerTextBox.Text = "";
+        }
+
+        RearSteerRow.Visibility = truck.HasRearSteer ? Visibility.Visible : Visibility.Collapsed;
+        RearSteerHintText.Visibility = truck.HasRearSteer ? Visibility.Visible : Visibility.Collapsed;
+        if (truck.HasRearSteer && truck.RearSteerAngle is { } rearAngle)
+        {
+            RearSteerTextBox.Text = rearAngle.ToString("0.######", CultureInfo.InvariantCulture);
+        }
+        else
+        {
+            RearSteerTextBox.Text = "";
+        }
+
+        BindDiffLockOptions(truck);
+        DriveCombo.SelectedValue = truck.DriveLayout;
+        TuningHintText.Visibility = Visibility.Collapsed;
+        TuningForm.Visibility = Visibility.Visible;
+        RefreshRestoreButton();
+    }
+
+    private void EnsureTrucksLoaded(string pakPath)
+    {
+        if (string.Equals(_trucksPakPath, pakPath, StringComparison.OrdinalIgnoreCase) && _trucks.Count > 0)
+        {
+            return;
+        }
+
+        _trucks = TruckTuningService.LoadTrucks(pakPath, AppLanguage.Current);
+        _trucksPakPath = pakPath;
+    }
+
+    private void ShowTuningHint(string message)
+    {
+        TuningForm.Visibility = Visibility.Collapsed;
+        TuningHintText.Text = message;
+        TuningHintText.Visibility = Visibility.Visible;
+        RestoreVehicleButton.IsEnabled = false;
+    }
+
+    private void BindDiffLockOptions(TruckTuningDefinition truck)
+    {
+        LabeledValue<TruckDiffLockMode>[] options;
+        if (truck.HasNativeDiffLockOptions)
+        {
+            options =
+            [
+                new(UiText.Vehicles.DiffLockAlwaysOn, TruckDiffLockMode.AlwaysOn),
+                new(UiText.Vehicles.DiffLockSwitchable, TruckDiffLockMode.Switchable),
+                new(UiText.Vehicles.DiffLockUpgradeable, TruckDiffLockMode.Upgradeable),
+                new(UiText.Vehicles.DiffLockNone, TruckDiffLockMode.None),
+            ];
+            DiffLockHintText.Text = UiText.Vehicles.DiffLockHintNative;
+        }
+        else
+        {
+            options =
+            [
+                new(UiText.Vehicles.DiffLockNone, TruckDiffLockMode.None),
+                new(UiText.Vehicles.DiffLockAlwaysOn, TruckDiffLockMode.AlwaysOn),
+            ];
+            DiffLockHintText.Text = UiText.Vehicles.DiffLockHintSimple;
+        }
+
+        DiffLockCombo.ItemsSource = options;
+
+        var mode = truck.DiffLock;
+        if (!truck.HasNativeDiffLockOptions
+            && mode is TruckDiffLockMode.Switchable or TruckDiffLockMode.Upgradeable)
+        {
+            mode = TruckDiffLockMode.None;
+        }
+
+        DiffLockCombo.SelectedValue = mode;
+    }
+
+    private void RefreshRestoreButton()
+    {
+        RestoreVehicleButton.IsEnabled = _currentTruck is not null
+            && !string.IsNullOrWhiteSpace(_session?.PakPath)
+            && PakBaselineService.HasBaseline(_session.PakPath);
+    }
+
+    private void SaveTuningButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (_currentTruck is null || string.IsNullOrWhiteSpace(_session?.PakPath) || _currentCard is null)
+        {
+            TuningStatusText.Text = UiText.Vehicles.LoadPakHint;
+            return;
+        }
+
+        if (!TryReadForm(out var fuel, out var diffLock, out var drive, out var responsiveness, out var frontSteer, out var rearSteer))
+        {
+            return;
+        }
+
+        _currentTruck.FuelCapacity = fuel;
+        _currentTruck.DiffLock = diffLock;
+        _currentTruck.DriveLayout = drive;
+        _currentTruck.Responsiveness = responsiveness;
+        _currentTruck.FrontSteerAngle = frontSteer;
+        _currentTruck.RearSteerAngle = rearSteer;
+
+        try
+        {
+            var result = TruckTuningService.SaveTruckChanges(_session.PakPath, _currentTruck);
+            _trucksPakPath = null;
+            LoadTuning(_currentCard);
+            TuningStatusText.Text = result.UpdatedFiles <= 0
+                ? UiText.Vehicles.NoChangesToSave
+                : UiText.Vehicles.SavedMessage();
+
+            if (result.UpdatedFiles > 0)
+            {
+                MessageBox.Show(
+                    UiText.Vehicles.SavedMessage(),
+                    UiText.Vehicles.SaveSuccessTitle,
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+            }
+        }
+        catch (Exception ex)
+        {
+            TuningStatusText.Text = UiText.Main.ErrorStatus(ex.Message);
+            MessageBox.Show(ex.Message, UiText.Vehicles.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    private void RestoreVehicleButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (_currentTruck is null || string.IsNullOrWhiteSpace(_session?.PakPath) || _currentCard is null)
+        {
+            TuningStatusText.Text = UiText.Vehicles.LoadPakHint;
+            return;
+        }
+
+        if (!PakBaselineService.HasBaseline(_session.PakPath))
+        {
+            MessageBox.Show(
+                UiText.Main.BaselineMissingShort,
+                UiText.Main.BaselineTitle,
+                MessageBoxButton.OK,
+                MessageBoxImage.Warning);
+            return;
+        }
+
+        try
+        {
+            var result = TruckTuningService.RestoreTruckFromBaseline(_session.PakPath, _currentTruck.EntryPath);
+            _trucksPakPath = null;
+            LoadTuning(_currentCard);
+            TuningStatusText.Text = result.UpdatedFiles <= 0
+                ? UiText.Vehicles.NoChangesToSave
+                : UiText.Vehicles.RestoredMessage();
+
+            if (result.UpdatedFiles > 0)
+            {
+                MessageBox.Show(
+                    UiText.Vehicles.RestoredMessage(),
+                    UiText.Vehicles.RestoreSuccessTitle,
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+            }
+        }
+        catch (Exception ex)
+        {
+            TuningStatusText.Text = UiText.Main.ErrorStatus(ex.Message);
+            MessageBox.Show(ex.Message, UiText.Vehicles.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    private bool TryReadForm(
+        out int fuel,
+        out TruckDiffLockMode diffLock,
+        out TruckDriveLayout drive,
+        out double responsiveness,
+        out double? frontSteer,
+        out double? rearSteer)
+    {
+        fuel = 0;
+        diffLock = TruckDiffLockMode.Switchable;
+        drive = TruckDriveLayout.AlwaysAwd;
+        responsiveness = 0;
+        frontSteer = null;
+        rearSteer = null;
+
+        if (!int.TryParse(FuelCapacityTextBox.Text.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out fuel)
+            || fuel is < 1 or > 10000)
+        {
+            TuningStatusText.Text = UiText.Vehicles.InvalidFuel;
+            return false;
+        }
+
+        if (!double.TryParse(
+                ResponsivenessTextBox.Text.Trim(),
+                NumberStyles.Float,
+                CultureInfo.InvariantCulture,
+                out responsiveness)
+            || responsiveness is < 0 or > 1)
+        {
+            TuningStatusText.Text = UiText.Vehicles.InvalidResponsiveness;
+            return false;
+        }
+
+        if (_currentTruck?.HasFrontSteer == true)
+        {
+            if (!double.TryParse(
+                    FrontSteerTextBox.Text.Trim(),
+                    NumberStyles.Float,
+                    CultureInfo.InvariantCulture,
+                    out var parsedFront)
+                || parsedFront is < 0 or > 90)
+            {
+                TuningStatusText.Text = UiText.Vehicles.InvalidFrontSteer;
+                return false;
+            }
+
+            frontSteer = parsedFront;
+        }
+
+        if (_currentTruck?.HasRearSteer == true)
+        {
+            if (!double.TryParse(
+                    RearSteerTextBox.Text.Trim(),
+                    NumberStyles.Float,
+                    CultureInfo.InvariantCulture,
+                    out var parsedRear)
+                || parsedRear is < -90 or > 0)
+            {
+                TuningStatusText.Text = UiText.Vehicles.InvalidRearSteer;
+                return false;
+            }
+
+            rearSteer = parsedRear;
+        }
+
+        if (DiffLockCombo.SelectedValue is not TruckDiffLockMode selectedDiff
+            || DriveCombo.SelectedValue is not TruckDriveLayout selectedDrive)
+        {
+            TuningStatusText.Text = UiText.Vehicles.LoadPakHint;
+            return false;
+        }
+
+        if (_currentTruck is not null
+            && !_currentTruck.HasNativeDiffLockOptions
+            && selectedDiff is TruckDiffLockMode.Switchable or TruckDiffLockMode.Upgradeable)
+        {
+            selectedDiff = TruckDiffLockMode.None;
+        }
+
+        diffLock = selectedDiff;
+        drive = selectedDrive;
+        return true;
+    }
+
     private void BackButton_Click(object sender, RoutedEventArgs e)
     {
+        _currentCard = null;
+        _currentTruck = null;
         DetailPanel.Visibility = Visibility.Collapsed;
         ListPanel.Visibility = Visibility.Visible;
     }
 
+    public sealed record LabeledValue<T>(string Label, T Value);
+
     private sealed class VehicleCard
     {
-        public VehicleCard(string id, string displayName, string category, BitmapImage? image)
+        public VehicleCard(
+            string id,
+            string displayName,
+            string category,
+            BitmapImage? image,
+            string ovalCode,
+            BitmapImage? flag)
         {
             Id = id;
             DisplayName = displayName;
             Category = category;
             Image = image;
+            OvalCode = ovalCode;
+            Flag = flag;
+            HeaderBrush = VehicleCategoryColors.ForCategory(category);
         }
 
         public string Id { get; }
         public string DisplayName { get; }
         public string Category { get; }
         public BitmapImage? Image { get; }
+        public string OvalCode { get; }
+        public BitmapImage? Flag { get; }
+        public Brush HeaderBrush { get; }
+        public Visibility OvalVisibility =>
+            string.IsNullOrWhiteSpace(OvalCode) ? Visibility.Collapsed : Visibility.Visible;
+        public Visibility FlagVisibility =>
+            Flag is null ? Visibility.Collapsed : Visibility.Visible;
     }
 }

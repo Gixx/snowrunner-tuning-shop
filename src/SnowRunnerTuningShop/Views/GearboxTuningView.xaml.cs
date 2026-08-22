@@ -276,7 +276,7 @@ public partial class GearboxTuningView : UserControl
     {
         private double _fuelConsumption;
         private double _idleFuelModifier;
-        private double _awdConsumptionModifier;
+        private double? _awdConsumptionModifier;
 
         public required string EntryPath { get; init; }
         public required string Name { get; init; }
@@ -288,7 +288,6 @@ public partial class GearboxTuningView : UserControl
         public required string UsedByTooltip { get; init; }
         public required string Category { get; init; }
         public int Price { get; init; }
-        public bool HasAwdConsumptionModifier { get; init; }
 
         public double FuelConsumption
         {
@@ -320,12 +319,15 @@ public partial class GearboxTuningView : UserControl
             }
         }
 
-        public double AwdConsumptionModifier
+        public double? AwdConsumptionModifier
         {
             get => _awdConsumptionModifier;
             set
             {
-                if (Math.Abs(_awdConsumptionModifier - value) < 0.0001)
+                if (_awdConsumptionModifier == value
+                    || (_awdConsumptionModifier is double left
+                        && value is double right
+                        && Math.Abs(left - right) < 0.0001))
                 {
                     return;
                 }
@@ -350,7 +352,6 @@ public partial class GearboxTuningView : UserControl
                 UsedByTooltip = definition.UsedByTooltip,
                 Category = definition.Category,
                 Price = definition.Price,
-                HasAwdConsumptionModifier = definition.HasAwdConsumptionModifier,
                 FuelConsumption = definition.FuelConsumption,
                 IdleFuelModifier = definition.IdleFuelModifier,
                 AwdConsumptionModifier = definition.AwdConsumptionModifier,
@@ -369,7 +370,6 @@ public partial class GearboxTuningView : UserControl
                 UsedByTooltip = UsedByTooltip,
                 Category = Category,
                 Price = Price,
-                HasAwdConsumptionModifier = HasAwdConsumptionModifier,
                 FuelConsumption = FuelConsumption,
                 IdleFuelModifier = IdleFuelModifier,
                 AwdConsumptionModifier = AwdConsumptionModifier,

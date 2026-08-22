@@ -46,8 +46,7 @@ public static class VehicleCatalog
                     row.ImageFile,
                     File.Exists(imagePath) ? imagePath : string.Empty);
             })
-            .OrderBy(entry => entry.Category, StringComparer.OrdinalIgnoreCase)
-            .ThenBy(entry => entry.DisplayName, StringComparer.OrdinalIgnoreCase)
+            .OrderBy(entry => entry.DisplayName, StringComparer.CurrentCultureIgnoreCase)
             .ToArray();
     }
 

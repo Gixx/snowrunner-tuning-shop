@@ -225,8 +225,20 @@ public static class SuspensionService
             var uiNameKey = ExtractUiNameKeyFromBlock(block)
                 ?? (attrs.TryGetValue("UiName", out var attrUiName) ? attrUiName : null);
 
-            ReadWheelValues(block, "front", out var hasFront, out var frontHeight, out var frontStrength, out var frontDamping);
-            ReadWheelValues(block, "rear", out var hasRear, out var rearHeight, out var rearStrength, out var rearDamping);
+            ReadWheelValues(
+                block,
+                "front",
+                out var hasFront,
+                out var frontHeight,
+                out var frontStrength,
+                out var frontDamping);
+            ReadWheelValues(
+                block,
+                "rear",
+                out var hasRear,
+                out var rearHeight,
+                out var rearStrength,
+                out var rearDamping);
 
             suspensions.Add(new SuspensionDefinition
             {
@@ -515,9 +527,9 @@ public static class SuspensionService
                 return match.Value;
             }
 
-            double height;
-            double strength;
-            double damping;
+            double? height;
+            double? strength;
+            double? damping;
             if (wheelType.Equals("front", StringComparison.OrdinalIgnoreCase) && target.HasFront)
             {
                 height = target.FrontHeight;
@@ -537,9 +549,20 @@ public static class SuspensionService
 
             var updatedAttrs = attrs;
             var localChanged = false;
-            localChanged |= SetOrReplaceAttribute(ref updatedAttrs, "Height", FormatNumeric(height));
-            localChanged |= SetOrReplaceAttribute(ref updatedAttrs, "Strength", FormatNumeric(strength));
-            localChanged |= SetOrReplaceAttribute(ref updatedAttrs, "Damping", FormatNumeric(damping));
+            if (height.HasValue || AttributeExists(updatedAttrs, "Height"))
+            {
+                localChanged |= SetOrReplaceAttribute(ref updatedAttrs, "Height", FormatNumeric(height ?? 0));
+            }
+
+            if (strength.HasValue || AttributeExists(updatedAttrs, "Strength"))
+            {
+                localChanged |= SetOrReplaceAttribute(ref updatedAttrs, "Strength", FormatNumeric(strength ?? 0));
+            }
+
+            if (damping.HasValue || AttributeExists(updatedAttrs, "Damping"))
+            {
+                localChanged |= SetOrReplaceAttribute(ref updatedAttrs, "Damping", FormatNumeric(damping ?? 0));
+            }
 
             if (!localChanged)
             {
@@ -568,12 +591,12 @@ public static class SuspensionService
             }
 
             if (Math.Abs(existing.DamageCapacity - target.DamageCapacity) > 1e-6
-                || Math.Abs(existing.FrontHeight - target.FrontHeight) > 1e-6
-                || Math.Abs(existing.FrontStrength - target.FrontStrength) > 1e-6
-                || Math.Abs(existing.FrontDamping - target.FrontDamping) > 1e-6
-                || Math.Abs(existing.RearHeight - target.RearHeight) > 1e-6
-                || Math.Abs(existing.RearStrength - target.RearStrength) > 1e-6
-                || Math.Abs(existing.RearDamping - target.RearDamping) > 1e-6)
+                || !NullableDoubleEquals(existing.FrontHeight, target.FrontHeight)
+                || !NullableDoubleEquals(existing.FrontStrength, target.FrontStrength)
+                || !NullableDoubleEquals(existing.FrontDamping, target.FrontDamping)
+                || !NullableDoubleEquals(existing.RearHeight, target.RearHeight)
+                || !NullableDoubleEquals(existing.RearStrength, target.RearStrength)
+                || !NullableDoubleEquals(existing.RearDamping, target.RearDamping))
             {
                 changed++;
             }
@@ -586,14 +609,14 @@ public static class SuspensionService
         string block,
         string wheelType,
         out bool found,
-        out double height,
-        out double strength,
-        out double damping)
+        out double? height,
+        out double? strength,
+        out double? damping)
     {
         found = false;
-        height = 0;
-        strength = 0;
-        damping = 0;
+        height = null;
+        strength = null;
+        damping = null;
 
         foreach (Match match in SuspensionOpenTagRegex.Matches(block))
         {
@@ -605,9 +628,21 @@ public static class SuspensionService
             }
 
             found = true;
-            height = ParseDouble(attrs.GetValueOrDefault("Height"), 0);
-            strength = ParseDouble(attrs.GetValueOrDefault("Strength"), 0);
-            damping = ParseDouble(attrs.GetValueOrDefault("Damping"), 0);
+            if (attrs.ContainsKey("Height"))
+            {
+                height = ParseDouble(attrs["Height"], 0);
+            }
+
+            if (attrs.ContainsKey("Strength"))
+            {
+                strength = ParseDouble(attrs["Strength"], 0);
+            }
+
+            if (attrs.ContainsKey("Damping"))
+            {
+                damping = ParseDouble(attrs["Damping"], 0);
+            }
+
             return;
         }
     }
@@ -743,14 +778,32 @@ public static class SuspensionService
 
     private readonly record struct SuspensionAttributeValues(
         double DamageCapacity,
-        double FrontHeight,
-        double FrontStrength,
-        double FrontDamping,
+        double? FrontHeight,
+        double? FrontStrength,
+        double? FrontDamping,
         bool HasFront,
-        double RearHeight,
-        double RearStrength,
-        double RearDamping,
+        double? RearHeight,
+        double? RearStrength,
+        double? RearDamping,
         bool HasRear);
+
+    private static bool AttributeExists(string attributesText, string attributeName) =>
+        TryGetAttributeValue(attributesText, attributeName, out _);
+
+    private static bool NullableDoubleEquals(double? left, double? right)
+    {
+        if (left is null && right is null)
+        {
+            return true;
+        }
+
+        if (left is null || right is null)
+        {
+            return false;
+        }
+
+        return Math.Abs(left.Value - right.Value) <= 1e-6;
+    }
 }
 
 public sealed record SuspensionSaveResult(int UpdatedFiles, int ChangedSuspensions);

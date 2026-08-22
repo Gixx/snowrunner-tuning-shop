@@ -159,7 +159,7 @@
                 <DataGridTextColumn Header="{x:Static loc:UiText+Gearbox.IdleColumn}" Binding="{Binding IdleFuelModifier, StringFormat=0.##, UpdateSourceTrigger=PropertyChanged}" Width="90"
                                     ElementStyle="{StaticResource TuningGridTextElementStyle}"
                                     EditingElementStyle="{StaticResource TuningGridTextEditingStyle}"/>
-                <DataGridTextColumn Header="{x:Static loc:UiText+Gearbox.AwdColumn}" Binding="{Binding AwdConsumptionModifier, StringFormat=0.##, UpdateSourceTrigger=PropertyChanged}" Width="100"
+                <DataGridTextColumn Header="{x:Static loc:UiText+Gearbox.AwdColumn}" Binding="{Binding AwdConsumptionModifier, StringFormat=0.##, TargetNullValue='', UpdateSourceTrigger=PropertyChanged}" Width="100"
                                     ElementStyle="{StaticResource TuningGridTextElementStyle}"
                                     EditingElementStyle="{StaticResource TuningGridTextEditingStyle}"/>
             </DataGrid.Columns>

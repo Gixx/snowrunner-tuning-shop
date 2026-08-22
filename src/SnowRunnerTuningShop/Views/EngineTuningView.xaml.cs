@@ -305,6 +305,7 @@ public partial class EngineTuningView : UserControl
         private double _fuelConsumption;
         private double _damageCapacity;
         private double _engineResponsiveness;
+        private bool _hasEngineResponsiveness;
 
         public required string EntryPath { get; init; }
         public required string Name { get; init; }
@@ -316,7 +317,6 @@ public partial class EngineTuningView : UserControl
         public required string UsedByTooltip { get; init; }
         public required string Category { get; init; }
         public int Price { get; init; }
-        public bool HasEngineResponsiveness { get; init; }
 
         public double Torque
         {
@@ -374,6 +374,7 @@ public partial class EngineTuningView : UserControl
                 }
 
                 _engineResponsiveness = value;
+                _hasEngineResponsiveness = true;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(EngineResponsiveness)));
             }
         }
@@ -393,11 +394,11 @@ public partial class EngineTuningView : UserControl
                 UsedByTooltip = definition.UsedByTooltip,
                 Category = definition.Category,
                 Price = definition.Price,
-                HasEngineResponsiveness = definition.HasEngineResponsiveness,
                 Torque = definition.Torque,
                 FuelConsumption = definition.FuelConsumption,
                 DamageCapacity = definition.DamageCapacity,
-                EngineResponsiveness = definition.EngineResponsiveness,
+                _engineResponsiveness = definition.EngineResponsiveness,
+                _hasEngineResponsiveness = definition.HasEngineResponsiveness,
             };
 
         public EngineDefinition ToDefinition() =>
@@ -413,11 +414,12 @@ public partial class EngineTuningView : UserControl
                 UsedByTooltip = UsedByTooltip,
                 Category = Category,
                 Price = Price,
-                HasEngineResponsiveness = HasEngineResponsiveness,
                 Torque = Torque,
                 FuelConsumption = FuelConsumption,
                 DamageCapacity = DamageCapacity,
                 EngineResponsiveness = EngineResponsiveness,
+                HasEngineResponsiveness = _hasEngineResponsiveness
+                    || Math.Abs(EngineResponsiveness - EngineService.DefaultEngineResponsiveness) > 1e-6,
             };
     }
 }

@@ -1,0 +1,424 @@
+﻿[
+    {
+        "id":  "fclt9000",
+        "basedOn":  "Ford CLT9000",
+        "wikiTitle":  {
+
+                      },
+        "yearFrom":  {
+
+                     },
+        "yearTo":  {
+
+                   },
+        "raw":  {
+
+                }
+    },
+    {
+        "id":  "gmh9500",
+        "basedOn":  "GMC MH9500",
+        "wikiTitle":  {
+
+                      },
+        "yearFrom":  {
+
+                     },
+        "yearTo":  {
+
+                   },
+        "raw":  {
+
+                }
+    },
+    {
+        "id":  "transtar",
+        "basedOn":  "International Transtar 4070A",
+        "wikiTitle":  {
+                          "title":  "International Transtar"
+                      },
+        "yearFrom":  {
+
+                     },
+        "yearTo":  {
+
+                   },
+        "raw":  {
+
+                }
+    },
+    {
+        "id":  "fleetstar",
+        "basedOn":  "International FleetStar F-2070A",
+        "wikiTitle":  {
+
+                      },
+        "yearFrom":  {
+
+                     },
+        "yearTo":  {
+
+                   },
+        "raw":  {
+
+                }
+    },
+    {
+        "id":  "international_hx520",
+        "basedOn":  "truck",
+        "wikiTitle":  {
+
+                      },
+        "yearFrom":  {
+
+                     },
+        "yearTo":  {
+
+                   },
+        "raw":  {
+
+                }
+    },
+    {
+        "id":  "pstd4",
+        "basedOn":  "Astra HHD8 86.48-80",
+        "wikiTitle":  {
+
+                      },
+        "yearFrom":  {
+
+                     },
+        "yearTo":  {
+
+                   },
+        "raw":  {
+
+                }
+    },
+    {
+        "id":  "wws4964",
+        "basedOn":  "White-Western Star 4964",
+        "wikiTitle":  {
+                          "title":  "List of Star Trek novels"
+                      },
+        "yearFrom":  {
+
+                     },
+        "yearTo":  {
+
+                   },
+        "raw":  {
+
+                }
+    },
+    {
+        "id":  "azov-73210",
+        "basedOn":  "KamAZ-K5340",
+        "wikiTitle":  {
+
+                      },
+        "yearFrom":  {
+
+                     },
+        "yearTo":  {
+
+                   },
+        "raw":  {
+
+                }
+    },
+    {
+        "id":  "96320",
+        "basedOn":  "BAZ-69092",
+        "wikiTitle":  null,
+        "yearFrom":  {
+
+                     },
+        "yearTo":  {
+
+                   },
+        "raw":  {
+
+                }
+    },
+    {
+        "id":  "3194",
+        "basedOn":  "Oshkosh M911",
+        "wikiTitle":  null,
+        "yearFrom":  {
+
+                     },
+        "yearTo":  {
+
+                   },
+        "raw":  {
+
+                }
+    },
+    {
+        "id":  "74760",
+        "basedOn":  "[http://www.volatdefence.com/en/katalog/heavy-equipment-transporters/mzkt-741351-999421-837211/ MZKT-741351]",
+        "wikiTitle":  null,
+        "yearFrom":  {
+
+                     },
+        "yearTo":  {
+
+                   },
+        "raw":  {
+
+                }
+    },
+    {
+        "id":  "74941",
+        "basedOn":  "[http://www.volatdefence.com/en/katalog/heavy-equipment-transporters/mzkt-741350-999420-837210/ MZKT-741350]",
+        "wikiTitle":  null,
+        "yearFrom":  {
+
+                     },
+        "yearTo":  {
+
+                   },
+        "raw":  {
+
+                }
+    },
+    {
+        "id":  "navistar",
+        "basedOn":  "Navistar 5000-MV",
+        "wikiTitle":  null,
+        "yearFrom":  {
+
+                     },
+        "yearTo":  {
+
+                   },
+        "raw":  {
+
+                }
+    },
+    {
+        "id":  "pp16",
+        "basedOn":  "Pacific P16",
+        "wikiTitle":  null,
+        "yearFrom":  {
+
+                     },
+        "yearTo":  {
+
+                   },
+        "raw":  {
+
+                }
+    },
+    {
+        "id":  "pp512pf",
+        "basedOn":  "Pacific P512",
+        "wikiTitle":  {
+                          "title":  "List of museum ships"
+                      },
+        "yearFrom":  {
+
+                     },
+        "yearTo":  {
+
+                   },
+        "raw":  {
+
+                }
+    },
+    {
+        "id":  "western_star_47x_nf_1424",
+        "basedOn":  "truck",
+        "wikiTitle":  {
+
+                      },
+        "yearFrom":  {
+
+                     },
+        "yearTo":  {
+
+                   },
+        "raw":  {
+
+                }
+    },
+    {
+        "id":  "western_star_47x_nf_1430",
+        "basedOn":  "truck",
+        "wikiTitle":  {
+
+                      },
+        "yearFrom":  {
+
+                     },
+        "yearTo":  {
+
+                   },
+        "raw":  {
+
+                }
+    },
+    {
+        "id":  "5319_nara",
+        "basedOn":  "KamAZ-6560M",
+        "wikiTitle":  {
+
+                      },
+        "yearFrom":  {
+
+                     },
+        "yearTo":  {
+
+                   },
+        "raw":  {
+
+                }
+    },
+    {
+        "id":  "64131",
+        "basedOn":  "KamAZ-65228",
+        "wikiTitle":  {
+                          "title":  "List of Kamaz vehicles"
+                      },
+        "yearFrom":  {
+
+                     },
+        "yearTo":  {
+
+                   },
+        "raw":  {
+
+                }
+    },
+    {
+        "id":  "114sd",
+        "basedOn":  "80px|link=Freightliner",
+        "wikiTitle":  {
+                          "title":  "Freightliner Business Class M2"
+                      },
+        "yearFrom":  {
+
+                     },
+        "yearTo":  {
+
+                   },
+        "raw":  {
+
+                }
+    },
+    {
+        "id":  "paystar",
+        "basedOn":  "International Paystar 5070",
+        "wikiTitle":  {
+                          "title":  "International Paystar"
+                      },
+        "yearFrom":  {
+
+                     },
+        "yearTo":  {
+
+                   },
+        "raw":  {
+
+                }
+    },
+    {
+        "id":  "mr230",
+        "basedOn":  "Berliet GBC 8x8",
+        "wikiTitle":  null,
+        "yearFrom":  {
+
+                     },
+        "yearTo":  {
+
+                   },
+        "raw":  {
+
+                }
+    },
+    {
+        "id":  "bm17",
+        "basedOn":  "Scammell S24",
+        "wikiTitle":  null,
+        "yearFrom":  {
+
+                     },
+        "yearTo":  {
+
+                   },
+        "raw":  {
+
+                }
+    },
+    {
+        "id":  "grad",
+        "basedOn":  "truck",
+        "wikiTitle":  null,
+        "yearFrom":  {
+
+                     },
+        "yearTo":  {
+
+                   },
+        "raw":  {
+
+                }
+    },
+    {
+        "id":  "ff750",
+        "basedOn":  "Ford F-750 4x4 CrewCab",
+        "wikiTitle":  null,
+        "yearFrom":  {
+
+                     },
+        "yearTo":  {
+
+                   },
+        "raw":  {
+
+                }
+    },
+    {
+        "id":  "by4",
+        "basedOn":  "ZAZ-965A \"Zaporozhets\"",
+        "wikiTitle":  null,
+        "yearFrom":  {
+
+                     },
+        "yearTo":  {
+
+                   },
+        "raw":  {
+
+                }
+    },
+    {
+        "id":  "h2",
+        "basedOn":  "Hummer H2 SUT",
+        "wikiTitle":  null,
+        "yearFrom":  {
+
+                     },
+        "yearTo":  {
+
+                   },
+        "raw":  {
+
+                }
+    },
+    {
+        "id":  "khan_sentinel",
+        "basedOn":  "UAZ-2363",
+        "wikiTitle":  null,
+        "yearFrom":  {
+
+                     },
+        "yearTo":  {
+
+                   },
+        "raw":  {
+
+                }
+    }
+]

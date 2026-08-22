@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -283,12 +284,12 @@ public partial class SuspensionTuningView : UserControl
     public sealed class SuspensionRowViewModel : INotifyPropertyChanged
     {
         private double _damageCapacity;
-        private double _frontHeight;
-        private double _frontStrength;
-        private double _frontDamping;
-        private double _rearHeight;
-        private double _rearStrength;
-        private double _rearDamping;
+        private double? _frontHeight;
+        private double? _frontStrength;
+        private double? _frontDamping;
+        private double? _rearHeight;
+        private double? _rearStrength;
+        private double? _rearDamping;
 
         public required string EntryPath { get; init; }
         public required string Name { get; init; }
@@ -318,97 +319,104 @@ public partial class SuspensionTuningView : UserControl
             }
         }
 
-        public double FrontHeight
+        public double? FrontHeight
         {
             get => _frontHeight;
-            set
-            {
-                if (Math.Abs(_frontHeight - value) < 0.0001)
-                {
-                    return;
-                }
-
-                _frontHeight = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FrontHeight)));
-            }
+            set => SetNullable(ref _frontHeight, value, nameof(FrontHeight));
         }
 
-        public double FrontStrength
+        public double? FrontStrength
         {
             get => _frontStrength;
-            set
-            {
-                if (Math.Abs(_frontStrength - value) < 0.0001)
-                {
-                    return;
-                }
-
-                _frontStrength = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FrontStrength)));
-            }
+            set => SetNullable(ref _frontStrength, value, nameof(FrontStrength));
         }
 
-        public double FrontDamping
+        public double? FrontDamping
         {
             get => _frontDamping;
-            set
-            {
-                if (Math.Abs(_frontDamping - value) < 0.0001)
-                {
-                    return;
-                }
-
-                _frontDamping = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FrontDamping)));
-            }
+            set => SetNullable(ref _frontDamping, value, nameof(FrontDamping), nameof(FrontDampingText));
         }
 
-        public double RearHeight
+        public string FrontDampingText
+        {
+            get => FormatOptionalDamping(HasFront, _frontDamping);
+            set => TryParseOptionalDamping(value, HasFront, v => FrontDamping = v);
+        }
+
+        public double? RearHeight
         {
             get => _rearHeight;
-            set
-            {
-                if (Math.Abs(_rearHeight - value) < 0.0001)
-                {
-                    return;
-                }
-
-                _rearHeight = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(RearHeight)));
-            }
+            set => SetNullable(ref _rearHeight, value, nameof(RearHeight));
         }
 
-        public double RearStrength
+        public double? RearStrength
         {
             get => _rearStrength;
-            set
-            {
-                if (Math.Abs(_rearStrength - value) < 0.0001)
-                {
-                    return;
-                }
-
-                _rearStrength = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(RearStrength)));
-            }
+            set => SetNullable(ref _rearStrength, value, nameof(RearStrength));
         }
 
-        public double RearDamping
+        public double? RearDamping
         {
             get => _rearDamping;
-            set
-            {
-                if (Math.Abs(_rearDamping - value) < 0.0001)
-                {
-                    return;
-                }
+            set => SetNullable(ref _rearDamping, value, nameof(RearDamping), nameof(RearDampingText));
+        }
 
-                _rearDamping = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(RearDamping)));
-            }
+        public string RearDampingText
+        {
+            get => FormatOptionalDamping(HasRear, _rearDamping);
+            set => TryParseOptionalDamping(value, HasRear, v => RearDamping = v);
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
+
+        private void SetNullable(ref double? field, double? value, string propertyName, string? relatedPropertyName = null)
+        {
+            if (field == value
+                || (field is double left && value is double right && Math.Abs(left - right) < 0.0001))
+            {
+                return;
+            }
+
+            field = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            if (relatedPropertyName is not null)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(relatedPropertyName));
+            }
+        }
+
+        private static string FormatOptionalDamping(bool hasAxle, double? value)
+        {
+            if (!hasAxle)
+            {
+                return "";
+            }
+
+            return value is double number
+                ? number.ToString("0.##", CultureInfo.InvariantCulture)
+                : UiText.Suspension.MissingValuePlaceholder;
+        }
+
+        private static void TryParseOptionalDamping(string? text, bool hasAxle, Action<double?> assign)
+        {
+            if (!hasAxle)
+            {
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(text)
+                || text.Equals(UiText.Suspension.MissingValuePlaceholder, StringComparison.OrdinalIgnoreCase))
+            {
+                assign(null);
+                return;
+            }
+
+            if (double.TryParse(text, NumberStyles.Float, CultureInfo.InvariantCulture, out var parsed)
+                || double.TryParse(text, NumberStyles.Float, CultureInfo.CurrentCulture, out parsed))
+            {
+                assign(parsed);
+            }
+        }
 
         public static SuspensionRowViewModel FromDefinition(SuspensionDefinition definition) =>
             new()

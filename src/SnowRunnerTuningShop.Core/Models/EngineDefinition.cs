@@ -16,6 +16,10 @@ public sealed class EngineDefinition
     public double Torque { get; set; }
     public double FuelConsumption { get; set; }
     public double DamageCapacity { get; set; }
+    /// <summary>
+    /// Engine RPM ramp speed. When absent in XML the game uses 0.04; we surface that default here.
+    /// </summary>
     public double EngineResponsiveness { get; set; }
+    /// <summary>True when EngineResponsiveness was present in the XML (or should be written back).</summary>
     public bool HasEngineResponsiveness { get; set; }
 }

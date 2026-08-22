@@ -15,12 +15,12 @@ public sealed class SuspensionDefinition
     public required string Category { get; init; }
     public int Price { get; init; }
     public double DamageCapacity { get; set; }
-    public double FrontHeight { get; set; }
-    public double FrontStrength { get; set; }
-    public double FrontDamping { get; set; }
+    public double? FrontHeight { get; set; }
+    public double? FrontStrength { get; set; }
+    public double? FrontDamping { get; set; }
     public bool HasFront { get; init; }
-    public double RearHeight { get; set; }
-    public double RearStrength { get; set; }
-    public double RearDamping { get; set; }
+    public double? RearHeight { get; set; }
+    public double? RearStrength { get; set; }
+    public double? RearDamping { get; set; }
     public bool HasRear { get; init; }
 }

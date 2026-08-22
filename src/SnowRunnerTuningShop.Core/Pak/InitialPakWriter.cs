@@ -4,6 +4,9 @@ namespace SnowRunnerTuningShop.Core.Pak;
 
 public static class InitialPakWriter
 {
+    /// <summary>
+    /// Replaces existing pak entries and adds any replacement keys that are not already in the archive.
+    /// </summary>
     public static int ReplaceEntries(string pakPath, IReadOnlyDictionary<string, byte[]> replacements)
     {
         if (string.IsNullOrWhiteSpace(pakPath))
@@ -32,6 +35,8 @@ public static class InitialPakWriter
 
         try
         {
+            var pendingAdds = new Dictionary<string, byte[]>(normalizedReplacements, StringComparer.Ordinal);
+
             using (var source = ZipFile.OpenRead(pakPath))
             using (var target = ZipFile.Open(tempPath, ZipArchiveMode.Create))
             {
@@ -41,15 +46,23 @@ public static class InitialPakWriter
                     var targetEntry = target.CreateEntry(entryName, CompressionLevel.Optimal);
 
                     using var output = targetEntry.Open();
-                    if (normalizedReplacements.TryGetValue(entryName, out var replacement))
+                    if (pendingAdds.TryGetValue(entryName, out var replacement))
                     {
                         output.Write(replacement, 0, replacement.Length);
+                        pendingAdds.Remove(entryName);
                     }
                     else
                     {
                         using var input = entry.Open();
                         input.CopyTo(output);
                     }
+                }
+
+                foreach (var (entryName, bytes) in pendingAdds)
+                {
+                    var targetEntry = target.CreateEntry(entryName, CompressionLevel.Optimal);
+                    using var output = targetEntry.Open();
+                    output.Write(bytes, 0, bytes.Length);
                 }
             }
 

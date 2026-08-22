@@ -18,6 +18,7 @@ public partial class MainWindow : Window
 
         HomeView.AttachSession(_session);
         PartsView.AttachSession(_session);
+        VehiclesView.AttachSession(_session);
 
         _sidebarPinned = WorkspaceConfigStore.GetSidebarPinned();
         _suppressPinHandler = true;
