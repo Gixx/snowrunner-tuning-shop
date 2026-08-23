@@ -2,7 +2,7 @@
 
 Windows desktop app for fine-tuning **SnowRunner** `initial.pak` values (engines, gearboxes, suspensions, tires, winches, and more).
 
-**Version:** 1.0.2  
+**Version:** 1.0.3  
 **Platform:** Windows (WPF, .NET)
 
 ---
@@ -115,13 +115,15 @@ by the game's publishers or developers.
 
 CI builds on every push/PR to `main`.
 
-To publish a release zip:
+To publish a release (installer + portable zip):
 
 ```bash
 git tag v1.0.0
 git push origin v1.0.0
 ```
 
-That runs the **Release** workflow: self-contained `win-x64` publish → zip → GitHub Release asset.
+That runs the **Release** workflow: self-contained `win-x64` publish → **Inno Setup installer** (+ portable zip) → GitHub Release assets.
+
+Prefer the `*-Setup.exe` installer (Start menu shortcut + uninstall). The zip is optional for portable use.
 
 Tag format must be `vMAJOR.MINOR.PATCH` (e.g. `v1.0.0`). Code signing is not included yet.

@@ -11,7 +11,7 @@ public static class UiText
         public const string Settings = "Settings";
         public const string OpenMenu = "Menu";
         public const string PinMenu = "Keep menu open";
-        public const string VersionLabel = "Version 1.0.2";
+        public const string VersionLabel = "Version 1.0.3";
     }
 
     public static class Main
