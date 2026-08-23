@@ -1,6 +1,6 @@
-﻿{
-    "version":  2,
-    "source":  "spintires.fandom.com Infobox (Based On / Manufacturer / Year); country from Based On; USSR if RU lineage and yearFrom \u003c 1991",
+{
+    "version":  3,
+    "source":  "spintires.fandom.com Infobox (Based On / Manufacturer / Year); country = manufacturing country of Based On original; USSR (SU) for Soviet-era plants when yearFrom \u003c 1991",
     "manufacturers":  [
                           {
                               "id":  "aac",
@@ -265,14 +265,19 @@
                       ],
     "countries":  [
                       {
-                          "code":  "AU",
-                          "name":  "Australia",
-                          "flagFile":  "flags/au.png"
-                      },
-                      {
                           "code":  "BE",
                           "name":  "Belgium",
                           "flagFile":  "flags/be.png"
+                      },
+                      {
+                          "code":  "BY",
+                          "name":  "Belarus",
+                          "flagFile":  "flags/by.png"
+                      },
+                      {
+                          "code":  "CA",
+                          "name":  "Canada",
+                          "flagFile":  "flags/ca.png"
                       },
                       {
                           "code":  "CN",
@@ -415,8 +420,8 @@
                          "basedOn":  "Western Star 57X",
                          "yearFrom":  2022,
                          "yearTo":  2022,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
+                         "countryCode":  "CA",
+                         "countryName":  "Canada"
                      },
                      {
                          "id":  "cct680",
@@ -523,8 +528,8 @@
                          "basedOn":  "White Western Star 4964",
                          "yearFrom":  1967,
                          "yearTo":  1981,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
+                         "countryCode":  "CA",
+                         "countryName":  "Canada"
                      },
                      {
                          "id":  "aramatsu_forester",
@@ -541,8 +546,8 @@
                          "basedOn":  "Hendrickson B-Series Prime Mover",
                          "yearFrom":  1964,
                          "yearTo":  1964,
-                         "countryCode":  "AU",
-                         "countryName":  "Australia"
+                         "countryCode":  "US",
+                         "countryName":  "United States"
                      },
                      {
                          "id":  "42-20",
@@ -685,8 +690,8 @@
                          "basedOn":  "MZKT-741351",
                          "yearFrom":  2013,
                          "yearTo":  null,
-                         "countryCode":  "RU",
-                         "countryName":  "Russia"
+                         "countryCode":  "BY",
+                         "countryName":  "Belarus"
                      },
                      {
                          "id":  "74941",
@@ -694,8 +699,8 @@
                          "basedOn":  "MZKT-741350",
                          "yearFrom":  2013,
                          "yearTo":  null,
-                         "countryCode":  "RU",
-                         "countryName":  "Russia"
+                         "countryCode":  "BY",
+                         "countryName":  "Belarus"
                      },
                      {
                          "id":  "navistar",
@@ -712,8 +717,8 @@
                          "basedOn":  "Pacific P12 (main model)Pacific P12W Roughneck (branding only)",
                          "yearFrom":  1982,
                          "yearTo":  1982,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
+                         "countryCode":  "CA",
+                         "countryName":  "Canada"
                      },
                      {
                          "id":  "pp16",
@@ -730,8 +735,8 @@
                          "basedOn":  "Pacific P512",
                          "yearFrom":  1971,
                          "yearTo":  1982,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
+                         "countryCode":  "CA",
+                         "countryName":  "Canada"
                      },
                      {
                          "id":  "p450",
@@ -784,8 +789,8 @@
                          "basedOn":  "Western Star 47X",
                          "yearFrom":  2021,
                          "yearTo":  null,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
+                         "countryCode":  "CA",
+                         "countryName":  "Canada"
                      },
                      {
                          "id":  "western_star_47x_nf_1430",
@@ -793,8 +798,8 @@
                          "basedOn":  "Western Star 47X",
                          "yearFrom":  2021,
                          "yearTo":  null,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
+                         "countryCode":  "CA",
+                         "countryName":  "Canada"
                      },
                      {
                          "id":  "western_star_49x",
@@ -802,8 +807,8 @@
                          "basedOn":  "Western Star 49X",
                          "yearFrom":  2020,
                          "yearTo":  2020,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
+                         "countryCode":  "CA",
+                         "countryName":  "Canada"
                      },
                      {
                          "id":  "ws6900ts",
@@ -811,8 +816,8 @@
                          "basedOn":  "Western Star 6900 TwinSteer",
                          "yearFrom":  2007,
                          "yearTo":  2007,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
+                         "countryCode":  "CA",
+                         "countryName":  "Canada"
                      },
                      {
                          "id":  "ws6900xd",
@@ -820,8 +825,8 @@
                          "basedOn":  "Western Star 6900XD",
                          "yearFrom":  2005,
                          "yearTo":  2005,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
+                         "countryCode":  "CA",
+                         "countryName":  "Canada"
                      },
                      {
                          "id":  "zikz_605r",
@@ -943,7 +948,7 @@
                      {
                          "id":  "bandit",
                          "manufacturerId":  "krs-logo-alt",
-                         "basedOn":  "November 16, 2020",
+                         "basedOn":  "P8WD GEOLKOM-PM",
                          "yearFrom":  2012,
                          "yearTo":  2012,
                          "countryCode":  "RU",
@@ -1054,8 +1059,8 @@
                          "basedOn":  "KrAZ-6443",
                          "yearFrom":  1992,
                          "yearTo":  1992,
-                         "countryCode":  "RU",
-                         "countryName":  "Russia"
+                         "countryCode":  "UA",
+                         "countryName":  "Ukraine"
                      },
                      {
                          "id":  "tayga_6455b",

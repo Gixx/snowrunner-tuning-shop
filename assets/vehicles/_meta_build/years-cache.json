@@ -1,8 +1,8 @@
-﻿[
+[
     {
         "id":  "fclt9000",
         "manufacturerId":  "ford",
-        "basedOn":  "Ford CLT9000",
+        "basedOn":  "Ford CLT-9000",
         "yearFrom":  null,
         "yearTo":  null,
         "countryCode":  "US",
@@ -11,7 +11,7 @@
     {
         "id":  "gmh9500",
         "manufacturerId":  "gm",
-        "basedOn":  "GMC MH9500",
+        "basedOn":  "GMC MH-9500",
         "yearFrom":  null,
         "yearTo":  null,
         "countryCode":  "US",
@@ -68,8 +68,8 @@
         "basedOn":  "Western Star 57X",
         "yearFrom":  2022,
         "yearTo":  2022,
-        "countryCode":  "US",
-        "countryName":  "United States"
+        "countryCode":  "CA",
+        "countryName":  "Canada"
     },
     {
         "id":  "cct680",
@@ -128,7 +128,7 @@
     {
         "id":  "international_hx520",
         "manufacturerId":  "international",
-        "basedOn":  "truck",
+        "basedOn":  "International HX520",
         "yearFrom":  null,
         "yearTo":  null,
         "countryCode":  "US",
@@ -155,7 +155,7 @@
     {
         "id":  "pstd4",
         "manufacturerId":  "padera",
-        "basedOn":  "Astra HHD8 86.48-80",
+        "basedOn":  "Astra HHD8 86.48",
         "yearFrom":  null,
         "yearTo":  null,
         "countryCode":  "IT",
@@ -173,11 +173,11 @@
     {
         "id":  "wws4964",
         "manufacturerId":  "western-star",
-        "basedOn":  "White-Western Star 4964",
+        "basedOn":  "White Western Star 4964",
         "yearFrom":  null,
         "yearTo":  null,
-        "countryCode":  "US",
-        "countryName":  "United States"
+        "countryCode":  "CA",
+        "countryName":  "Canada"
     },
     {
         "id":  "aramatsu_forester",
@@ -194,8 +194,8 @@
         "basedOn":  "Hendrickson B-Series Prime Mover",
         "yearFrom":  1964,
         "yearTo":  1964,
-        "countryCode":  "AU",
-        "countryName":  "Australia"
+        "countryCode":  "US",
+        "countryName":  "United States"
     },
     {
         "id":  "42-20",
@@ -218,7 +218,7 @@
     {
         "id":  "azov-73210",
         "manufacturerId":  "azov",
-        "basedOn":  "KamAZ-K5340",
+        "basedOn":  "KamAZ K5 (K5340)",
         "yearFrom":  null,
         "yearTo":  null,
         "countryCode":  "RU",
@@ -248,8 +248,8 @@
         "basedOn":  "BAZ-69092",
         "yearFrom":  null,
         "yearTo":  null,
-        "countryCode":  "RU",
-        "countryName":  "Russia"
+        "countryCode":  "SU",
+        "countryName":  "USSR"
     },
     {
         "id":  "3194",
@@ -335,20 +335,20 @@
     {
         "id":  "74760",
         "manufacturerId":  "kolob",
-        "basedOn":  "[http://www.volatdefence.com/en/katalog/heavy-equipment-transporters/mzkt-741351-999421-837211/ MZKT-741351]",
+        "basedOn":  "MZKT-741351",
         "yearFrom":  null,
         "yearTo":  null,
-        "countryCode":  "RU",
-        "countryName":  "Russia"
+        "countryCode":  "BY",
+        "countryName":  "Belarus"
     },
     {
         "id":  "74941",
         "manufacturerId":  "kolob",
-        "basedOn":  "[http://www.volatdefence.com/en/katalog/heavy-equipment-transporters/mzkt-741350-999420-837210/ MZKT-741350]",
+        "basedOn":  "MZKT-741350",
         "yearFrom":  null,
         "yearTo":  null,
-        "countryCode":  "RU",
-        "countryName":  "Russia"
+        "countryCode":  "BY",
+        "countryName":  "Belarus"
     },
     {
         "id":  "navistar",
@@ -365,13 +365,13 @@
         "basedOn":  "Pacific P12 (main model)Pacific P12W Roughneck (branding only)",
         "yearFrom":  1982,
         "yearTo":  1982,
-        "countryCode":  "US",
-        "countryName":  "United States"
+        "countryCode":  "CA",
+        "countryName":  "Canada"
     },
     {
         "id":  "pp16",
         "manufacturerId":  "pacific",
-        "basedOn":  "Pacific P16",
+        "basedOn":  "Pacific M26/P16",
         "yearFrom":  null,
         "yearTo":  null,
         "countryCode":  "US",
@@ -383,8 +383,8 @@
         "basedOn":  "Pacific P512",
         "yearFrom":  null,
         "yearTo":  null,
-        "countryCode":  "US",
-        "countryName":  "United States"
+        "countryCode":  "CA",
+        "countryName":  "Canada"
     },
     {
         "id":  "p450",
@@ -434,20 +434,20 @@
     {
         "id":  "western_star_47x_nf_1424",
         "manufacturerId":  "western-star",
-        "basedOn":  "truck",
+        "basedOn":  "Western Star 47X",
         "yearFrom":  null,
         "yearTo":  null,
-        "countryCode":  "US",
-        "countryName":  "United States"
+        "countryCode":  "CA",
+        "countryName":  "Canada"
     },
     {
         "id":  "western_star_47x_nf_1430",
         "manufacturerId":  "western-star",
-        "basedOn":  "truck",
+        "basedOn":  "Western Star 47X",
         "yearFrom":  null,
         "yearTo":  null,
-        "countryCode":  "US",
-        "countryName":  "United States"
+        "countryCode":  "CA",
+        "countryName":  "Canada"
     },
     {
         "id":  "western_star_49x",
@@ -455,8 +455,8 @@
         "basedOn":  "Western Star 49X",
         "yearFrom":  2020,
         "yearTo":  2020,
-        "countryCode":  "US",
-        "countryName":  "United States"
+        "countryCode":  "CA",
+        "countryName":  "Canada"
     },
     {
         "id":  "ws6900ts",
@@ -464,8 +464,8 @@
         "basedOn":  "Western Star 6900 TwinSteer",
         "yearFrom":  2007,
         "yearTo":  2007,
-        "countryCode":  "US",
-        "countryName":  "United States"
+        "countryCode":  "CA",
+        "countryName":  "Canada"
     },
     {
         "id":  "ws6900xd",
@@ -473,8 +473,8 @@
         "basedOn":  "Western Star 6900XD",
         "yearFrom":  2005,
         "yearTo":  2005,
-        "countryCode":  "US",
-        "countryName":  "United States"
+        "countryCode":  "CA",
+        "countryName":  "Canada"
     },
     {
         "id":  "zikz_605r",
@@ -500,8 +500,8 @@
         "basedOn":  "AM General M939",
         "yearFrom":  1983,
         "yearTo":  1983,
-        "countryCode":  "SU",
-        "countryName":  "USSR"
+        "countryCode":  "US",
+        "countryName":  "United States"
     },
     {
         "id":  "ank_mk38_civilian",
@@ -509,8 +509,8 @@
         "basedOn":  "AM General M939",
         "yearFrom":  1983,
         "yearTo":  1983,
-        "countryCode":  "SU",
-        "countryName":  "USSR"
+        "countryCode":  "US",
+        "countryName":  "United States"
     },
     {
         "id":  "a1160",
@@ -533,7 +533,7 @@
     {
         "id":  "5319_nara",
         "manufacturerId":  "azov",
-        "basedOn":  "KamAZ-6560M",
+        "basedOn":  "KamAZ-6560",
         "yearFrom":  null,
         "yearTo":  null,
         "countryCode":  "RU",
@@ -551,7 +551,7 @@
     {
         "id":  "114sd",
         "manufacturerId":  "freightliner",
-        "basedOn":  "80px|link=Freightliner",
+        "basedOn":  "Freightliner 114SD",
         "yearFrom":  null,
         "yearTo":  null,
         "countryCode":  "US",
@@ -596,7 +596,7 @@
     {
         "id":  "bandit",
         "manufacturerId":  "krs-logo-alt",
-        "basedOn":  "November 16, 2020",
+        "basedOn":  "P8WD GEOLKOM-PM",
         "yearFrom":  2012,
         "yearTo":  2012,
         "countryCode":  "RU",
@@ -668,7 +668,7 @@
     {
         "id":  "310e",
         "manufacturerId":  "step",
-        "basedOn":  "15px",
+        "basedOn":  "ZiL-E133Vyat",
         "yearFrom":  1982,
         "yearTo":  1982,
         "countryCode":  "SU",
@@ -707,8 +707,8 @@
         "basedOn":  "KrAZ-6443",
         "yearFrom":  1992,
         "yearTo":  1992,
-        "countryCode":  "RU",
-        "countryName":  "Russia"
+        "countryCode":  "UA",
+        "countryName":  "Ukraine"
     },
     {
         "id":  "tayga_6455b",
@@ -758,7 +758,7 @@
     {
         "id":  "grad",
         "manufacturerId":  "voron",
-        "basedOn":  "truck",
+        "basedOn":  "Ural Next",
         "yearFrom":  null,
         "yearTo":  null,
         "countryCode":  "RU",
@@ -857,7 +857,7 @@
     {
         "id":  "ff750",
         "manufacturerId":  "ford",
-        "basedOn":  "Ford F-750 4x4 CrewCab",
+        "basedOn":  "Ford F-750 Super Duty",
         "yearFrom":  null,
         "yearTo":  null,
         "countryCode":  "US",
@@ -866,7 +866,7 @@
     {
         "id":  "by4",
         "manufacturerId":  "gor",
-        "basedOn":  "ZAZ-965A \"Zaporozhets\"",
+        "basedOn":  "ZAZ-965A Zaporozhets",
         "yearFrom":  null,
         "yearTo":  null,
         "countryCode":  "UA",
@@ -911,7 +911,7 @@
     {
         "id":  "khan_sentinel",
         "manufacturerId":  "khan",
-        "basedOn":  "UAZ-2363",
+        "basedOn":  "UAZ-23632 Patriot Pickup",
         "yearFrom":  null,
         "yearTo":  null,
         "countryCode":  "RU",
@@ -1010,7 +1010,7 @@
     {
         "id":  "166",
         "manufacturerId":  "logo-tuz",
-        "basedOn":  "[[:wikipedia:GAZ-69",
+        "basedOn":  "GAZ-69A",
         "yearFrom":  1953,
         "yearTo":  1953,
         "countryCode":  "SU",

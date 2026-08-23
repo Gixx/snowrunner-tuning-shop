@@ -73,8 +73,12 @@ function Parse-Manufacturer([string]$wt) {
 function Guess-Country([string]$basedOn, [string]$mfg, [string]$displayName) {
     $t = "$basedOn $mfg $displayName".ToLowerInvariant()
     $rules = @(
-        @{ Code = 'US'; Name = 'United States'; Patterns = @('chevrolet', 'ford', 'gmc', 'gm ', 'international', 'navistar', 'kenworth', 'mack', 'western star', 'freightliner', 'pacific', 'caterpillar', 'cat ', 'hummer', 'scout', 'loadstar', 'paystar', 'fleetstar', 'transtar', 'kodiak', 'ck1500', 'apache', 'rezvani', 'aramatsu', 'oshkosh', 'earthroamer', 'jeep', 'neo falcon', 'force gurkha') },
-        @{ Code = 'RU'; Name = 'Russia'; Patterns = @('kamaz', 'kam az', 'ural', 'zil', 'gaz-', 'gaz ', 'maz', 'azov', 'tuz', 'step', 'kolob', 'dan ', 'yar', 'khan', 'kirovets', 'tayga', 'voron', 'don ', 'bandit', 'tatarin', 'burlak', 'ank', 'tonar', 'yamal', 'trekol', 'zikz') },
+        # More specific patterns first
+        @{ Code = 'CA'; Name = 'Canada'; Patterns = @('western star', 'pacific p12', 'pacific p512', 'pacific truck') },
+        @{ Code = 'BY'; Name = 'Belarus'; Patterns = @('mzkt', 'volat') },
+        @{ Code = 'UA'; Name = 'Ukraine'; Patterns = @('kraz', 'kryukov', 'zaz', 'zaporozhets') },
+        @{ Code = 'US'; Name = 'United States'; Patterns = @('chevrolet', 'ford', 'gmc', 'gm ', 'international', 'navistar', 'kenworth', 'mack', 'freightliner', 'pacific m26', 'm26/p16', 'caterpillar', 'cat ', 'hummer', 'scout', 'loadstar', 'paystar', 'fleetstar', 'transtar', 'kodiak', 'ck1500', 'apache', 'rezvani', 'aramatsu', 'oshkosh', 'earthroamer', 'jeep', 'hendrickson', 'am general', 'john deere') },
+        @{ Code = 'RU'; Name = 'Russia'; Patterns = @('kamaz', 'kam az', 'ural', 'zil', 'gaz-', 'gaz ', 'azov', 'tuz', 'step', 'kolob', 'dan ', 'yar', 'khan', 'kirovets', 'tayga', 'voron', 'don ', 'bandit', 'tatarin', 'burlak', 'ank', 'tonar', 'yamal', 'trekol', 'zikz', 'geolkom') },
         @{ Code = 'CZ'; Name = 'Czech Republic'; Patterns = @('tatra') },
         @{ Code = 'DE'; Name = 'Germany'; Patterns = @('mercedes', 'unimog', 'man ', 'zetros', 'faun', 'claas') },
         @{ Code = 'SE'; Name = 'Sweden'; Patterns = @('volvo', 'scania') },
@@ -84,14 +88,11 @@ function Guess-Country([string]$basedOn, [string]$mfg, [string]$displayName) {
         @{ Code = 'GB'; Name = 'United Kingdom'; Patterns = @('land rover', 'landrover', 'defender', 'leyland', 'scammell') },
         @{ Code = 'NL'; Name = 'Netherlands'; Patterns = @('daf ') },
         @{ Code = 'BE'; Name = 'Belgium'; Patterns = @('mol ') },
-        @{ Code = 'CA'; Name = 'Canada'; Patterns = @('bomber') },
-        @{ Code = 'UA'; Name = 'Ukraine'; Patterns = @('kraz', 'kryukov', 'zaz', 'zaporozhets') },
         @{ Code = 'CN'; Name = 'China'; Patterns = @('faw', 'sinotruk', 'dongfeng', 'jangsu') },
         @{ Code = 'PL'; Name = 'Poland'; Patterns = @('jelcz', 'star ') },
-        @{ Code = 'IN'; Name = 'India'; Patterns = @('mahindra') },
+        @{ Code = 'IN'; Name = 'India'; Patterns = @('mahindra', 'force gurkha', 'gurkha') },
         @{ Code = 'PT'; Name = 'Portugal'; Patterns = @('umm ', 'alter') },
-        @{ Code = 'FI'; Name = 'Finland'; Patterns = @('sisu', 'valmet') },
-        @{ Code = 'AU'; Name = 'Australia'; Patterns = @('hendrickson') }
+        @{ Code = 'FI'; Name = 'Finland'; Patterns = @('sisu', 'valmet') }
     )
     foreach ($rule in $rules) {
         foreach ($k in $rule.Patterns) {
@@ -112,7 +113,7 @@ $overrides = @{
     'sst833c'      = @{ basedOn = 'MOL F 7066'; manufacturerName = 'Sleiter'; countryCode = 'BE'; countryName = 'Belgium' }
     'hibbm816'     = @{ basedOn = 'DAF F241 Series'; manufacturerName = 'HIB'; countryCode = 'NL'; countryName = 'Netherlands' }
     'hibb1980'     = @{ basedOn = 'Leyland DAF T244 Expedition'; manufacturerName = 'HIB'; countryCode = 'GB'; countryName = 'United Kingdom' }
-    'aa15'         = @{ basedOn = 'Hendrickson B-Series Prime Mover'; manufacturerName = 'AVENHORN'; countryCode = 'AU'; countryName = 'Australia' }
+    'aa15'         = @{ basedOn = 'Hendrickson B-Series Prime Mover'; manufacturerName = 'AVENHORN'; countryCode = 'US'; countryName = 'United States' }
     'p450'         = @{ basedOn = 'Faun Goliath 8x8'; manufacturerName = 'PLAD'; countryCode = 'DE'; countryName = 'Germany' }
     'p440b'        = @{ basedOn = 'Faun L912 SA'; manufacturerName = 'PLAD'; countryCode = 'DE'; countryName = 'Germany' }
     'a1160'        = @{ basedOn = 'Valmet 1502'; manufacturerName = 'Ankatra'; countryCode = 'FI'; countryName = 'Finland' }
@@ -129,6 +130,20 @@ $overrides = @{
     'mtb8106rg'    = @{ basedOn = 'Force Gurkha'; manufacturerName = 'MTB'; countryCode = 'IN'; countryName = 'India' }
     'nf2000'       = @{ basedOn = 'Mahindra Bolero'; manufacturerName = 'Neo'; countryCode = 'IN'; countryName = 'India' }
     'yar87'        = @{ basedOn = 'TREKOL-39294'; manufacturerName = 'YAR'; countryCode = 'RU'; countryName = 'Russia' }
+    'pp12'         = @{ basedOn = 'Pacific P12'; manufacturerName = 'Pacific'; countryCode = 'CA'; countryName = 'Canada' }
+    'pp512pf'      = @{ basedOn = 'Pacific P512'; manufacturerName = 'Pacific'; countryCode = 'CA'; countryName = 'Canada' }
+    'pp16'         = @{ basedOn = 'Pacific M26/P16'; manufacturerName = 'Pacific'; countryCode = 'US'; countryName = 'United States' }
+    '74760'        = @{ basedOn = 'MZKT-741351'; manufacturerName = 'Kolob'; countryCode = 'BY'; countryName = 'Belarus' }
+    '74941'        = @{ basedOn = 'MZKT-741350'; manufacturerName = 'Kolob'; countryCode = 'BY'; countryName = 'Belarus' }
+    '6436'         = @{ basedOn = 'KrAZ-6443'; manufacturerName = 'Tayga'; countryCode = 'UA'; countryName = 'Ukraine' }
+    'bandit'       = @{ basedOn = 'P8WD GEOLKOM-PM'; manufacturerName = 'KRS'; countryCode = 'RU'; countryName = 'Russia' }
+    'western_star_57x' = @{ countryCode = 'CA'; countryName = 'Canada' }
+    'western_star_47x_nf_1424' = @{ countryCode = 'CA'; countryName = 'Canada' }
+    'western_star_47x_nf_1430' = @{ countryCode = 'CA'; countryName = 'Canada' }
+    'western_star_49x' = @{ countryCode = 'CA'; countryName = 'Canada' }
+    'ws6900ts'     = @{ countryCode = 'CA'; countryName = 'Canada' }
+    'ws6900xd'     = @{ countryCode = 'CA'; countryName = 'Canada' }
+    'wws4964'      = @{ countryCode = 'CA'; countryName = 'Canada' }
 }
 
 $raw = Get-Content $rawPath -Raw | ConvertFrom-Json

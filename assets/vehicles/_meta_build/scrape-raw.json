@@ -1,4 +1,4 @@
-﻿[
+[
     {
         "id":  "fclt9000",
         "displayName":  "Ford CLT9000",
@@ -31,8 +31,8 @@
         "manufacturerLogoFile":  null,
         "manufacturerLogoSource":  "HIB logo.png",
         "manufacturerName":  "HIB logo",
-        "countryCode":  "",
-        "countryName":  "",
+        "countryCode":  "NL",
+        "countryName":  "Netherlands",
         "error":  null
     },
     {
@@ -91,8 +91,8 @@
         "manufacturerLogoFile":  "manufacturers/western-star-logo.png",
         "manufacturerLogoSource":  "Western_star_logo.png",
         "manufacturerName":  "Western star",
-        "countryCode":  "US",
-        "countryName":  "United States",
+        "countryCode":  "CA",
+        "countryName":  "Canada",
         "error":  null
     },
     {
@@ -223,8 +223,8 @@
         "manufacturerLogoFile":  "manufacturers/logo-voron.png",
         "manufacturerLogoSource":  "Logo voron.png",
         "manufacturerName":  "Logo voron",
-        "countryCode":  "RU",
-        "countryName":  "Russia",
+        "countryCode":  "SU",
+        "countryName":  "USSR",
         "error":  null
     },
     {
@@ -235,8 +235,8 @@
         "manufacturerLogoFile":  "manufacturers/western-star-logo.png",
         "manufacturerLogoSource":  "Western_star_logo.png",
         "manufacturerName":  "Western star",
-        "countryCode":  "US",
-        "countryName":  "United States",
+        "countryCode":  "CA",
+        "countryName":  "Canada",
         "error":  null
     },
     {
@@ -259,8 +259,8 @@
         "manufacturerLogoFile":  null,
         "manufacturerLogoSource":  "AVENHORN logo.png",
         "manufacturerName":  "AVENHORN logo",
-        "countryCode":  "",
-        "countryName":  "",
+        "countryCode":  "US",
+        "countryName":  "United States",
         "error":  null
     },
     {
@@ -307,8 +307,8 @@
         "manufacturerLogoFile":  "manufacturers/boar-logo.png",
         "manufacturerLogoSource":  "BOAR_logo.png",
         "manufacturerName":  "BOAR",
-        "countryCode":  "",
-        "countryName":  "",
+        "countryCode":  "RU",
+        "countryName":  "Russia",
         "error":  null
     },
     {
@@ -331,8 +331,8 @@
         "manufacturerLogoFile":  "manufacturers/dan-logo.png",
         "manufacturerLogoSource":  "DAN_logo.png",
         "manufacturerName":  "DAN",
-        "countryCode":  "RU",
-        "countryName":  "Russia",
+        "countryCode":  "SU",
+        "countryName":  "USSR",
         "error":  null
     },
     {
@@ -343,8 +343,8 @@
         "manufacturerLogoFile":  "manufacturers/derry-longhorn-logo.png",
         "manufacturerLogoSource":  "Derry_longhorn_logo.png",
         "manufacturerName":  "Derry longhorn",
-        "countryCode":  "",
-        "countryName":  "",
+        "countryCode":  "US",
+        "countryName":  "United States",
         "error":  null
     },
     {
@@ -355,8 +355,8 @@
         "manufacturerLogoFile":  "manufacturers/derry-longhorn-logo.png",
         "manufacturerLogoSource":  "Derry_longhorn_logo.png",
         "manufacturerName":  "Derry longhorn",
-        "countryCode":  "",
-        "countryName":  "",
+        "countryCode":  "US",
+        "countryName":  "United States",
         "error":  null
     },
     {
@@ -367,8 +367,8 @@
         "manufacturerLogoFile":  "manufacturers/derry-longhorn-logo.png",
         "manufacturerLogoSource":  "Derry longhorn_logo.png",
         "manufacturerName":  "Derry longhorn",
-        "countryCode":  "",
-        "countryName":  "",
+        "countryCode":  "US",
+        "countryName":  "United States",
         "error":  null
     },
     {
@@ -379,8 +379,8 @@
         "manufacturerLogoFile":  "manufacturers/logo-femm.png",
         "manufacturerLogoSource":  "Logo FEMM.png",
         "manufacturerName":  "Logo FEMM",
-        "countryCode":  "",
-        "countryName":  "",
+        "countryCode":  "RU",
+        "countryName":  "Russia",
         "error":  null
     },
     {
@@ -391,8 +391,8 @@
         "manufacturerLogoFile":  null,
         "manufacturerLogoSource":  "Logo Futom.png",
         "manufacturerName":  "Logo Futom",
-        "countryCode":  "",
-        "countryName":  "",
+        "countryCode":  "DE",
+        "countryName":  "Germany",
         "error":  null
     },
     {
@@ -427,8 +427,8 @@
         "manufacturerLogoFile":  "manufacturers/kirovets.png",
         "manufacturerLogoSource":  "Kirovets.png",
         "manufacturerName":  "Kirovets",
-        "countryCode":  "RU",
-        "countryName":  "Russia",
+        "countryCode":  "SU",
+        "countryName":  "USSR",
         "error":  null
     },
     {
@@ -451,8 +451,8 @@
         "manufacturerLogoFile":  "manufacturers/kolob-logo.png",
         "manufacturerLogoSource":  "KOLOB_logo.png",
         "manufacturerName":  "KOLOB",
-        "countryCode":  "RU",
-        "countryName":  "Russia",
+        "countryCode":  "BY",
+        "countryName":  "Belarus",
         "error":  null
     },
     {
@@ -463,8 +463,8 @@
         "manufacturerLogoFile":  "manufacturers/kolob-logo.png",
         "manufacturerLogoSource":  "KOLOB_logo.png",
         "manufacturerName":  "KOLOB",
-        "countryCode":  "RU",
-        "countryName":  "Russia",
+        "countryCode":  "BY",
+        "countryName":  "Belarus",
         "error":  null
     },
     {
@@ -487,8 +487,8 @@
         "manufacturerLogoFile":  "manufacturers/pacific-logo.png",
         "manufacturerLogoSource":  "Pacific_logo.png",
         "manufacturerName":  "Pacific",
-        "countryCode":  "US",
-        "countryName":  "United States",
+        "countryCode":  "CA",
+        "countryName":  "Canada",
         "error":  null
     },
     {
@@ -511,8 +511,8 @@
         "manufacturerLogoFile":  "manufacturers/pacific-logo.png",
         "manufacturerLogoSource":  "Pacific_logo.png",
         "manufacturerName":  "Pacific",
-        "countryCode":  "US",
-        "countryName":  "United States",
+        "countryCode":  "CA",
+        "countryName":  "Canada",
         "error":  null
     },
     {
@@ -523,8 +523,8 @@
         "manufacturerLogoFile":  null,
         "manufacturerLogoSource":  "Logo PLAD.png",
         "manufacturerName":  "Logo PLAD",
-        "countryCode":  "",
-        "countryName":  "",
+        "countryCode":  "DE",
+        "countryName":  "Germany",
         "error":  null
     },
     {
@@ -535,8 +535,8 @@
         "manufacturerLogoFile":  null,
         "manufacturerLogoSource":  "Sleiter logo.png",
         "manufacturerName":  "Sleiter logo",
-        "countryCode":  "",
-        "countryName":  "",
+        "countryCode":  "BE",
+        "countryName":  "Belgium",
         "error":  null
     },
     {
@@ -547,8 +547,8 @@
         "manufacturerLogoFile":  null,
         "manufacturerLogoSource":  "Sleiter logo.png",
         "manufacturerName":  "Sleiter logo",
-        "countryCode":  "",
-        "countryName":  "",
+        "countryCode":  "BE",
+        "countryName":  "Belgium",
         "error":  null
     },
     {
@@ -583,8 +583,8 @@
         "manufacturerLogoFile":  "manufacturers/western-star-logo.png",
         "manufacturerLogoSource":  "Western_star_logo.png",
         "manufacturerName":  "Western star",
-        "countryCode":  "US",
-        "countryName":  "United States",
+        "countryCode":  "CA",
+        "countryName":  "Canada",
         "error":  null
     },
     {
@@ -595,8 +595,8 @@
         "manufacturerLogoFile":  "manufacturers/western-star-logo.png",
         "manufacturerLogoSource":  "Western_star_logo.png",
         "manufacturerName":  "Western star",
-        "countryCode":  "US",
-        "countryName":  "United States",
+        "countryCode":  "CA",
+        "countryName":  "Canada",
         "error":  null
     },
     {
@@ -607,8 +607,8 @@
         "manufacturerLogoFile":  "manufacturers/western-star-logo.png",
         "manufacturerLogoSource":  "Western_star_logo.png",
         "manufacturerName":  "Western star",
-        "countryCode":  "US",
-        "countryName":  "United States",
+        "countryCode":  "CA",
+        "countryName":  "Canada",
         "error":  null
     },
     {
@@ -619,8 +619,8 @@
         "manufacturerLogoFile":  "manufacturers/western-star-logo.png",
         "manufacturerLogoSource":  "Western_star_logo.png",
         "manufacturerName":  "Western star",
-        "countryCode":  "US",
-        "countryName":  "United States",
+        "countryCode":  "CA",
+        "countryName":  "Canada",
         "error":  null
     },
     {
@@ -631,8 +631,8 @@
         "manufacturerLogoFile":  "manufacturers/western-star-logo.png",
         "manufacturerLogoSource":  "Western_star_logo.png",
         "manufacturerName":  "Western star",
-        "countryCode":  "US",
-        "countryName":  "United States",
+        "countryCode":  "CA",
+        "countryName":  "Canada",
         "error":  null
     },
     {
@@ -643,8 +643,8 @@
         "manufacturerLogoFile":  "manufacturers/zikz-logo.png",
         "manufacturerLogoSource":  "ZIKZ_logo.png",
         "manufacturerName":  "ZIKZ",
-        "countryCode":  "RU",
-        "countryName":  "Russia",
+        "countryCode":  "SU",
+        "countryName":  "USSR",
         "error":  null
     },
     {
@@ -655,8 +655,8 @@
         "manufacturerLogoFile":  "manufacturers/zikz-logo.png",
         "manufacturerLogoSource":  "ZIKZ logo.png",
         "manufacturerName":  "ZIKZ logo",
-        "countryCode":  "RU",
-        "countryName":  "Russia",
+        "countryCode":  "SU",
+        "countryName":  "USSR",
         "error":  null
     },
     {
@@ -667,8 +667,8 @@
         "manufacturerLogoFile":  "manufacturers/ank-logo.png",
         "manufacturerLogoSource":  "ank_logo.png",
         "manufacturerName":  "ank",
-        "countryCode":  "RU",
-        "countryName":  "Russia",
+        "countryCode":  "US",
+        "countryName":  "United States",
         "error":  null
     },
     {
@@ -679,8 +679,8 @@
         "manufacturerLogoFile":  "manufacturers/ank-logo.png",
         "manufacturerLogoSource":  "ank_logo.png",
         "manufacturerName":  "ank",
-        "countryCode":  "RU",
-        "countryName":  "Russia",
+        "countryCode":  "US",
+        "countryName":  "United States",
         "error":  null
     },
     {
@@ -691,8 +691,8 @@
         "manufacturerLogoFile":  null,
         "manufacturerLogoSource":  "Logo Ankatra.png",
         "manufacturerName":  "Logo Ankatra",
-        "countryCode":  "",
-        "countryName":  "",
+        "countryCode":  "FI",
+        "countryName":  "Finland",
         "error":  null
     },
     {
@@ -763,8 +763,8 @@
         "manufacturerLogoFile":  null,
         "manufacturerLogoSource":  "HIB logo.png",
         "manufacturerName":  "HIB logo",
-        "countryCode":  "",
-        "countryName":  "",
+        "countryCode":  "GB",
+        "countryName":  "United Kingdom",
         "error":  null
     },
     {
@@ -787,15 +787,15 @@
         "manufacturerLogoFile":  null,
         "manufacturerLogoSource":  null,
         "manufacturerName":  null,
-        "countryCode":  "",
-        "countryName":  "",
+        "countryCode":  "CN",
+        "countryName":  "China",
         "error":  null
     },
     {
         "id":  "bandit",
         "displayName":  "KRS 58 \"Bandit\"",
         "wikiTitle":  "KRS 58 \"Bandit\"",
-        "basedOn":  "November 16, 2020",
+        "basedOn":  "P8WD GEOLKOM-PM",
         "manufacturerLogoFile":  "manufacturers/krs-logo-alt.png",
         "manufacturerLogoSource":  "KRS_logo_alt.png",
         "manufacturerName":  "KRS logo alt",
@@ -847,8 +847,8 @@
         "manufacturerLogoFile":  null,
         "manufacturerLogoSource":  "Mercer logo.png",
         "manufacturerName":  "Mercer logo",
-        "countryCode":  "",
-        "countryName":  "",
+        "countryCode":  "FR",
+        "countryName":  "France",
         "error":  null
     },
     {
@@ -859,8 +859,8 @@
         "manufacturerLogoFile":  null,
         "manufacturerLogoSource":  null,
         "manufacturerName":  null,
-        "countryCode":  "",
-        "countryName":  "",
+        "countryCode":  "FR",
+        "countryName":  "France",
         "error":  null
     },
     {
@@ -871,8 +871,8 @@
         "manufacturerLogoFile":  null,
         "manufacturerLogoSource":  "PLAD logo.png",
         "manufacturerName":  "PLAD logo",
-        "countryCode":  "",
-        "countryName":  "",
+        "countryCode":  "DE",
+        "countryName":  "Germany",
         "error":  null
     },
     {
@@ -883,8 +883,8 @@
         "manufacturerLogoFile":  "manufacturers/royal-logo.png",
         "manufacturerLogoSource":  "Royal logo.png",
         "manufacturerName":  "Royal logo",
-        "countryCode":  "",
-        "countryName":  "",
+        "countryCode":  "GB",
+        "countryName":  "United Kingdom",
         "error":  null
     },
     {
@@ -895,8 +895,8 @@
         "manufacturerLogoFile":  "manufacturers/step-logo.png",
         "manufacturerLogoSource":  "Step_logo.png",
         "manufacturerName":  "Step",
-        "countryCode":  "RU",
-        "countryName":  "Russia",
+        "countryCode":  "SU",
+        "countryName":  "USSR",
         "error":  null
     },
     {
@@ -907,8 +907,8 @@
         "manufacturerLogoFile":  "manufacturers/step-logo.png",
         "manufacturerLogoSource":  "Step_logo.png",
         "manufacturerName":  "Step",
-        "countryCode":  "RU",
-        "countryName":  "Russia",
+        "countryCode":  "SU",
+        "countryName":  "USSR",
         "error":  null
     },
     {
@@ -919,8 +919,8 @@
         "manufacturerLogoFile":  "manufacturers/step-logo.png",
         "manufacturerLogoSource":  "Step_logo.png",
         "manufacturerName":  "Step",
-        "countryCode":  "RU",
-        "countryName":  "Russia",
+        "countryCode":  "SU",
+        "countryName":  "USSR",
         "error":  null
     },
     {
@@ -943,8 +943,8 @@
         "manufacturerLogoFile":  "manufacturers/tayga-logo.png",
         "manufacturerLogoSource":  "tayga_logo.png",
         "manufacturerName":  "tayga",
-        "countryCode":  "RU",
-        "countryName":  "Russia",
+        "countryCode":  "UA",
+        "countryName":  "Ukraine",
         "error":  null
     },
     {
@@ -955,8 +955,8 @@
         "manufacturerLogoFile":  "manufacturers/tayga-logo.png",
         "manufacturerLogoSource":  "tayga_logo.png",
         "manufacturerName":  "tayga",
-        "countryCode":  "RU",
-        "countryName":  "Russia",
+        "countryCode":  "SU",
+        "countryName":  "USSR",
         "error":  null
     },
     {
@@ -979,8 +979,8 @@
         "manufacturerLogoFile":  "manufacturers/logo-tuz.png",
         "manufacturerLogoSource":  "logo_tuz.png",
         "manufacturerName":  "logo tuz",
-        "countryCode":  "RU",
-        "countryName":  "Russia",
+        "countryCode":  "SU",
+        "countryName":  "USSR",
         "error":  null
     },
     {
@@ -991,8 +991,8 @@
         "manufacturerLogoFile":  "manufacturers/logo-voron.png",
         "manufacturerLogoSource":  "logo_voron.png",
         "manufacturerName":  "logo voron",
-        "countryCode":  "RU",
-        "countryName":  "Russia",
+        "countryCode":  "SU",
+        "countryName":  "USSR",
         "error":  null
     },
     {
@@ -1003,8 +1003,8 @@
         "manufacturerLogoFile":  null,
         "manufacturerLogoSource":  null,
         "manufacturerName":  null,
-        "countryCode":  "RU",
-        "countryName":  "Russia",
+        "countryCode":  "SU",
+        "countryName":  "USSR",
         "error":  null
     },
     {
@@ -1027,8 +1027,8 @@
         "manufacturerLogoFile":  "manufacturers/zikz-logo.png",
         "manufacturerLogoSource":  "ZIKZ_logo.png",
         "manufacturerName":  "ZIKZ",
-        "countryCode":  "RU",
-        "countryName":  "Russia",
+        "countryCode":  "SU",
+        "countryName":  "USSR",
         "error":  null
     },
     {
@@ -1039,8 +1039,8 @@
         "manufacturerLogoFile":  "manufacturers/zikz-logo.png",
         "manufacturerLogoSource":  "ZIKZ_logo.png",
         "manufacturerName":  "ZIKZ",
-        "countryCode":  "RU",
-        "countryName":  "Russia",
+        "countryCode":  "SU",
+        "countryName":  "USSR",
         "error":  null
     },
     {
@@ -1051,8 +1051,8 @@
         "manufacturerLogoFile":  null,
         "manufacturerLogoSource":  "Logo AAC.png",
         "manufacturerName":  "Logo AAC",
-        "countryCode":  "",
-        "countryName":  "",
+        "countryCode":  "PT",
+        "countryName":  "Portugal",
         "error":  null
     },
     {
@@ -1111,8 +1111,8 @@
         "manufacturerLogoFile":  "manufacturers/don-logo.png",
         "manufacturerLogoSource":  "DON_logo.png",
         "manufacturerName":  "DON",
-        "countryCode":  "RU",
-        "countryName":  "Russia",
+        "countryCode":  "SU",
+        "countryName":  "USSR",
         "error":  null
     },
     {
@@ -1123,8 +1123,8 @@
         "manufacturerLogoFile":  null,
         "manufacturerLogoSource":  "Logo EarthRoamer.png",
         "manufacturerName":  "Logo EarthRoamer",
-        "countryCode":  "",
-        "countryName":  "",
+        "countryCode":  "US",
+        "countryName":  "United States",
         "error":  null
     },
     {
@@ -1135,8 +1135,8 @@
         "manufacturerLogoFile":  null,
         "manufacturerLogoSource":  "Logo EarthRoamer.png",
         "manufacturerName":  "Logo EarthRoamer",
-        "countryCode":  "",
-        "countryName":  "",
+        "countryCode":  "US",
+        "countryName":  "United States",
         "error":  null
     },
     {
@@ -1159,8 +1159,8 @@
         "manufacturerLogoFile":  "manufacturers/gor-logo.png",
         "manufacturerLogoSource":  "GOR_logo.png",
         "manufacturerName":  "GOR",
-        "countryCode":  "",
-        "countryName":  "",
+        "countryCode":  "UA",
+        "countryName":  "Ukraine",
         "error":  null
     },
     {
@@ -1195,8 +1195,8 @@
         "manufacturerLogoFile":  null,
         "manufacturerLogoSource":  null,
         "manufacturerName":  null,
-        "countryCode":  "",
-        "countryName":  "",
+        "countryCode":  "US",
+        "countryName":  "United States",
         "error":  null
     },
     {
@@ -1207,8 +1207,8 @@
         "manufacturerLogoFile":  null,
         "manufacturerLogoSource":  null,
         "manufacturerName":  null,
-        "countryCode":  "",
-        "countryName":  "",
+        "countryCode":  "US",
+        "countryName":  "United States",
         "error":  null
     },
     {
@@ -1243,8 +1243,8 @@
         "manufacturerLogoFile":  "manufacturers/khan-logo.png",
         "manufacturerLogoSource":  "KHAN_logo.png",
         "manufacturerName":  "KHAN",
-        "countryCode":  "RU",
-        "countryName":  "Russia",
+        "countryCode":  "SU",
+        "countryName":  "USSR",
         "error":  null
     },
     {
@@ -1279,8 +1279,8 @@
         "manufacturerLogoFile":  "manufacturers/logo-mtb.png",
         "manufacturerLogoSource":  "Logo MTB.png",
         "manufacturerName":  "Logo MTB",
-        "countryCode":  "",
-        "countryName":  "",
+        "countryCode":  "IN",
+        "countryName":  "India",
         "error":  null
     },
     {
@@ -1291,8 +1291,8 @@
         "manufacturerLogoFile":  "manufacturers/neo-logo.png",
         "manufacturerLogoSource":  "Neo logo.png",
         "manufacturerName":  "Neo logo",
-        "countryCode":  "",
-        "countryName":  "",
+        "countryCode":  "IN",
+        "countryName":  "India",
         "error":  null
     },
     {
@@ -1351,8 +1351,8 @@
         "manufacturerLogoFile":  null,
         "manufacturerLogoSource":  null,
         "manufacturerName":  null,
-        "countryCode":  "RU",
-        "countryName":  "Russia",
+        "countryCode":  "SU",
+        "countryName":  "USSR",
         "error":  null
     },
     {
@@ -1363,8 +1363,8 @@
         "manufacturerLogoFile":  "manufacturers/logo-tuz.png",
         "manufacturerLogoSource":  "logo_tuz.png",
         "manufacturerName":  "logo tuz",
-        "countryCode":  "RU",
-        "countryName":  "Russia",
+        "countryCode":  "SU",
+        "countryName":  "USSR",
         "error":  null
     },
     {
@@ -1375,8 +1375,8 @@
         "manufacturerLogoFile":  "manufacturers/yar-logo.png",
         "manufacturerLogoSource":  "YAR logo.png",
         "manufacturerName":  "YAR logo",
-        "countryCode":  "",
-        "countryName":  "",
+        "countryCode":  "RU",
+        "countryName":  "Russia",
         "error":  null
     },
     {
