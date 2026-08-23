@@ -21,6 +21,63 @@ import shotVehicle from "@/assets/shot-193501.png";
 
 const RELEASE_URL = "https://github.com/Gixx/snowrunner-tuning-shop/releases/latest";
 const REPO_URL = "https://github.com/Gixx/snowrunner-tuning-shop";
+const SITE_URL = "https://gixx.github.io/snowrunner-tuning-shop/";
+
+const badges = [
+  {
+    href: RELEASE_URL,
+    src: "https://img.shields.io/github/v/release/Gixx/snowrunner-tuning-shop?style=flat-square&label=version&color=38bdf8",
+    alt: "Latest release version",
+  },
+  {
+    href: "https://learn.microsoft.com/dotnet/csharp/",
+    src: "https://img.shields.io/badge/C%23-239120?style=flat-square&logo=csharp&logoColor=white",
+    alt: "C#",
+  },
+  {
+    href: "https://learn.microsoft.com/dotnet/desktop/wpf/",
+    src: "https://img.shields.io/badge/WPF-.NET-512BD4?style=flat-square&logo=dotnet&logoColor=white",
+    alt: "WPF on .NET",
+  },
+  {
+    href: RELEASE_URL,
+    src: "https://img.shields.io/badge/platform-Windows-0078D4?style=flat-square&logo=windows&logoColor=white",
+    alt: "Windows",
+  },
+  {
+    href: RELEASE_URL,
+    src: "https://img.shields.io/github/downloads/Gixx/snowrunner-tuning-shop/total.svg?style=flat-square&label=downloads&color=38bdf8",
+    alt: "GitHub release downloads",
+  },
+  {
+    href: SITE_URL,
+    src: "https://img.shields.io/badge/website-GitHub%20Pages-222?style=flat-square&logo=githubpages&logoColor=white",
+    alt: "GitHub Pages website",
+  },
+  {
+    href: `${REPO_URL}/blob/main/LICENSE`,
+    src: "https://img.shields.io/github/license/Gixx/snowrunner-tuning-shop?style=flat-square",
+    alt: "MIT license",
+  },
+];
+
+function BadgeRow({ className = "" }: { className?: string }) {
+  return (
+    <div className={`flex flex-wrap items-center gap-2 ${className}`}>
+      {badges.map((badge) => (
+        <a
+          key={badge.alt}
+          href={badge.href}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex opacity-90 transition-opacity hover:opacity-100"
+        >
+          <img src={badge.src} alt={badge.alt} height={20} />
+        </a>
+      ))}
+    </div>
+  );
+}
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -150,6 +207,7 @@ function Index() {
                 Read the code on GitHub <ArrowRight className="size-4" aria-hidden />
               </a>
             </div>
+            <BadgeRow className="mt-5" />
           </Reveal>
 
           <Reveal delay={320}>
@@ -274,6 +332,7 @@ function Index() {
               <Download className="size-5" aria-hidden />
               DOWNLOAD LATEST RELEASE
             </a>
+            <BadgeRow className="mt-6 justify-center" />
           </Reveal>
         </div>
       </section>
