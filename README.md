@@ -5,6 +5,8 @@ Windows desktop app for fine-tuning **SnowRunner** `initial.pak` values (engines
 **Version:** 1.0.5  
 **Platform:** Windows (WPF, .NET)
 
+See the full [Changelog](CHANGELOG.md) for features and fixes per release.
+
 ---
 
 ## What it is
@@ -112,6 +114,8 @@ by the game's publishers or developers.
 ---
 
 ## Releases (GitHub Actions)
+
+See **[CHANGELOG.md](CHANGELOG.md)** for what changed in each tagged version.
 
 CI builds on every push/PR to `main`.
 
