@@ -8,9 +8,9 @@
         mc:Ignorable="d"
         Title="SnowRunner Tuning Shop"
         Icon="pack://application:,,,/Assets/app-icon.ico"
-        Height="780"
+        Height="820"
         Width="1200"
-        MinHeight="640"
+        MinHeight="680"
         MinWidth="900">
     <Grid>
         <Grid x:Name="MainContent">

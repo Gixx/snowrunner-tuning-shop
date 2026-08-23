@@ -11,7 +11,7 @@ public static class UiText
         public const string Settings = "Settings";
         public const string OpenMenu = "Menu";
         public const string PinMenu = "Keep menu open";
-        public const string VersionLabel = "Version 1.0.4";
+        public const string VersionLabel = "Version 1.0.5";
     }
 
     public static class Main
@@ -168,6 +168,7 @@ public static class UiText
         public const string RoleLabel = "Role";
         public const string YearsLabel = "Years";
         public const string CountryLabel = "Country";
+        public const string CountryHint = "Brand origin of the real-world basis.";
         public const string CatalogMissing = "Vehicle catalog assets were not found.";
         public const string SearchPlaceholder = "Search by name…";
         public const string TuningTitle = "Vehicle tuning";
@@ -197,7 +198,8 @@ public static class UiText
         public const string DiffLockHintSimple =
             "This truck has no diff-lock upgrade in the game. Only None or Always on can be set.";
         public const string DriveHint =
-            "Selectable AWD turns on the in-cab AWD switch. It does not add an AWD row in the upgrade list (that requires a transfer-case addon).";
+            "RWD matches the garage \"AWD: No\". Selectable AWD enables the in-cab switch (Torque full). " +
+            "Upgradeable AWD in-game also needs a transfer-case addon socket; connectable alone is not enough.";
         public const string SaveChanges = "Save changes";
         public const string RestoreThisVehicle = "Restore this vehicle to baseline";
         public const string LoadPakHint = "Load an initial.pak on the Home page first.";

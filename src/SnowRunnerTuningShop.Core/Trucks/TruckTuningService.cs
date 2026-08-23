@@ -658,16 +658,47 @@ public static class TruckTuningService
         }
 
         var hasNone = frontTorques.Any(value => value.Equals("none", StringComparison.OrdinalIgnoreCase));
-        var hasSelectable = frontTorques.Any(value =>
-            value.Equals("full", StringComparison.OrdinalIgnoreCase)
-            || value.Equals("connectable", StringComparison.OrdinalIgnoreCase));
+        var hasFull = frontTorques.Any(value => value.Equals("full", StringComparison.OrdinalIgnoreCase));
+        var hasConnectable = frontTorques.Any(value =>
+            value.Equals("connectable", StringComparison.OrdinalIgnoreCase));
 
-        if (hasSelectable)
+        // Torque="full" = cabin AWD switch available.
+        // Torque="connectable" only maps to selectable/upgradeable AWD when a TransferBox
+        // (or similar) addon socket exists — otherwise the garage shows AWD: No (e.g. Pacific P512).
+        if (hasFull || (hasConnectable && HasTransferBoxUpgradePath(text)))
         {
             return TruckDriveLayout.SelectableAwd;
         }
 
-        return hasNone ? TruckDriveLayout.Rwd : TruckDriveLayout.AlwaysAwd;
+        if (hasNone || hasConnectable)
+        {
+            return TruckDriveLayout.Rwd;
+        }
+
+        return TruckDriveLayout.AlwaysAwd;
+    }
+
+    /// <summary>
+    /// True when the truck XML exposes an AWD / transfer-case upgrade socket
+    /// (game "AWD: Capable"), not merely Torque="connectable" on a front axle.
+    /// </summary>
+    private static bool HasTransferBoxUpgradePath(string text)
+    {
+        foreach (Match match in Regex.Matches(
+                     text,
+                     @"Names\s*=\s*""(?<names>[^""]*)""",
+                     RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
+        {
+            var names = match.Groups["names"].Value;
+            if (names.Contains("TransferBox", StringComparison.OrdinalIgnoreCase)
+                || names.Contains("TransferCase", StringComparison.OrdinalIgnoreCase)
+                || names.Contains("AllWheel", StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+        }
+
+        return text.Contains("AllWheelDrive", StringComparison.OrdinalIgnoreCase);
     }
 
     private static bool IsFrontDriveTag(string tag, string location)
