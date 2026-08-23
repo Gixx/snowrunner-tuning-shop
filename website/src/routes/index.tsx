@@ -21,7 +21,6 @@ import shotVehicle from "@/assets/shot-193501.png";
 
 const RELEASE_URL = "https://github.com/Gixx/snowrunner-tuning-shop/releases/latest";
 const REPO_URL = "https://github.com/Gixx/snowrunner-tuning-shop";
-const SITE_URL = "https://gixx.github.io/snowrunner-tuning-shop/";
 
 const badges = [
   {
@@ -48,11 +47,6 @@ const badges = [
     href: RELEASE_URL,
     src: "https://img.shields.io/github/downloads/Gixx/snowrunner-tuning-shop/total.svg?style=flat-square&label=downloads&color=e11d48",
     alt: "GitHub release downloads",
-  },
-  {
-    href: SITE_URL,
-    src: "https://img.shields.io/badge/website-GitHub%20Pages-38bdf8?style=flat-square&logo=githubpages&logoColor=white",
-    alt: "GitHub Pages website",
   },
   {
     href: `${REPO_URL}/blob/main/LICENSE`,
