@@ -31,7 +31,7 @@ const badges = [
   },
   {
     href: "https://learn.microsoft.com/dotnet/csharp/",
-    src: "https://img.shields.io/badge/C%23-239120?style=flat-square&logo=csharp&logoColor=white",
+    src: "https://img.shields.io/badge/language-C%23-239120?style=flat-square&logo=csharp&logoColor=white",
     alt: "C#",
   },
   {
@@ -46,12 +46,12 @@ const badges = [
   },
   {
     href: RELEASE_URL,
-    src: "https://img.shields.io/github/downloads/Gixx/snowrunner-tuning-shop/total.svg?style=flat-square&label=downloads&color=38bdf8",
+    src: "https://img.shields.io/github/downloads/Gixx/snowrunner-tuning-shop/total.svg?style=flat-square&label=downloads&color=e11d48",
     alt: "GitHub release downloads",
   },
   {
     href: SITE_URL,
-    src: "https://img.shields.io/badge/website-GitHub%20Pages-222?style=flat-square&logo=githubpages&logoColor=white",
+    src: "https://img.shields.io/badge/website-GitHub%20Pages-38bdf8?style=flat-square&logo=githubpages&logoColor=white",
     alt: "GitHub Pages website",
   },
   {

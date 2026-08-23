@@ -3,11 +3,11 @@
 Windows desktop app for fine-tuning **SnowRunner** `initial.pak` values (engines, gearboxes, suspensions, tires, winches, and more).
 
 [![Version](https://img.shields.io/github/v/release/Gixx/snowrunner-tuning-shop?style=flat-square&label=version&color=38bdf8)](https://github.com/Gixx/snowrunner-tuning-shop/releases/latest)
-[![C#](https://img.shields.io/badge/C%23-239120?style=flat-square&logo=csharp&logoColor=white)](https://learn.microsoft.com/dotnet/csharp/)
+[![C#](https://img.shields.io/badge/language-C%23-239120?style=flat-square&logo=csharp&logoColor=white)](https://learn.microsoft.com/dotnet/csharp/)
 [![WPF](https://img.shields.io/badge/WPF-.NET-512BD4?style=flat-square&logo=dotnet&logoColor=white)](https://learn.microsoft.com/dotnet/desktop/wpf/)
 [![Windows](https://img.shields.io/badge/platform-Windows-0078D4?style=flat-square&logo=windows&logoColor=white)](https://github.com/Gixx/snowrunner-tuning-shop/releases/latest)
-[![Downloads](https://img.shields.io/github/downloads/Gixx/snowrunner-tuning-shop/total.svg?style=flat-square&label=downloads&color=38bdf8)](https://github.com/Gixx/snowrunner-tuning-shop/releases)
-[![Website](https://img.shields.io/badge/website-GitHub%20Pages-222?style=flat-square&logo=githubpages&logoColor=white)](https://gixx.github.io/snowrunner-tuning-shop/)
+[![Downloads](https://img.shields.io/github/downloads/Gixx/snowrunner-tuning-shop/total.svg?style=flat-square&label=downloads&color=e11d48)](https://github.com/Gixx/snowrunner-tuning-shop/releases)
+[![Website](https://img.shields.io/badge/website-GitHub%20Pages-38bdf8?style=flat-square&logo=githubpages&logoColor=white)](https://gixx.github.io/snowrunner-tuning-shop/)
 [![License](https://img.shields.io/github/license/Gixx/snowrunner-tuning-shop?style=flat-square)](LICENSE)
 
 See the full [Changelog](CHANGELOG.md) for features and fixes per release.
