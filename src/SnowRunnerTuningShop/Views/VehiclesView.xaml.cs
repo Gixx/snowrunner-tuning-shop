@@ -8,6 +8,7 @@ using System.Windows.Media.Imaging;
 using SnowRunnerTuningShop.Core.Backup;
 using SnowRunnerTuningShop.Core.Models;
 using SnowRunnerTuningShop.Core.Trucks;
+using SnowRunnerTuningShop.Core.Tuning;
 using SnowRunnerTuningShop.Localization;
 using SnowRunnerTuningShop.Vehicles;
 
@@ -50,7 +51,11 @@ public partial class VehiclesView : UserControl
     {
         _session = session;
         _session.PakChanged += (_, _) => OnPakChanged();
-        _session.BaselineChanged += (_, _) => RefreshRestoreButton();
+        _session.BaselineChanged += (_, _) =>
+        {
+            RefreshRestoreButton();
+            RefreshGlobalMultipliersPanel();
+        };
         OnPakChanged();
     }
 
@@ -65,12 +70,14 @@ public partial class VehiclesView : UserControl
         FilterAll.IsChecked = true;
         LoadCatalog();
         UpdateSearchPlaceholder();
+        RefreshGlobalMultipliersPanel();
     }
 
     private void OnPakChanged()
     {
         _trucks = [];
         _trucksPakPath = null;
+        RefreshGlobalMultipliersPanel();
         if (_currentCard is not null && DetailPanel.Visibility == Visibility.Visible)
         {
             LoadTuning(_currentCard);
@@ -78,6 +85,123 @@ public partial class VehiclesView : UserControl
         else
         {
             ShowTuningHint(UiText.Vehicles.LoadPakHint);
+        }
+    }
+
+    private void RefreshGlobalMultipliersPanel()
+    {
+        var canApply = _session?.HasPak == true
+            && !string.IsNullOrWhiteSpace(_session.PakPath)
+            && PakBaselineService.HasBaseline(_session.PakPath);
+
+        ApplyGlobalMultipliersButton.IsEnabled = canApply;
+        FuelMultiplierSlider.IsEnabled = canApply;
+        FrontSteerGlobalSlider.IsEnabled = canApply;
+        ResponsivenessMultiplierSlider.IsEnabled = canApply;
+
+        if (!canApply)
+        {
+            ResetGlobalMultiplierSlidersToBaseline();
+        }
+
+        UpdateGlobalMultiplierLabels();
+    }
+
+    private const int FrontSteerGlobalBaselineIndex = 1;
+
+    private void ResetGlobalMultiplierSlidersToBaseline()
+    {
+        FuelMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
+        FrontSteerGlobalSlider.Value = FrontSteerGlobalBaselineIndex;
+        ResponsivenessMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
+    }
+
+    private void GlobalMultiplierSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (!_ready)
+        {
+            return;
+        }
+
+        UpdateGlobalMultiplierLabels();
+    }
+
+    private void UpdateGlobalMultiplierLabels()
+    {
+        FuelMultiplierLabel.Text = TuningMultiplierPresets.FormatSliderCaption(
+            "Fuel tank",
+            GetMultiplierIndex(FuelMultiplierSlider));
+        FrontSteerGlobalLabel.Text = GetFrontSteerGlobalLabel(GetFrontSteerGlobalIndex(FrontSteerGlobalSlider));
+        ResponsivenessMultiplierLabel.Text = TuningMultiplierPresets.FormatSliderCaption(
+            "Responsiveness",
+            GetMultiplierIndex(ResponsivenessMultiplierSlider));
+    }
+
+    private static int GetFrontSteerGlobalIndex(Slider slider) =>
+        Math.Clamp((int)Math.Round(slider.Value, MidpointRounding.AwayFromZero), 0, 2);
+
+    private static TruckFrontSteerGlobalMode GetFrontSteerGlobalMode(Slider slider) =>
+        (TruckFrontSteerGlobalMode)GetFrontSteerGlobalIndex(slider);
+
+    private static string GetFrontSteerGlobalLabel(int index) =>
+        index switch
+        {
+            0 => UiText.Vehicles.FrontSteerGlobalMin,
+            2 => UiText.Vehicles.FrontSteerGlobalMax,
+            _ => UiText.Vehicles.FrontSteerGlobalDefault,
+        };
+
+    private static int GetMultiplierIndex(Slider slider) =>
+        TuningMultiplierPresets.ClampIndex((int)Math.Round(slider.Value, MidpointRounding.AwayFromZero));
+
+    private static double GetMultiplier(Slider slider) =>
+        TuningMultiplierPresets.GetValue(GetMultiplierIndex(slider));
+
+    private void ApplyGlobalMultipliersButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (_session?.HasPak != true || string.IsNullOrWhiteSpace(_session.PakPath))
+        {
+            MessageBox.Show(
+                UiText.Vehicles.LoadPakForGlobalHint,
+                UiText.Vehicles.SaveErrorTitle,
+                MessageBoxButton.OK,
+                MessageBoxImage.Warning);
+            return;
+        }
+
+        if (!PakBaselineService.HasBaseline(_session.PakPath))
+        {
+            MessageBox.Show(
+                UiText.Main.BaselineMissingShort,
+                UiText.Main.BaselineTitle,
+                MessageBoxButton.OK,
+                MessageBoxImage.Warning);
+            return;
+        }
+
+        try
+        {
+            var result = TruckTuningService.ApplyGlobalMultipliers(
+                _session.PakPath,
+                GetMultiplier(FuelMultiplierSlider),
+                GetFrontSteerGlobalMode(FrontSteerGlobalSlider),
+                GetMultiplier(ResponsivenessMultiplierSlider));
+
+            _trucksPakPath = null;
+            if (_currentCard is not null && DetailPanel.Visibility == Visibility.Visible)
+            {
+                LoadTuning(_currentCard);
+            }
+
+            MessageBox.Show(
+                UiText.Vehicles.GlobalMultipliersSavedMessage(result.ChangedTrucks, result.UpdatedFiles),
+                UiText.Vehicles.SaveSuccessTitle,
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message, UiText.Vehicles.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 

@@ -1,4 +1,5 @@
 using System.IO.Compression;
+using SnowRunnerTuningShop.Core.Profile;
 
 namespace SnowRunnerTuningShop.Core.Pak;
 
@@ -7,7 +8,10 @@ public static class InitialPakWriter
     /// <summary>
     /// Replaces existing pak entries and adds any replacement keys that are not already in the archive.
     /// </summary>
-    public static int ReplaceEntries(string pakPath, IReadOnlyDictionary<string, byte[]> replacements)
+    public static int ReplaceEntries(
+        string pakPath,
+        IReadOnlyDictionary<string, byte[]> replacements,
+        bool syncProfile = true)
     {
         if (string.IsNullOrWhiteSpace(pakPath))
         {
@@ -76,7 +80,98 @@ public static class InitialPakWriter
             }
 
             File.Move(tempPath, pakPath, overwrite: true);
+
+            if (syncProfile)
+            {
+                TuningProfileService.SyncAfterPakWrite(pakPath);
+            }
+
             return normalizedReplacements.Count;
+        }
+        finally
+        {
+            if (File.Exists(tempPath))
+            {
+                File.Delete(tempPath);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Rebuilds the pak without the specified entries.
+    /// </summary>
+    public static int RemoveEntries(
+        string pakPath,
+        IReadOnlyCollection<string> entryPaths,
+        bool syncProfile = true)
+    {
+        if (string.IsNullOrWhiteSpace(pakPath))
+        {
+            throw new ArgumentException("Pak file path is required.", nameof(pakPath));
+        }
+
+        if (!File.Exists(pakPath))
+        {
+            throw new FileNotFoundException("Pak file was not found.", pakPath);
+        }
+
+        if (entryPaths.Count == 0)
+        {
+            return 0;
+        }
+
+        var removedPaths = new HashSet<string>(
+            entryPaths.Select(path => PakEntryLocator.NormalizeEntryPath(path)),
+            StringComparer.OrdinalIgnoreCase);
+
+        var directory = Path.GetDirectoryName(pakPath)
+            ?? throw new InvalidOperationException("Invalid pak path.");
+        var tempPath = Path.Combine(directory, $"{Path.GetFileName(pakPath)}.{Guid.NewGuid():N}.tmp");
+        var removedCount = 0;
+
+        try
+        {
+            using (var source = ZipFile.OpenRead(pakPath))
+            using (var target = ZipFile.Open(tempPath, ZipArchiveMode.Create))
+            {
+                foreach (var entry in source.Entries)
+                {
+                    var entryName = entry.FullName.Replace('\\', '/');
+                    if (removedPaths.Contains(entryName))
+                    {
+                        removedCount++;
+                        continue;
+                    }
+
+                    var targetEntry = target.CreateEntry(entryName, CompressionLevel.Optimal);
+                    using var output = targetEntry.Open();
+                    using var input = entry.Open();
+                    input.CopyTo(output);
+                }
+            }
+
+            if (removedCount == 0)
+            {
+                return 0;
+            }
+
+            if (File.Exists(pakPath))
+            {
+                var attributes = File.GetAttributes(pakPath);
+                if ((attributes & FileAttributes.ReadOnly) != 0)
+                {
+                    File.SetAttributes(pakPath, attributes & ~FileAttributes.ReadOnly);
+                }
+            }
+
+            File.Move(tempPath, pakPath, overwrite: true);
+
+            if (syncProfile)
+            {
+                TuningProfileService.SyncAfterPakWrite(pakPath);
+            }
+
+            return removedCount;
         }
         finally
         {

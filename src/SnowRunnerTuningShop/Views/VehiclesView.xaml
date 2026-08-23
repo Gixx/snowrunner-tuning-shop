@@ -58,10 +58,98 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <Grid Grid.Row="0" Margin="0,0,0,12">
+            <Border Grid.Row="0"
+                    Background="{DynamicResource CardBackgroundFillColorSecondaryBrush}"
+                    BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="16"
+                    Margin="0,0,0,12">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0"
+                               Grid.ColumnSpan="4"
+                               Text="{x:Static loc:UiText+Vehicles.GlobalMultipliersTitle}"
+                               FontWeight="SemiBold"
+                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                               Margin="0,0,0,4"/>
+                    <TextBlock Grid.Row="1"
+                               Grid.ColumnSpan="4"
+                               Text="{x:Static loc:UiText+Vehicles.GlobalMultipliersHint}"
+                               TextWrapping="Wrap"
+                               FontSize="11"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                               Margin="0,0,0,12"/>
+
+                    <StackPanel Grid.Row="2" Grid.Column="0" Margin="0,0,12,0">
+                        <TextBlock x:Name="FuelMultiplierLabel"
+                                   Text="{x:Static loc:UiText+Vehicles.FuelMultiplierDefault}"
+                                   Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                        <Slider x:Name="FuelMultiplierSlider"
+                                Minimum="0"
+                                Maximum="8"
+                                Value="4"
+                                TickFrequency="1"
+                                IsSnapToTickEnabled="True"
+                                IsEnabled="False"
+                                ValueChanged="GlobalMultiplierSlider_ValueChanged"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="2" Grid.Column="1" Margin="12,0,12,0">
+                        <TextBlock x:Name="FrontSteerGlobalLabel"
+                                   Text="{x:Static loc:UiText+Vehicles.FrontSteerGlobalDefault}"
+                                   Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                        <Slider x:Name="FrontSteerGlobalSlider"
+                                Minimum="0"
+                                Maximum="2"
+                                Value="1"
+                                TickFrequency="1"
+                                IsSnapToTickEnabled="True"
+                                IsEnabled="False"
+                                ValueChanged="GlobalMultiplierSlider_ValueChanged"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="2" Grid.Column="2" Margin="12,0,12,0">
+                        <TextBlock x:Name="ResponsivenessMultiplierLabel"
+                                   Text="{x:Static loc:UiText+Vehicles.ResponsivenessMultiplierDefault}"
+                                   Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                        <Slider x:Name="ResponsivenessMultiplierSlider"
+                                Minimum="0"
+                                Maximum="8"
+                                Value="4"
+                                TickFrequency="1"
+                                IsSnapToTickEnabled="True"
+                                IsEnabled="False"
+                                ValueChanged="GlobalMultiplierSlider_ValueChanged"/>
+                    </StackPanel>
+
+                    <Button x:Name="ApplyGlobalMultipliersButton"
+                            Grid.Row="2"
+                            Grid.Column="3"
+                            Content="{x:Static loc:UiText+Vehicles.ApplyGlobalMultipliers}"
+                            Padding="14,8"
+                            VerticalAlignment="Center"
+                            IsEnabled="False"
+                            Click="ApplyGlobalMultipliersButton_Click"/>
+                </Grid>
+            </Border>
+
+            <Grid Grid.Row="1" Margin="0,0,0,12">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="260" MinWidth="160"/>
@@ -110,11 +198,11 @@
             </Grid>
 
             <TextBlock x:Name="CountTextBlock"
-                       Grid.Row="1"
+                       Grid.Row="2"
                        Margin="0,0,0,8"
                        Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
 
-            <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+            <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto">
                 <ItemsControl x:Name="VehiclesItems">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>

@@ -1,5 +1,7 @@
 namespace SnowRunnerTuningShop.Localization;
 
+using SnowRunnerTuningShop.Core;
+
 public static class UiText
 {
     public static class Nav
@@ -11,7 +13,7 @@ public static class UiText
         public const string Settings = "Settings";
         public const string OpenMenu = "Menu";
         public const string PinMenu = "Keep menu open";
-        public const string VersionLabel = "Version 1.0.5";
+        public static string VersionLabel => $"Version {AppInfo.Version}";
     }
 
     public static class Main
@@ -171,6 +173,20 @@ public static class UiText
         public const string CountryHint = "Brand origin of the real-world basis.";
         public const string CatalogMissing = "Vehicle catalog assets were not found.";
         public const string SearchPlaceholder = "Search by name…";
+        public const string GlobalMultipliersTitle = "Global multipliers (relative to the baseline values)";
+        public const string FuelMultiplierDefault = "Fuel tank: 1 (baseline)";
+        public const string FrontSteerGlobalDefault = "Front steer: Default (baseline)";
+        public const string FrontSteerGlobalMin = "Front steer: Min (10°)";
+        public const string FrontSteerGlobalMax = "Front steer: Max (60°)";
+        public const string ResponsivenessMultiplierDefault = "Responsiveness: 1 (baseline)";
+        public const string ApplyGlobalMultipliers = "Apply to all vehicles";
+        public const string GlobalMultipliersHint =
+            "Fuel tank and responsiveness scale from baseline. Front steer uses three presets: Min (10°), Default (baseline per truck), Max (60°). Independent of the category filter below.";
+        public const string LoadPakForGlobalHint = "Load an initial.pak on the Home page to enable global vehicle multipliers.";
+        public static string GlobalMultipliersAppliedStatus(int changedTrucks, int updatedFiles) =>
+            $"Applied global vehicle multipliers to {changedTrucks} truck(s) across {updatedFiles} file(s).";
+        public static string GlobalMultipliersSavedMessage(int changedTrucks, int updatedFiles) =>
+            $"Global vehicle multipliers applied to {changedTrucks} truck(s) ({updatedFiles} file(s) updated).";
         public const string TuningTitle = "Vehicle tuning";
         public const string FuelTankLabel = "Fuel tank";
         public const string FuelUnit = "L";

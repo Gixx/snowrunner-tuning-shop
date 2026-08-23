@@ -11,6 +11,9 @@ namespace SnowRunnerTuningShop.Core.Trucks;
 
 public static class TruckTuningService
 {
+    public const double GlobalFrontSteerMinimumDegrees = 10;
+    public const double GlobalFrontSteerMaximumDegrees = 60;
+
     private static readonly Regex TruckDataOpenRegex = new(
         @"<TruckData\b(?<attrs>[^>]*)>",
         RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
@@ -108,6 +111,68 @@ public static class TruckTuningService
         var byId = trucks.Where(truck => NormalizeKey(truck.TruckId) == idKey).ToArray();
         return byId.Length == 1 ? byId[0] : null;
     }
+
+    public static TruckTuningSaveResult ApplyGlobalMultipliers(
+        string pakPath,
+        double fuelMultiplier,
+        TruckFrontSteerGlobalMode frontSteerMode,
+        double responsivenessMultiplier)
+    {
+        ValidateMultiplier(fuelMultiplier, nameof(fuelMultiplier));
+        ValidateMultiplier(responsivenessMultiplier, nameof(responsivenessMultiplier));
+        if (!Enum.IsDefined(frontSteerMode))
+        {
+            throw new ArgumentOutOfRangeException(nameof(frontSteerMode), "Unsupported front steer preset.");
+        }
+
+        var baselinePath = PakBaselineService.RequireBaseline(pakPath);
+
+        Dictionary<string, byte[]> replacements;
+        var changedTrucks = 0;
+
+        using (var baselineArchive = ZipFile.OpenRead(baselinePath))
+        using (var currentArchive = ZipFile.OpenRead(pakPath))
+        {
+            replacements = new Dictionary<string, byte[]>(StringComparer.Ordinal);
+
+            foreach (var entry in currentArchive.Entries)
+            {
+                var entryPath = entry.FullName.Replace('\\', '/');
+                if (!IsTruckEntry(entryPath))
+                {
+                    continue;
+                }
+
+                var baselineEntry = PakEntryLocator.FindEntry(baselineArchive, entryPath);
+                if (baselineEntry is null)
+                {
+                    continue;
+                }
+
+                var baselineText = ReadEntryText(baselineEntry);
+                var updatedText = ApplyGlobalMultipliersToText(
+                    baselineText,
+                    fuelMultiplier,
+                    frontSteerMode,
+                    responsivenessMultiplier);
+
+                var currentText = ReadEntryText(entry);
+                if (!string.Equals(currentText, updatedText, StringComparison.Ordinal))
+                {
+                    replacements[entryPath] = Encoding.UTF8.GetBytes(updatedText);
+                    changedTrucks++;
+                }
+            }
+        }
+
+        var updatedFiles = replacements.Count == 0
+            ? 0
+            : InitialPakWriter.ReplaceEntries(pakPath, replacements);
+        return new TruckTuningSaveResult(updatedFiles, changedTrucks);
+    }
+
+    public static TruckTuningSaveResult RestoreGlobalTuningFromBaseline(string pakPath) =>
+        ApplyGlobalMultipliers(pakPath, 1.0, TruckFrontSteerGlobalMode.Baseline, 1.0);
 
     public static TruckTuningSaveResult SaveTruckChanges(string pakPath, TruckTuningDefinition truck)
     {
@@ -232,6 +297,65 @@ public static class TruckTuningService
         updated = ApplyDiffLock(archive, updated, truck);
         updated = ApplyDriveLayout(updated, truck.DriveLayout);
         return updated;
+    }
+
+    private static string ApplyGlobalMultipliersToText(
+        string baselineText,
+        double fuelMultiplier,
+        TruckFrontSteerGlobalMode frontSteerMode,
+        double responsivenessMultiplier)
+    {
+        var truckData = TruckDataOpenRegex.Match(baselineText);
+        if (!truckData.Success)
+        {
+            return baselineText;
+        }
+
+        var attrs = ParseAttributes(truckData.Groups["attrs"].Value);
+        var updated = baselineText;
+
+        if (attrs.TryGetValue("FuelCapacity", out var fuelRaw))
+        {
+            var baselineFuel = ParseInt(fuelRaw, 0);
+            if (baselineFuel > 0)
+            {
+                var scaledFuel = (int)Math.Clamp(
+                    Math.Round(baselineFuel * fuelMultiplier, MidpointRounding.AwayFromZero),
+                    1,
+                    10000);
+                updated = ApplyFuelCapacity(updated, scaledFuel);
+            }
+        }
+
+        var baselineResponsiveness = ParseDouble(
+            attrs.TryGetValue("Responsiveness", out var responsivenessRaw) ? responsivenessRaw : null,
+            0.4);
+        var scaledResponsiveness = Math.Clamp(baselineResponsiveness * responsivenessMultiplier, 0, 1);
+        updated = SetTruckDataAttribute(
+            updated,
+            "Responsiveness",
+            FormatNumeric(scaledResponsiveness, preferInteger: false));
+
+        var (_, _, hasFrontSteer, _) = ParseSteerAngles(baselineText);
+        if (hasFrontSteer)
+        {
+            updated = frontSteerMode switch
+            {
+                TruckFrontSteerGlobalMode.Minimum => ApplyFrontSteerAngle(updated, GlobalFrontSteerMinimumDegrees),
+                TruckFrontSteerGlobalMode.Maximum => ApplyFrontSteerAngle(updated, GlobalFrontSteerMaximumDegrees),
+                _ => updated,
+            };
+        }
+
+        return updated;
+    }
+
+    private static void ValidateMultiplier(double value, string parameterName)
+    {
+        if (!double.IsFinite(value) || value <= 0)
+        {
+            throw new ArgumentOutOfRangeException(parameterName, "Multiplier must be a positive number.");
+        }
     }
 
     private static TruckDiffLockMode ResolveDiffLockMode(

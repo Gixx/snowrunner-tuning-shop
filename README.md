@@ -2,7 +2,7 @@
 
 Windows desktop app for fine-tuning **SnowRunner** `initial.pak` values (engines, gearboxes, suspensions, tires, winches, and more).
 
-**Version:** 1.0.5  
+**Version:** 1.0.6  
 **Platform:** Windows (WPF, .NET)
 
 See the full [Changelog](CHANGELOG.md) for features and fixes per release.

@@ -6,6 +6,7 @@ using SnowRunnerTuningShop.Core.Backup;
 using SnowRunnerTuningShop.Core.Config;
 using SnowRunnerTuningShop.Core.Constants;
 using SnowRunnerTuningShop.Core.Pak;
+using SnowRunnerTuningShop.Core.Profile;
 using SnowRunnerTuningShop.Localization;
 
 namespace SnowRunnerTuningShop.Views;
@@ -177,6 +178,7 @@ public partial class HomeView : UserControl
 
         var summary = InitialPakReader.ReadSummary(pakPath);
         _session.SetPak(pakPath, summary);
+        TuningProfileService.RecordWorkingPakOpened(pakPath);
         RefreshWorkspaceUi();
         RefreshFromSession();
     }

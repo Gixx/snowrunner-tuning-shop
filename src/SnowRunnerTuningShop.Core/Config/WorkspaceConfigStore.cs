@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using SnowRunnerTuningShop.Core.Profile;
 
 namespace SnowRunnerTuningShop.Core.Config;
 
@@ -36,6 +37,10 @@ public sealed class EditionConfig
     public string WorkingPakPath { get; set; } = "";
 
     public string DisplayName { get; set; } = "Custom";
+
+    public PakFingerprintSnapshot? BaselineFingerprint { get; set; }
+
+    public PakFingerprintSnapshot? LastKnownWorkingFingerprint { get; set; }
 }
 
 public sealed record ActiveWorkspace(
@@ -132,11 +137,50 @@ public static class WorkspaceConfigStore
         var config = Load();
         var id = GameEditionDetector.SanitizeEditionId(editionId);
         config.ActiveEditionId = id;
-        config.Editions[id] = new EditionConfig
+        if (!config.Editions.TryGetValue(id, out var edition))
         {
-            DisplayName = displayName,
-            WorkingPakPath = Path.GetFullPath(workingPakPath),
-        };
+            edition = new EditionConfig();
+        }
+
+        edition.DisplayName = displayName;
+        edition.WorkingPakPath = Path.GetFullPath(workingPakPath);
+        config.Editions[id] = edition;
+        Save(config);
+    }
+
+    public static void UpdateEditionFingerprints(
+        string editionId,
+        PakFingerprintSnapshot? baselineFingerprint = null,
+        string? workingPakPath = null,
+        PakFingerprintSnapshot? workingFingerprint = null)
+    {
+        var config = Load();
+        var id = GameEditionDetector.SanitizeEditionId(editionId);
+        if (!config.Editions.TryGetValue(id, out var edition))
+        {
+            edition = new EditionConfig();
+            config.Editions[id] = edition;
+        }
+
+        if (baselineFingerprint is not null)
+        {
+            edition.BaselineFingerprint = baselineFingerprint;
+        }
+
+        if (workingFingerprint is not null)
+        {
+            edition.LastKnownWorkingFingerprint = workingFingerprint;
+        }
+        else if (!string.IsNullOrWhiteSpace(workingPakPath) && File.Exists(workingPakPath))
+        {
+            edition.LastKnownWorkingFingerprint = PakFingerprintService.ComputeFileFingerprint(workingPakPath);
+        }
+
+        if (!string.IsNullOrWhiteSpace(workingPakPath))
+        {
+            edition.WorkingPakPath = Path.GetFullPath(workingPakPath);
+        }
+
         Save(config);
     }
 

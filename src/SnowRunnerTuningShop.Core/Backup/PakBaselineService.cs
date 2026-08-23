@@ -1,4 +1,5 @@
 using SnowRunnerTuningShop.Core.Config;
+using SnowRunnerTuningShop.Core.Profile;
 
 namespace SnowRunnerTuningShop.Core.Backup;
 
@@ -151,8 +152,14 @@ public static class PakBaselineService
     public static void RestorePakFromBaseline(string workingPakPath)
     {
         var baselinePath = RequireBaseline(workingPakPath);
+        var editionId = ResolveEditionId(workingPakPath);
         ClearReadOnlyAttribute(workingPakPath);
         File.Copy(baselinePath, workingPakPath, overwrite: true);
+
+        if (!string.IsNullOrWhiteSpace(editionId))
+        {
+            TuningProfileService.OnWorkingPakRestoredFromBaseline(editionId, workingPakPath);
+        }
     }
 
     public static string CreateOrReplaceEditionBaseline(string editionId, string sourceFilePath)
@@ -166,6 +173,7 @@ public static class PakBaselineService
         ClearReadOnlyAttribute(baselinePath);
         File.Copy(sourceFilePath, baselinePath, overwrite: true);
         SetReadOnlyAttribute(baselinePath);
+        TuningProfileService.OnBaselineReplaced(editionId, baselinePath);
         return baselinePath;
     }
 

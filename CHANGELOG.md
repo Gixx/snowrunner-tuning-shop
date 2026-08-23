@@ -9,6 +9,20 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ---
 
+## [1.0.6] — 2026-08-23
+
+### Added
+- **Tuning profile** persistence: every save writes a diff of tuned pak entries (vs. your baseline) to `%LocalAppData%\SnowRunnerTuningShop\profiles\`.
+- **Pak marker** (`[media]/_tuning_shop/marker.xml`) injected into the working `initial.pak` when edits exist — used later for game-update detection (v1.1.0).
+- **Baseline and working fingerprints** (SHA-256, size, timestamp) stored per game edition in `config.json`.
+- **Vehicles — global multipliers** for fuel tank and responsiveness; **front steer** uses three presets (Min 10°, Default/baseline, Max 60°).
+
+### Notes
+- Full baseline restore keeps the saved profile for future **Reapply** (coming in v1.1.0).
+- Replacing the baseline clears the profile for that edition.
+
+---
+
 ## [1.0.5] — 2026-08-23
 
 ### Fixed
@@ -89,6 +103,7 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ---
 
+[1.0.6]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.0.6
 [1.0.5]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.0.5
 [1.0.4]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.0.4
 [1.0.3]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.0.3

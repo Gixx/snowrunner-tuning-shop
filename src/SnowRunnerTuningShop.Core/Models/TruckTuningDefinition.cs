@@ -15,6 +15,14 @@ public enum TruckDiffLockMode
     None,
 }
 
+/// <summary>Three-position global front steer preset (not a baseline multiplier).</summary>
+public enum TruckFrontSteerGlobalMode
+{
+    Minimum = 0,
+    Baseline = 1,
+    Maximum = 2,
+}
+
 public sealed class TruckTuningDefinition
 {
     public required string EntryPath { get; init; }
@@ -52,4 +60,4 @@ public sealed class TruckTuningDefinition
     public bool HasRearSteer { get; init; }
 }
 
-public sealed record TruckTuningSaveResult(int UpdatedFiles);
+public sealed record TruckTuningSaveResult(int UpdatedFiles, int ChangedTrucks = 0);
