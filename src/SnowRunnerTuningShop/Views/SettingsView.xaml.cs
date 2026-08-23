@@ -1,9 +1,8 @@
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
-using SnowRunnerTuningShop.Core.Backup;
 using SnowRunnerTuningShop.Core.Config;
-using SnowRunnerTuningShop.Core.Pak;
+using SnowRunnerTuningShop.Core.Profile;
 using SnowRunnerTuningShop.Localization;
 
 namespace SnowRunnerTuningShop.Views;
@@ -26,9 +25,9 @@ public partial class SettingsView : UserControl
     public void AttachSession(AppSession session)
     {
         _session = session;
-        _session.PakChanged += (_, _) => RefreshRestoreButton();
-        _session.BaselineChanged += (_, _) => RefreshRestoreButton();
-        RefreshRestoreButton();
+        _session.PakChanged += (_, _) => RefreshWorkspaceButtons();
+        _session.BaselineChanged += (_, _) => RefreshWorkspaceButtons();
+        RefreshWorkspaceButtons();
     }
 
     private void SettingsView_Loaded(object sender, RoutedEventArgs e)
@@ -51,7 +50,7 @@ public partial class SettingsView : UserControl
         ThemeCombo.SelectedValue = WorkspaceConfigStore.GetThemeMode();
         _suppressThemeHandler = false;
 
-        RefreshRestoreButton();
+        RefreshWorkspaceButtons();
     }
 
     private void ThemeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -64,63 +63,47 @@ public partial class SettingsView : UserControl
         ThemeService.ApplyAndSave(themeMode);
     }
 
-    private void RefreshRestoreButton()
+    private void RefreshWorkspaceButtons()
     {
+        var health = WorkspaceHealthService.Evaluate(_session?.PakPath);
         var hasBaseline = _session?.HasPak == true
             && !string.IsNullOrWhiteSpace(_session.PakPath)
-            && PakBaselineService.HasBaseline(_session.PakPath);
+            && health.Kind != WorkspaceHealthKind.NotReady;
+
         RestoreFullBaselineButton.IsEnabled = hasBaseline;
+        RefreshBaselineButton.IsEnabled = health.CanRefreshBaseline;
+        ReapplyButton.IsEnabled = health.CanReapply;
+        WorkspaceStatusTextBlock.Text = UiText.Workspace.StatusLine(health.Kind, health.ProfileEntryCount);
     }
 
     private void RestoreFullBaselineButton_Click(object sender, RoutedEventArgs e)
     {
-        if (_session is null || string.IsNullOrWhiteSpace(_session.PakPath))
-        {
-            MessageBox.Show(
-                UiText.Main.BaselineMissingShort,
-                UiText.Main.BaselineTitle,
-                MessageBoxButton.OK,
-                MessageBoxImage.Warning);
-            return;
-        }
-
-        if (!PakBaselineService.HasBaseline(_session.PakPath))
-        {
-            MessageBox.Show(
-                UiText.Main.BaselineMissingShort,
-                UiText.Main.BaselineTitle,
-                MessageBoxButton.OK,
-                MessageBoxImage.Warning);
-            return;
-        }
-
-        var confirm = MessageBox.Show(
-            UiText.Main.RestoreFullBaselineConfirmMessage,
-            UiText.Main.RestoreFullBaselineConfirmTitle,
-            MessageBoxButton.YesNo,
-            MessageBoxImage.Warning);
-
-        if (confirm != MessageBoxResult.Yes)
+        if (_session is null)
         {
             return;
         }
 
-        try
+        WorkspaceCommands.TryRestoreFullBaseline(_session);
+    }
+
+    private void RefreshBaselineButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (_session is null)
         {
-            var pakPath = _session.PakPath;
-            PakBaselineService.RestorePakFromBaseline(pakPath);
-            var summary = InitialPakReader.ReadSummary(pakPath);
-            _session.SetPak(pakPath, summary);
-            MessageBox.Show(
-                UiText.Main.RestoreFullBaselineMessage,
-                UiText.Main.RestoreFullBaselineSuccessTitle,
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
+            return;
         }
-        catch (Exception ex)
+
+        WorkspaceCommands.TryRefreshBaselineFromGame(_session);
+    }
+
+    private void ReapplyButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (_session is null)
         {
-            MessageBox.Show(ex.Message, UiText.Main.BaselineErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+            return;
         }
+
+        WorkspaceCommands.TryReapplySavedChanges(_session);
     }
 
     private void OpenWebsiteButton_Click(object sender, RoutedEventArgs e) =>

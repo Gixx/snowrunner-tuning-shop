@@ -9,6 +9,24 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ---
 
+## [1.1.0] — 2026-08-23
+
+### Added
+- **Game update detection:** Home shows a banner when `initial.pak` looks like a new vanilla file (no Tuning Shop marker, saved profile still present, working pak differs from the baseline).
+- **Refresh baseline from game** (Home and Settings): copies the current working pak over the read-only baseline **without** clearing the saved profile.
+- **Reapply saved changes** (Home and Settings): writes the saved profile back into the working pak, then reports applied / missing / failed files.
+- Workspace health status on Home (banner + profile line) and Settings.
+
+### Changed
+- Full baseline restore still keeps the saved profile. The confirm/success text now points at **Reapply saved changes**.
+- Saving while the working pak matches the baseline no longer wipes a waiting profile (so restore → refresh → reapply is safe).
+
+### Notes
+- After a game update, refresh the baseline **before** reapplying. Reapply is disabled until the working pak matches the baseline.
+- Avoid saving new edits after restore/refresh until you reapply — a new save would replace the saved profile.
+
+---
+
 ## [1.0.6] — 2026-08-23
 
 ### Added
@@ -103,6 +121,7 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ---
 
+[1.1.0]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.1.0
 [1.0.6]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.0.6
 [1.0.5]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.0.5
 [1.0.4]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.0.4

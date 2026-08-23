@@ -162,6 +162,57 @@ public static class PakBaselineService
         }
     }
 
+    /// <summary>
+    /// Copies the current working pak over the read-only baseline without clearing the saved profile.
+    /// Use after a game update, when the working file is the new unmodified vanilla pak.
+    /// </summary>
+    public static string RefreshBaselineFromWorkingPak(string workingPakPath)
+    {
+        if (!File.Exists(workingPakPath))
+        {
+            throw new FileNotFoundException("Working initial.pak was not found.", workingPakPath);
+        }
+
+        if (TuningProfileMarker.HasMarker(workingPakPath))
+        {
+            throw new InvalidOperationException(
+                "Cannot refresh the baseline while Tuning Shop edits are present in the working pak. " +
+                "Restore the full baseline first, or wait until the game has replaced the file.");
+        }
+
+        var editionId = ResolveEditionId(workingPakPath)
+            ?? throw new InvalidOperationException("No edition is configured for this working pak.");
+
+        if (!HasBaselineForEdition(editionId))
+        {
+            throw new InvalidOperationException(
+                "No baseline is configured for this game edition. " +
+                "On the Home page, use Set baseline from original.");
+        }
+
+        var workingFingerprint = PakFingerprintService.ComputeFileFingerprint(workingPakPath);
+        var baselinePath = GetBaselinePathForEdition(editionId);
+        ClearReadOnlyAttribute(baselinePath);
+        File.Copy(workingPakPath, baselinePath, overwrite: true);
+        SetReadOnlyAttribute(baselinePath);
+
+        var baselineInfo = new FileInfo(baselinePath);
+        var baselineFingerprint = new PakFingerprintSnapshot
+        {
+            Sha256 = workingFingerprint.Sha256,
+            SizeBytes = workingFingerprint.SizeBytes,
+            LastWriteTimeUtc = baselineInfo.LastWriteTimeUtc,
+        };
+
+        WorkspaceConfigStore.UpdateEditionFingerprints(
+            editionId,
+            baselineFingerprint: baselineFingerprint,
+            workingPakPath: workingPakPath,
+            workingFingerprint: workingFingerprint);
+
+        return baselinePath;
+    }
+
     public static string CreateOrReplaceEditionBaseline(string editionId, string sourceFilePath)
     {
         if (!File.Exists(sourceFilePath))

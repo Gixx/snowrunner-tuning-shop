@@ -24,7 +24,11 @@ public partial class HomeView : UserControl
     public void AttachSession(AppSession session)
     {
         _session = session;
-        _session.PakChanged += (_, _) => RefreshFromSession();
+        _session.PakChanged += (_, _) =>
+        {
+            RefreshWorkspaceUi();
+            RefreshFromSession();
+        };
         _session.BaselineChanged += (_, _) => RefreshWorkspaceUi();
 
         if (!_autoLoadAttempted)
@@ -122,51 +126,32 @@ public partial class HomeView : UserControl
 
     private void RestoreFullBaselineButton_Click(object sender, RoutedEventArgs e)
     {
-        if (_session is null || string.IsNullOrWhiteSpace(_session.PakPath))
-        {
-            MessageBox.Show(
-                UiText.Main.BaselineMissingShort,
-                UiText.Main.BaselineTitle,
-                MessageBoxButton.OK,
-                MessageBoxImage.Warning);
-            return;
-        }
-
-        if (!PakBaselineService.HasBaseline(_session.PakPath))
-        {
-            MessageBox.Show(
-                UiText.Main.BaselineMissingShort,
-                UiText.Main.BaselineTitle,
-                MessageBoxButton.OK,
-                MessageBoxImage.Warning);
-            return;
-        }
-
-        var confirm = MessageBox.Show(
-            UiText.Main.RestoreFullBaselineConfirmMessage,
-            UiText.Main.RestoreFullBaselineConfirmTitle,
-            MessageBoxButton.YesNo,
-            MessageBoxImage.Warning);
-
-        if (confirm != MessageBoxResult.Yes)
+        if (_session is null)
         {
             return;
         }
 
-        try
+        WorkspaceCommands.TryRestoreFullBaseline(_session);
+    }
+
+    private void RefreshBaselineButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (_session is null)
         {
-            PakBaselineService.RestorePakFromBaseline(_session.PakPath);
-            LoadWorkingPak(_session.PakPath);
-            MessageBox.Show(
-                UiText.Main.RestoreFullBaselineMessage,
-                UiText.Main.RestoreFullBaselineSuccessTitle,
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
+            return;
         }
-        catch (Exception ex)
+
+        WorkspaceCommands.TryRefreshBaselineFromGame(_session);
+    }
+
+    private void ReapplyButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (_session is null)
         {
-            MessageBox.Show(ex.Message, UiText.Main.BaselineErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+            return;
         }
+
+        WorkspaceCommands.TryReapplySavedChanges(_session);
     }
 
     private void LoadWorkingPak(string pakPath)
@@ -195,6 +180,7 @@ public partial class HomeView : UserControl
 
         if (!isReady || workspace is null)
         {
+            HealthBanner.Visibility = Visibility.Collapsed;
             return;
         }
 
@@ -209,6 +195,62 @@ public partial class HomeView : UserControl
         WorkingPakTextBlock.Text = UiText.Main.WorkingPakStatus(
             workspace.DisplayName,
             workspace.WorkingPakPath);
+
+        ApplyHealthUi(WorkspaceHealthService.Evaluate(workspace.WorkingPakPath));
+    }
+
+    private void ApplyHealthUi(WorkspaceHealth health)
+    {
+        ProfileStatusTextBlock.Text = health.HasProfile
+            ? UiText.Workspace.ProfileStatus(health.ProfileEntryCount)
+            : UiText.Workspace.NoSavedProfile;
+
+        RefreshBaselineButton.IsEnabled = health.CanRefreshBaseline;
+        ReapplyButton.IsEnabled = health.CanReapply;
+
+        switch (health.Kind)
+        {
+            case WorkspaceHealthKind.GameUpdateDetected:
+                ShowHealthBanner(
+                    UiText.Workspace.GameUpdateTitle,
+                    UiText.Workspace.GameUpdateMessage,
+                    caution: true);
+                break;
+            case WorkspaceHealthKind.UnknownExternalChange:
+                ShowHealthBanner(
+                    UiText.Workspace.UnknownChangeTitle,
+                    UiText.Workspace.UnknownChangeMessage,
+                    caution: true);
+                break;
+            case WorkspaceHealthKind.ReadyToReapply:
+                ShowHealthBanner(
+                    UiText.Workspace.ReadyToReapplyTitle,
+                    UiText.Workspace.ReadyToReapplyMessage,
+                    caution: false);
+                break;
+            case WorkspaceHealthKind.InconsistentMarker:
+                ShowHealthBanner(
+                    UiText.Workspace.InconsistentMarkerTitle,
+                    UiText.Workspace.InconsistentMarkerMessage,
+                    caution: true);
+                break;
+            default:
+                HealthBanner.Visibility = Visibility.Collapsed;
+                break;
+        }
+    }
+
+    private void ShowHealthBanner(string title, string message, bool caution)
+    {
+        HealthBannerTitle.Text = title;
+        HealthBannerMessage.Text = message;
+        HealthBanner.SetResourceReference(
+            Border.BackgroundProperty,
+            caution ? "SystemFillColorCautionBackgroundBrush" : "CardBackgroundFillColorSecondaryBrush");
+        HealthBanner.SetResourceReference(
+            Border.BorderBrushProperty,
+            caution ? "SystemFillColorCautionBrush" : "AccentFillColorDefaultBrush");
+        HealthBanner.Visibility = Visibility.Visible;
     }
 
     private void RefreshFromSession()

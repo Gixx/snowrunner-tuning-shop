@@ -42,4 +42,33 @@ public static class PakFingerprintService
         return left.SizeBytes == right.SizeBytes
             && string.Equals(left.Sha256, right.Sha256, StringComparison.OrdinalIgnoreCase);
     }
+
+    /// <summary>
+    /// Reuses a cached snapshot when size and last-write time still match, avoiding a full SHA-256 pass.
+    /// </summary>
+    public static PakFingerprintSnapshot GetFreshFingerprint(
+        string filePath,
+        PakFingerprintSnapshot? cached = null)
+    {
+        if (string.IsNullOrWhiteSpace(filePath))
+        {
+            throw new ArgumentException("File path is required.", nameof(filePath));
+        }
+
+        if (!File.Exists(filePath))
+        {
+            throw new FileNotFoundException("File was not found.", filePath);
+        }
+
+        var info = new FileInfo(filePath);
+        if (cached is not null
+            && !string.IsNullOrWhiteSpace(cached.Sha256)
+            && cached.SizeBytes == info.Length
+            && Math.Abs((cached.LastWriteTimeUtc - info.LastWriteTimeUtc).TotalSeconds) < 2)
+        {
+            return cached;
+        }
+
+        return ComputeFileFingerprint(filePath);
+    }
 }

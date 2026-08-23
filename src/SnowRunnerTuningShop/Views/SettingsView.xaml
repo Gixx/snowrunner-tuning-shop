@@ -65,14 +65,31 @@
                                FontSize="11"
                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                                Margin="0,0,0,12"/>
-                    <Button x:Name="RestoreFullBaselineButton"
-                            Content="{x:Static loc:UiText+Main.RestoreFullBaseline}"
-                            HorizontalAlignment="Left"
-                            Padding="14,8"
-                            Background="#C42B1C"
-                            Foreground="White"
-                            BorderBrush="#C42B1C"
-                            Click="RestoreFullBaselineButton_Click"/>
+                    <TextBlock x:Name="WorkspaceStatusTextBlock"
+                               TextWrapping="Wrap"
+                               FontSize="11"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                               Margin="0,0,0,12"/>
+                    <WrapPanel>
+                        <Button x:Name="RefreshBaselineButton"
+                                Content="{x:Static loc:UiText+Workspace.RefreshBaseline}"
+                                Padding="14,8"
+                                Margin="0,0,8,8"
+                                Click="RefreshBaselineButton_Click"/>
+                        <Button x:Name="ReapplyButton"
+                                Content="{x:Static loc:UiText+Workspace.ReapplySavedChanges}"
+                                Padding="14,8"
+                                Margin="0,0,8,8"
+                                Click="ReapplyButton_Click"/>
+                        <Button x:Name="RestoreFullBaselineButton"
+                                Content="{x:Static loc:UiText+Main.RestoreFullBaseline}"
+                                Padding="14,8"
+                                Margin="0,0,8,8"
+                                Background="#C42B1C"
+                                Foreground="White"
+                                BorderBrush="#C42B1C"
+                                Click="RestoreFullBaselineButton_Click"/>
+                    </WrapPanel>
                 </StackPanel>
             </Border>
 

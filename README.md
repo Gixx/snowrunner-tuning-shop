@@ -2,7 +2,7 @@
 
 Windows desktop app for fine-tuning **SnowRunner** `initial.pak` values (engines, gearboxes, suspensions, tires, winches, and more).
 
-**Version:** 1.0.6  
+**Version:** 1.1.0  
 **Platform:** Windows (WPF, .NET)
 
 See the full [Changelog](CHANGELOG.md) for features and fixes per release.
@@ -25,6 +25,7 @@ It is aimed at players who want stronger engines, longer winches, stickier tires
 - Set a baseline from your **unmodified** original `initial.pak` (Steam, GOG, Epic, Xbox, …)
 - Remembers the working pak path per game edition/location
 - Restore the full pak from baseline
+- Detects when the game replaces `initial.pak`, refresh the baseline from the new vanilla file, then reapply saved tunings
 - Switch between store/install locations
 
 ### Parts tuning
@@ -68,7 +69,7 @@ Also:
 2. On **Home**, choose **Set baseline from original…** and pick your untouched `initial.pak`.
 3. Open **Parts**, pick a tab (Winch, Engine, …).
 4. Use global multipliers **Apply**, and/or edit rows and **Save individual changes**.
-5. If something goes wrong, use **Restore … to baseline** on that tab, or **Restore full baseline** on Home.
+5. If something goes wrong, use **Restore … to baseline** on that tab, or **Restore full baseline** on Home. After a game update, use **Refresh baseline from game**, then **Reapply saved changes**.
 
 **Tip:** Keep a copy of your original pak outside the game folder as well. Updates may replace `initial.pak`.
 

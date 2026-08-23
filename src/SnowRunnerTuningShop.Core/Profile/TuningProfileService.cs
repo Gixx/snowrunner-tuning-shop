@@ -12,6 +12,11 @@ public sealed record TuningProfileSyncResult(
     bool ProfileSaved,
     bool MarkerPresent);
 
+public sealed record TuningProfileReapplyResult(
+    int AppliedCount,
+    IReadOnlyList<string> MissingEntryPaths,
+    IReadOnlyList<string> FailedEntryPaths);
+
 public static class TuningProfileService
 {
     private static readonly JsonSerializerOptions JsonOptions = new()
@@ -104,7 +109,6 @@ public static class TuningProfileService
         {
             var existingProfile = TryLoadProfile(editionId);
             if (existingProfile?.Entries.Count > 0
-                && string.Equals(existingProfile.BaselineSha256, baselineFingerprint.Sha256, StringComparison.OrdinalIgnoreCase)
                 && PakFingerprintService.FingerprintsMatch(workingFingerprint, baselineFingerprint))
             {
                 WorkspaceConfigStore.UpdateEditionFingerprints(
@@ -196,6 +200,74 @@ public static class TuningProfileService
             editionId,
             workingPakPath: workingPakPath,
             workingFingerprint: workingFingerprint);
+    }
+
+    public static TuningProfileReapplyResult ReapplySavedChanges(string workingPakPath)
+    {
+        if (string.IsNullOrWhiteSpace(workingPakPath) || !File.Exists(workingPakPath))
+        {
+            throw new FileNotFoundException("Working initial.pak was not found.", workingPakPath);
+        }
+
+        var editionId = WorkspaceConfigStore.TryResolveEditionId(workingPakPath)
+            ?? throw new InvalidOperationException(
+                "No game edition is configured for this working pak.");
+
+        var profile = TryLoadProfile(editionId);
+        if (profile?.Entries.Count is not > 0)
+        {
+            throw new InvalidOperationException("No saved tuning profile exists for this edition.");
+        }
+
+        var baselinePath = PakBaselineService.RequireBaseline(workingPakPath);
+        var config = WorkspaceConfigStore.Load();
+        config.Editions.TryGetValue(editionId, out var edition);
+        var workingFingerprint = PakFingerprintService.GetFreshFingerprint(
+            workingPakPath,
+            edition?.LastKnownWorkingFingerprint);
+        var baselineFingerprint = PakFingerprintService.GetFreshFingerprint(
+            baselinePath,
+            edition?.BaselineFingerprint);
+
+        if (!PakFingerprintService.FingerprintsMatch(workingFingerprint, baselineFingerprint))
+        {
+            throw new InvalidOperationException(
+                "The working pak does not match the baseline. Refresh the baseline from the game first, then reapply.");
+        }
+
+        var replacements = new Dictionary<string, byte[]>(StringComparer.Ordinal);
+        var missing = new List<string>();
+        var failed = new List<string>();
+
+        using (var archive = ZipFile.OpenRead(workingPakPath))
+        {
+            foreach (var (entryPath, base64) in profile.Entries)
+            {
+                try
+                {
+                    var bytes = Convert.FromBase64String(base64);
+                    var entry = PakEntryLocator.FindEntry(archive, entryPath);
+                    if (entry is null)
+                    {
+                        missing.Add(entryPath);
+                        continue;
+                    }
+
+                    replacements[entry.FullName.Replace('\\', '/')] = bytes;
+                }
+                catch
+                {
+                    failed.Add(entryPath);
+                }
+            }
+        }
+
+        if (replacements.Count > 0)
+        {
+            InitialPakWriter.ReplaceEntries(workingPakPath, replacements);
+        }
+
+        return new TuningProfileReapplyResult(replacements.Count, missing, failed);
     }
 
     private static Dictionary<string, string> BuildProfileDiff(string workingPakPath, string baselinePath)

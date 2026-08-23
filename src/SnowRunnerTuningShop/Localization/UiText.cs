@@ -1,6 +1,7 @@
 namespace SnowRunnerTuningShop.Localization;
 
 using SnowRunnerTuningShop.Core;
+using SnowRunnerTuningShop.Core.Profile;
 
 public static class UiText
 {
@@ -51,7 +52,8 @@ public static class UiText
         public const string RestoreFullBaselineConfirmTitle = "Restore full baseline?";
         public const string RestoreFullBaselineConfirmMessage =
             "This replaces the entire working initial.pak with the read-only baseline copy. " +
-            "All tuning changes in the pak will be lost. This cannot be undone from inside the tuner.";
+            "All tuning changes in the pak will be lost. This cannot be undone from inside the tuner.\n\n" +
+            "Your saved tuning profile is kept so you can reapply the changes afterwards.";
         public const string RestoreFullBaselineSuccessTitle = "Pak restored";
 
         public static string LoadSuccessStatus(int entryCount) =>
@@ -94,7 +96,8 @@ public static class UiText
             $"Editing ({editionDisplayName}): {workingPakPath}";
 
         public const string RestoreFullBaselineMessage =
-            "The entire initial.pak was restored from the baseline.";
+            "The entire initial.pak was restored from the baseline. " +
+            "You can reapply saved changes from Home or Settings.";
 
         public static string OverviewDetails(
             string filePath,
@@ -249,7 +252,8 @@ public static class UiText
         public const string ThemeLight = "Light";
         public const string WorkspaceTitle = "Workspace";
         public const string WorkspaceHint =
-            "Replace the entire working initial.pak with the read-only baseline copy for this edition.";
+            "Restore the working pak from the baseline, refresh the baseline after a game update, " +
+            "or reapply your saved tuning profile.";
         public const string AboutTitle = "About & support";
         public const string AboutHint =
             "Project website, releases, and optional support via PayPal.";
@@ -259,6 +263,102 @@ public static class UiText
         public const string FeedbackHint =
             "Found a bug or have an idea? Open an issue on the GitHub tracker.";
         public const string OpenIssueTracker = "Open issue tracker";
+    }
+
+    public static class Workspace
+    {
+        public const string RefreshBaseline = "Refresh baseline from game";
+        public const string ReapplySavedChanges = "Reapply saved changes";
+        public const string RefreshBaselineTitle = "Refresh baseline";
+        public const string RefreshBaselineConfirmTitle = "Refresh baseline from the working pak?";
+        public const string RefreshBaselineGameUpdateConfirm =
+            "The game appears to have replaced initial.pak. This saves the current file as the new read-only baseline. " +
+            "Use this only when the pak is the new unmodified vanilla file.\n\n" +
+            "Your saved tuning profile is kept so you can reapply afterwards. Continue?";
+        public const string RefreshBaselineUnknownConfirm =
+            "The working pak differs from the baseline. Replace the baseline with the current file?\n\n" +
+            "Only continue if this is an unmodified vanilla initial.pak (for example after a game update).";
+        public const string RefreshBaselineSuccessMessage =
+            "The baseline was updated from the current working pak. You can reapply saved changes next.";
+        public const string ReapplyTitle = "Reapply saved changes";
+        public const string ReapplyConfirmTitle = "Reapply saved changes?";
+        public const string ReapplyConfirmMessage =
+            "This writes your saved tuning profile back into the working initial.pak. " +
+            "Files that no longer exist after a game update will be skipped and listed in a report. Continue?";
+        public const string ReapplySuccessTitle = "Saved changes reapplied";
+        public const string NoSavedProfile = "No saved tuning profile.";
+        public const string GameUpdateTitle = "Game update detected";
+        public const string GameUpdateMessage =
+            "SnowRunner appears to have replaced initial.pak with a new vanilla file. " +
+            "Refresh the baseline from this file, then reapply your saved tuning changes. " +
+            "Avoid saving new edits until you reapply — a new save would replace the saved profile.";
+        public const string UnknownChangeTitle = "Working pak changed";
+        public const string UnknownChangeMessage =
+            "The working initial.pak differs from the baseline and has no Tuning Shop marker. " +
+            "If the game updated, refresh the baseline. If you edited the file elsewhere, " +
+            "set a new baseline from an original pak instead.";
+        public const string ReadyToReapplyTitle = "Saved changes ready to reapply";
+        public const string ReadyToReapplyMessage =
+            "The working pak matches the baseline. You can reapply your saved tuning profile. " +
+            "Avoid saving new edits first — that would replace the saved profile.";
+        public const string InconsistentMarkerTitle = "Marker mismatch";
+        public const string InconsistentMarkerMessage =
+            "The working pak matches the baseline but still contains a Tuning Shop marker. " +
+            "Restore the full baseline to clean it, or reapply saved changes if a profile exists.";
+
+        public static string ProfileStatus(int entryCount) =>
+            $"Saved profile: {entryCount} file(s).";
+
+        public static string StatusLine(WorkspaceHealthKind kind, int profileEntryCount) =>
+            kind switch
+            {
+                WorkspaceHealthKind.GameUpdateDetected =>
+                    "Game update detected. Refresh the baseline, then reapply saved changes.",
+                WorkspaceHealthKind.UnknownExternalChange =>
+                    "Working pak differs from the baseline (no Tuning Shop marker).",
+                WorkspaceHealthKind.ReadyToReapply =>
+                    $"Saved profile ready to reapply ({profileEntryCount} file(s)).",
+                WorkspaceHealthKind.HealthyTuned =>
+                    $"Workspace healthy — tuned ({profileEntryCount} saved file(s)).",
+                WorkspaceHealthKind.HealthyVanilla =>
+                    "Workspace healthy — working pak matches the baseline.",
+                WorkspaceHealthKind.InconsistentMarker =>
+                    "Pak matches the baseline but still has a Tuning Shop marker.",
+                _ => "Workspace is not ready.",
+            };
+
+        public static string ReapplyReport(TuningProfileReapplyResult result)
+        {
+            var lines = new List<string>
+            {
+                $"Applied {result.AppliedCount} file(s).",
+            };
+
+            AppendPathList(lines, "Skipped (no longer in the pak)", result.MissingEntryPaths);
+            AppendPathList(lines, "Failed", result.FailedEntryPaths);
+            return string.Join(Environment.NewLine, lines);
+        }
+
+        private static void AppendPathList(List<string> lines, string heading, IReadOnlyList<string> paths)
+        {
+            if (paths.Count == 0)
+            {
+                return;
+            }
+
+            lines.Add(string.Empty);
+            lines.Add($"{heading}: {paths.Count}");
+            const int limit = 12;
+            foreach (var path in paths.Take(limit))
+            {
+                lines.Add($"  {path}");
+            }
+
+            if (paths.Count > limit)
+            {
+                lines.Add($"  … and {paths.Count - limit} more.");
+            }
+        }
     }
 
     public static class Engine

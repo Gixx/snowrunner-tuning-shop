@@ -8,72 +8,107 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- First-time setup -->
-        <Border x:Name="SetupPanel"
-                Grid.Row="0"
-                Background="{DynamicResource SystemFillColorCautionBackgroundBrush}"
-                BorderBrush="{DynamicResource SystemFillColorCautionBrush}"
-                BorderThickness="1"
-                CornerRadius="8"
-                Padding="16"
-                Margin="0,0,0,16"
-                Visibility="Collapsed">
-            <StackPanel>
-                <TextBlock Text="{x:Static loc:UiText+Main.BaselineTitle}"
-                           FontWeight="SemiBold"
-                           FontSize="16"
-                           Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-                           Margin="0,0,0,8"/>
-                <TextBlock Text="{x:Static loc:UiText+Main.BaselineWarning}"
-                           TextWrapping="Wrap"
-                           Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-                           Margin="0,0,0,12"/>
-                <Button Content="{x:Static loc:UiText+Main.SetBaselineFromOriginal}"
-                        HorizontalAlignment="Left"
-                        Padding="14,8"
-                        Click="SetBaselineButton_Click"/>
-            </StackPanel>
-        </Border>
-
-        <!-- Ready state -->
-        <Border x:Name="ReadyPanel"
-                Grid.Row="0"
-                Background="{DynamicResource SystemFillColorSuccessBackgroundBrush}"
-                BorderBrush="{DynamicResource SystemFillColorSuccessBrush}"
-                BorderThickness="1"
-                CornerRadius="8"
-                Padding="16"
-                Margin="0,0,0,16"
-                Visibility="Collapsed">
-            <StackPanel>
-                <TextBlock Text="{x:Static loc:UiText+Main.BaselineReadyTitle}"
-                           FontWeight="SemiBold"
-                           FontSize="16"
-                           Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-                           Margin="0,0,0,8"/>
-                <TextBlock x:Name="BaselineReadyTextBlock"
-                           TextWrapping="Wrap"
-                           Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-                           Margin="0,0,0,8"/>
-                <TextBlock x:Name="WorkingPakTextBlock"
-                           TextWrapping="Wrap"
-                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                           Margin="0,0,0,12"/>
-                <StackPanel Orientation="Horizontal">
-                    <Button Content="{x:Static loc:UiText+Main.ChangeLocation}"
+        <StackPanel Grid.Row="0">
+            <!-- First-time setup -->
+            <Border x:Name="SetupPanel"
+                    Background="{DynamicResource SystemFillColorCautionBackgroundBrush}"
+                    BorderBrush="{DynamicResource SystemFillColorCautionBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="16"
+                    Margin="0,0,0,16"
+                    Visibility="Collapsed">
+                <StackPanel>
+                    <TextBlock Text="{x:Static loc:UiText+Main.BaselineTitle}"
+                               FontWeight="SemiBold"
+                               FontSize="16"
+                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                               Margin="0,0,0,8"/>
+                    <TextBlock Text="{x:Static loc:UiText+Main.BaselineWarning}"
+                               TextWrapping="Wrap"
+                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                               Margin="0,0,0,12"/>
+                    <Button Content="{x:Static loc:UiText+Main.SetBaselineFromOriginal}"
+                            HorizontalAlignment="Left"
                             Padding="14,8"
-                            Margin="0,0,8,0"
-                            Click="ChangeLocationButton_Click"/>
-                    <Button x:Name="RestoreFullBaselineButton"
-                            Content="{x:Static loc:UiText+Main.RestoreFullBaseline}"
-                            Padding="14,8"
-                            Background="#C42B1C"
-                            Foreground="White"
-                            BorderBrush="#C42B1C"
-                            Click="RestoreFullBaselineButton_Click"/>
+                            Click="SetBaselineButton_Click"/>
                 </StackPanel>
-            </StackPanel>
-        </Border>
+            </Border>
+
+            <Border x:Name="HealthBanner"
+                    Background="{DynamicResource SystemFillColorCautionBackgroundBrush}"
+                    BorderBrush="{DynamicResource SystemFillColorCautionBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="16"
+                    Margin="0,0,0,16"
+                    Visibility="Collapsed">
+                <StackPanel>
+                    <TextBlock x:Name="HealthBannerTitle"
+                               FontWeight="SemiBold"
+                               FontSize="16"
+                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                               Margin="0,0,0,8"/>
+                    <TextBlock x:Name="HealthBannerMessage"
+                               TextWrapping="Wrap"
+                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Ready state -->
+            <Border x:Name="ReadyPanel"
+                    Background="{DynamicResource SystemFillColorSuccessBackgroundBrush}"
+                    BorderBrush="{DynamicResource SystemFillColorSuccessBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="16"
+                    Margin="0,0,0,16"
+                    Visibility="Collapsed">
+                <StackPanel>
+                    <TextBlock Text="{x:Static loc:UiText+Main.BaselineReadyTitle}"
+                               FontWeight="SemiBold"
+                               FontSize="16"
+                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                               Margin="0,0,0,8"/>
+                    <TextBlock x:Name="BaselineReadyTextBlock"
+                               TextWrapping="Wrap"
+                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                               Margin="0,0,0,8"/>
+                    <TextBlock x:Name="WorkingPakTextBlock"
+                               TextWrapping="Wrap"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                               Margin="0,0,0,8"/>
+                    <TextBlock x:Name="ProfileStatusTextBlock"
+                               TextWrapping="Wrap"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                               Margin="0,0,0,12"/>
+                    <WrapPanel>
+                        <Button Content="{x:Static loc:UiText+Main.ChangeLocation}"
+                                Padding="14,8"
+                                Margin="0,0,8,8"
+                                Click="ChangeLocationButton_Click"/>
+                        <Button x:Name="RefreshBaselineButton"
+                                Content="{x:Static loc:UiText+Workspace.RefreshBaseline}"
+                                Padding="14,8"
+                                Margin="0,0,8,8"
+                                Click="RefreshBaselineButton_Click"/>
+                        <Button x:Name="ReapplyButton"
+                                Content="{x:Static loc:UiText+Workspace.ReapplySavedChanges}"
+                                Padding="14,8"
+                                Margin="0,0,8,8"
+                                Click="ReapplyButton_Click"/>
+                        <Button x:Name="RestoreFullBaselineButton"
+                                Content="{x:Static loc:UiText+Main.RestoreFullBaseline}"
+                                Padding="14,8"
+                                Margin="0,0,8,8"
+                                Background="#C42B1C"
+                                Foreground="White"
+                                BorderBrush="#C42B1C"
+                                Click="RestoreFullBaselineButton_Click"/>
+                    </WrapPanel>
+                </StackPanel>
+            </Border>
+        </StackPanel>
 
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>

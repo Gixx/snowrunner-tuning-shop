@@ -68,7 +68,7 @@ const features = [
   {
     icon: ShieldCheck,
     title: "Baseline safety net",
-    body: "Your original initial.pak is backed up on first run. Restore a single vehicle, one category, or everything at once.",
+    body: "Your original initial.pak is backed up on first run. Restore a category, or everything at once. After a game update, refresh the baseline and reapply your saved tunings.",
   },
   {
     icon: Layers,
@@ -263,7 +263,7 @@ function Index() {
               <span className="shine-text">GET THE TUNING SHOP</span>
             </h2>
             <p className="mt-5 text-muted-foreground">
-              Version 1.0.6 · Windows installer · free forever · no account, no telemetry.
+              Version 1.1.0 · Windows installer · free forever · no account, no telemetry.
             </p>
             <a
               href={RELEASE_URL}
