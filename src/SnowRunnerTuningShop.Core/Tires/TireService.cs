@@ -18,8 +18,11 @@ public static class TireService
         @"<TruckTire\b(?<attrs>[^>]*)>",
         RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
+    // Quoted values may contain '/' (e.g. Mesh="wheels/..."). Using [^>]* swallows the
+    // self-closing slash, so a rewrite of `<WheelFriction _template="X" />` becomes
+    // `<WheelFriction _template="X" / IsIgnoreIce="true">` and the garage/truck store breaks.
     private static readonly Regex WheelFrictionTagRegex = new(
-        @"<WheelFriction\b(?<attrs>[^>]*)(?<self>/?)>",
+        @"<WheelFriction\b(?<attrs>(?:[^>/]|""[^""]*"")*)(?<self>/?)>",
         RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
     private static readonly Regex AttributeRegex = new(
@@ -376,7 +379,58 @@ public static class TireService
             return baselineText;
         }
 
-        return WheelFrictionTagRegex.Replace(baselineText, match =>
+        var matches = TruckTireOpenTagRegex.Matches(baselineText);
+        if (matches.Count == 0)
+        {
+            return baselineText;
+        }
+
+        var builder = new StringBuilder(baselineText.Length);
+        var lastIndex = 0;
+        for (var i = 0; i < matches.Count; i++)
+        {
+            var match = matches[i];
+            var blockEnd = i + 1 < matches.Count ? matches[i + 1].Index : baselineText.Length;
+            var block = baselineText[match.Index..blockEnd];
+            builder.Append(baselineText, lastIndex, match.Index - lastIndex);
+
+            if (IsInsideTemplatesSection(baselineText, match.Index))
+            {
+                builder.Append(block);
+            }
+            else
+            {
+                builder.Append(ApplyMultipliersToTireBlock(
+                    block,
+                    templates,
+                    onRoadMultiplier,
+                    offRoadMultiplier,
+                    mudMultiplier,
+                    ignoreIceForAll,
+                    onRoadBaseline,
+                    offRoadBaseline,
+                    mudBaseline));
+            }
+
+            lastIndex = blockEnd;
+        }
+
+        builder.Append(baselineText, lastIndex, baselineText.Length - lastIndex);
+        return builder.ToString();
+    }
+
+    private static string ApplyMultipliersToTireBlock(
+        string block,
+        IReadOnlyDictionary<string, WheelFrictionTemplates.FrictionValues> templates,
+        double onRoadMultiplier,
+        double offRoadMultiplier,
+        double mudMultiplier,
+        bool? ignoreIceForAll,
+        bool onRoadBaseline,
+        bool offRoadBaseline,
+        bool mudBaseline)
+    {
+        return WheelFrictionTagRegex.Replace(block, match =>
         {
             var attrs = match.Groups["attrs"].Value;
             var self = match.Groups["self"].Value;
@@ -408,11 +462,11 @@ public static class TireService
 
             if (ignoreIceForAll is not null)
             {
-                SetOrReplaceAttribute(ref updatedAttrs, "IsIgnoreIce", ignoreIce ? "true" : "false");
+                ApplyIgnoreIceAttribute(ref updatedAttrs, ignoreIce);
             }
 
             return $"<WheelFriction{updatedAttrs}{self}>";
-        });
+        }, 1);
     }
 
     private static bool TryApplyUpdatesToText(
@@ -504,10 +558,7 @@ public static class TireService
                 ref updatedAttrs,
                 "SubstanceFriction",
                 FormatNumeric(target.MudFriction));
-            localChanged |= SetOrReplaceAttribute(
-                ref updatedAttrs,
-                "IsIgnoreIce",
-                target.IgnoreIce ? "true" : "false");
+            localChanged |= ApplyIgnoreIceAttribute(ref updatedAttrs, target.IgnoreIce);
 
             if (!localChanged)
             {
@@ -591,6 +642,28 @@ public static class TireService
         }
 
         attributesText = attributesText.TrimEnd() + $" {replacement}";
+        return true;
+    }
+
+    private static bool ApplyIgnoreIceAttribute(ref string attributesText, bool ignoreIce) =>
+        ignoreIce
+            ? SetOrReplaceAttribute(ref attributesText, "IsIgnoreIce", "true")
+            : RemoveAttribute(ref attributesText, "IsIgnoreIce");
+
+    private static bool RemoveAttribute(ref string attributesText, string attributeName)
+    {
+        var pattern = $@"\s*\b{Regex.Escape(attributeName)}\s*=\s*""[^""]*""";
+        var updated = Regex.Replace(
+            attributesText,
+            pattern,
+            string.Empty,
+            RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+        if (string.Equals(updated, attributesText, StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        attributesText = updated;
         return true;
     }
 

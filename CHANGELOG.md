@@ -9,6 +9,13 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ---
 
+## [1.1.1] — 2026-08-24
+
+### Fixed
+- **Ignore ice** on tires wrote invalid self-closing `WheelFriction` XML (`… / IsIgnoreIce="true">`). That broke the in-game Truck Store and garage for most trucks ([#1](https://github.com/Gixx/snowrunner-tuning-shop/issues/1)).
+
+---
+
 ## [1.1.0] — 2026-08-23
 
 ### Added
@@ -121,6 +128,7 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ---
 
+[1.1.1]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.1.1
 [1.1.0]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.1.0
 [1.0.6]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.0.6
 [1.0.5]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.0.5
