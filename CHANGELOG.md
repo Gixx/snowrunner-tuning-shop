@@ -9,6 +9,13 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ---
 
+## [1.1.2] — 2026-08-24
+
+### Added
+- **In-app update check:** Home shows a banner when a newer GitHub release exists. Settings can check now, open the installer, or skip that version.
+
+---
+
 ## [1.1.1] — 2026-08-24
 
 ### Fixed
@@ -128,6 +135,7 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ---
 
+[1.1.2]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.1.2
 [1.1.1]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.1.1
 [1.1.0]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.1.0
 [1.0.6]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.0.6

@@ -7,7 +7,9 @@
              mc:Ignorable="d"
              d:DesignHeight="560"
              d:DesignWidth="900">
-    <Grid>
+    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Disabled"
+                  Padding="0,0,8,0">
         <StackPanel>
             <TextBlock Text="{x:Static loc:UiText+Settings.Title}"
                        FontSize="22"
@@ -109,15 +111,55 @@
                                FontSize="11"
                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                                Margin="0,0,0,12"/>
-                    <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="{x:Static loc:UiText+Settings.InstalledVersion}"
+                               TextWrapping="Wrap"
+                               FontSize="11"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                               Margin="0,0,0,8"/>
+                    <TextBlock x:Name="UpdateStatusTextBlock"
+                               TextWrapping="Wrap"
+                               FontSize="11"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                               Margin="0,0,0,12"/>
+                    <WrapPanel>
+                        <Button x:Name="CheckForUpdatesButton"
+                                Content="{x:Static loc:UiText+Settings.CheckForUpdates}"
+                                Padding="14,8"
+                                Margin="0,0,8,8"
+                                Click="CheckForUpdatesButton_Click"/>
+                        <Button x:Name="DownloadUpdateButton"
+                                Content="{x:Static loc:UiText+Settings.DownloadUpdate}"
+                                Padding="14,8"
+                                Margin="0,0,8,8"
+                                Visibility="Collapsed"
+                                Click="DownloadUpdateButton_Click"/>
                         <Button Content="{x:Static loc:UiText+Settings.OpenWebsite}"
                                 Padding="14,8"
-                                Margin="0,0,8,0"
+                                Margin="0,0,8,8"
                                 Click="OpenWebsiteButton_Click"/>
-                        <Button Content="{x:Static loc:UiText+Settings.DonatePayPal}"
-                                Padding="14,8"
-                                Click="DonatePayPalButton_Click"/>
-                    </StackPanel>
+                        <Button Style="{StaticResource PayPalDonateButtonStyle}"
+                                Margin="0,0,8,8"
+                                ToolTip="{x:Static loc:UiText+Settings.DonatePayPal}"
+                                AutomationProperties.Name="{x:Static loc:UiText+Settings.DonatePayPal}"
+                                Click="DonatePayPalButton_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{x:Static loc:UiText+Settings.DonateWith}"
+                                           FontFamily="Segoe UI"
+                                           FontSize="13"
+                                           Foreground="#111111"
+                                           VerticalAlignment="Center"
+                                           Margin="0,1,7,0"/>
+                                <TextBlock FontFamily="Arial"
+                                           FontStyle="Italic"
+                                           FontWeight="Bold"
+                                           FontSize="16"
+                                           VerticalAlignment="Center">
+                                    <Run Text="Pay" Foreground="#003087"/>
+                                    <Run Text="Pal" Foreground="#009CDE"/>
+                                </TextBlock>
+                            </StackPanel>
+                        </Button>
+                    </WrapPanel>
                 </StackPanel>
             </Border>
 
@@ -144,5 +186,5 @@
                 </StackPanel>
             </Border>
         </StackPanel>
-    </Grid>
+    </ScrollViewer>
 </UserControl>

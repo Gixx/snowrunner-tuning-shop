@@ -1,12 +1,15 @@
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Win32;
+using SnowRunnerTuningShop.Core;
 using SnowRunnerTuningShop.Core.Backup;
 using SnowRunnerTuningShop.Core.Config;
 using SnowRunnerTuningShop.Core.Constants;
 using SnowRunnerTuningShop.Core.Pak;
 using SnowRunnerTuningShop.Core.Profile;
+using SnowRunnerTuningShop.Core.Updates;
 using SnowRunnerTuningShop.Localization;
 
 namespace SnowRunnerTuningShop.Views;
@@ -15,10 +18,12 @@ public partial class HomeView : UserControl
 {
     private AppSession? _session;
     private bool _autoLoadAttempted;
+    private AppUpdateCheckResult? _availableUpdate;
 
     public HomeView()
     {
         InitializeComponent();
+        Loaded += HomeView_Loaded;
     }
 
     public void AttachSession(AppSession session)
@@ -293,6 +298,64 @@ public partial class HomeView : UserControl
         }
 
         return $"{size:0.##} {units[unitIndex]}";
+    }
+
+    private async void HomeView_Loaded(object sender, RoutedEventArgs e)
+    {
+        Loaded -= HomeView_Loaded;
+        await RefreshUpdateBannerAsync();
+    }
+
+    private async Task RefreshUpdateBannerAsync()
+    {
+        try
+        {
+            var result = await AppUpdateService.CheckAsync();
+            var skipped = WorkspaceConfigStore.GetSkippedAppVersion();
+            var show = result.Status == AppUpdateStatus.UpdateAvailable
+                && !string.IsNullOrWhiteSpace(result.LatestVersion)
+                && !AppUpdateService.IsSameVersion(result.LatestVersion, skipped);
+
+            _availableUpdate = show ? result : null;
+            UpdateBanner.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
+            if (show)
+            {
+                UpdateBannerMessage.Text = UiText.Settings.UpdateAvailableMessage(result.LatestVersion!);
+            }
+        }
+        catch
+        {
+            UpdateBanner.Visibility = Visibility.Collapsed;
+        }
+    }
+
+    private void DownloadUpdateButton_Click(object sender, RoutedEventArgs e)
+    {
+        var url = _availableUpdate?.InstallerUrl ?? _availableUpdate?.ReleasePageUrl ?? AppInfo.LatestReleasePageUrl;
+        OpenUrl(url);
+    }
+
+    private void SkipUpdateButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (!string.IsNullOrWhiteSpace(_availableUpdate?.LatestVersion))
+        {
+            WorkspaceConfigStore.SetSkippedAppVersion(_availableUpdate.LatestVersion);
+        }
+
+        UpdateBanner.Visibility = Visibility.Collapsed;
+        _availableUpdate = null;
+    }
+
+    private static void OpenUrl(string url)
+    {
+        try
+        {
+            Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message, UiText.Settings.Title, MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 
     private sealed record CategoryRow(string Name, int ItemCount, int FileCount, string SampleFile);

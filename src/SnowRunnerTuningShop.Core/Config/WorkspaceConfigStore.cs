@@ -13,6 +13,9 @@ public sealed class WorkspaceConfig
     /// <summary>App theme: System, Dark, or Light.</summary>
     public string ThemeMode { get; set; } = ThemeModes.System;
 
+    /// <summary>Latest GitHub release the user chose not to be notified about.</summary>
+    public string? SkippedAppVersion { get; set; }
+
     public Dictionary<string, EditionConfig> Editions { get; set; } =
         new(StringComparer.OrdinalIgnoreCase);
 }
@@ -199,6 +202,15 @@ public static class WorkspaceConfigStore
     {
         var config = Load();
         config.ThemeMode = ThemeModes.Normalize(themeMode);
+        Save(config);
+    }
+
+    public static string? GetSkippedAppVersion() => Load().SkippedAppVersion;
+
+    public static void SetSkippedAppVersion(string? version)
+    {
+        var config = Load();
+        config.SkippedAppVersion = string.IsNullOrWhiteSpace(version) ? null : version.Trim();
         Save(config);
     }
 

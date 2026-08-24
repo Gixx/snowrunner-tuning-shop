@@ -257,8 +257,21 @@ public static class UiText
         public const string AboutTitle = "About & support";
         public const string AboutHint =
             "Project website, releases, and optional support via PayPal.";
+        public static string InstalledVersion => $"Installed version: {AppInfo.Version}";
+        public const string CheckForUpdates = "Check for updates";
+        public const string DownloadUpdate = "Download update";
+        public const string SkipThisVersion = "Skip this version";
+        public const string UpdateAvailableTitle = "App update available";
+        public const string CheckingForUpdates = "Checking for updates…";
+        public const string UpToDate = "You are running the latest version.";
+        public const string UpdateCheckFailed = "Could not check for updates. Try again later.";
+        public static string UpdateAvailableMessage(string latest) =>
+            $"Version {latest} is available (you have {AppInfo.Version}). Download the installer from GitHub Releases.";
+        public static string UpdateAvailableStatus(string latest) =>
+            $"Update available: {latest}.";
         public const string OpenWebsite = "Open website";
         public const string DonatePayPal = "Donate with PayPal";
+        public const string DonateWith = "Donate with";
         public const string FeedbackTitle = "Feedback";
         public const string FeedbackHint =
             "Found a bug or have an idea? Open an issue on the GitHub tracker.";

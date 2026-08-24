@@ -315,7 +315,7 @@ function Index() {
               <span className="shine-text">GET THE TUNING SHOP</span>
             </h2>
             <p className="mt-5 text-muted-foreground">
-              Version 1.1.1 · Windows installer · free forever · no account, no telemetry.
+              Version 1.1.2 · Windows installer · free forever · no account, no telemetry.
             </p>
             <a
               href={RELEASE_URL}
