@@ -116,8 +116,7 @@ public partial class SettingsView : UserControl
 
     private void DownloadUpdateButton_Click(object sender, RoutedEventArgs e)
     {
-        var url = _availableUpdate?.InstallerUrl ?? _availableUpdate?.ReleasePageUrl ?? AppInfo.LatestReleasePageUrl;
-        OpenUrl(url);
+        AppUpdateUi.StartDownload(Window.GetWindow(this), _availableUpdate);
     }
 
     private async Task RefreshUpdateStatusAsync(bool forceRefresh = false)

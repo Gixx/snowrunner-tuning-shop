@@ -172,7 +172,7 @@ public static class UiText
         public const string ManufacturerLabel = "Manufacturer";
         public const string BasedOnLabel = "Based on";
         public const string RoleLabel = "Role";
-        public const string YearsLabel = "Years";
+        public const string YearsLabel = "Year";
         public const string CountryLabel = "Country";
         public const string CountryHint = "Brand origin of the real-world basis.";
         public const string CatalogMissing = "Vehicle catalog assets were not found.";
@@ -187,15 +187,32 @@ public static class UiText
         public const string ApplyGlobalMultipliers = "Apply to all vehicles";
         public const string GlobalMultipliersHint =
             "Fuel tank, store price, and responsiveness scale from baseline. Front steer uses three presets: Min (10°), Default (baseline per truck), Max (60°). Independent of the category filter below.";
+        public const string StoreUnlocksTitle = "Store unlocks (all vehicles)";
+        public const string StoreUnlocksHint =
+            "Apply region and rank unlocks across every truck XML. Region-free makes trucks appear in every regional truck store. Unlock all sets UnlockByRank to 0.";
+        public const string ReleaseRegionLock = "Release region lock (all stores)";
+        public const string UnlockAllVehicles = "Unlock all vehicles (rank 0)";
+        public const string ApplyStoreUnlocks = "Apply store unlocks";
         public const string LoadPakForGlobalHint = "Load an initial.pak on the Home page to enable global vehicle multipliers.";
         public static string GlobalMultipliersAppliedStatus(int changedTrucks, int updatedFiles) =>
             $"Applied global vehicle multipliers to {changedTrucks} truck(s) across {updatedFiles} file(s).";
         public static string GlobalMultipliersSavedMessage(int changedTrucks, int updatedFiles) =>
             $"Global vehicle multipliers applied to {changedTrucks} truck(s) ({updatedFiles} file(s) updated).";
+        public static string StoreUnlocksSavedMessage(int changedTrucks, int updatedFiles) =>
+            $"Store unlocks applied to {changedTrucks} truck(s) ({updatedFiles} file(s) updated).";
+        public const string StoreUnlocksNothingSelected =
+            "Select at least one store unlock option before applying.";
         public const string TuningTitle = "Vehicle tuning";
         public const string FuelTankLabel = "Fuel tank";
         public const string FuelUnit = "L";
         public const string StorePriceLabel = "Store price";
+        public const string RegionFreeLabel = "Region-free";
+        public const string RegionFreeHint =
+            "When checked, this truck is listed in every regional truck store (GameData Country = all regions).";
+        public const string StoreRegionsLabel = "Store regions";
+        public const string UnlockRankLabel = "Unlock rank";
+        public const string UnlockRankHint =
+            "Player rank required in the truck store (GameData UnlockByRank). Use 0 to clear the rank gate.";
         public const string FrontSteerLabel = "Front steer";
         public const string RearSteerLabel = "Rear steer";
         public const string SteerAngleUnit = "°";
@@ -224,6 +241,13 @@ public static class UiText
             "Upgradeable AWD in-game also needs a transfer-case addon socket; connectable alone is not enough.";
         public const string SaveChanges = "Save changes";
         public const string RestoreThisVehicle = "Restore this vehicle to baseline";
+        public const string RestoreAllVehicles = "Restore all vehicles to baseline";
+        public const string RestoreAllVehiclesConfirmTitle = "Restore all vehicles?";
+        public const string RestoreAllVehiclesConfirmMessage =
+            "This restores every truck XML from your baseline pak (fuel, steer, price, unlocks, drive, and other vehicle edits). Continue?";
+        public const string RestoreAllVehiclesSuccessTitle = "Vehicles restored";
+        public static string RestoreAllVehiclesSavedMessage(int changedTrucks, int updatedFiles) =>
+            $"Restored {changedTrucks} vehicle(s) from baseline ({updatedFiles} file(s) updated).";
         public const string LoadPakHint = "Load an initial.pak on the Home page first.";
         public const string TruckNotFound =
             "This vehicle could not be matched to a truck XML in the loaded pak.";
@@ -237,6 +261,8 @@ public static class UiText
             "Rear steer must be between -90 and 0 degrees.";
         public const string InvalidPrice =
             "Store price must be a whole number from 0 to 9,999,999.";
+        public const string InvalidUnlockRank =
+            "Unlock rank must be a whole number from 0 to 30.";
         public const string SaveSuccessTitle = "Saved successfully";
         public const string SaveErrorTitle = "Save error";
         public const string RestoreSuccessTitle = "Vehicle restored";
@@ -291,7 +317,7 @@ public static class UiText
         public const string UpToDate = "You are running the latest version.";
         public const string UpdateCheckFailed = "Could not check for updates. Try again later.";
         public static string UpdateAvailableMessage(string latest) =>
-            $"Version {latest} is available (you have {AppInfo.Version}). Download the installer from GitHub Releases.";
+            $"Version {latest} is available (you have {AppInfo.Version}). Download and install it from inside the app.";
         public static string UpdateAvailableStatus(string latest) =>
             $"Update available: {latest}.";
         public const string OpenWebsite = "Open website";
@@ -301,6 +327,29 @@ public static class UiText
         public const string FeedbackHint =
             "Found a bug or have an idea? Open an issue on the GitHub tracker.";
         public const string OpenIssueTracker = "Open issue tracker";
+    }
+
+    public static class UpdateDownload
+    {
+        public const string Title = "Download update";
+        public const string DownloadingTitle = "Downloading update…";
+        public const string DownloadingDetail = "Downloading the installer. Please wait.";
+        public static string DownloadingDetailVersion(string version) =>
+            $"Downloading version {version}. Please wait.";
+        public const string Cancelling = "Cancelling download…";
+        public const string CompleteTitle = "Download complete";
+        public const string CompleteDetail =
+            "The installer is ready. Choose Update and restart to close this app and run the setup.";
+        public const string FailedTitle = "Download failed";
+        public const string UpdateAndRestart = "Update and restart";
+        public const string Cancel = "Cancel";
+        public const string Close = "Close";
+
+        public static string ProgressLabel(double percent, string received, string total) =>
+            $"{percent:0}% — {received} / {total}";
+
+        public static string ProgressIndeterminate(string received) =>
+            $"{received} downloaded…";
     }
 
     public static class Workspace

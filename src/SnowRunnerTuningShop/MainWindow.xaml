@@ -8,8 +8,8 @@
         mc:Ignorable="d"
         Title="SnowRunner Tuning Shop"
         Icon="pack://application:,,,/Assets/app-icon.ico"
-        Height="820"
-        Width="1200"
+        Height="815"
+        Width="1358"
         MinHeight="680"
         MinWidth="900">
     <Grid>

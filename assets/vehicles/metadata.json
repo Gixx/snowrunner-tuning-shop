@@ -1,1399 +1,1283 @@
 {
-    "version":  3,
-    "source":  "spintires.fandom.com Infobox (Based On / Manufacturer / Year); country = manufacturing country of Based On original; USSR (SU) for Soviet-era plants when yearFrom \u003c 1991",
-    "manufacturers":  [
-                          {
-                              "id":  "aac",
-                              "name":  "AAC",
-                              "logoFile":  null
-                          },
-                          {
-                              "id":  "ank",
-                              "name":  "Ank",
-                              "logoFile":  "manufacturers/ank-logo.png"
-                          },
-                          {
-                              "id":  "ankatra",
-                              "name":  "Ankatra",
-                              "logoFile":  null
-                          },
-                          {
-                              "id":  "aramatsu",
-                              "name":  "Aramatsu",
-                              "logoFile":  "manufacturers/aramatsu.png"
-                          },
-                          {
-                              "id":  "avenhorn",
-                              "name":  "Avenhorn",
-                              "logoFile":  null
-                          },
-                          {
-                              "id":  "azov",
-                              "name":  "Azov",
-                              "logoFile":  "manufacturers/azov-logo.png"
-                          },
-                          {
-                              "id":  "boar",
-                              "name":  "Boar",
-                              "logoFile":  "manufacturers/boar-logo.png"
-                          },
-                          {
-                              "id":  "burlak",
-                              "name":  "Burlak",
-                              "logoFile":  "manufacturers/burlak-logo.png"
-                          },
-                          {
-                              "id":  "cat",
-                              "name":  "Cat",
-                              "logoFile":  "manufacturers/cat-store-logo.png"
-                          },
-                          {
-                              "id":  "chevrolet",
-                              "name":  "Chevrolet",
-                              "logoFile":  "manufacturers/chevrolet-store-logo.png"
-                          },
-                          {
-                              "id":  "dan",
-                              "name":  "Dan",
-                              "logoFile":  "manufacturers/dan-logo.png"
-                          },
-                          {
-                              "id":  "derry-longhorn",
-                              "name":  "Derry Longhorn",
-                              "logoFile":  "manufacturers/derry-longhorn-logo.png"
-                          },
-                          {
-                              "id":  "don",
-                              "name":  "Don",
-                              "logoFile":  "manufacturers/don-logo.png"
-                          },
-                          {
-                              "id":  "earthroamer",
-                              "name":  "Earthroamer",
-                              "logoFile":  null
-                          },
-                          {
-                              "id":  "femm",
-                              "name":  "Femm",
-                              "logoFile":  "manufacturers/logo-femm.png"
-                          },
-                          {
-                              "id":  "ford",
-                              "name":  "Ford",
-                              "logoFile":  "manufacturers/ford-logo.png"
-                          },
-                          {
-                              "id":  "freightliner",
-                              "name":  "Freightliner",
-                              "logoFile":  "manufacturers/freightliner-logo.png"
-                          },
-                          {
-                              "id":  "futom",
-                              "name":  "Futom",
-                              "logoFile":  null
-                          },
-                          {
-                              "id":  "gm",
-                              "name":  "GMC",
-                              "logoFile":  "manufacturers/gm-logo.png"
-                          },
-                          {
-                              "id":  "gor",
-                              "name":  "Gor",
-                              "logoFile":  "manufacturers/gor-logo.png"
-                          },
-                          {
-                              "id":  "hib",
-                              "name":  "HIB",
-                              "logoFile":  null
-                          },
-                          {
-                              "id":  "international",
-                              "name":  "International",
-                              "logoFile":  "manufacturers/international-logo.png"
-                          },
-                          {
-                              "id":  "jangsu",
-                              "name":  "Jangsu",
-                              "logoFile":  null
-                          },
-                          {
-                              "id":  "jeep",
-                              "name":  "Jeep",
-                              "logoFile":  "manufacturers/jeep-logo.png"
-                          },
-                          {
-                              "id":  "kenworth",
-                              "name":  "Kenworth",
-                              "logoFile":  "manufacturers/kenworth-logo.png"
-                          },
-                          {
-                              "id":  "khan",
-                              "name":  "Khan",
-                              "logoFile":  "manufacturers/khan-logo.png"
-                          },
-                          {
-                              "id":  "kirovets",
-                              "name":  "Kirovets",
-                              "logoFile":  "manufacturers/kirovets.png"
-                          },
-                          {
-                              "id":  "kolob",
-                              "name":  "Kolob",
-                              "logoFile":  "manufacturers/kolob-logo.png"
-                          },
-                          {
-                              "id":  "krs-logo-alt",
-                              "name":  "Krs Logo Alt",
-                              "logoFile":  "manufacturers/krs-logo-alt.png"
-                          },
-                          {
-                              "id":  "landrover-main",
-                              "name":  "Landrover Main",
-                              "logoFile":  "manufacturers/landrover-main.png"
-                          },
-                          {
-                              "id":  "logo-tuz",
-                              "name":  "Logo Tuz",
-                              "logoFile":  "manufacturers/logo-tuz.png"
-                          },
-                          {
-                              "id":  "logo-voron",
-                              "name":  "Logo Voron",
-                              "logoFile":  "manufacturers/logo-voron.png"
-                          },
-                          {
-                              "id":  "mack",
-                              "name":  "Mack",
-                              "logoFile":  "manufacturers/mack-logo.png"
-                          },
-                          {
-                              "id":  "mack-mod",
-                              "name":  "Mack mod",
-                              "logoFile":  "manufacturers/mack-mod.png"
-                          },
-                          {
-                              "id":  "mercedes-benz",
-                              "name":  "Mercedes-Benz",
-                              "logoFile":  "manufacturers/mercedes-benz-logo.png"
-                          },
-                          {
-                              "id":  "mercer",
-                              "name":  "Mercer",
-                              "logoFile":  null
-                          },
-                          {
-                              "id":  "mtb",
-                              "name":  "MTB",
-                              "logoFile":  "manufacturers/logo-mtb.png"
-                          },
-                          {
-                              "id":  "neo",
-                              "name":  "Neo",
-                              "logoFile":  "manufacturers/neo-logo.png"
-                          },
-                          {
-                              "id":  "pacific",
-                              "name":  "Pacific",
-                              "logoFile":  "manufacturers/pacific-logo.png"
-                          },
-                          {
-                              "id":  "padera",
-                              "name":  "Padera",
-                              "logoFile":  null
-                          },
-                          {
-                              "id":  "plad",
-                              "name":  "PLAD",
-                              "logoFile":  null
-                          },
-                          {
-                              "id":  "rezvani",
-                              "name":  "Rezvani",
-                              "logoFile":  "manufacturers/rezvani.png"
-                          },
-                          {
-                              "id":  "royal",
-                              "name":  "Royal",
-                              "logoFile":  "manufacturers/royal-logo.png"
-                          },
-                          {
-                              "id":  "sleiter",
-                              "name":  "Sleiter",
-                              "logoFile":  null
-                          },
-                          {
-                              "id":  "step",
-                              "name":  "Step",
-                              "logoFile":  "manufacturers/step-logo.png"
-                          },
-                          {
-                              "id":  "tatra",
-                              "name":  "Tatra",
-                              "logoFile":  "manufacturers/tatra-logo.png"
-                          },
-                          {
-                              "id":  "tayga",
-                              "name":  "Tayga",
-                              "logoFile":  "manufacturers/tayga-logo.png"
-                          },
-                          {
-                              "id":  "tuz",
-                              "name":  "Tuz",
-                              "logoFile":  "manufacturers/logo-tuz.png"
-                          },
-                          {
-                              "id":  "voron",
-                              "name":  "Voron",
-                              "logoFile":  "manufacturers/logo-voron.png"
-                          },
-                          {
-                              "id":  "western-star",
-                              "name":  "Western Star",
-                              "logoFile":  "manufacturers/western-star-logo.png"
-                          },
-                          {
-                              "id":  "yar",
-                              "name":  "YAR",
-                              "logoFile":  "manufacturers/yar-logo.png"
-                          },
-                          {
-                              "id":  "zikz",
-                              "name":  "Zikz",
-                              "logoFile":  "manufacturers/zikz-logo.png"
-                          }
-                      ],
-    "countries":  [
-                      {
-                          "code":  "BE",
-                          "name":  "Belgium",
-                          "flagFile":  "flags/be.png"
-                      },
-                      {
-                          "code":  "BY",
-                          "name":  "Belarus",
-                          "flagFile":  "flags/by.png"
-                      },
-                      {
-                          "code":  "CA",
-                          "name":  "Canada",
-                          "flagFile":  "flags/ca.png"
-                      },
-                      {
-                          "code":  "CN",
-                          "name":  "China",
-                          "flagFile":  "flags/cn.png"
-                      },
-                      {
-                          "code":  "CZ",
-                          "name":  "Czech Republic",
-                          "flagFile":  "flags/cz.png"
-                      },
-                      {
-                          "code":  "DE",
-                          "name":  "Germany",
-                          "flagFile":  "flags/de.png"
-                      },
-                      {
-                          "code":  "FI",
-                          "name":  "Finland",
-                          "flagFile":  "flags/fi.png"
-                      },
-                      {
-                          "code":  "FR",
-                          "name":  "France",
-                          "flagFile":  "flags/fr.png"
-                      },
-                      {
-                          "code":  "GB",
-                          "name":  "United Kingdom",
-                          "flagFile":  "flags/gb.png"
-                      },
-                      {
-                          "code":  "IN",
-                          "name":  "India",
-                          "flagFile":  "flags/in.png"
-                      },
-                      {
-                          "code":  "IT",
-                          "name":  "Italy",
-                          "flagFile":  "flags/it.png"
-                      },
-                      {
-                          "code":  "NL",
-                          "name":  "Netherlands",
-                          "flagFile":  "flags/nl.png"
-                      },
-                      {
-                          "code":  "PT",
-                          "name":  "Portugal",
-                          "flagFile":  "flags/pt.png"
-                      },
-                      {
-                          "code":  "RU",
-                          "name":  "Russia",
-                          "flagFile":  "flags/ru.png"
-                      },
-                      {
-                          "code":  "SU",
-                          "name":  "USSR",
-                          "flagFile":  "flags/su.png"
-                      },
-                      {
-                          "code":  "UA",
-                          "name":  "Ukraine",
-                          "flagFile":  "flags/ua.png"
-                      },
-                      {
-                          "code":  "US",
-                          "name":  "United States",
-                          "flagFile":  "flags/us.png"
-                      }
-                  ],
-    "vehicles":  [
-                     {
-                         "id":  "fclt9000",
-                         "manufacturerId":  "ford",
-                         "basedOn":  "Ford CLT-9000",
-                         "yearFrom":  1977,
-                         "yearTo":  1991,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
-                     },
-                     {
-                         "id":  "gmh9500",
-                         "manufacturerId":  "gm",
-                         "basedOn":  "GMC MH-9500",
-                         "yearFrom":  1966,
-                         "yearTo":  1978,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
-                     },
-                     {
-                         "id":  "hibbm816",
-                         "manufacturerId":  "hib",
-                         "basedOn":  "DAF F241 Series",
-                         "yearFrom":  1973,
-                         "yearTo":  1973,
-                         "countryCode":  "NL",
-                         "countryName":  "Netherlands"
-                     },
-                     {
-                         "id":  "transtar",
-                         "manufacturerId":  "international",
-                         "basedOn":  "International Transtar 4070A",
-                         "yearFrom":  1971,
-                         "yearTo":  1986,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
-                     },
-                     {
-                         "id":  "kt880",
-                         "manufacturerId":  "kenworth",
-                         "basedOn":  "Kenworth T880",
-                         "yearFrom":  2019,
-                         "yearTo":  2019,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
-                     },
-                     {
-                         "id":  "kw990",
-                         "manufacturerId":  "kenworth",
-                         "basedOn":  "Kenworth W990",
-                         "yearFrom":  2018,
-                         "yearTo":  2018,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
-                     },
-                     {
-                         "id":  "mtp",
-                         "manufacturerId":  "mack-mod",
-                         "basedOn":  "Mack TerraPro",
-                         "yearFrom":  2007,
-                         "yearTo":  2007,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
-                     },
-                     {
-                         "id":  "western_star_57x",
-                         "manufacturerId":  "western-star",
-                         "basedOn":  "Western Star 57X",
-                         "yearFrom":  2022,
-                         "yearTo":  2022,
-                         "countryCode":  "CA",
-                         "countryName":  "Canada"
-                     },
-                     {
-                         "id":  "cct680",
-                         "manufacturerId":  "cat",
-                         "basedOn":  "Caterpillar CT680",
-                         "yearFrom":  2013,
-                         "yearTo":  2013,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
-                     },
-                     {
-                         "id":  "ct681",
-                         "manufacturerId":  "cat",
-                         "basedOn":  "Caterpillar CT681",
-                         "yearFrom":  2014,
-                         "yearTo":  2014,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
-                     },
-                     {
-                         "id":  "kodiak",
-                         "manufacturerId":  "chevrolet",
-                         "basedOn":  "Chevrolet Kodiak C70",
-                         "yearFrom":  1980,
-                         "yearTo":  2009,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
-                     },
-                     {
-                         "id":  "fleetstar",
-                         "manufacturerId":  "international",
-                         "basedOn":  "International Fleetstar F-2070A",
-                         "yearFrom":  1962,
-                         "yearTo":  1977,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
-                     },
-                     {
-                         "id":  "ffld120",
-                         "manufacturerId":  null,
-                         "basedOn":  "Freightliner FLD120",
-                         "yearFrom":  1988,
-                         "yearTo":  1988,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
-                     },
-                     {
-                         "id":  "gmc_8000",
-                         "manufacturerId":  "gm",
-                         "basedOn":  "[[:wikipedia:GMC_Brigadier",
-                         "yearFrom":  1978,
-                         "yearTo":  1988,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
-                     },
-                     {
-                         "id":  "international_hx520",
-                         "manufacturerId":  "international",
-                         "basedOn":  "International HX520",
-                         "yearFrom":  2016,
-                         "yearTo":  null,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
-                     },
-                     {
-                         "id":  "kc500",
-                         "manufacturerId":  "kenworth",
-                         "basedOn":  "Kenworth C500 Tandem",
-                         "yearFrom":  2007,
-                         "yearTo":  2007,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
-                     },
-                     {
-                         "id":  "mp",
-                         "manufacturerId":  "mack-mod",
-                         "basedOn":  "Mack Pinnacle",
-                         "yearFrom":  2019,
-                         "yearTo":  2019,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
-                     },
-                     {
-                         "id":  "pstd4",
-                         "manufacturerId":  "padera",
-                         "basedOn":  "Astra HHD8 86.48",
-                         "yearFrom":  2003,
-                         "yearTo":  2012,
-                         "countryCode":  "IT",
-                         "countryName":  "Italy"
-                     },
-                     {
-                         "id":  "vg5352",
-                         "manufacturerId":  "voron",
-                         "basedOn":  "Ural-5323",
-                         "yearFrom":  1989,
-                         "yearTo":  1989,
-                         "countryCode":  "SU",
-                         "countryName":  "USSR"
-                     },
-                     {
-                         "id":  "wws4964",
-                         "manufacturerId":  "western-star",
-                         "basedOn":  "White Western Star 4964",
-                         "yearFrom":  1967,
-                         "yearTo":  1981,
-                         "countryCode":  "CA",
-                         "countryName":  "Canada"
-                     },
-                     {
-                         "id":  "aramatsu_forester",
-                         "manufacturerId":  "aramatsu",
-                         "basedOn":  "John Deere 1210E",
-                         "yearFrom":  2010,
-                         "yearTo":  2010,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
-                     },
-                     {
-                         "id":  "aa15",
-                         "manufacturerId":  "avenhorn",
-                         "basedOn":  "Hendrickson B-Series Prime Mover",
-                         "yearFrom":  1964,
-                         "yearTo":  1964,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
-                     },
-                     {
-                         "id":  "42-20",
-                         "manufacturerId":  "azov",
-                         "basedOn":  "KamAZ-6345 Arctic",
-                         "yearFrom":  2017,
-                         "yearTo":  2017,
-                         "countryCode":  "RU",
-                         "countryName":  "Russia"
-                     },
-                     {
-                         "id":  "a67096a",
-                         "manufacturerId":  "azov",
-                         "basedOn":  "KamAZ-65808",
-                         "yearFrom":  2022,
-                         "yearTo":  2022,
-                         "countryCode":  "RU",
-                         "countryName":  "Russia"
-                     },
-                     {
-                         "id":  "azov-73210",
-                         "manufacturerId":  "azov",
-                         "basedOn":  "KamAZ K5 (K5340)",
-                         "yearFrom":  2019,
-                         "yearTo":  null,
-                         "countryCode":  "RU",
-                         "countryName":  "Russia"
-                     },
-                     {
-                         "id":  "boar",
-                         "manufacturerId":  "boar",
-                         "basedOn":  "TONAR-7502",
-                         "yearFrom":  2018,
-                         "yearTo":  2018,
-                         "countryCode":  "RU",
-                         "countryName":  "Russia"
-                     },
-                     {
-                         "id":  "c745c",
-                         "manufacturerId":  "cat",
-                         "basedOn":  "Caterpillar 745C",
-                         "yearFrom":  2015,
-                         "yearTo":  2015,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
-                     },
-                     {
-                         "id":  "96320",
-                         "manufacturerId":  "dan",
-                         "basedOn":  "BAZ-69092",
-                         "yearFrom":  1990,
-                         "yearTo":  null,
-                         "countryCode":  "SU",
-                         "countryName":  "USSR"
-                     },
-                     {
-                         "id":  "3194",
-                         "manufacturerId":  "derry-longhorn",
-                         "basedOn":  "Oshkosh M911",
-                         "yearFrom":  1976,
-                         "yearTo":  1990,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
-                     },
-                     {
-                         "id":  "4520",
-                         "manufacturerId":  "derry-longhorn",
-                         "basedOn":  "Oshkosh HET A0 M1070A0",
-                         "yearFrom":  1992,
-                         "yearTo":  1992,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
-                     },
-                     {
-                         "id":  "derryspecial",
-                         "manufacturerId":  "derry-longhorn",
-                         "basedOn":  "Oshkosh M1120A4",
-                         "yearFrom":  2008,
-                         "yearTo":  2008,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
-                     },
-                     {
-                         "id":  "femm7at",
-                         "manufacturerId":  "femm",
-                         "basedOn":  "Yamal B-6M",
-                         "yearFrom":  2013,
-                         "yearTo":  2013,
-                         "countryCode":  "RU",
-                         "countryName":  "Russia"
-                     },
-                     {
-                         "id":  "f7290ra",
-                         "manufacturerId":  "futom",
-                         "basedOn":  "Claas Xerion 5000",
-                         "yearFrom":  2019,
-                         "yearTo":  2019,
-                         "countryCode":  "DE",
-                         "countryName":  "Germany"
-                     },
-                     {
-                         "id":  "paystar_5600ts",
-                         "manufacturerId":  "international",
-                         "basedOn":  "International Paystar 5600i T/A Tridrive",
-                         "yearFrom":  2004,
-                         "yearTo":  2004,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
-                     },
-                     {
-                         "id":  "k963",
-                         "manufacturerId":  "kenworth",
-                         "basedOn":  "Kenworth 963",
-                         "yearFrom":  2005,
-                         "yearTo":  2005,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
-                     },
-                     {
-                         "id":  "k700sr",
-                         "manufacturerId":  "kirovets",
-                         "basedOn":  "Kirovets K-700",
-                         "yearFrom":  1962,
-                         "yearTo":  1962,
-                         "countryCode":  "SU",
-                         "countryName":  "USSR"
-                     },
-                     {
-                         "id":  "img_k7m",
-                         "manufacturerId":  "kirovets",
-                         "basedOn":  "Kirovets K-7M",
-                         "yearFrom":  2020,
-                         "yearTo":  2020,
-                         "countryCode":  "RU",
-                         "countryName":  "Russia"
-                     },
-                     {
-                         "id":  "74760",
-                         "manufacturerId":  "kolob",
-                         "basedOn":  "MZKT-741351",
-                         "yearFrom":  2013,
-                         "yearTo":  null,
-                         "countryCode":  "BY",
-                         "countryName":  "Belarus"
-                     },
-                     {
-                         "id":  "74941",
-                         "manufacturerId":  "kolob",
-                         "basedOn":  "MZKT-741350",
-                         "yearFrom":  2013,
-                         "yearTo":  null,
-                         "countryCode":  "BY",
-                         "countryName":  "Belarus"
-                     },
-                     {
-                         "id":  "navistar",
-                         "manufacturerId":  "international",
-                         "basedOn":  "Navistar 5000-MV",
-                         "yearFrom":  1988,
-                         "yearTo":  2015,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
-                     },
-                     {
-                         "id":  "pp12",
-                         "manufacturerId":  "pacific",
-                         "basedOn":  "Pacific P12 (main model)Pacific P12W Roughneck (branding only)",
-                         "yearFrom":  1982,
-                         "yearTo":  1982,
-                         "countryCode":  "CA",
-                         "countryName":  "Canada"
-                     },
-                     {
-                         "id":  "pp16",
-                         "manufacturerId":  "pacific",
-                         "basedOn":  "Pacific M26/P16",
-                         "yearFrom":  1943,
-                         "yearTo":  1945,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
-                     },
-                     {
-                         "id":  "pp512pf",
-                         "manufacturerId":  "pacific",
-                         "basedOn":  "Pacific P512",
-                         "yearFrom":  1971,
-                         "yearTo":  1982,
-                         "countryCode":  "CA",
-                         "countryName":  "Canada"
-                     },
-                     {
-                         "id":  "p450",
-                         "manufacturerId":  "plad",
-                         "basedOn":  "Faun Goliath 8x8",
-                         "yearFrom":  1989,
-                         "yearTo":  1989,
-                         "countryCode":  "DE",
-                         "countryName":  "Germany"
-                     },
-                     {
-                         "id":  "smfk816e",
-                         "manufacturerId":  "sleiter",
-                         "basedOn":  "MOL TB800",
-                         "yearFrom":  1989,
-                         "yearTo":  1989,
-                         "countryCode":  "BE",
-                         "countryName":  "Belgium"
-                     },
-                     {
-                         "id":  "sst833c",
-                         "manufacturerId":  "sleiter",
-                         "basedOn":  "MOL F 7066",
-                         "yearFrom":  1999,
-                         "yearTo":  1999,
-                         "countryCode":  "BE",
-                         "countryName":  "Belgium"
-                     },
-                     {
-                         "id":  "tatra_force",
-                         "manufacturerId":  "tatra",
-                         "basedOn":  "Tatra T815-7Z0R9T 44 440 8x8.1R",
-                         "yearFrom":  2012,
-                         "yearTo":  2012,
-                         "countryCode":  "CZ",
-                         "countryName":  "Czech Republic"
-                     },
-                     {
-                         "id":  "tatra_t813",
-                         "manufacturerId":  "tatra",
-                         "basedOn":  "TATRA T813",
-                         "yearFrom":  1967,
-                         "yearTo":  1967,
-                         "countryCode":  "CZ",
-                         "countryName":  "Czech Republic"
-                     },
-                     {
-                         "id":  "western_star_47x_nf_1424",
-                         "manufacturerId":  "western-star",
-                         "basedOn":  "Western Star 47X",
-                         "yearFrom":  2021,
-                         "yearTo":  null,
-                         "countryCode":  "CA",
-                         "countryName":  "Canada"
-                     },
-                     {
-                         "id":  "western_star_47x_nf_1430",
-                         "manufacturerId":  "western-star",
-                         "basedOn":  "Western Star 47X",
-                         "yearFrom":  2021,
-                         "yearTo":  null,
-                         "countryCode":  "CA",
-                         "countryName":  "Canada"
-                     },
-                     {
-                         "id":  "western_star_49x",
-                         "manufacturerId":  "western-star",
-                         "basedOn":  "Western Star 49X",
-                         "yearFrom":  2020,
-                         "yearTo":  2020,
-                         "countryCode":  "CA",
-                         "countryName":  "Canada"
-                     },
-                     {
-                         "id":  "ws6900ts",
-                         "manufacturerId":  "western-star",
-                         "basedOn":  "Western Star 6900 TwinSteer",
-                         "yearFrom":  2007,
-                         "yearTo":  2007,
-                         "countryCode":  "CA",
-                         "countryName":  "Canada"
-                     },
-                     {
-                         "id":  "ws6900xd",
-                         "manufacturerId":  "western-star",
-                         "basedOn":  "Western Star 6900XD",
-                         "yearFrom":  2005,
-                         "yearTo":  2005,
-                         "countryCode":  "CA",
-                         "countryName":  "Canada"
-                     },
-                     {
-                         "id":  "zikz_605r",
-                         "manufacturerId":  "zikz",
-                         "basedOn":  "MAZ-537",
-                         "yearFrom":  1959,
-                         "yearTo":  1959,
-                         "countryCode":  "SU",
-                         "countryName":  "USSR"
-                     },
-                     {
-                         "id":  "z612h",
-                         "manufacturerId":  "zikz",
-                         "basedOn":  "MAZ-7310",
-                         "yearFrom":  1962,
-                         "yearTo":  1962,
-                         "countryCode":  "SU",
-                         "countryName":  "USSR"
-                     },
-                     {
-                         "id":  "mk38",
-                         "manufacturerId":  "ank",
-                         "basedOn":  "AM General M939",
-                         "yearFrom":  1983,
-                         "yearTo":  1983,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
-                     },
-                     {
-                         "id":  "ank_mk38_civilian",
-                         "manufacturerId":  "ank",
-                         "basedOn":  "AM General M939",
-                         "yearFrom":  1983,
-                         "yearTo":  1983,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
-                     },
-                     {
-                         "id":  "a1160",
-                         "manufacturerId":  "ankatra",
-                         "basedOn":  "Valmet 1502",
-                         "yearFrom":  1975,
-                         "yearTo":  1975,
-                         "countryCode":  "FI",
-                         "countryName":  "Finland"
-                     },
-                     {
-                         "id":  "43191_sprinter",
-                         "manufacturerId":  "azov",
-                         "basedOn":  "KamAZ-4326-9",
-                         "yearFrom":  1995,
-                         "yearTo":  1995,
-                         "countryCode":  "RU",
-                         "countryName":  "Russia"
-                     },
-                     {
-                         "id":  "5319_nara",
-                         "manufacturerId":  "azov",
-                         "basedOn":  "KamAZ-6560",
-                         "yearFrom":  2005,
-                         "yearTo":  null,
-                         "countryCode":  "RU",
-                         "countryName":  "Russia"
-                     },
-                     {
-                         "id":  "64131",
-                         "manufacturerId":  "azov",
-                         "basedOn":  "KamAZ-65228",
-                         "yearFrom":  2008,
-                         "yearTo":  null,
-                         "countryCode":  "RU",
-                         "countryName":  "Russia"
-                     },
-                     {
-                         "id":  "114sd",
-                         "manufacturerId":  "freightliner",
-                         "basedOn":  "Freightliner 114SD",
-                         "yearFrom":  2011,
-                         "yearTo":  null,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
-                     },
-                     {
-                         "id":  "m916a1",
-                         "manufacturerId":  "freightliner",
-                         "basedOn":  "Freightliner M916A1",
-                         "yearFrom":  1978,
-                         "yearTo":  null,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
-                     },
-                     {
-                         "id":  "hibb1980",
-                         "manufacturerId":  "hib",
-                         "basedOn":  "Leyland DAF T244 Expedition",
-                         "yearFrom":  1990,
-                         "yearTo":  1990,
-                         "countryCode":  "GB",
-                         "countryName":  "United Kingdom"
-                     },
-                     {
-                         "id":  "paystar",
-                         "manufacturerId":  "international",
-                         "basedOn":  "International Paystar 5070",
-                         "yearFrom":  1973,
-                         "yearTo":  2016,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
-                     },
-                     {
-                         "id":  "jrx600",
-                         "manufacturerId":  "jangsu",
-                         "basedOn":  "Dongfeng EQ2100",
-                         "yearFrom":  1996,
-                         "yearTo":  1996,
-                         "countryCode":  "CN",
-                         "countryName":  "China"
-                     },
-                     {
-                         "id":  "bandit",
-                         "manufacturerId":  "krs-logo-alt",
-                         "basedOn":  "P8WD GEOLKOM-PM",
-                         "yearFrom":  2012,
-                         "yearTo":  2012,
-                         "countryCode":  "RU",
-                         "countryName":  "Russia"
-                     },
-                     {
-                         "id":  "mdm917",
-                         "manufacturerId":  "mack",
-                         "basedOn":  "Mack Defense M917",
-                         "yearFrom":  2019,
-                         "yearTo":  2019,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
-                     },
-                     {
-                         "id":  "mba3332",
-                         "manufacturerId":  "mercedes-benz",
-                         "basedOn":  "Mercedes-Benz Actros 3332 MP2 6x6",
-                         "yearFrom":  2004,
-                         "yearTo":  2004,
-                         "countryCode":  "DE",
-                         "countryName":  "Germany"
-                     },
-                     {
-                         "id":  "mbz",
-                         "manufacturerId":  "mercedes-benz",
-                         "basedOn":  "Mercedes-Benz Zetros",
-                         "yearFrom":  2008,
-                         "yearTo":  2008,
-                         "countryCode":  "DE",
-                         "countryName":  "Germany"
-                     },
-                     {
-                         "id":  "mk520",
-                         "manufacturerId":  "mercer",
-                         "basedOn":  "Berliet GBC 8",
-                         "yearFrom":  1958,
-                         "yearTo":  1958,
-                         "countryCode":  "FR",
-                         "countryName":  "France"
-                     },
-                     {
-                         "id":  "mr230",
-                         "manufacturerId":  "mercer",
-                         "basedOn":  "Berliet GBC 8x8",
-                         "yearFrom":  1959,
-                         "yearTo":  1977,
-                         "countryCode":  "FR",
-                         "countryName":  "France"
-                     },
-                     {
-                         "id":  "p440b",
-                         "manufacturerId":  "plad",
-                         "basedOn":  "Faun L912 SA",
-                         "yearFrom":  1967,
-                         "yearTo":  1967,
-                         "countryCode":  "DE",
-                         "countryName":  "Germany"
-                     },
-                     {
-                         "id":  "bm17",
-                         "manufacturerId":  "royal",
-                         "basedOn":  "Scammell S24",
-                         "yearFrom":  1980,
-                         "yearTo":  1988,
-                         "countryCode":  "GB",
-                         "countryName":  "United Kingdom"
-                     },
-                     {
-                         "id":  "310e",
-                         "manufacturerId":  "step",
-                         "basedOn":  "ZiL-E133Vyat",
-                         "yearFrom":  1982,
-                         "yearTo":  1982,
-                         "countryCode":  "SU",
-                         "countryName":  "USSR"
-                     },
-                     {
-                         "id":  "3364",
-                         "manufacturerId":  "step",
-                         "basedOn":  "ZiL-164",
-                         "yearFrom":  1957,
-                         "yearTo":  1957,
-                         "countryCode":  "SU",
-                         "countryName":  "USSR"
-                     },
-                     {
-                         "id":  "steppike",
-                         "manufacturerId":  "step",
-                         "basedOn":  "ZiL-133G1",
-                         "yearFrom":  1975,
-                         "yearTo":  1975,
-                         "countryCode":  "SU",
-                         "countryName":  "USSR"
-                     },
-                     {
-                         "id":  "tatra_phoenix",
-                         "manufacturerId":  "tatra",
-                         "basedOn":  "Tatra T158-8P6R44",
-                         "yearFrom":  2018,
-                         "yearTo":  2018,
-                         "countryCode":  "CZ",
-                         "countryName":  "Czech Republic"
-                     },
-                     {
-                         "id":  "6436",
-                         "manufacturerId":  "tayga",
-                         "basedOn":  "KrAZ-6443",
-                         "yearFrom":  1992,
-                         "yearTo":  1992,
-                         "countryCode":  "UA",
-                         "countryName":  "Ukraine"
-                     },
-                     {
-                         "id":  "tayga_6455b",
-                         "manufacturerId":  "tayga",
-                         "basedOn":  "KrAZ-255",
-                         "yearFrom":  1967,
-                         "yearTo":  1967,
-                         "countryCode":  "SU",
-                         "countryName":  "USSR"
-                     },
-                     {
-                         "id":  "tuz_108",
-                         "manufacturerId":  "tuz",
-                         "basedOn":  "GAZ-3308 \"Sadko\"",
-                         "yearFrom":  1997,
-                         "yearTo":  1997,
-                         "countryCode":  "RU",
-                         "countryName":  "Russia"
-                     },
-                     {
-                         "id":  "actaeon",
-                         "manufacturerId":  "tuz",
-                         "basedOn":  "GAZ-66",
-                         "yearFrom":  1964,
-                         "yearTo":  1964,
-                         "countryCode":  "SU",
-                         "countryName":  "USSR"
-                     },
-                     {
-                         "id":  "ae4380",
-                         "manufacturerId":  "voron",
-                         "basedOn":  "Ural-4320",
-                         "yearFrom":  1977,
-                         "yearTo":  1977,
-                         "countryCode":  "SU",
-                         "countryName":  "USSR"
-                     },
-                     {
-                         "id":  "d53233",
-                         "manufacturerId":  "logo-voron",
-                         "basedOn":  "Ural-55223",
-                         "yearFrom":  1959,
-                         "yearTo":  1990,
-                         "countryCode":  "SU",
-                         "countryName":  "USSR"
-                     },
-                     {
-                         "id":  "grad",
-                         "manufacturerId":  "voron",
-                         "basedOn":  "Ural Next",
-                         "yearFrom":  2015,
-                         "yearTo":  null,
-                         "countryCode":  "RU",
-                         "countryName":  "Russia"
-                     },
-                     {
-                         "id":  "5368",
-                         "manufacturerId":  "zikz",
-                         "basedOn":  "MAZ-500",
-                         "yearFrom":  1963,
-                         "yearTo":  1963,
-                         "countryCode":  "SU",
-                         "countryName":  "USSR"
-                     },
-                     {
-                         "id":  "zikz556a",
-                         "manufacturerId":  "zikz",
-                         "basedOn":  "MAZ-502",
-                         "yearFrom":  1957,
-                         "yearTo":  1957,
-                         "countryCode":  "SU",
-                         "countryName":  "USSR"
-                     },
-                     {
-                         "id":  "aac58dw",
-                         "manufacturerId":  "aac",
-                         "basedOn":  "UMM Alter II",
-                         "yearFrom":  1986,
-                         "yearTo":  1986,
-                         "countryCode":  "PT",
-                         "countryName":  "Portugal"
-                     },
-                     {
-                         "id":  "b6x6",
-                         "manufacturerId":  "burlak",
-                         "basedOn":  "[https://burlakoffroad.com/en/models/13 Burlak Mobile Crane 6x6]",
-                         "yearFrom":  2022,
-                         "yearTo":  2022,
-                         "countryCode":  "RU",
-                         "countryName":  "Russia"
-                     },
-                     {
-                         "id":  "cth357",
-                         "manufacturerId":  "cat",
-                         "basedOn":  "Caterpillar TH357D AG",
-                         "yearFrom":  2017,
-                         "yearTo":  2017,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
-                     },
-                     {
-                         "id":  "chevrolet-apache",
-                         "manufacturerId":  "chevrolet",
-                         "basedOn":  "Chevrolet Apache",
-                         "yearFrom":  1958,
-                         "yearTo":  1961,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
-                     },
-                     {
-                         "id":  "ck1500",
-                         "manufacturerId":  "chevrolet",
-                         "basedOn":  "Chevrolet C/K 1500",
-                         "yearFrom":  1987,
-                         "yearTo":  1987,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
-                     },
-                     {
-                         "id":  "d71",
-                         "manufacturerId":  "don",
-                         "basedOn":  "Lada Niva 21213",
-                         "yearFrom":  1977,
-                         "yearTo":  1977,
-                         "countryCode":  "SU",
-                         "countryName":  "USSR"
-                     },
-                     {
-                         "id":  "elti",
-                         "manufacturerId":  "earthroamer",
-                         "basedOn":  "EarthRoamer LTi",
-                         "yearFrom":  2021,
-                         "yearTo":  2021,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
-                     },
-                     {
-                         "id":  "esx",
-                         "manufacturerId":  "earthroamer",
-                         "basedOn":  "EarthRoamer SX",
-                         "yearFrom":  2023,
-                         "yearTo":  2023,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
-                     },
-                     {
-                         "id":  "ff750",
-                         "manufacturerId":  "ford",
-                         "basedOn":  "Ford F-750 Super Duty",
-                         "yearFrom":  2000,
-                         "yearTo":  null,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
-                     },
-                     {
-                         "id":  "by4",
-                         "manufacturerId":  "gor",
-                         "basedOn":  "ZAZ-965A Zaporozhets",
-                         "yearFrom":  1960,
-                         "yearTo":  1969,
-                         "countryCode":  "UA",
-                         "countryName":  "Ukraine"
-                     },
-                     {
-                         "id":  "h2",
-                         "manufacturerId":  null,
-                         "basedOn":  "Hummer H2 SUT",
-                         "yearFrom":  2005,
-                         "yearTo":  2009,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
-                     },
-                     {
-                         "id":  "loadstar",
-                         "manufacturerId":  "international",
-                         "basedOn":  "[[:wikipedia:International_Loadstar",
-                         "yearFrom":  1962,
-                         "yearTo":  1979,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
-                     },
-                     {
-                         "id":  "jcj7r",
-                         "manufacturerId":  "jeep",
-                         "basedOn":  "[[:wikipedia:Jeep_CJ",
-                         "yearFrom":  1976,
-                         "yearTo":  1986,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
-                     },
-                     {
-                         "id":  "jw",
-                         "manufacturerId":  "jeep",
-                         "basedOn":  "[[:wikipedia:Jeep_Wrangler",
-                         "yearFrom":  1986,
-                         "yearTo":  null,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
-                     },
-                     {
-                         "id":  "khan_sentinel",
-                         "manufacturerId":  "khan",
-                         "basedOn":  "UAZ-23632 Patriot Pickup",
-                         "yearFrom":  2014,
-                         "yearTo":  null,
-                         "countryCode":  "RU",
-                         "countryName":  "Russia"
-                     },
-                     {
-                         "id":  "marshall",
-                         "manufacturerId":  "khan",
-                         "basedOn":  "UAZ-315195 Hunter",
-                         "yearFrom":  2003,
-                         "yearTo":  2003,
-                         "countryCode":  "RU",
-                         "countryName":  "Russia"
-                     },
-                     {
-                         "id":  "loaf",
-                         "manufacturerId":  "khan",
-                         "basedOn":  "UAZ-3741",
-                         "yearFrom":  1985,
-                         "yearTo":  1985,
-                         "countryCode":  "SU",
-                         "countryName":  "USSR"
-                     },
-                     {
-                         "id":  "landroverdefender110",
-                         "manufacturerId":  "landrover-main",
-                         "basedOn":  "[[:wikipedia:Land_Rover_Defender",
-                         "yearFrom":  1983,
-                         "yearTo":  2016,
-                         "countryCode":  "GB",
-                         "countryName":  "United Kingdom"
-                     },
-                     {
-                         "id":  "landroverdefender90",
-                         "manufacturerId":  "landrover-main",
-                         "basedOn":  "[[:wikipedia:Land_Rover_Defender",
-                         "yearFrom":  1984,
-                         "yearTo":  2016,
-                         "countryCode":  "GB",
-                         "countryName":  "United Kingdom"
-                     },
-                     {
-                         "id":  "mtb8106rg",
-                         "manufacturerId":  "mtb",
-                         "basedOn":  "Force Gurkha",
-                         "yearFrom":  2008,
-                         "yearTo":  2008,
-                         "countryCode":  "IN",
-                         "countryName":  "India"
-                     },
-                     {
-                         "id":  "nf2000",
-                         "manufacturerId":  "neo",
-                         "basedOn":  "Mahindra Bolero",
-                         "yearFrom":  2000,
-                         "yearTo":  2000,
-                         "countryCode":  "IN",
-                         "countryName":  "India"
-                     },
-                     {
-                         "id":  "rezvani-hercules-6x6",
-                         "manufacturerId":  "rezvani",
-                         "basedOn":  "Rezvani Hercules 6x6",
-                         "yearFrom":  2019,
-                         "yearTo":  null,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
-                     },
-                     {
-                         "id":  "rt",
-                         "manufacturerId":  "rezvani",
-                         "basedOn":  "[https://en.wikipedia.org/wiki/Rezvani_Tank Rezvani Tank]",
-                         "yearFrom":  2020,
-                         "yearTo":  2020,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
-                     },
-                     {
-                         "id":  "scout800",
-                         "manufacturerId":  "international",
-                         "basedOn":  "International Harvester Scout 800A",
-                         "yearFrom":  1968,
-                         "yearTo":  1968,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
-                     },
-                     {
-                         "id":  "tatra_805",
-                         "manufacturerId":  "tatra",
-                         "basedOn":  "Tatra 805",
-                         "yearFrom":  1952,
-                         "yearTo":  1952,
-                         "countryCode":  "CZ",
-                         "countryName":  "Czech Republic"
-                     },
-                     {
-                         "id":  "166",
-                         "manufacturerId":  "logo-tuz",
-                         "basedOn":  "GAZ-69A",
-                         "yearFrom":  1953,
-                         "yearTo":  1953,
-                         "countryCode":  "SU",
-                         "countryName":  "USSR"
-                     },
-                     {
-                         "id":  "tatarin",
-                         "manufacturerId":  "tuz",
-                         "basedOn":  "GAZ-59037A",
-                         "yearFrom":  1990,
-                         "yearTo":  1990,
-                         "countryCode":  "SU",
-                         "countryName":  "USSR"
-                     },
-                     {
-                         "id":  "yar87",
-                         "manufacturerId":  "yar",
-                         "basedOn":  "TREKOL-39294",
-                         "yearFrom":  2004,
-                         "yearTo":  2004,
-                         "countryCode":  "RU",
-                         "countryName":  "Russia"
-                     },
-                     {
-                         "id":  "veh_c770g_alt",
-                         "manufacturerId":  "cat",
-                         "basedOn":  "[https://www.cat.com/en_US/products/new/equipment/off-highway-trucks/off-highway-trucks-bare-chassis/1000005264.html Caterpillar 770G]",
-                         "yearFrom":  2012,
-                         "yearTo":  2012,
-                         "countryCode":  "US",
-                         "countryName":  "United States"
-                     }
-                 ]
+  "version": 4,
+  "source": "spintires.fandom.com Infobox (Based On / Manufacturer); year = visual design year (first year if look unchanged); country = manufacturing country of Based On original; USSR (SU) for Soviet-era plants when year < 1991",
+  "manufacturers": [
+    {
+      "id": "aac",
+      "name": "AAC",
+      "logoFile": null
+    },
+    {
+      "id": "ank",
+      "name": "Ank",
+      "logoFile": "manufacturers/ank-logo.png"
+    },
+    {
+      "id": "ankatra",
+      "name": "Ankatra",
+      "logoFile": null
+    },
+    {
+      "id": "aramatsu",
+      "name": "Aramatsu",
+      "logoFile": "manufacturers/aramatsu.png"
+    },
+    {
+      "id": "avenhorn",
+      "name": "Avenhorn",
+      "logoFile": null
+    },
+    {
+      "id": "azov",
+      "name": "Azov",
+      "logoFile": "manufacturers/azov-logo.png"
+    },
+    {
+      "id": "boar",
+      "name": "Boar",
+      "logoFile": "manufacturers/boar-logo.png"
+    },
+    {
+      "id": "burlak",
+      "name": "Burlak",
+      "logoFile": "manufacturers/burlak-logo.png"
+    },
+    {
+      "id": "cat",
+      "name": "Cat",
+      "logoFile": "manufacturers/cat-store-logo.png"
+    },
+    {
+      "id": "chevrolet",
+      "name": "Chevrolet",
+      "logoFile": "manufacturers/chevrolet-store-logo.png"
+    },
+    {
+      "id": "dan",
+      "name": "Dan",
+      "logoFile": "manufacturers/dan-logo.png"
+    },
+    {
+      "id": "derry-longhorn",
+      "name": "Derry Longhorn",
+      "logoFile": "manufacturers/derry-longhorn-logo.png"
+    },
+    {
+      "id": "don",
+      "name": "Don",
+      "logoFile": "manufacturers/don-logo.png"
+    },
+    {
+      "id": "earthroamer",
+      "name": "Earthroamer",
+      "logoFile": null
+    },
+    {
+      "id": "femm",
+      "name": "Femm",
+      "logoFile": "manufacturers/logo-femm.png"
+    },
+    {
+      "id": "ford",
+      "name": "Ford",
+      "logoFile": "manufacturers/ford-logo.png"
+    },
+    {
+      "id": "freightliner",
+      "name": "Freightliner",
+      "logoFile": "manufacturers/freightliner-logo.png"
+    },
+    {
+      "id": "futom",
+      "name": "Futom",
+      "logoFile": null
+    },
+    {
+      "id": "gm",
+      "name": "GMC",
+      "logoFile": "manufacturers/gm-logo.png"
+    },
+    {
+      "id": "gor",
+      "name": "Gor",
+      "logoFile": "manufacturers/gor-logo.png"
+    },
+    {
+      "id": "hib",
+      "name": "HIB",
+      "logoFile": null
+    },
+    {
+      "id": "international",
+      "name": "International",
+      "logoFile": "manufacturers/international-logo.png"
+    },
+    {
+      "id": "jangsu",
+      "name": "Jangsu",
+      "logoFile": null
+    },
+    {
+      "id": "jeep",
+      "name": "Jeep",
+      "logoFile": "manufacturers/jeep-logo.png"
+    },
+    {
+      "id": "kenworth",
+      "name": "Kenworth",
+      "logoFile": "manufacturers/kenworth-logo.png"
+    },
+    {
+      "id": "khan",
+      "name": "Khan",
+      "logoFile": "manufacturers/khan-logo.png"
+    },
+    {
+      "id": "kirovets",
+      "name": "Kirovets",
+      "logoFile": "manufacturers/kirovets.png"
+    },
+    {
+      "id": "kolob",
+      "name": "Kolob",
+      "logoFile": "manufacturers/kolob-logo.png"
+    },
+    {
+      "id": "krs-logo-alt",
+      "name": "Krs Logo Alt",
+      "logoFile": "manufacturers/krs-logo-alt.png"
+    },
+    {
+      "id": "landrover-main",
+      "name": "Landrover Main",
+      "logoFile": "manufacturers/landrover-main.png"
+    },
+    {
+      "id": "logo-tuz",
+      "name": "Logo Tuz",
+      "logoFile": "manufacturers/logo-tuz.png"
+    },
+    {
+      "id": "logo-voron",
+      "name": "Logo Voron",
+      "logoFile": "manufacturers/logo-voron.png"
+    },
+    {
+      "id": "mack",
+      "name": "Mack",
+      "logoFile": "manufacturers/mack-logo.png"
+    },
+    {
+      "id": "mack-mod",
+      "name": "Mack mod",
+      "logoFile": "manufacturers/mack-mod.png"
+    },
+    {
+      "id": "mercedes-benz",
+      "name": "Mercedes-Benz",
+      "logoFile": "manufacturers/mercedes-benz-logo.png"
+    },
+    {
+      "id": "mercer",
+      "name": "Mercer",
+      "logoFile": null
+    },
+    {
+      "id": "mtb",
+      "name": "MTB",
+      "logoFile": "manufacturers/logo-mtb.png"
+    },
+    {
+      "id": "neo",
+      "name": "Neo",
+      "logoFile": "manufacturers/neo-logo.png"
+    },
+    {
+      "id": "pacific",
+      "name": "Pacific",
+      "logoFile": "manufacturers/pacific-logo.png"
+    },
+    {
+      "id": "padera",
+      "name": "Padera",
+      "logoFile": null
+    },
+    {
+      "id": "plad",
+      "name": "PLAD",
+      "logoFile": null
+    },
+    {
+      "id": "rezvani",
+      "name": "Rezvani",
+      "logoFile": "manufacturers/rezvani.png"
+    },
+    {
+      "id": "royal",
+      "name": "Royal",
+      "logoFile": "manufacturers/royal-logo.png"
+    },
+    {
+      "id": "sleiter",
+      "name": "Sleiter",
+      "logoFile": null
+    },
+    {
+      "id": "step",
+      "name": "Step",
+      "logoFile": "manufacturers/step-logo.png"
+    },
+    {
+      "id": "tatra",
+      "name": "Tatra",
+      "logoFile": "manufacturers/tatra-logo.png"
+    },
+    {
+      "id": "tayga",
+      "name": "Tayga",
+      "logoFile": "manufacturers/tayga-logo.png"
+    },
+    {
+      "id": "tuz",
+      "name": "Tuz",
+      "logoFile": "manufacturers/logo-tuz.png"
+    },
+    {
+      "id": "voron",
+      "name": "Voron",
+      "logoFile": "manufacturers/logo-voron.png"
+    },
+    {
+      "id": "western-star",
+      "name": "Western Star",
+      "logoFile": "manufacturers/western-star-logo.png"
+    },
+    {
+      "id": "yar",
+      "name": "YAR",
+      "logoFile": "manufacturers/yar-logo.png"
+    },
+    {
+      "id": "zikz",
+      "name": "Zikz",
+      "logoFile": "manufacturers/zikz-logo.png"
+    }
+  ],
+  "countries": [
+    {
+      "code": "BE",
+      "name": "Belgium",
+      "flagFile": "flags/be.png"
+    },
+    {
+      "code": "BY",
+      "name": "Belarus",
+      "flagFile": "flags/by.png"
+    },
+    {
+      "code": "CA",
+      "name": "Canada",
+      "flagFile": "flags/ca.png"
+    },
+    {
+      "code": "CN",
+      "name": "China",
+      "flagFile": "flags/cn.png"
+    },
+    {
+      "code": "CZ",
+      "name": "Czech Republic",
+      "flagFile": "flags/cz.png"
+    },
+    {
+      "code": "DE",
+      "name": "Germany",
+      "flagFile": "flags/de.png"
+    },
+    {
+      "code": "FI",
+      "name": "Finland",
+      "flagFile": "flags/fi.png"
+    },
+    {
+      "code": "FR",
+      "name": "France",
+      "flagFile": "flags/fr.png"
+    },
+    {
+      "code": "GB",
+      "name": "United Kingdom",
+      "flagFile": "flags/gb.png"
+    },
+    {
+      "code": "IN",
+      "name": "India",
+      "flagFile": "flags/in.png"
+    },
+    {
+      "code": "IT",
+      "name": "Italy",
+      "flagFile": "flags/it.png"
+    },
+    {
+      "code": "NL",
+      "name": "Netherlands",
+      "flagFile": "flags/nl.png"
+    },
+    {
+      "code": "PT",
+      "name": "Portugal",
+      "flagFile": "flags/pt.png"
+    },
+    {
+      "code": "RU",
+      "name": "Russia",
+      "flagFile": "flags/ru.png"
+    },
+    {
+      "code": "SU",
+      "name": "USSR",
+      "flagFile": "flags/su.png"
+    },
+    {
+      "code": "UA",
+      "name": "Ukraine",
+      "flagFile": "flags/ua.png"
+    },
+    {
+      "code": "US",
+      "name": "United States",
+      "flagFile": "flags/us.png"
+    }
+  ],
+  "vehicles": [
+    {
+      "id": "fclt9000",
+      "manufacturerId": "ford",
+      "basedOn": "Ford CLT-9000",
+      "countryCode": "US",
+      "countryName": "United States",
+      "year": 1977
+    },
+    {
+      "id": "gmh9500",
+      "manufacturerId": "gm",
+      "basedOn": "GMC MH-9500",
+      "countryCode": "US",
+      "countryName": "United States",
+      "year": 1966
+    },
+    {
+      "id": "hibbm816",
+      "manufacturerId": "hib",
+      "basedOn": "DAF F241 Series",
+      "countryCode": "NL",
+      "countryName": "Netherlands",
+      "year": 1973
+    },
+    {
+      "id": "transtar",
+      "manufacturerId": "international",
+      "basedOn": "International Transtar 4070A",
+      "countryCode": "US",
+      "countryName": "United States",
+      "year": 1971
+    },
+    {
+      "id": "kt880",
+      "manufacturerId": "kenworth",
+      "basedOn": "Kenworth T880",
+      "countryCode": "US",
+      "countryName": "United States",
+      "year": 2019
+    },
+    {
+      "id": "kw990",
+      "manufacturerId": "kenworth",
+      "basedOn": "Kenworth W990",
+      "countryCode": "US",
+      "countryName": "United States",
+      "year": 2018
+    },
+    {
+      "id": "mtp",
+      "manufacturerId": "mack-mod",
+      "basedOn": "Mack TerraPro",
+      "countryCode": "US",
+      "countryName": "United States",
+      "year": 2007
+    },
+    {
+      "id": "western_star_57x",
+      "manufacturerId": "western-star",
+      "basedOn": "Western Star 57X",
+      "countryCode": "CA",
+      "countryName": "Canada",
+      "year": 2022
+    },
+    {
+      "id": "cct680",
+      "manufacturerId": "cat",
+      "basedOn": "Caterpillar CT680",
+      "countryCode": "US",
+      "countryName": "United States",
+      "year": 2013
+    },
+    {
+      "id": "ct681",
+      "manufacturerId": "cat",
+      "basedOn": "Caterpillar CT681",
+      "countryCode": "US",
+      "countryName": "United States",
+      "year": 2014
+    },
+    {
+      "id": "kodiak",
+      "manufacturerId": "chevrolet",
+      "basedOn": "Chevrolet Kodiak C70",
+      "countryCode": "US",
+      "countryName": "United States",
+      "year": 1980
+    },
+    {
+      "id": "fleetstar",
+      "manufacturerId": "international",
+      "basedOn": "International Fleetstar F-2070A",
+      "countryCode": "US",
+      "countryName": "United States",
+      "year": 1962
+    },
+    {
+      "id": "ffld120",
+      "manufacturerId": null,
+      "basedOn": "Freightliner FLD120",
+      "countryCode": "US",
+      "countryName": "United States",
+      "year": 1988
+    },
+    {
+      "id": "gmc_8000",
+      "manufacturerId": "gm",
+      "basedOn": "[[:wikipedia:GMC_Brigadier",
+      "countryCode": "US",
+      "countryName": "United States",
+      "year": 1978
+    },
+    {
+      "id": "international_hx520",
+      "manufacturerId": "international",
+      "basedOn": "International HX520",
+      "countryCode": "US",
+      "countryName": "United States",
+      "year": 2016
+    },
+    {
+      "id": "kc500",
+      "manufacturerId": "kenworth",
+      "basedOn": "Kenworth C500 Tandem",
+      "countryCode": "US",
+      "countryName": "United States",
+      "year": 2007
+    },
+    {
+      "id": "mp",
+      "manufacturerId": "mack-mod",
+      "basedOn": "Mack Pinnacle",
+      "countryCode": "US",
+      "countryName": "United States",
+      "year": 2019
+    },
+    {
+      "id": "pstd4",
+      "manufacturerId": "padera",
+      "basedOn": "Astra HHD8 86.48",
+      "countryCode": "IT",
+      "countryName": "Italy",
+      "year": 2003
+    },
+    {
+      "id": "vg5352",
+      "manufacturerId": "voron",
+      "basedOn": "Ural-5323",
+      "countryCode": "SU",
+      "countryName": "USSR",
+      "year": 1989
+    },
+    {
+      "id": "wws4964",
+      "manufacturerId": "western-star",
+      "basedOn": "White Western Star 4964",
+      "countryCode": "CA",
+      "countryName": "Canada",
+      "year": 1967
+    },
+    {
+      "id": "aramatsu_forester",
+      "manufacturerId": "aramatsu",
+      "basedOn": "John Deere 1210E",
+      "countryCode": "US",
+      "countryName": "United States",
+      "year": 2010
+    },
+    {
+      "id": "aa15",
+      "manufacturerId": "avenhorn",
+      "basedOn": "Hendrickson B-Series Prime Mover",
+      "countryCode": "US",
+      "countryName": "United States",
+      "year": 1964
+    },
+    {
+      "id": "42-20",
+      "manufacturerId": "azov",
+      "basedOn": "KamAZ-6345 Arctic",
+      "countryCode": "RU",
+      "countryName": "Russia",
+      "year": 2017
+    },
+    {
+      "id": "a67096a",
+      "manufacturerId": "azov",
+      "basedOn": "KamAZ-65808",
+      "countryCode": "RU",
+      "countryName": "Russia",
+      "year": 2022
+    },
+    {
+      "id": "azov-73210",
+      "manufacturerId": "azov",
+      "basedOn": "KamAZ K5 (K5340)",
+      "countryCode": "RU",
+      "countryName": "Russia",
+      "year": 2019
+    },
+    {
+      "id": "boar",
+      "manufacturerId": "boar",
+      "basedOn": "TONAR-7502",
+      "countryCode": "RU",
+      "countryName": "Russia",
+      "year": 2018
+    },
+    {
+      "id": "c745c",
+      "manufacturerId": "cat",
+      "basedOn": "Caterpillar 745C",
+      "countryCode": "US",
+      "countryName": "United States",
+      "year": 2015
+    },
+    {
+      "id": "96320",
+      "manufacturerId": "dan",
+      "basedOn": "BAZ-69092",
+      "countryCode": "SU",
+      "countryName": "USSR",
+      "year": 1990
+    },
+    {
+      "id": "3194",
+      "manufacturerId": "derry-longhorn",
+      "basedOn": "Oshkosh M911",
+      "countryCode": "US",
+      "countryName": "United States",
+      "year": 1976
+    },
+    {
+      "id": "4520",
+      "manufacturerId": "derry-longhorn",
+      "basedOn": "Oshkosh HET A0 M1070A0",
+      "countryCode": "US",
+      "countryName": "United States",
+      "year": 1992
+    },
+    {
+      "id": "derryspecial",
+      "manufacturerId": "derry-longhorn",
+      "basedOn": "Oshkosh M1120A4",
+      "countryCode": "US",
+      "countryName": "United States",
+      "year": 2008
+    },
+    {
+      "id": "femm7at",
+      "manufacturerId": "femm",
+      "basedOn": "Yamal B-6M",
+      "countryCode": "RU",
+      "countryName": "Russia",
+      "year": 2013
+    },
+    {
+      "id": "f7290ra",
+      "manufacturerId": "futom",
+      "basedOn": "Claas Xerion 5000",
+      "countryCode": "DE",
+      "countryName": "Germany",
+      "year": 2019
+    },
+    {
+      "id": "paystar_5600ts",
+      "manufacturerId": "international",
+      "basedOn": "International Paystar 5600i T/A Tridrive",
+      "countryCode": "US",
+      "countryName": "United States",
+      "year": 2004
+    },
+    {
+      "id": "k963",
+      "manufacturerId": "kenworth",
+      "basedOn": "Kenworth 963",
+      "countryCode": "US",
+      "countryName": "United States",
+      "year": 2005
+    },
+    {
+      "id": "k700sr",
+      "manufacturerId": "kirovets",
+      "basedOn": "Kirovets K-700",
+      "countryCode": "SU",
+      "countryName": "USSR",
+      "year": 1962
+    },
+    {
+      "id": "img_k7m",
+      "manufacturerId": "kirovets",
+      "basedOn": "Kirovets K-7M",
+      "countryCode": "RU",
+      "countryName": "Russia",
+      "year": 2020
+    },
+    {
+      "id": "74760",
+      "manufacturerId": "kolob",
+      "basedOn": "MZKT-741351",
+      "countryCode": "BY",
+      "countryName": "Belarus",
+      "year": 2013
+    },
+    {
+      "id": "74941",
+      "manufacturerId": "kolob",
+      "basedOn": "MZKT-741350",
+      "countryCode": "BY",
+      "countryName": "Belarus",
+      "year": 2013
+    },
+    {
+      "id": "navistar",
+      "manufacturerId": "international",
+      "basedOn": "Navistar 5000-MV",
+      "countryCode": "US",
+      "countryName": "United States",
+      "year": 1988
+    },
+    {
+      "id": "pp12",
+      "manufacturerId": "pacific",
+      "basedOn": "Pacific P12 (main model)Pacific P12W Roughneck (branding only)",
+      "countryCode": "CA",
+      "countryName": "Canada",
+      "year": 1982
+    },
+    {
+      "id": "pp16",
+      "manufacturerId": "pacific",
+      "basedOn": "Pacific M26/P16",
+      "countryCode": "US",
+      "countryName": "United States",
+      "year": 1943
+    },
+    {
+      "id": "pp512pf",
+      "manufacturerId": "pacific",
+      "basedOn": "Pacific P512",
+      "countryCode": "CA",
+      "countryName": "Canada",
+      "year": 1971
+    },
+    {
+      "id": "p450",
+      "manufacturerId": "plad",
+      "basedOn": "Faun Goliath 8x8",
+      "countryCode": "DE",
+      "countryName": "Germany",
+      "year": 1989
+    },
+    {
+      "id": "smfk816e",
+      "manufacturerId": "sleiter",
+      "basedOn": "MOL TB800",
+      "countryCode": "BE",
+      "countryName": "Belgium",
+      "year": 1989
+    },
+    {
+      "id": "sst833c",
+      "manufacturerId": "sleiter",
+      "basedOn": "MOL F 7066",
+      "countryCode": "BE",
+      "countryName": "Belgium",
+      "year": 1999
+    },
+    {
+      "id": "tatra_force",
+      "manufacturerId": "tatra",
+      "basedOn": "Tatra T815-7Z0R9T 44 440 8x8.1R",
+      "countryCode": "CZ",
+      "countryName": "Czech Republic",
+      "year": 2012
+    },
+    {
+      "id": "tatra_t813",
+      "manufacturerId": "tatra",
+      "basedOn": "TATRA T813",
+      "countryCode": "CZ",
+      "countryName": "Czech Republic",
+      "year": 1967
+    },
+    {
+      "id": "western_star_47x_nf_1424",
+      "manufacturerId": "western-star",
+      "basedOn": "Western Star 47X",
+      "countryCode": "CA",
+      "countryName": "Canada",
+      "year": 2021
+    },
+    {
+      "id": "western_star_47x_nf_1430",
+      "manufacturerId": "western-star",
+      "basedOn": "Western Star 47X",
+      "countryCode": "CA",
+      "countryName": "Canada",
+      "year": 2021
+    },
+    {
+      "id": "western_star_49x",
+      "manufacturerId": "western-star",
+      "basedOn": "Western Star 49X",
+      "countryCode": "CA",
+      "countryName": "Canada",
+      "year": 2020
+    },
+    {
+      "id": "ws6900ts",
+      "manufacturerId": "western-star",
+      "basedOn": "Western Star 6900 TwinSteer",
+      "countryCode": "CA",
+      "countryName": "Canada",
+      "year": 2007
+    },
+    {
+      "id": "ws6900xd",
+      "manufacturerId": "western-star",
+      "basedOn": "Western Star 6900XD",
+      "countryCode": "CA",
+      "countryName": "Canada",
+      "year": 2005
+    },
+    {
+      "id": "zikz_605r",
+      "manufacturerId": "zikz",
+      "basedOn": "MAZ-537",
+      "countryCode": "SU",
+      "countryName": "USSR",
+      "year": 1959
+    },
+    {
+      "id": "z612h",
+      "manufacturerId": "zikz",
+      "basedOn": "MAZ-7310",
+      "countryCode": "SU",
+      "countryName": "USSR",
+      "year": 1962
+    },
+    {
+      "id": "mk38",
+      "manufacturerId": "ank",
+      "basedOn": "AM General M939",
+      "countryCode": "US",
+      "countryName": "United States",
+      "year": 1983
+    },
+    {
+      "id": "ank_mk38_civilian",
+      "manufacturerId": "ank",
+      "basedOn": "AM General M939",
+      "countryCode": "US",
+      "countryName": "United States",
+      "year": 1983
+    },
+    {
+      "id": "a1160",
+      "manufacturerId": "ankatra",
+      "basedOn": "Valmet 1502",
+      "countryCode": "FI",
+      "countryName": "Finland",
+      "year": 1975
+    },
+    {
+      "id": "43191_sprinter",
+      "manufacturerId": "azov",
+      "basedOn": "KamAZ-4326-9",
+      "countryCode": "RU",
+      "countryName": "Russia",
+      "year": 1995
+    },
+    {
+      "id": "5319_nara",
+      "manufacturerId": "azov",
+      "basedOn": "KamAZ-6560",
+      "countryCode": "RU",
+      "countryName": "Russia",
+      "year": 2005
+    },
+    {
+      "id": "64131",
+      "manufacturerId": "azov",
+      "basedOn": "KamAZ-65228",
+      "countryCode": "RU",
+      "countryName": "Russia",
+      "year": 2008
+    },
+    {
+      "id": "114sd",
+      "manufacturerId": "freightliner",
+      "basedOn": "Freightliner 114SD",
+      "countryCode": "US",
+      "countryName": "United States",
+      "year": 2011
+    },
+    {
+      "id": "m916a1",
+      "manufacturerId": "freightliner",
+      "basedOn": "Freightliner M916A1",
+      "countryCode": "US",
+      "countryName": "United States",
+      "year": 1978
+    },
+    {
+      "id": "hibb1980",
+      "manufacturerId": "hib",
+      "basedOn": "Leyland DAF T244 Expedition",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "year": 1990
+    },
+    {
+      "id": "paystar",
+      "manufacturerId": "international",
+      "basedOn": "International Paystar 5070",
+      "countryCode": "US",
+      "countryName": "United States",
+      "year": 1973
+    },
+    {
+      "id": "jrx600",
+      "manufacturerId": "jangsu",
+      "basedOn": "Dongfeng EQ2100",
+      "countryCode": "CN",
+      "countryName": "China",
+      "year": 1996
+    },
+    {
+      "id": "bandit",
+      "manufacturerId": "krs-logo-alt",
+      "basedOn": "P8WD GEOLKOM-PM",
+      "countryCode": "RU",
+      "countryName": "Russia",
+      "year": 2012
+    },
+    {
+      "id": "mdm917",
+      "manufacturerId": "mack",
+      "basedOn": "Mack Defense M917",
+      "countryCode": "US",
+      "countryName": "United States",
+      "year": 2019
+    },
+    {
+      "id": "mba3332",
+      "manufacturerId": "mercedes-benz",
+      "basedOn": "Mercedes-Benz Actros 3332 MP2 6x6",
+      "countryCode": "DE",
+      "countryName": "Germany",
+      "year": 2004
+    },
+    {
+      "id": "mbz",
+      "manufacturerId": "mercedes-benz",
+      "basedOn": "Mercedes-Benz Zetros",
+      "countryCode": "DE",
+      "countryName": "Germany",
+      "year": 2008
+    },
+    {
+      "id": "mk520",
+      "manufacturerId": "mercer",
+      "basedOn": "Berliet GBC 8",
+      "countryCode": "FR",
+      "countryName": "France",
+      "year": 1958
+    },
+    {
+      "id": "mr230",
+      "manufacturerId": "mercer",
+      "basedOn": "Berliet GBC 8x8",
+      "countryCode": "FR",
+      "countryName": "France",
+      "year": 1959
+    },
+    {
+      "id": "p440b",
+      "manufacturerId": "plad",
+      "basedOn": "Faun L912 SA",
+      "countryCode": "DE",
+      "countryName": "Germany",
+      "year": 1967
+    },
+    {
+      "id": "bm17",
+      "manufacturerId": "royal",
+      "basedOn": "Scammell S24",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "year": 1980
+    },
+    {
+      "id": "310e",
+      "manufacturerId": "step",
+      "basedOn": "ZiL-E133Vyat",
+      "countryCode": "SU",
+      "countryName": "USSR",
+      "year": 1982
+    },
+    {
+      "id": "3364",
+      "manufacturerId": "step",
+      "basedOn": "ZiL-164",
+      "countryCode": "SU",
+      "countryName": "USSR",
+      "year": 1957
+    },
+    {
+      "id": "steppike",
+      "manufacturerId": "step",
+      "basedOn": "ZiL-133G1",
+      "countryCode": "SU",
+      "countryName": "USSR",
+      "year": 1975
+    },
+    {
+      "id": "tatra_phoenix",
+      "manufacturerId": "tatra",
+      "basedOn": "Tatra T158-8P6R44",
+      "countryCode": "CZ",
+      "countryName": "Czech Republic",
+      "year": 2018
+    },
+    {
+      "id": "6436",
+      "manufacturerId": "tayga",
+      "basedOn": "KrAZ-6443",
+      "countryCode": "UA",
+      "countryName": "Ukraine",
+      "year": 1992
+    },
+    {
+      "id": "tayga_6455b",
+      "manufacturerId": "tayga",
+      "basedOn": "KrAZ-255",
+      "countryCode": "SU",
+      "countryName": "USSR",
+      "year": 1967
+    },
+    {
+      "id": "tuz_108",
+      "manufacturerId": "tuz",
+      "basedOn": "GAZ-3308 \"Sadko\"",
+      "countryCode": "RU",
+      "countryName": "Russia",
+      "year": 1997
+    },
+    {
+      "id": "actaeon",
+      "manufacturerId": "tuz",
+      "basedOn": "GAZ-66",
+      "countryCode": "SU",
+      "countryName": "USSR",
+      "year": 1964
+    },
+    {
+      "id": "ae4380",
+      "manufacturerId": "voron",
+      "basedOn": "Ural-4320",
+      "countryCode": "SU",
+      "countryName": "USSR",
+      "year": 1977
+    },
+    {
+      "id": "d53233",
+      "manufacturerId": "logo-voron",
+      "basedOn": "Ural-55223",
+      "countryCode": "SU",
+      "countryName": "USSR",
+      "year": 1959
+    },
+    {
+      "id": "grad",
+      "manufacturerId": "voron",
+      "basedOn": "Ural Next",
+      "countryCode": "RU",
+      "countryName": "Russia",
+      "year": 2015
+    },
+    {
+      "id": "5368",
+      "manufacturerId": "zikz",
+      "basedOn": "MAZ-500",
+      "countryCode": "SU",
+      "countryName": "USSR",
+      "year": 1963
+    },
+    {
+      "id": "zikz556a",
+      "manufacturerId": "zikz",
+      "basedOn": "MAZ-502",
+      "countryCode": "SU",
+      "countryName": "USSR",
+      "year": 1957
+    },
+    {
+      "id": "aac58dw",
+      "manufacturerId": "aac",
+      "basedOn": "UMM Alter II",
+      "countryCode": "PT",
+      "countryName": "Portugal",
+      "year": 1986
+    },
+    {
+      "id": "b6x6",
+      "manufacturerId": "burlak",
+      "basedOn": "[https://burlakoffroad.com/en/models/13 Burlak Mobile Crane 6x6]",
+      "countryCode": "RU",
+      "countryName": "Russia",
+      "year": 2022
+    },
+    {
+      "id": "cth357",
+      "manufacturerId": "cat",
+      "basedOn": "Caterpillar TH357D AG",
+      "countryCode": "US",
+      "countryName": "United States",
+      "year": 2017
+    },
+    {
+      "id": "chevrolet-apache",
+      "manufacturerId": "chevrolet",
+      "basedOn": "Chevrolet Apache",
+      "countryCode": "US",
+      "countryName": "United States",
+      "year": 1958
+    },
+    {
+      "id": "ck1500",
+      "manufacturerId": "chevrolet",
+      "basedOn": "Chevrolet C/K 1500",
+      "countryCode": "US",
+      "countryName": "United States",
+      "year": 1987
+    },
+    {
+      "id": "d71",
+      "manufacturerId": "don",
+      "basedOn": "Lada Niva 21213",
+      "countryCode": "SU",
+      "countryName": "USSR",
+      "year": 1977
+    },
+    {
+      "id": "elti",
+      "manufacturerId": "earthroamer",
+      "basedOn": "EarthRoamer LTi",
+      "countryCode": "US",
+      "countryName": "United States",
+      "year": 2021
+    },
+    {
+      "id": "esx",
+      "manufacturerId": "earthroamer",
+      "basedOn": "EarthRoamer SX",
+      "countryCode": "US",
+      "countryName": "United States",
+      "year": 2023
+    },
+    {
+      "id": "ff750",
+      "manufacturerId": "ford",
+      "basedOn": "Ford F-750 Super Duty",
+      "countryCode": "US",
+      "countryName": "United States",
+      "year": 2000
+    },
+    {
+      "id": "by4",
+      "manufacturerId": "gor",
+      "basedOn": "ZAZ-965A Zaporozhets",
+      "countryCode": "SU",
+      "countryName": "USSR",
+      "year": 1960
+    },
+    {
+      "id": "h2",
+      "manufacturerId": null,
+      "basedOn": "Hummer H2 SUT",
+      "countryCode": "US",
+      "countryName": "United States",
+      "year": 2005
+    },
+    {
+      "id": "loadstar",
+      "manufacturerId": "international",
+      "basedOn": "[[:wikipedia:International_Loadstar",
+      "countryCode": "US",
+      "countryName": "United States",
+      "year": 1962
+    },
+    {
+      "id": "jcj7r",
+      "manufacturerId": "jeep",
+      "basedOn": "[[:wikipedia:Jeep_CJ",
+      "countryCode": "US",
+      "countryName": "United States",
+      "year": 1976
+    },
+    {
+      "id": "jw",
+      "manufacturerId": "jeep",
+      "basedOn": "[[:wikipedia:Jeep_Wrangler",
+      "countryCode": "US",
+      "countryName": "United States",
+      "year": 1986
+    },
+    {
+      "id": "khan_sentinel",
+      "manufacturerId": "khan",
+      "basedOn": "UAZ-23632 Patriot Pickup",
+      "countryCode": "RU",
+      "countryName": "Russia",
+      "year": 2014
+    },
+    {
+      "id": "marshall",
+      "manufacturerId": "khan",
+      "basedOn": "UAZ-315195 Hunter",
+      "countryCode": "RU",
+      "countryName": "Russia",
+      "year": 2003
+    },
+    {
+      "id": "loaf",
+      "manufacturerId": "khan",
+      "basedOn": "UAZ-3741",
+      "countryCode": "SU",
+      "countryName": "USSR",
+      "year": 1985
+    },
+    {
+      "id": "landroverdefender110",
+      "manufacturerId": "landrover-main",
+      "basedOn": "[[:wikipedia:Land_Rover_Defender",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "year": 1983
+    },
+    {
+      "id": "landroverdefender90",
+      "manufacturerId": "landrover-main",
+      "basedOn": "[[:wikipedia:Land_Rover_Defender",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "year": 1984
+    },
+    {
+      "id": "mtb8106rg",
+      "manufacturerId": "mtb",
+      "basedOn": "Force Gurkha",
+      "countryCode": "IN",
+      "countryName": "India",
+      "year": 2008
+    },
+    {
+      "id": "nf2000",
+      "manufacturerId": "neo",
+      "basedOn": "Mahindra Bolero",
+      "countryCode": "IN",
+      "countryName": "India",
+      "year": 2000
+    },
+    {
+      "id": "rezvani-hercules-6x6",
+      "manufacturerId": "rezvani",
+      "basedOn": "Rezvani Hercules 6x6",
+      "countryCode": "US",
+      "countryName": "United States",
+      "year": 2019
+    },
+    {
+      "id": "rt",
+      "manufacturerId": "rezvani",
+      "basedOn": "[https://en.wikipedia.org/wiki/Rezvani_Tank Rezvani Tank]",
+      "countryCode": "US",
+      "countryName": "United States",
+      "year": 2020
+    },
+    {
+      "id": "scout800",
+      "manufacturerId": "international",
+      "basedOn": "International Harvester Scout 800A",
+      "countryCode": "US",
+      "countryName": "United States",
+      "year": 1968
+    },
+    {
+      "id": "tatra_805",
+      "manufacturerId": "tatra",
+      "basedOn": "Tatra 805",
+      "countryCode": "CZ",
+      "countryName": "Czech Republic",
+      "year": 1952
+    },
+    {
+      "id": "166",
+      "manufacturerId": "logo-tuz",
+      "basedOn": "GAZ-69A",
+      "countryCode": "SU",
+      "countryName": "USSR",
+      "year": 1953
+    },
+    {
+      "id": "tatarin",
+      "manufacturerId": "tuz",
+      "basedOn": "GAZ-59037A",
+      "countryCode": "SU",
+      "countryName": "USSR",
+      "year": 1990
+    },
+    {
+      "id": "yar87",
+      "manufacturerId": "yar",
+      "basedOn": "TREKOL-39294",
+      "countryCode": "RU",
+      "countryName": "Russia",
+      "year": 2004
+    },
+    {
+      "id": "veh_c770g_alt",
+      "manufacturerId": "cat",
+      "basedOn": "[https://www.cat.com/en_US/products/new/equipment/off-highway-trucks/off-highway-trucks-bare-chassis/1000005264.html Caterpillar 770G]",
+      "countryCode": "US",
+      "countryName": "United States",
+      "year": 2012
+    }
+  ]
 }

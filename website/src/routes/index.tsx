@@ -210,8 +210,8 @@ function Index() {
                 src={shotVehicle}
                 alt="SnowRunner Tuning Shop vehicle tuning panel with fuel tank, front steer, responsiveness, diff lock and drive settings"
                 width={1782}
-                height={1161}
-                className="w-full"
+                height={1221}
+                className="h-auto w-full"
               />
             </div>
           </Reveal>
@@ -271,8 +271,10 @@ function Index() {
                   <img
                     src={s.src}
                     alt={s.alt}
+                    width={1782}
+                    height={1221}
                     loading="lazy"
-                    className="w-full transition-transform duration-700 hover:scale-[1.02]"
+                    className="h-auto w-full transition-transform duration-700 hover:scale-[1.02]"
                   />
                   <figcaption className="border-t border-border px-5 py-3 text-xs uppercase tracking-[0.2em] text-muted-foreground">
                     {s.label}
@@ -315,7 +317,7 @@ function Index() {
               <span className="shine-text">GET THE TUNING SHOP</span>
             </h2>
             <p className="mt-5 text-muted-foreground">
-              Version 1.1.3 · Windows installer · free forever · no account, no telemetry.
+              Version 1.1.4 · Windows installer · free forever · no account, no telemetry.
             </p>
             <a
               href={RELEASE_URL}

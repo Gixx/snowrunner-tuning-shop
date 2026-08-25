@@ -131,6 +131,97 @@ public static class TruckTuningService
             throw new ArgumentOutOfRangeException(nameof(frontSteerMode), "Unsupported front steer preset.");
         }
 
+        return MutateDirectTrucksFromBaseline(
+            pakPath,
+            baselineText => ApplyGlobalMultipliersToText(
+                baselineText,
+                fuelMultiplier,
+                frontSteerMode,
+                responsivenessMultiplier,
+                priceMultiplier));
+    }
+
+    public static TruckTuningSaveResult ApplyGlobalStoreUnlocks(
+        string pakPath,
+        bool releaseRegionLock,
+        bool unlockAllVehicles)
+    {
+        if (!releaseRegionLock && !unlockAllVehicles)
+        {
+            return new TruckTuningSaveResult(0);
+        }
+
+        return MutateDirectTrucksInPlace(
+            pakPath,
+            text =>
+            {
+                var updated = text;
+                if (releaseRegionLock)
+                {
+                    updated = ApplyGameDataCountry(updated, TruckStoreRegions.AllCountriesAttributeValue);
+                }
+
+                if (unlockAllVehicles)
+                {
+                    updated = ApplyGameDataUnlockByRank(updated, 0);
+                }
+
+                return updated;
+            });
+    }
+
+    public static TruckTuningSaveResult RestoreGlobalTuningFromBaseline(string pakPath) =>
+        RestoreAllVehiclesFromBaseline(pakPath);
+
+    /// <summary>Copies every direct truck XML from the baseline pak into the working pak.</summary>
+    public static TruckTuningSaveResult RestoreAllVehiclesFromBaseline(string pakPath)
+    {
+        var baselinePath = PakBaselineService.RequireBaseline(pakPath);
+
+        Dictionary<string, byte[]> replacements;
+        var changedTrucks = 0;
+
+        using (var baselineArchive = ZipFile.OpenRead(baselinePath))
+        using (var currentArchive = ZipFile.OpenRead(pakPath))
+        {
+            replacements = new Dictionary<string, byte[]>(StringComparer.Ordinal);
+
+            foreach (var entry in currentArchive.Entries)
+            {
+                var entryPath = entry.FullName.Replace('\\', '/');
+                if (!IsTruckEntry(entryPath))
+                {
+                    continue;
+                }
+
+                var baselineEntry = PakEntryLocator.FindEntry(baselineArchive, entryPath);
+                if (baselineEntry is null)
+                {
+                    continue;
+                }
+
+                var baselineBytes = ReadEntryBytes(baselineEntry);
+                var currentBytes = ReadEntryBytes(entry);
+                if (currentBytes.AsSpan().SequenceEqual(baselineBytes))
+                {
+                    continue;
+                }
+
+                replacements[entryPath] = baselineBytes;
+                changedTrucks++;
+            }
+        }
+
+        var updatedFiles = replacements.Count == 0
+            ? 0
+            : InitialPakWriter.ReplaceEntries(pakPath, replacements);
+        return new TruckTuningSaveResult(updatedFiles, changedTrucks);
+    }
+
+    private static TruckTuningSaveResult MutateDirectTrucksFromBaseline(
+        string pakPath,
+        Func<string, string> transformBaselineText)
+    {
         var baselinePath = PakBaselineService.RequireBaseline(pakPath);
 
         Dictionary<string, byte[]> replacements;
@@ -156,12 +247,7 @@ public static class TruckTuningService
                 }
 
                 var baselineText = ReadEntryText(baselineEntry);
-                var updatedText = ApplyGlobalMultipliersToText(
-                    baselineText,
-                    fuelMultiplier,
-                    frontSteerMode,
-                    responsivenessMultiplier,
-                    priceMultiplier);
+                var updatedText = transformBaselineText(baselineText);
 
                 var currentText = ReadEntryText(entry);
                 if (!string.Equals(currentText, updatedText, StringComparison.Ordinal))
@@ -178,8 +264,45 @@ public static class TruckTuningService
         return new TruckTuningSaveResult(updatedFiles, changedTrucks);
     }
 
-    public static TruckTuningSaveResult RestoreGlobalTuningFromBaseline(string pakPath) =>
-        ApplyGlobalMultipliers(pakPath, 1.0, TruckFrontSteerGlobalMode.Baseline, 1.0, 1.0);
+    private static TruckTuningSaveResult MutateDirectTrucksInPlace(
+        string pakPath,
+        Func<string, string> transformText)
+    {
+        Dictionary<string, byte[]> replacements;
+        var changedTrucks = 0;
+
+        using (var currentArchive = ZipFile.OpenRead(pakPath))
+        {
+            replacements = new Dictionary<string, byte[]>(StringComparer.Ordinal);
+
+            foreach (var entry in currentArchive.Entries)
+            {
+                var entryPath = entry.FullName.Replace('\\', '/');
+                if (!IsTruckEntry(entryPath))
+                {
+                    continue;
+                }
+
+                var currentText = ReadEntryText(entry);
+                if (!GameDataOpenRegex.IsMatch(currentText))
+                {
+                    continue;
+                }
+
+                var updatedText = transformText(currentText);
+                if (!string.Equals(currentText, updatedText, StringComparison.Ordinal))
+                {
+                    replacements[entryPath] = Encoding.UTF8.GetBytes(updatedText);
+                    changedTrucks++;
+                }
+            }
+        }
+
+        var updatedFiles = replacements.Count == 0
+            ? 0
+            : InitialPakWriter.ReplaceEntries(pakPath, replacements);
+        return new TruckTuningSaveResult(updatedFiles, changedTrucks);
+    }
 
     public static TruckTuningSaveResult SaveTruckChanges(string pakPath, TruckTuningDefinition truck)
     {
@@ -287,6 +410,14 @@ public static class TruckTuningService
             BaselineFuelCapacity = ReadBaselineInt(baselineText, text, "FuelCapacity"),
             Price = ExtractGameDataPrice(text),
             BaselinePrice = baselineText is not null ? ExtractGameDataPrice(baselineText) : ExtractGameDataPrice(text),
+            StoreCountries = ExtractGameDataAttribute(text, "Country"),
+            BaselineStoreCountries = baselineText is not null
+                ? ExtractGameDataAttribute(baselineText, "Country")
+                : ExtractGameDataAttribute(text, "Country"),
+            UnlockByRank = ExtractGameDataUnlockByRank(text),
+            BaselineUnlockByRank = baselineText is not null
+                ? ExtractGameDataUnlockByRank(baselineText)
+                : ExtractGameDataUnlockByRank(text),
             DiffLockTypeRaw = diffRaw ?? "",
             HasNativeDiffLockOptions = hasNativeDiffLockOptions,
             DiffLock = ResolveDiffLockMode(archive, text, diffRaw, hasNativeDiffLockOptions),
@@ -310,6 +441,8 @@ public static class TruckTuningService
     {
         var updated = ApplyFuelCapacity(text, truck.FuelCapacity);
         updated = ApplyGameDataPrice(updated, truck.Price);
+        updated = ApplyGameDataCountry(updated, truck.StoreCountries);
+        updated = ApplyGameDataUnlockByRank(updated, truck.UnlockByRank);
         updated = ApplySteering(updated, truck);
         updated = ApplyDiffLock(archive, updated, truck);
         updated = ApplyDriveLayout(updated, truck.DriveLayout);
@@ -438,6 +571,20 @@ public static class TruckTuningService
 
     private static string ApplyGameDataPrice(string text, int price)
     {
+        return SetGameDataAttribute(text, "Price", price.ToString(CultureInfo.InvariantCulture));
+    }
+
+    private static string ApplyGameDataCountry(string text, string countries) =>
+        SetGameDataAttribute(text, "Country", countries);
+
+    private static string ApplyGameDataUnlockByRank(string text, int unlockByRank)
+    {
+        var clamped = Math.Clamp(unlockByRank, 0, 30);
+        return SetGameDataAttribute(text, "UnlockByRank", clamped.ToString(CultureInfo.InvariantCulture));
+    }
+
+    private static string SetGameDataAttribute(string text, string attributeName, string value)
+    {
         var match = GameDataOpenRegex.Match(text);
         if (!match.Success)
         {
@@ -445,7 +592,7 @@ public static class TruckTuningService
         }
 
         var attrs = match.Groups["attrs"].Value;
-        if (!SetOrReplaceAttribute(ref attrs, "Price", price.ToString(CultureInfo.InvariantCulture)))
+        if (!SetOrReplaceAttribute(ref attrs, attributeName, value))
         {
             return text;
         }
@@ -454,18 +601,22 @@ public static class TruckTuningService
         return string.Concat(text.AsSpan(0, match.Index), replacement, text.AsSpan(match.Index + match.Length));
     }
 
-    private static int ExtractGameDataPrice(string text)
+    private static int ExtractGameDataPrice(string text) =>
+        ParseInt(ExtractGameDataAttribute(text, "Price"), 0);
+
+    private static int ExtractGameDataUnlockByRank(string text) =>
+        Math.Clamp(ParseInt(ExtractGameDataAttribute(text, "UnlockByRank"), 1), 0, 30);
+
+    private static string ExtractGameDataAttribute(string text, string attributeName)
     {
         var match = GameDataOpenRegex.Match(text);
         if (!match.Success)
         {
-            return 0;
+            return "";
         }
 
         var attrs = ParseAttributes(match.Groups["attrs"].Value);
-        return attrs.TryGetValue("Price", out var raw)
-            ? ParseInt(raw, 0)
-            : 0;
+        return attrs.TryGetValue(attributeName, out var raw) ? raw : "";
     }
 
     private static int ReadBaselineInt(string? baselineText, string currentText, string attributeName)

@@ -331,8 +331,7 @@ public partial class HomeView : UserControl
 
     private void DownloadUpdateButton_Click(object sender, RoutedEventArgs e)
     {
-        var url = _availableUpdate?.InstallerUrl ?? _availableUpdate?.ReleasePageUrl ?? AppInfo.LatestReleasePageUrl;
-        OpenUrl(url);
+        AppUpdateUi.StartDownload(Window.GetWindow(this), _availableUpdate);
     }
 
     private void SkipUpdateButton_Click(object sender, RoutedEventArgs e)

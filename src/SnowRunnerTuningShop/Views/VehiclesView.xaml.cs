@@ -28,6 +28,8 @@ public partial class VehiclesView : UserControl
     private TruckTuningDefinition? _currentTruck;
     private string _filter = "All";
     private bool _ready;
+    private bool _suppressUnlockRankSync;
+    private bool _suppressRegionFreeSync;
 
     public VehiclesView()
     {
@@ -100,6 +102,10 @@ public partial class VehiclesView : UserControl
         FrontSteerGlobalSlider.IsEnabled = canApply;
         ResponsivenessMultiplierSlider.IsEnabled = canApply;
         PriceMultiplierSlider.IsEnabled = canApply;
+        ReleaseRegionLockCheckBox.IsEnabled = canApply;
+        UnlockAllVehiclesCheckBox.IsEnabled = canApply;
+        ApplyStoreUnlocksButton.IsEnabled = canApply;
+        RestoreAllVehiclesButton.IsEnabled = canApply;
 
         if (!canApply)
         {
@@ -203,6 +209,119 @@ public partial class VehiclesView : UserControl
             MessageBox.Show(
                 UiText.Vehicles.GlobalMultipliersSavedMessage(result.ChangedTrucks, result.UpdatedFiles),
                 UiText.Vehicles.SaveSuccessTitle,
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message, UiText.Vehicles.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    private void ApplyStoreUnlocksButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (_session?.HasPak != true || string.IsNullOrWhiteSpace(_session.PakPath))
+        {
+            MessageBox.Show(
+                UiText.Vehicles.LoadPakForGlobalHint,
+                UiText.Vehicles.SaveErrorTitle,
+                MessageBoxButton.OK,
+                MessageBoxImage.Warning);
+            return;
+        }
+
+        if (!PakBaselineService.HasBaseline(_session.PakPath))
+        {
+            MessageBox.Show(
+                UiText.Main.BaselineMissingShort,
+                UiText.Main.BaselineTitle,
+                MessageBoxButton.OK,
+                MessageBoxImage.Warning);
+            return;
+        }
+
+        var releaseRegionLock = ReleaseRegionLockCheckBox.IsChecked == true;
+        var unlockAll = UnlockAllVehiclesCheckBox.IsChecked == true;
+        if (!releaseRegionLock && !unlockAll)
+        {
+            MessageBox.Show(
+                UiText.Vehicles.StoreUnlocksNothingSelected,
+                UiText.Vehicles.SaveErrorTitle,
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
+            return;
+        }
+
+        try
+        {
+            var result = TruckTuningService.ApplyGlobalStoreUnlocks(
+                _session.PakPath,
+                releaseRegionLock,
+                unlockAll);
+
+            _trucksPakPath = null;
+            if (_currentCard is not null && DetailPanel.Visibility == Visibility.Visible)
+            {
+                LoadTuning(_currentCard);
+            }
+
+            MessageBox.Show(
+                UiText.Vehicles.StoreUnlocksSavedMessage(result.ChangedTrucks, result.UpdatedFiles),
+                UiText.Vehicles.SaveSuccessTitle,
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message, UiText.Vehicles.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    private void RestoreAllVehiclesButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (_session?.HasPak != true || string.IsNullOrWhiteSpace(_session.PakPath))
+        {
+            MessageBox.Show(
+                UiText.Vehicles.LoadPakForGlobalHint,
+                UiText.Vehicles.SaveErrorTitle,
+                MessageBoxButton.OK,
+                MessageBoxImage.Warning);
+            return;
+        }
+
+        if (!PakBaselineService.HasBaseline(_session.PakPath))
+        {
+            MessageBox.Show(
+                UiText.Main.BaselineMissingShort,
+                UiText.Main.BaselineTitle,
+                MessageBoxButton.OK,
+                MessageBoxImage.Warning);
+            return;
+        }
+
+        var confirm = MessageBox.Show(
+            UiText.Vehicles.RestoreAllVehiclesConfirmMessage,
+            UiText.Vehicles.RestoreAllVehiclesConfirmTitle,
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Question,
+            MessageBoxResult.No);
+        if (confirm != MessageBoxResult.Yes)
+        {
+            return;
+        }
+
+        try
+        {
+            var result = TruckTuningService.RestoreAllVehiclesFromBaseline(_session.PakPath);
+            _trucksPakPath = null;
+            ResetGlobalMultiplierSlidersToBaseline();
+            ReleaseRegionLockCheckBox.IsChecked = false;
+            UnlockAllVehiclesCheckBox.IsChecked = false;
+            UpdateGlobalMultiplierLabels();
+
+            MessageBox.Show(
+                UiText.Vehicles.RestoreAllVehiclesSavedMessage(result.ChangedTrucks, result.UpdatedFiles),
+                UiText.Vehicles.RestoreAllVehiclesSuccessTitle,
                 MessageBoxButton.OK,
                 MessageBoxImage.Information);
         }
@@ -353,21 +472,21 @@ public partial class VehiclesView : UserControl
 
         var hasBasedOn = !string.IsNullOrWhiteSpace(meta?.BasedOn);
         var hasRole = !string.IsNullOrWhiteSpace(role);
-        var hasYears = !string.IsNullOrWhiteSpace(meta?.YearDisplay);
+        var hasYear = !string.IsNullOrWhiteSpace(meta?.YearDisplay);
         var hasCountry = meta?.Country is not null;
-        DetailMetaPanel.Visibility = hasBasedOn || hasRole || hasYears || hasCountry
+        DetailMetaPanel.Visibility = hasBasedOn || hasRole || hasYear || hasCountry
             ? Visibility.Visible
             : Visibility.Collapsed;
 
         BasedOnRow.Visibility = hasBasedOn ? Visibility.Visible : Visibility.Collapsed;
         DetailBasedOnText.Text = meta?.BasedOn ?? "";
-        BasedOnRow.Margin = hasRole || hasYears || hasCountry ? new Thickness(0, 0, 0, 10) : new Thickness(0);
+        BasedOnRow.Margin = hasRole || hasYear || hasCountry ? new Thickness(0, 0, 0, 10) : new Thickness(0);
 
         RoleRow.Visibility = hasRole ? Visibility.Visible : Visibility.Collapsed;
         DetailRoleText.Text = role;
-        RoleRow.Margin = hasYears || hasCountry ? new Thickness(0, 0, 0, 10) : new Thickness(0);
+        RoleRow.Margin = hasYear || hasCountry ? new Thickness(0, 0, 0, 10) : new Thickness(0);
 
-        YearsRow.Visibility = hasYears ? Visibility.Visible : Visibility.Collapsed;
+        YearsRow.Visibility = hasYear ? Visibility.Visible : Visibility.Collapsed;
         DetailYearsText.Text = meta?.YearDisplay ?? "";
         YearsRow.Margin = hasCountry ? new Thickness(0, 0, 0, 10) : new Thickness(0);
 
@@ -421,6 +540,7 @@ public partial class VehiclesView : UserControl
         FuelCapacityTextBox.Text = truck.FuelCapacity.ToString(CultureInfo.InvariantCulture);
         StorePriceTextBox.Text = truck.Price.ToString(CultureInfo.InvariantCulture);
         ResponsivenessTextBox.Text = truck.Responsiveness.ToString("0.######", CultureInfo.InvariantCulture);
+        BindStoreUnlockFields(truck);
         FrontSteerRow.Visibility = truck.HasFrontSteer ? Visibility.Visible : Visibility.Collapsed;
         FrontSteerHintText.Visibility = truck.HasFrontSteer ? Visibility.Visible : Visibility.Collapsed;
         if (truck.HasFrontSteer && truck.FrontSteerAngle is { } frontAngle)
@@ -521,13 +641,24 @@ public partial class VehiclesView : UserControl
             return;
         }
 
-        if (!TryReadForm(out var fuel, out var price, out var diffLock, out var drive, out var responsiveness, out var frontSteer, out var rearSteer))
+        if (!TryReadForm(
+                out var fuel,
+                out var price,
+                out var storeCountries,
+                out var unlockRank,
+                out var diffLock,
+                out var drive,
+                out var responsiveness,
+                out var frontSteer,
+                out var rearSteer))
         {
             return;
         }
 
         _currentTruck.FuelCapacity = fuel;
         _currentTruck.Price = price;
+        _currentTruck.StoreCountries = storeCountries;
+        _currentTruck.UnlockByRank = unlockRank;
         _currentTruck.DiffLock = diffLock;
         _currentTruck.DriveLayout = drive;
         _currentTruck.Responsiveness = responsiveness;
@@ -605,6 +736,8 @@ public partial class VehiclesView : UserControl
     private bool TryReadForm(
         out int fuel,
         out int price,
+        out string storeCountries,
+        out int unlockRank,
         out TruckDiffLockMode diffLock,
         out TruckDriveLayout drive,
         out double responsiveness,
@@ -613,6 +746,8 @@ public partial class VehiclesView : UserControl
     {
         fuel = 0;
         price = 0;
+        storeCountries = "";
+        unlockRank = 0;
         diffLock = TruckDiffLockMode.Switchable;
         drive = TruckDriveLayout.AlwaysAwd;
         responsiveness = 0;
@@ -631,6 +766,23 @@ public partial class VehiclesView : UserControl
         {
             TuningStatusText.Text = UiText.Vehicles.InvalidPrice;
             return false;
+        }
+
+        if (!int.TryParse(UnlockRankTextBox.Text.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out unlockRank)
+            || unlockRank is < 0 or > 30)
+        {
+            TuningStatusText.Text = UiText.Vehicles.InvalidUnlockRank;
+            return false;
+        }
+
+        storeCountries = _currentTruck?.StoreCountries ?? "";
+        if (RegionFreeCheckBox.IsChecked == true)
+        {
+            storeCountries = TruckStoreRegions.AllCountriesAttributeValue;
+        }
+        else if (string.IsNullOrWhiteSpace(storeCountries))
+        {
+            storeCountries = _currentTruck?.BaselineStoreCountries ?? "";
         }
 
         if (!double.TryParse(
@@ -693,6 +845,83 @@ public partial class VehiclesView : UserControl
         diffLock = selectedDiff;
         drive = selectedDrive;
         return true;
+    }
+
+    private void BindStoreUnlockFields(TruckTuningDefinition truck)
+    {
+        _suppressRegionFreeSync = true;
+        RegionFreeCheckBox.IsChecked = truck.IsRegionFree;
+        _suppressRegionFreeSync = false;
+        RefreshStoreRegionsLabel(truck);
+
+        _suppressUnlockRankSync = true;
+        UnlockRankSlider.Value = truck.UnlockByRank;
+        UnlockRankTextBox.Text = truck.UnlockByRank.ToString(CultureInfo.InvariantCulture);
+        _suppressUnlockRankSync = false;
+    }
+
+    private void RefreshStoreRegionsLabel(TruckTuningDefinition truck)
+    {
+        var source = RegionFreeCheckBox.IsChecked == true
+            ? TruckStoreRegions.AllCountriesAttributeValue
+            : (string.IsNullOrWhiteSpace(truck.StoreCountries)
+                ? truck.BaselineStoreCountries
+                : truck.StoreCountries);
+
+        var formatted = TruckStoreRegions.FormatLockedRegions(source);
+        StoreRegionsText.Text = string.IsNullOrWhiteSpace(formatted)
+            ? $"{UiText.Vehicles.StoreRegionsLabel}: —"
+            : $"{UiText.Vehicles.StoreRegionsLabel}: {formatted}";
+    }
+
+    private void RegionFreeCheckBox_Changed(object sender, RoutedEventArgs e)
+    {
+        if (_suppressRegionFreeSync || _currentTruck is null)
+        {
+            return;
+        }
+
+        if (RegionFreeCheckBox.IsChecked == true)
+        {
+            _currentTruck.StoreCountries = TruckStoreRegions.AllCountriesAttributeValue;
+        }
+        else
+        {
+            _currentTruck.StoreCountries = _currentTruck.BaselineStoreCountries;
+        }
+
+        RefreshStoreRegionsLabel(_currentTruck);
+    }
+
+    private void UnlockRankSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (_suppressUnlockRankSync || !_ready)
+        {
+            return;
+        }
+
+        var rank = (int)Math.Round(UnlockRankSlider.Value, MidpointRounding.AwayFromZero);
+        _suppressUnlockRankSync = true;
+        UnlockRankTextBox.Text = rank.ToString(CultureInfo.InvariantCulture);
+        _suppressUnlockRankSync = false;
+    }
+
+    private void UnlockRankTextBox_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        if (_suppressUnlockRankSync || !_ready)
+        {
+            return;
+        }
+
+        if (!int.TryParse(UnlockRankTextBox.Text.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out var rank)
+            || rank is < 0 or > 30)
+        {
+            return;
+        }
+
+        _suppressUnlockRankSync = true;
+        UnlockRankSlider.Value = rank;
+        _suppressUnlockRankSync = false;
     }
 
     private void BackButton_Click(object sender, RoutedEventArgs e)

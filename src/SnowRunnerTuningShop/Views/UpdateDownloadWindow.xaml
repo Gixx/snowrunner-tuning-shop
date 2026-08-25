@@ -1,0 +1,66 @@
+<Window x:Class="SnowRunnerTuningShop.Views.UpdateDownloadWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:loc="clr-namespace:SnowRunnerTuningShop.Localization"
+        Title="{x:Static loc:UiText+UpdateDownload.Title}"
+        Width="460"
+        SizeToContent="Height"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        ShowInTaskbar="False">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock x:Name="StatusTitleText"
+                   Grid.Row="0"
+                   FontSize="16"
+                   FontWeight="SemiBold"
+                   Text="{x:Static loc:UiText+UpdateDownload.DownloadingTitle}"
+                   Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                   Margin="0,0,0,8"/>
+
+        <TextBlock x:Name="StatusDetailText"
+                   Grid.Row="1"
+                   TextWrapping="Wrap"
+                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                   Margin="0,0,0,14"/>
+
+        <ProgressBar x:Name="DownloadProgressBar"
+                     Grid.Row="2"
+                     Height="16"
+                     Minimum="0"
+                     Maximum="100"
+                     Value="0"
+                     Margin="0,0,0,8"/>
+
+        <TextBlock x:Name="ProgressPercentText"
+                   Grid.Row="3"
+                   HorizontalAlignment="Right"
+                   FontSize="11"
+                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                   Margin="0,0,0,16"/>
+
+        <StackPanel Grid.Row="4"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right">
+            <Button x:Name="PrimaryButton"
+                    Content="{x:Static loc:UiText+UpdateDownload.UpdateAndRestart}"
+                    Padding="14,8"
+                    Margin="0,0,8,0"
+                    Visibility="Collapsed"
+                    IsDefault="True"
+                    Click="PrimaryButton_Click"/>
+            <Button x:Name="SecondaryButton"
+                    Content="{x:Static loc:UiText+UpdateDownload.Cancel}"
+                    Padding="14,8"
+                    IsCancel="True"
+                    Click="SecondaryButton_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

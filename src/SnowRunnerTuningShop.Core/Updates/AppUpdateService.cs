@@ -19,9 +19,18 @@ public sealed record AppUpdateCheckResult(
     string? InstallerUrl,
     string? ErrorMessage);
 
+public sealed record AppUpdateDownloadProgress(long BytesReceived, long? TotalBytes)
+{
+    public double? Percent =>
+        TotalBytes is > 0
+            ? Math.Clamp(100.0 * BytesReceived / TotalBytes.Value, 0, 100)
+            : null;
+}
+
 public static class AppUpdateService
 {
     private static readonly HttpClient Http = CreateClient();
+    private static readonly HttpClient DownloadHttp = CreateDownloadClient();
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
         PropertyNameCaseInsensitive = true,
@@ -111,6 +120,122 @@ public static class AppUpdateService
         return a == b;
     }
 
+    public static string BuildInstallerTempPath(string? installerUrl, string? latestVersion)
+    {
+        var fileName = TryGetFileNameFromUrl(installerUrl);
+        if (string.IsNullOrWhiteSpace(fileName))
+        {
+            var version = string.IsNullOrWhiteSpace(latestVersion) ? "latest" : latestVersion.Trim();
+            fileName = $"SnowRunnerTuningShop-v{version}-Setup.exe";
+        }
+
+        foreach (var invalid in Path.GetInvalidFileNameChars())
+        {
+            fileName = fileName.Replace(invalid, '_');
+        }
+
+        var folder = Path.Combine(Path.GetTempPath(), "SnowRunnerTuningShop", "updates");
+        Directory.CreateDirectory(folder);
+        return Path.Combine(folder, fileName);
+    }
+
+    public static async Task DownloadInstallerAsync(
+        string installerUrl,
+        string destinationPath,
+        IProgress<AppUpdateDownloadProgress>? progress = null,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(installerUrl);
+        ArgumentException.ThrowIfNullOrWhiteSpace(destinationPath);
+
+        var directory = Path.GetDirectoryName(destinationPath);
+        if (!string.IsNullOrWhiteSpace(directory))
+        {
+            Directory.CreateDirectory(directory);
+        }
+
+        var tempPath = destinationPath + ".partial";
+        try
+        {
+            using var request = new HttpRequestMessage(HttpMethod.Get, installerUrl);
+            using var response = await DownloadHttp
+                .SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken)
+                .ConfigureAwait(false);
+            response.EnsureSuccessStatusCode();
+
+            var total = response.Content.Headers.ContentLength;
+            await using var source = await response.Content.ReadAsStreamAsync(cancellationToken)
+                .ConfigureAwait(false);
+            await using var destination = new FileStream(
+                tempPath,
+                FileMode.Create,
+                FileAccess.Write,
+                FileShare.None,
+                bufferSize: 81920,
+                options: FileOptions.Asynchronous | FileOptions.SequentialScan);
+
+            var buffer = new byte[81920];
+            long received = 0;
+            progress?.Report(new AppUpdateDownloadProgress(received, total));
+
+            while (true)
+            {
+                var read = await source.ReadAsync(buffer.AsMemory(0, buffer.Length), cancellationToken)
+                    .ConfigureAwait(false);
+                if (read <= 0)
+                {
+                    break;
+                }
+
+                await destination.WriteAsync(buffer.AsMemory(0, read), cancellationToken)
+                    .ConfigureAwait(false);
+                received += read;
+                progress?.Report(new AppUpdateDownloadProgress(received, total));
+            }
+
+            await destination.FlushAsync(cancellationToken).ConfigureAwait(false);
+        }
+        catch
+        {
+            TryDelete(tempPath);
+            throw;
+        }
+
+        if (File.Exists(destinationPath))
+        {
+            File.Delete(destinationPath);
+        }
+
+        File.Move(tempPath, destinationPath);
+    }
+
+    private static string? TryGetFileNameFromUrl(string? url)
+    {
+        if (string.IsNullOrWhiteSpace(url)
+            || !Uri.TryCreate(url, UriKind.Absolute, out var uri))
+        {
+            return null;
+        }
+
+        var name = Path.GetFileName(uri.LocalPath);
+        return string.IsNullOrWhiteSpace(name) ? null : name;
+    }
+
+    private static void TryDelete(string path)
+    {
+        try
+        {
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+        }
+        catch
+        {
+            // Best-effort cleanup of partial downloads.
+        }
+    }
+
     private static AppUpdateCheckResult Cache(AppUpdateCheckResult result)
     {
         _cache = result;
@@ -169,6 +294,17 @@ public static class AppUpdateService
         client.DefaultRequestHeaders.Accept.Add(
             new MediaTypeWithQualityHeaderValue("application/vnd.github+json"));
         client.DefaultRequestHeaders.TryAddWithoutValidation("X-GitHub-Api-Version", "2022-11-28");
+        return client;
+    }
+
+    private static HttpClient CreateDownloadClient()
+    {
+        var client = new HttpClient
+        {
+            Timeout = TimeSpan.FromMinutes(30),
+        };
+        client.DefaultRequestHeaders.UserAgent.Add(
+            new ProductInfoHeaderValue("SnowRunnerTuningShop", AppInfo.Version));
         return client;
     }
 

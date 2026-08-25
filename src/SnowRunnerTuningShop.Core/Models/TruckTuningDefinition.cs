@@ -1,3 +1,5 @@
+using SnowRunnerTuningShop.Core.Trucks;
+
 namespace SnowRunnerTuningShop.Core.Models;
 
 public enum TruckDriveLayout
@@ -41,6 +43,18 @@ public sealed class TruckTuningDefinition
     public int Price { get; set; }
 
     public int BaselinePrice { get; init; }
+
+    /// <summary>GameData Country — comma-separated store region codes.</summary>
+    public string StoreCountries { get; set; } = "";
+
+    public string BaselineStoreCountries { get; init; } = "";
+
+    public bool IsRegionFree => TruckStoreRegions.HasAllStoreRegions(StoreCountries);
+
+    /// <summary>GameData UnlockByRank (0–30). 0 removes the rank gate where the game accepts it.</summary>
+    public int UnlockByRank { get; set; }
+
+    public int BaselineUnlockByRank { get; init; }
 
     public TruckDiffLockMode DiffLock { get; set; }
 

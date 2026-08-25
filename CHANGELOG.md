@@ -9,6 +9,21 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ---
 
+## [1.1.4] — 2026-08-25
+
+### Added
+- **Vehicles — store unlocks:** global release region lock / unlock-all-by-rank, plus per-truck region-free and unlock rank (0–30).
+- **Vehicles — restore all:** restore every truck XML from baseline on the list page.
+- **In-app update download:** progress dialog, then Update and restart after the installer finishes downloading.
+- Collapsible global panels (Expander) on Parts and Vehicles list pages.
+- Refreshed app icon / favicon.
+
+### Changed
+- Vehicle catalog metadata uses a single **Year**; Soviet-era UA/BY/RU plants before 1991 show as USSR (e.g. Gor BY-4).
+- Default window size tuned for typical desktop layouts (DPI-aware logical size).
+
+---
+
 ## [1.1.3] — 2026-08-25
 
 ### Added
@@ -143,6 +158,7 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ---
 
+[1.1.4]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.1.4
 [1.1.3]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.1.3
 [1.1.2]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.1.2
 [1.1.1]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.1.1

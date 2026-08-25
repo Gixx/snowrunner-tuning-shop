@@ -11,33 +11,11 @@ public sealed record VehicleCountryInfo(string Code, string Name, string? FlagPa
 public sealed record VehicleMetaInfo(
     string Id,
     string? BasedOn,
-    int? YearFrom,
-    int? YearTo,
+    int? Year,
     VehicleManufacturerInfo? Manufacturer,
     VehicleCountryInfo? Country)
 {
-    public string? YearDisplay
-    {
-        get
-        {
-            if (YearFrom is null && YearTo is null)
-            {
-                return null;
-            }
-
-            if (YearFrom is int from && YearTo is int to)
-            {
-                return from == to ? from.ToString() : $"{from}–{to}";
-            }
-
-            if (YearFrom is int startOnly)
-            {
-                return $"{startOnly}–present";
-            }
-
-            return $"–{YearTo}";
-        }
-    }
+    public string? YearDisplay => Year?.ToString();
 }
 
 public static class VehicleMetadata
@@ -114,12 +92,16 @@ public static class VehicleMetadata
                 manufacturer = mfg;
             }
 
+            var year = vehicle.Year ?? vehicle.YearFrom;
             var countryCode = vehicle.CountryCode;
             var countryName = vehicle.CountryName;
-            // Runtime safety net: RU lineage introduced before 1991 → USSR
-            if (string.Equals(countryCode, "RU", StringComparison.OrdinalIgnoreCase)
-                && vehicle.YearFrom is int yearFrom
-                && yearFrom < 1991)
+            // Runtime safety net: Soviet-era plants before 1991 → USSR
+            if (year is int y
+                && y < 1991
+                && countryCode is not null
+                && (countryCode.Equals("RU", StringComparison.OrdinalIgnoreCase)
+                    || countryCode.Equals("UA", StringComparison.OrdinalIgnoreCase)
+                    || countryCode.Equals("BY", StringComparison.OrdinalIgnoreCase)))
             {
                 countryCode = "SU";
                 countryName = "USSR";
@@ -145,8 +127,7 @@ public static class VehicleMetadata
             map[vehicle.Id] = new VehicleMetaInfo(
                 vehicle.Id,
                 string.IsNullOrWhiteSpace(vehicle.BasedOn) ? null : vehicle.BasedOn,
-                vehicle.YearFrom,
-                vehicle.YearTo,
+                year,
                 manufacturer,
                 country);
         }
@@ -209,8 +190,9 @@ public static class VehicleMetadata
         public string Id { get; set; } = "";
         public string? ManufacturerId { get; set; }
         public string? BasedOn { get; set; }
+        public int? Year { get; set; }
+        /// <summary>Legacy field; prefer <see cref="Year"/>.</summary>
         public int? YearFrom { get; set; }
-        public int? YearTo { get; set; }
         public string? CountryCode { get; set; }
         public string? CountryName { get; set; }
     }
