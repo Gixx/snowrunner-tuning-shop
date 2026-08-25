@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using SnowRunnerTuningShop.Controls;
 using SnowRunnerTuningShop.Core.Backup;
 using SnowRunnerTuningShop.Core.Models;
 using SnowRunnerTuningShop.Core.Trucks;
@@ -98,6 +99,7 @@ public partial class VehiclesView : UserControl
         FuelMultiplierSlider.IsEnabled = canApply;
         FrontSteerGlobalSlider.IsEnabled = canApply;
         ResponsivenessMultiplierSlider.IsEnabled = canApply;
+        PriceMultiplierSlider.IsEnabled = canApply;
 
         if (!canApply)
         {
@@ -114,6 +116,7 @@ public partial class VehiclesView : UserControl
         FuelMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
         FrontSteerGlobalSlider.Value = FrontSteerGlobalBaselineIndex;
         ResponsivenessMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
+        PriceMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
     }
 
     private void GlobalMultiplierSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -135,6 +138,9 @@ public partial class VehiclesView : UserControl
         ResponsivenessMultiplierLabel.Text = TuningMultiplierPresets.FormatSliderCaption(
             "Responsiveness",
             GetMultiplierIndex(ResponsivenessMultiplierSlider));
+        PriceMultiplierLabel.Text = TuningMultiplierPresets.FormatSliderCaption(
+            "Store price",
+            GetMultiplierIndex(PriceMultiplierSlider));
     }
 
     private static int GetFrontSteerGlobalIndex(Slider slider) =>
@@ -185,7 +191,8 @@ public partial class VehiclesView : UserControl
                 _session.PakPath,
                 GetMultiplier(FuelMultiplierSlider),
                 GetFrontSteerGlobalMode(FrontSteerGlobalSlider),
-                GetMultiplier(ResponsivenessMultiplierSlider));
+                GetMultiplier(ResponsivenessMultiplierSlider),
+                GetMultiplier(PriceMultiplierSlider));
 
             _trucksPakPath = null;
             if (_currentCard is not null && DetailPanel.Visibility == Visibility.Visible)
@@ -412,6 +419,7 @@ public partial class VehiclesView : UserControl
 
         _currentTruck = truck;
         FuelCapacityTextBox.Text = truck.FuelCapacity.ToString(CultureInfo.InvariantCulture);
+        StorePriceTextBox.Text = truck.Price.ToString(CultureInfo.InvariantCulture);
         ResponsivenessTextBox.Text = truck.Responsiveness.ToString("0.######", CultureInfo.InvariantCulture);
         FrontSteerRow.Visibility = truck.HasFrontSteer ? Visibility.Visible : Visibility.Collapsed;
         FrontSteerHintText.Visibility = truck.HasFrontSteer ? Visibility.Visible : Visibility.Collapsed;
@@ -437,6 +445,7 @@ public partial class VehiclesView : UserControl
 
         BindDiffLockOptions(truck);
         DriveCombo.SelectedValue = truck.DriveLayout;
+        RefreshSafeRangeHints();
         TuningHintText.Visibility = Visibility.Collapsed;
         TuningForm.Visibility = Visibility.Visible;
         RefreshRestoreButton();
@@ -512,12 +521,13 @@ public partial class VehiclesView : UserControl
             return;
         }
 
-        if (!TryReadForm(out var fuel, out var diffLock, out var drive, out var responsiveness, out var frontSteer, out var rearSteer))
+        if (!TryReadForm(out var fuel, out var price, out var diffLock, out var drive, out var responsiveness, out var frontSteer, out var rearSteer))
         {
             return;
         }
 
         _currentTruck.FuelCapacity = fuel;
+        _currentTruck.Price = price;
         _currentTruck.DiffLock = diffLock;
         _currentTruck.DriveLayout = drive;
         _currentTruck.Responsiveness = responsiveness;
@@ -594,6 +604,7 @@ public partial class VehiclesView : UserControl
 
     private bool TryReadForm(
         out int fuel,
+        out int price,
         out TruckDiffLockMode diffLock,
         out TruckDriveLayout drive,
         out double responsiveness,
@@ -601,6 +612,7 @@ public partial class VehiclesView : UserControl
         out double? rearSteer)
     {
         fuel = 0;
+        price = 0;
         diffLock = TruckDiffLockMode.Switchable;
         drive = TruckDriveLayout.AlwaysAwd;
         responsiveness = 0;
@@ -611,6 +623,13 @@ public partial class VehiclesView : UserControl
             || fuel is < 1 or > 10000)
         {
             TuningStatusText.Text = UiText.Vehicles.InvalidFuel;
+            return false;
+        }
+
+        if (!int.TryParse(StorePriceTextBox.Text.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out price)
+            || price is < 0 or > 9_999_999)
+        {
+            TuningStatusText.Text = UiText.Vehicles.InvalidPrice;
             return false;
         }
 
@@ -682,6 +701,64 @@ public partial class VehiclesView : UserControl
         _currentTruck = null;
         DetailPanel.Visibility = Visibility.Collapsed;
         ListPanel.Visibility = Visibility.Visible;
+    }
+
+    private void TuningNumericTextBox_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        if (!_ready || TuningForm.Visibility != Visibility.Visible)
+        {
+            return;
+        }
+
+        RefreshSafeRangeHints();
+    }
+
+    private void RefreshSafeRangeHints()
+    {
+        if (_currentTruck is null)
+        {
+            return;
+        }
+
+        SafeRangeHintPresenter.Refresh(
+            FuelSafeRangeHint,
+            FuelCapacityTextBox,
+            TuningFieldRange.FuelLiters(_currentTruck.BaselineFuelCapacity));
+        SafeRangeHintPresenter.Refresh(
+            PriceSafeRangeHint,
+            StorePriceTextBox,
+            TuningFieldRange.StorePrice(_currentTruck.BaselinePrice));
+
+        if (_currentTruck.HasFrontSteer)
+        {
+            FrontSteerSafeRangeHint.Visibility = Visibility.Visible;
+            SafeRangeHintPresenter.Refresh(
+                FrontSteerSafeRangeHint,
+                FrontSteerTextBox,
+                TuningFieldRange.FrontSteerDegrees(_currentTruck.BaselineFrontSteerAngle));
+        }
+        else
+        {
+            FrontSteerSafeRangeHint.Visibility = Visibility.Collapsed;
+        }
+
+        if (_currentTruck.HasRearSteer)
+        {
+            RearSteerSafeRangeHint.Visibility = Visibility.Visible;
+            SafeRangeHintPresenter.Refresh(
+                RearSteerSafeRangeHint,
+                RearSteerTextBox,
+                TuningFieldRange.RearSteerDegrees(_currentTruck.BaselineRearSteerAngle));
+        }
+        else
+        {
+            RearSteerSafeRangeHint.Visibility = Visibility.Collapsed;
+        }
+
+        SafeRangeHintPresenter.Refresh(
+            ResponsivenessSafeRangeHint,
+            ResponsivenessTextBox,
+            TuningFieldRange.Responsiveness(_currentTruck.BaselineResponsiveness));
     }
 
     public sealed record LabeledValue<T>(string Label, T Value);

@@ -20,3 +20,4 @@ website/dist/
 website/.output/
 website/.tanstack/
 website/.nitro/
+docs/plan/

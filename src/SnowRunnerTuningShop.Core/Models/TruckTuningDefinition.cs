@@ -35,6 +35,13 @@ public sealed class TruckTuningDefinition
 
     public int FuelCapacity { get; set; }
 
+    public int BaselineFuelCapacity { get; init; }
+
+    /// <summary>Truck store price from GameData Price.</summary>
+    public int Price { get; set; }
+
+    public int BaselinePrice { get; init; }
+
     public TruckDiffLockMode DiffLock { get; set; }
 
     public string DiffLockTypeRaw { get; init; } = "";
@@ -49,11 +56,17 @@ public sealed class TruckTuningDefinition
     /// <summary>TruckData Responsiveness — steering wheel return speed.</summary>
     public double Responsiveness { get; set; }
 
+    public double BaselineResponsiveness { get; init; }
+
     /// <summary>Front steering angle in degrees (0–90), or null when the truck has no front steer wheels.</summary>
     public double? FrontSteerAngle { get; set; }
 
+    public double? BaselineFrontSteerAngle { get; init; }
+
     /// <summary>Rear counter-steer angle in degrees (−90–0), or null when the truck has no rear steer wheels.</summary>
     public double? RearSteerAngle { get; set; }
+
+    public double? BaselineRearSteerAngle { get; init; }
 
     public bool HasFrontSteer { get; init; }
 

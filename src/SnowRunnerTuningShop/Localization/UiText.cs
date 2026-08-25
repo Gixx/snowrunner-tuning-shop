@@ -2,6 +2,7 @@ namespace SnowRunnerTuningShop.Localization;
 
 using SnowRunnerTuningShop.Core;
 using SnowRunnerTuningShop.Core.Profile;
+using SnowRunnerTuningShop.Core.Tuning;
 
 public static class UiText
 {
@@ -182,9 +183,10 @@ public static class UiText
         public const string FrontSteerGlobalMin = "Front steer: Min (10°)";
         public const string FrontSteerGlobalMax = "Front steer: Max (60°)";
         public const string ResponsivenessMultiplierDefault = "Responsiveness: 1 (baseline)";
+        public const string PriceMultiplierDefault = "Store price: 1 (baseline)";
         public const string ApplyGlobalMultipliers = "Apply to all vehicles";
         public const string GlobalMultipliersHint =
-            "Fuel tank and responsiveness scale from baseline. Front steer uses three presets: Min (10°), Default (baseline per truck), Max (60°). Independent of the category filter below.";
+            "Fuel tank, store price, and responsiveness scale from baseline. Front steer uses three presets: Min (10°), Default (baseline per truck), Max (60°). Independent of the category filter below.";
         public const string LoadPakForGlobalHint = "Load an initial.pak on the Home page to enable global vehicle multipliers.";
         public static string GlobalMultipliersAppliedStatus(int changedTrucks, int updatedFiles) =>
             $"Applied global vehicle multipliers to {changedTrucks} truck(s) across {updatedFiles} file(s).";
@@ -193,6 +195,7 @@ public static class UiText
         public const string TuningTitle = "Vehicle tuning";
         public const string FuelTankLabel = "Fuel tank";
         public const string FuelUnit = "L";
+        public const string StorePriceLabel = "Store price";
         public const string FrontSteerLabel = "Front steer";
         public const string RearSteerLabel = "Rear steer";
         public const string SteerAngleUnit = "°";
@@ -232,6 +235,8 @@ public static class UiText
             "Front steer must be between 0 and 90 degrees.";
         public const string InvalidRearSteer =
             "Rear steer must be between -90 and 0 degrees.";
+        public const string InvalidPrice =
+            "Store price must be a whole number from 0 to 9,999,999.";
         public const string SaveSuccessTitle = "Saved successfully";
         public const string SaveErrorTitle = "Save error";
         public const string RestoreSuccessTitle = "Vehicle restored";
@@ -239,6 +244,26 @@ public static class UiText
         public static string CountLabel(int count) => $"{count} vehicles";
         public static string SavedMessage() => "Vehicle tuning saved.";
         public static string RestoredMessage() => "This vehicle was restored from the baseline.";
+    }
+
+    public static class SafeRange
+    {
+        public const string InvalidNumber = "Enter a valid number.";
+
+        public static string BaselineLabel(string formattedValue) =>
+            $"Baseline: {formattedValue}";
+
+        public static string AllowedLabel(string minFormatted, string maxFormatted) =>
+            $"Allowed: {minFormatted}–{maxFormatted}";
+
+        public static string ZoneMessage(SafeRangeZone zone) =>
+            zone switch
+            {
+                SafeRangeZone.Normal => "Within normal range",
+                SafeRangeZone.Warning => "Outside typical range — check before saving",
+                SafeRangeZone.Extreme => "Extreme value — may cause unexpected behavior",
+                _ => "Outside allowed range",
+            };
     }
 
     public static class Settings

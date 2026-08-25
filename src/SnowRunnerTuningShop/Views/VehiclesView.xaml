@@ -80,6 +80,7 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
                     <TextBlock Grid.Row="0"
@@ -140,12 +141,27 @@
 
                     <Button x:Name="ApplyGlobalMultipliersButton"
                             Grid.Row="2"
+                            Grid.RowSpan="2"
                             Grid.Column="3"
                             Content="{x:Static loc:UiText+Vehicles.ApplyGlobalMultipliers}"
                             Padding="14,8"
                             VerticalAlignment="Center"
                             IsEnabled="False"
                             Click="ApplyGlobalMultipliersButton_Click"/>
+
+                    <StackPanel Grid.Row="3" Grid.Column="0" Margin="0,12,12,0">
+                        <TextBlock x:Name="PriceMultiplierLabel"
+                                   Text="{x:Static loc:UiText+Vehicles.PriceMultiplierDefault}"
+                                   Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                        <Slider x:Name="PriceMultiplierSlider"
+                                Minimum="0"
+                                Maximum="8"
+                                Value="4"
+                                TickFrequency="1"
+                                IsSnapToTickEnabled="True"
+                                IsEnabled="False"
+                                ValueChanged="GlobalMultiplierSlider_ValueChanged"/>
+                    </StackPanel>
                 </Grid>
             </Border>
 
@@ -429,7 +445,8 @@
                                     </Grid.ColumnDefinitions>
                                     <TextBox x:Name="FuelCapacityTextBox"
                                              Padding="10,7"
-                                             VerticalContentAlignment="Center"/>
+                                             VerticalContentAlignment="Center"
+                                             TextChanged="TuningNumericTextBox_TextChanged"/>
                                     <TextBlock Grid.Column="1"
                                                Text="{x:Static loc:UiText+Vehicles.FuelUnit}"
                                                Margin="10,0,0,0"
@@ -437,8 +454,35 @@
                                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
                                 </Grid>
                             </Grid>
+                            <TextBlock x:Name="FuelSafeRangeHint"
+                                       Margin="140,0,0,14"
+                                       FontSize="11"
+                                       TextWrapping="Wrap"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
 
-                            <Grid x:Name="FrontSteerRow" Margin="0,0,0,14">
+                            <Grid Margin="0,0,0,6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="140"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{x:Static loc:UiText+Vehicles.StorePriceLabel}"
+                                           VerticalAlignment="Center"
+                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                <TextBox x:Name="StorePriceTextBox"
+                                         Grid.Column="1"
+                                         MaxWidth="140"
+                                         HorizontalAlignment="Left"
+                                         Padding="10,7"
+                                         VerticalContentAlignment="Center"
+                                         TextChanged="TuningNumericTextBox_TextChanged"/>
+                            </Grid>
+                            <TextBlock x:Name="PriceSafeRangeHint"
+                                       Margin="140,0,0,14"
+                                       FontSize="11"
+                                       TextWrapping="Wrap"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+
+                            <Grid x:Name="FrontSteerRow" Margin="0,0,0,6">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="140"/>
                                     <ColumnDefinition Width="*"/>
@@ -453,7 +497,8 @@
                                     </Grid.ColumnDefinitions>
                                     <TextBox x:Name="FrontSteerTextBox"
                                              Padding="10,7"
-                                             VerticalContentAlignment="Center"/>
+                                             VerticalContentAlignment="Center"
+                                             TextChanged="TuningNumericTextBox_TextChanged"/>
                                     <TextBlock Grid.Column="1"
                                                Text="{x:Static loc:UiText+Vehicles.SteerAngleUnit}"
                                                Margin="10,0,0,0"
@@ -462,13 +507,18 @@
                                 </Grid>
                             </Grid>
                             <TextBlock x:Name="FrontSteerHintText"
-                                       Margin="140,0,0,14"
+                                       Margin="140,0,0,4"
                                        Text="{x:Static loc:UiText+Vehicles.FrontSteerHint}"
                                        TextWrapping="Wrap"
                                        FontSize="11"
                                        Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                            <TextBlock x:Name="FrontSteerSafeRangeHint"
+                                       Margin="140,0,0,14"
+                                       FontSize="11"
+                                       TextWrapping="Wrap"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
 
-                            <Grid x:Name="RearSteerRow" Margin="0,0,0,14">
+                            <Grid x:Name="RearSteerRow" Margin="0,0,0,6">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="140"/>
                                     <ColumnDefinition Width="*"/>
@@ -483,7 +533,8 @@
                                     </Grid.ColumnDefinitions>
                                     <TextBox x:Name="RearSteerTextBox"
                                              Padding="10,7"
-                                             VerticalContentAlignment="Center"/>
+                                             VerticalContentAlignment="Center"
+                                             TextChanged="TuningNumericTextBox_TextChanged"/>
                                     <TextBlock Grid.Column="1"
                                                Text="{x:Static loc:UiText+Vehicles.SteerAngleUnit}"
                                                Margin="10,0,0,0"
@@ -492,10 +543,15 @@
                                 </Grid>
                             </Grid>
                             <TextBlock x:Name="RearSteerHintText"
-                                       Margin="140,0,0,14"
+                                       Margin="140,0,0,4"
                                        Text="{x:Static loc:UiText+Vehicles.RearSteerHint}"
                                        TextWrapping="Wrap"
                                        FontSize="11"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                            <TextBlock x:Name="RearSteerSafeRangeHint"
+                                       Margin="140,0,0,14"
+                                       FontSize="11"
+                                       TextWrapping="Wrap"
                                        Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
 
                             <Grid Margin="0,0,0,6">
@@ -511,12 +567,18 @@
                                          MaxWidth="140"
                                          HorizontalAlignment="Left"
                                          Padding="10,7"
-                                         VerticalContentAlignment="Center"/>
+                                         VerticalContentAlignment="Center"
+                                         TextChanged="TuningNumericTextBox_TextChanged"/>
                             </Grid>
                             <TextBlock Text="{x:Static loc:UiText+Vehicles.ResponsivenessHint}"
-                                       Margin="140,0,0,14"
+                                       Margin="140,0,0,4"
                                        TextWrapping="Wrap"
                                        FontSize="11"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                            <TextBlock x:Name="ResponsivenessSafeRangeHint"
+                                       Margin="140,0,0,14"
+                                       FontSize="11"
+                                       TextWrapping="Wrap"
                                        Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
 
                             <Grid Margin="0,0,0,14">

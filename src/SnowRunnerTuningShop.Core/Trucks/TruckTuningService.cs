@@ -18,6 +18,10 @@ public static class TruckTuningService
         @"<TruckData\b(?<attrs>[^>]*)>",
         RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
+    private static readonly Regex GameDataOpenRegex = new(
+        @"<GameData\b(?<attrs>[^>]*)>",
+        RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+
     private static readonly Regex VehicleUiNameRegex = new(
         @"UiName\s*=\s*""(?<value>UI_VEHICLE_[^""]+)""",
         RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
@@ -116,10 +120,12 @@ public static class TruckTuningService
         string pakPath,
         double fuelMultiplier,
         TruckFrontSteerGlobalMode frontSteerMode,
-        double responsivenessMultiplier)
+        double responsivenessMultiplier,
+        double priceMultiplier)
     {
         ValidateMultiplier(fuelMultiplier, nameof(fuelMultiplier));
         ValidateMultiplier(responsivenessMultiplier, nameof(responsivenessMultiplier));
+        ValidateMultiplier(priceMultiplier, nameof(priceMultiplier));
         if (!Enum.IsDefined(frontSteerMode))
         {
             throw new ArgumentOutOfRangeException(nameof(frontSteerMode), "Unsupported front steer preset.");
@@ -154,7 +160,8 @@ public static class TruckTuningService
                     baselineText,
                     fuelMultiplier,
                     frontSteerMode,
-                    responsivenessMultiplier);
+                    responsivenessMultiplier,
+                    priceMultiplier);
 
                 var currentText = ReadEntryText(entry);
                 if (!string.Equals(currentText, updatedText, StringComparison.Ordinal))
@@ -172,7 +179,7 @@ public static class TruckTuningService
     }
 
     public static TruckTuningSaveResult RestoreGlobalTuningFromBaseline(string pakPath) =>
-        ApplyGlobalMultipliers(pakPath, 1.0, TruckFrontSteerGlobalMode.Baseline, 1.0);
+        ApplyGlobalMultipliers(pakPath, 1.0, TruckFrontSteerGlobalMode.Baseline, 1.0, 1.0);
 
     public static TruckTuningSaveResult SaveTruckChanges(string pakPath, TruckTuningDefinition truck)
     {
@@ -263,6 +270,9 @@ public static class TruckTuningService
         var uiKey = uiMatch.Success ? uiMatch.Groups["value"].Value : "";
 
         var baselineText = TryReadTruckText(baselineArchive, entryPath);
+        var baselineSteer = baselineText is not null
+            ? ParseSteerAngles(baselineText)
+            : ParseSteerAngles(text);
         var hasNativeDiffLockOptions = baselineText is not null
             ? HasNativeDiffLockInfrastructure(baselineArchive!, baselineText, truckId)
             : HasNativeDiffLockInfrastructure(archive, text, truckId);
@@ -274,13 +284,19 @@ public static class TruckTuningService
             UiNameKey = uiKey,
             DisplayName = GameStringsReader.Resolve(strings, uiKey, truckId),
             FuelCapacity = ParseInt(fuelRaw, 0),
+            BaselineFuelCapacity = ReadBaselineInt(baselineText, text, "FuelCapacity"),
+            Price = ExtractGameDataPrice(text),
+            BaselinePrice = baselineText is not null ? ExtractGameDataPrice(baselineText) : ExtractGameDataPrice(text),
             DiffLockTypeRaw = diffRaw ?? "",
             HasNativeDiffLockOptions = hasNativeDiffLockOptions,
             DiffLock = ResolveDiffLockMode(archive, text, diffRaw, hasNativeDiffLockOptions),
             DriveLayout = InferDriveLayout(text),
             Responsiveness = ParseDouble(responsivenessRaw, 0.4),
+            BaselineResponsiveness = ReadBaselineDouble(baselineText, text, "Responsiveness", 0.4),
             FrontSteerAngle = frontSteerAngle,
+            BaselineFrontSteerAngle = baselineSteer.Front,
             RearSteerAngle = rearSteerAngle,
+            BaselineRearSteerAngle = baselineSteer.Rear,
             HasFrontSteer = hasFrontSteer,
             HasRearSteer = hasRearSteer,
         };
@@ -293,6 +309,7 @@ public static class TruckTuningService
         TruckTuningDefinition truck)
     {
         var updated = ApplyFuelCapacity(text, truck.FuelCapacity);
+        updated = ApplyGameDataPrice(updated, truck.Price);
         updated = ApplySteering(updated, truck);
         updated = ApplyDiffLock(archive, updated, truck);
         updated = ApplyDriveLayout(updated, truck.DriveLayout);
@@ -303,7 +320,8 @@ public static class TruckTuningService
         string baselineText,
         double fuelMultiplier,
         TruckFrontSteerGlobalMode frontSteerMode,
-        double responsivenessMultiplier)
+        double responsivenessMultiplier,
+        double priceMultiplier)
     {
         var truckData = TruckDataOpenRegex.Match(baselineText);
         if (!truckData.Success)
@@ -335,6 +353,16 @@ public static class TruckTuningService
             updated,
             "Responsiveness",
             FormatNumeric(scaledResponsiveness, preferInteger: false));
+
+        var baselinePrice = ExtractGameDataPrice(baselineText);
+        if (baselinePrice >= 0 && GameDataOpenRegex.IsMatch(baselineText))
+        {
+            var scaledPrice = (int)Math.Clamp(
+                Math.Round(baselinePrice * priceMultiplier, MidpointRounding.AwayFromZero),
+                0,
+                9_999_999);
+            updated = ApplyGameDataPrice(updated, scaledPrice);
+        }
 
         var (_, _, hasFrontSteer, _) = ParseSteerAngles(baselineText);
         if (hasFrontSteer)
@@ -406,6 +434,93 @@ public static class TruckTuningService
 
         var replacement = $"<TruckData{attrs}>";
         return string.Concat(text.AsSpan(0, match.Index), replacement, text.AsSpan(match.Index + match.Length));
+    }
+
+    private static string ApplyGameDataPrice(string text, int price)
+    {
+        var match = GameDataOpenRegex.Match(text);
+        if (!match.Success)
+        {
+            return text;
+        }
+
+        var attrs = match.Groups["attrs"].Value;
+        if (!SetOrReplaceAttribute(ref attrs, "Price", price.ToString(CultureInfo.InvariantCulture)))
+        {
+            return text;
+        }
+
+        var replacement = $"<GameData{attrs}>";
+        return string.Concat(text.AsSpan(0, match.Index), replacement, text.AsSpan(match.Index + match.Length));
+    }
+
+    private static int ExtractGameDataPrice(string text)
+    {
+        var match = GameDataOpenRegex.Match(text);
+        if (!match.Success)
+        {
+            return 0;
+        }
+
+        var attrs = ParseAttributes(match.Groups["attrs"].Value);
+        return attrs.TryGetValue("Price", out var raw)
+            ? ParseInt(raw, 0)
+            : 0;
+    }
+
+    private static int ReadBaselineInt(string? baselineText, string currentText, string attributeName)
+    {
+        if (baselineText is not null
+            && TryGetTruckDataAttribute(baselineText, attributeName, out var baselineRaw))
+        {
+            return ParseInt(baselineRaw, 0);
+        }
+
+        if (TryGetTruckDataAttribute(currentText, attributeName, out var currentRaw))
+        {
+            return ParseInt(currentRaw, 0);
+        }
+
+        return 0;
+    }
+
+    private static double ReadBaselineDouble(
+        string? baselineText,
+        string currentText,
+        string attributeName,
+        double fallback)
+    {
+        if (baselineText is not null
+            && TryGetTruckDataAttribute(baselineText, attributeName, out var baselineRaw))
+        {
+            return ParseDouble(baselineRaw, fallback);
+        }
+
+        if (TryGetTruckDataAttribute(currentText, attributeName, out var currentRaw))
+        {
+            return ParseDouble(currentRaw, fallback);
+        }
+
+        return fallback;
+    }
+
+    private static bool TryGetTruckDataAttribute(string text, string attributeName, out string value)
+    {
+        value = "";
+        var match = TruckDataOpenRegex.Match(text);
+        if (!match.Success)
+        {
+            return false;
+        }
+
+        var attrs = ParseAttributes(match.Groups["attrs"].Value);
+        if (!attrs.TryGetValue(attributeName, out var raw))
+        {
+            return false;
+        }
+
+        value = raw;
+        return true;
     }
 
     private static string ApplySteering(string text, TruckTuningDefinition truck)

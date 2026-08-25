@@ -9,6 +9,14 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ---
 
+## [1.1.3] — 2026-08-25
+
+### Added
+- **Vehicles — store price:** global multiplier on the list page and per-truck **Store price** field (edits `GameData Price` in truck XML).
+- **Safe-range hints:** numeric vehicle tuning fields show baseline, allowed range, and color-coded guidance (normal / atypical / extreme) while editing.
+
+---
+
 ## [1.1.2] — 2026-08-24
 
 ### Added
@@ -135,6 +143,7 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ---
 
+[1.1.3]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.1.3
 [1.1.2]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.1.2
 [1.1.1]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.1.1
 [1.1.0]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.1.0
