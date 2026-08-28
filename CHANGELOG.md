@@ -9,6 +9,28 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ---
 
+## [1.2.0] — 2026-08-28
+
+### Added
+- **Multilingual UI:** app chrome in English, German, French, Spanish, Portuguese, Brazilian Portuguese, Polish, Russian, and Ukrainian (`assets/localization/*.json`).
+- **Installer language picker** (English default): writes `%LocalAppData%\SnowRunnerTuningShop\install-language.json` on first install; the app imports it into `config.json` on startup.
+- **Settings → Language** selector with restart prompt (WPF `x:Static` bindings require a relaunch).
+- **Global crash reporting:** unhandled UI/domain/task exceptions open a crash dialog instead of silently exiting — local log, clipboard copy, GitHub issue search by fingerprint, pre-filled new issue URL.
+- Debug-only crash test buttons on Settings (Debug builds).
+
+### Changed
+- Game pak string language (`strings_*.str`) follows the selected UI culture (e.g. `pt-BR` → `brazilian`).
+
+### Fixed
+- App icon / favicon sizes for clearer display at small DPI.
+
+### Notes
+- Dynamic status messages (e.g. “Loaded successfully: …”) still use English fallbacks in code; static UI labels and buttons are translated.
+- Locale strings were machine-translated — wording may be refined in later patches.
+- Restart the app after changing language in Settings.
+
+---
+
 ## [1.1.4] — 2026-08-25
 
 ### Added
@@ -158,6 +180,7 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ---
 
+[1.2.0]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.2.0
 [1.1.4]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.1.4
 [1.1.3]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.1.3
 [1.1.2]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.1.2

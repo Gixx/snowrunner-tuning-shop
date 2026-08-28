@@ -57,6 +57,8 @@ Also:
 ### UI
 - Collapsible hamburger sidebar (optional pin)
 - Dark/light Fluent-style theme follows Windows
+- **Languages:** English, Deutsch, Français, Español, Português, Português (Brasil), Polski, Русский, Українська — chosen in the installer or **Settings** (restart to apply)
+- **Crash reports:** unexpected errors show a dialog with copy report / open GitHub issue (deduplicated by fingerprint)
 
 ---
 
