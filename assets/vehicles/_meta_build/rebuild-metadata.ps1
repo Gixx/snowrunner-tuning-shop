@@ -27,19 +27,42 @@ function Get-FileUrl([string]$fileName) {
     return $null
 }
 
+function Convert-WebPImageToPngIfNeeded([string]$path) {
+    if (-not (Test-Path $path)) { return }
+    $bytes = [IO.File]::ReadAllBytes($path)
+    if ($bytes.Length -lt 12) { return }
+    if ($bytes[0] -ne 0x52 -or $bytes[1] -ne 0x49 -or $bytes[8] -ne 0x57) { return }
+
+    $python = Get-Command python -ErrorAction SilentlyContinue
+    if (-not $python) {
+        Write-Warning "WebP logo at $path requires Python + Pillow to convert to PNG."
+        return
+    }
+
+    $script = @"
+from PIL import Image
+from pathlib import Path
+path = Path(r'$($path.Replace("'", "''"))')
+Image.open(path).save(path, format='PNG')
+"@
+    & $python.Source -c $script
+}
+
 function Ensure-Logo([string]$logoSource) {
     if (-not $logoSource) { return $null }
-    $ext = [IO.Path]::GetExtension($logoSource)
-    if (-not $ext) { $ext = '.png' }
     $slugBase = [IO.Path]::GetFileNameWithoutExtension($logoSource).ToLowerInvariant() -replace '[^a-z0-9]+', '-'
-    $destName = "$slugBase$ext"
+    $destName = "$slugBase.png"
     $dest = Join-Path $logoDir $destName
     if (-not (Test-Path $dest) -or (Get-Item $dest).Length -lt 100) {
         $url = Get-FileUrl $logoSource
         Start-Sleep -Milliseconds 120
         if ($url) {
             Invoke-WebRequest -Uri $url -Headers $ua -OutFile $dest -UseBasicParsing
+            Convert-WebPImageToPngIfNeeded $dest
         }
+    }
+    else {
+        Convert-WebPImageToPngIfNeeded $dest
     }
     if ((Test-Path $dest) -and (Get-Item $dest).Length -gt 100) {
         return "manufacturers/$destName"

@@ -9,6 +9,13 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ---
 
+## [1.2.1] — 2026-08-28
+
+### Fixed
+- **Vehicles — detail view image load:** manufacturer logos (and one test asset) were WebP files saved with a `.png` extension; WPF could not decode them and raised `NotSupportedException` when opening vehicle details ([#3](https://github.com/Gixx/snowrunner-tuning-shop/issues/3)). Logos are now real PNG; `TryLoadImage` fails gracefully on unsupported formats; metadata rebuild converts WebP downloads automatically.
+
+---
+
 ## [1.2.0] — 2026-08-28
 
 ### Added
@@ -180,6 +187,7 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ---
 
+[1.2.1]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.2.1
 [1.2.0]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.2.0
 [1.1.4]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.1.4
 [1.1.3]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.1.3

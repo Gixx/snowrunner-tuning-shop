@@ -142,14 +142,21 @@ public static class VehicleMetadata
             return null;
         }
 
-        var image = new BitmapImage();
-        image.BeginInit();
-        image.CacheOption = BitmapCacheOption.OnLoad;
-        image.UriSource = new Uri(imagePath, UriKind.Absolute);
-        image.DecodePixelWidth = decodePixelWidth;
-        image.EndInit();
-        image.Freeze();
-        return image;
+        try
+        {
+            var image = new BitmapImage();
+            image.BeginInit();
+            image.CacheOption = BitmapCacheOption.OnLoad;
+            image.UriSource = new Uri(imagePath, UriKind.Absolute);
+            image.DecodePixelWidth = decodePixelWidth;
+            image.EndInit();
+            image.Freeze();
+            return image;
+        }
+        catch (Exception ex) when (ex is NotSupportedException or System.Runtime.InteropServices.COMException or IOException)
+        {
+            return null;
+        }
     }
 
     private static string? ResolveAssetPath(string assetsDir, string? relative)
