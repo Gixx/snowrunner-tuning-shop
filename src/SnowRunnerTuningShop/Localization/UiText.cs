@@ -8,54 +8,46 @@ public static class UiText
 {
     public static class Nav
     {
-        public const string Home = "Home";
-        public const string General = "General";
-        public const string Parts = "Parts";
-        public const string Vehicles = "Vehicles";
-        public const string Settings = "Settings";
-        public const string OpenMenu = "Menu";
-        public const string PinMenu = "Keep menu open";
-        public static string VersionLabel => $"Version {AppInfo.Version}";
+        public static string Home => StringResources.Get("Nav.Home", "Home");
+        public static string General => StringResources.Get("Nav.General", "General");
+        public static string Parts => StringResources.Get("Nav.Parts", "Parts");
+        public static string Vehicles => StringResources.Get("Nav.Vehicles", "Vehicles");
+        public static string Settings => StringResources.Get("Nav.Settings", "Settings");
+        public static string OpenMenu => StringResources.Get("Nav.OpenMenu", "Menu");
+        public static string PinMenu => StringResources.Get("Nav.PinMenu", "Keep menu open");
+        public static string VersionLabel => StringResources.Format("Nav.VersionLabel", "Version {0}", AppInfo.Version);
     }
 
     public static class Main
     {
-        public const string Subtitle = "Fine-tune SnowRunner initial.pak";
-        public const string OverviewTitle = "Overview";
-        public const string OverviewPlaceholder =
-            "Set a baseline from your original initial.pak to load the workspace.";
-        public const string CategoriesTitle = "Tuning categories";
-        public const string CategoryColumn = "Category";
-        public const string ItemsColumn = "Items";
-        public const string FilesColumn = "Files";
-        public const string SampleFileColumn = "Sample file";
-        public const string BrowseDialogFilter = "SnowRunner pak (*.pak)|*.pak|All files (*.*)|*.*";
-        public const string LoadingPakStatus = "Loading pak...";
-        public const string LoadErrorTitle = "Load error";
+        public static string Subtitle => StringResources.Get("Main.Subtitle", "Fine-tune SnowRunner initial.pak");
+        public static string OverviewTitle => StringResources.Get("Main.OverviewTitle", "Overview");
+        public static string OverviewPlaceholder => StringResources.Get("Main.OverviewPlaceholder", "Set a baseline from your original initial.pak to load the workspace.");
+        public static string CategoriesTitle => StringResources.Get("Main.CategoriesTitle", "Tuning categories");
+        public static string CategoryColumn => StringResources.Get("Main.CategoryColumn", "Category");
+        public static string ItemsColumn => StringResources.Get("Main.ItemsColumn", "Items");
+        public static string FilesColumn => StringResources.Get("Main.FilesColumn", "Files");
+        public static string SampleFileColumn => StringResources.Get("Main.SampleFileColumn", "Sample file");
+        public static string BrowseDialogFilter => StringResources.Get("Main.BrowseDialogFilter", "SnowRunner pak (*.pak)|*.pak|All files (*.*)|*.*");
+        public static string LoadingPakStatus => StringResources.Get("Main.LoadingPakStatus", "Loading pak...");
+        public static string LoadErrorTitle => StringResources.Get("Main.LoadErrorTitle", "Load error");
 
-        public const string BaselineTitle = "Baseline required";
-        public const string BaselineWarning =
-            "Choose your unmodified original initial.pak (Steam, GOG, Epic, Xbox, etc.). " +
-            "The app saves a read-only baseline for that edition and remembers this file as the one you will edit.";
-        public const string BaselineReadyTitle = "Baseline ready";
-        public const string BaselineReadyNote =
-            "Baseline is healthy and ready. Keep the baseline file read-only.";
-        public const string BaselineMissingShort =
-            "Baseline is not set. On Home, use Set baseline from original.";
-        public const string SetBaselineFromOriginal = "Set baseline from original...";
-        public const string ChangeLocation = "Change location...";
-        public const string RestoreFullBaseline = "Restore full baseline";
-        public const string SelectOriginalPakDialogTitle = "Select unmodified original initial.pak";
-        public const string ChangeLocationDialogTitle = "Select initial.pak for another store/location";
-        public const string BaselineUpdatedTitle = "Baseline set";
-        public const string LocationChangedTitle = "Location changed";
-        public const string BaselineErrorTitle = "Baseline error";
-        public const string RestoreFullBaselineConfirmTitle = "Restore full baseline?";
-        public const string RestoreFullBaselineConfirmMessage =
-            "This replaces the entire working initial.pak with the read-only baseline copy. " +
-            "All tuning changes in the pak will be lost. This cannot be undone from inside the tuner.\n\n" +
-            "Your saved tuning profile is kept so you can reapply the changes afterwards.";
-        public const string RestoreFullBaselineSuccessTitle = "Pak restored";
+        public static string BaselineTitle => StringResources.Get("Main.BaselineTitle", "Baseline required");
+        public static string BaselineWarning => StringResources.Get("Main.BaselineWarning", "Choose your unmodified original initial.pak (Steam, GOG, Epic, Xbox, etc.). The app saves a read-only baseline for that edition and remembers this file as the one you will edit.");
+        public static string BaselineReadyTitle => StringResources.Get("Main.BaselineReadyTitle", "Baseline ready");
+        public static string BaselineReadyNote => StringResources.Get("Main.BaselineReadyNote", "Baseline is healthy and ready. Keep the baseline file read-only.");
+        public static string BaselineMissingShort => StringResources.Get("Main.BaselineMissingShort", "Baseline is not set. On Home, use Set baseline from original.");
+        public static string SetBaselineFromOriginal => StringResources.Get("Main.SetBaselineFromOriginal", "Set baseline from original...");
+        public static string ChangeLocation => StringResources.Get("Main.ChangeLocation", "Change location...");
+        public static string RestoreFullBaseline => StringResources.Get("Main.RestoreFullBaseline", "Restore full baseline");
+        public static string SelectOriginalPakDialogTitle => StringResources.Get("Main.SelectOriginalPakDialogTitle", "Select unmodified original initial.pak");
+        public static string ChangeLocationDialogTitle => StringResources.Get("Main.ChangeLocationDialogTitle", "Select initial.pak for another store/location");
+        public static string BaselineUpdatedTitle => StringResources.Get("Main.BaselineUpdatedTitle", "Baseline set");
+        public static string LocationChangedTitle => StringResources.Get("Main.LocationChangedTitle", "Location changed");
+        public static string BaselineErrorTitle => StringResources.Get("Main.BaselineErrorTitle", "Baseline error");
+        public static string RestoreFullBaselineConfirmTitle => StringResources.Get("Main.RestoreFullBaselineConfirmTitle", "Restore full baseline?");
+        public static string RestoreFullBaselineConfirmMessage => StringResources.Get("Main.RestoreFullBaselineConfirmMessage", "This replaces the entire working initial.pak with the read-only baseline copy. All tuning changes in the pak will be lost. This cannot be undone from inside the tuner.\n\nYour saved tuning profile is kept so you can reapply the changes afterwards.");
+        public static string RestoreFullBaselineSuccessTitle => StringResources.Get("Main.RestoreFullBaselineSuccessTitle", "Pak restored");
 
         public static string LoadSuccessStatus(int entryCount) =>
             $"Loaded successfully: {entryCount:N0} entries.";
@@ -96,9 +88,7 @@ public static class UiText
         public static string WorkingPakStatus(string editionDisplayName, string workingPakPath) =>
             $"Editing ({editionDisplayName}): {workingPakPath}";
 
-        public const string RestoreFullBaselineMessage =
-            "The entire initial.pak was restored from the baseline. " +
-            "You can reapply saved changes from Home or Settings.";
+        public static string RestoreFullBaselineMessage => StringResources.Get("Main.RestoreFullBaselineMessage", "The entire initial.pak was restored from the baseline. You can reapply saved changes from Home or Settings.");
 
         public static string OverviewDetails(
             string filePath,
@@ -120,38 +110,36 @@ public static class UiText
 
     public static class Parts
     {
-        public const string Winch = "Winch";
-        public const string Engine = "Engine";
-        public const string Gearbox = "Gearbox";
-        public const string Suspension = "Suspension";
-        public const string Tires = "Tires";
-        public const string ComingSoon = "Coming soon.";
-        public const string LoadPakHint = "Load an initial.pak on the Home page first.";
-        public const string Loading = "Loading…";
+        public static string Winch => StringResources.Get("Parts.Winch", "Winch");
+        public static string Engine => StringResources.Get("Parts.Engine", "Engine");
+        public static string Gearbox => StringResources.Get("Parts.Gearbox", "Gearbox");
+        public static string Suspension => StringResources.Get("Parts.Suspension", "Suspension");
+        public static string Tires => StringResources.Get("Parts.Tires", "Tires");
+        public static string ComingSoon => StringResources.Get("Parts.ComingSoon", "Coming soon.");
+        public static string LoadPakHint => StringResources.Get("Parts.LoadPakHint", "Load an initial.pak on the Home page first.");
+        public static string Loading => StringResources.Get("Parts.Loading", "Loading…");
     }
 
     public static class General
     {
-        public const string Title = "General tuning";
-        public const string LoadPakHint = "Load an initial.pak on the Home page first.";
-        public const string AssetsMissing = "General mod assets were not found.";
-        public const string CameraTitle = "Camera collisions";
-        public const string CameraHint =
-            "Sets ClipCamera on map object models. Pass through stops the chase camera from clipping against buildings, bridges, and similar objects.";
-        public const string CameraModeLabel = "Mode";
-        public const string CameraCollisionsOff = "Pass through objects";
-        public const string CameraCollisionsOn = "Game default (collisions)";
-        public const string ApplyCamera = "Apply camera setting";
-        public const string RestoreCameraBaseline = "Restore camera baseline";
-        public const string RockTitle = "Trail rock size";
-        public const string RockHint =
-            "Adjusts trail pebbles (SmallRock plants: small_rock, small_forest_rock, burnt_small_rock — base game and DLC). Left = no collision; right = vanilla baseline.";
-        public const string RockSizeDefault = "Rock physics: Vanilla (baseline)";
-        public const string ApplyRockSize = "Apply rock size";
-        public const string RestoreRockBaseline = "Restore rock baseline";
-        public const string NoChangesToSave = "No general changes were detected to save.";
-        public const string SaveSuccessTitle = "Saved successfully";
-        public const string SaveErrorTitle = "Save error";
+        public static string Title => StringResources.Get("General.Title", "General tuning");
+        public static string LoadPakHint => StringResources.Get("General.LoadPakHint", "Load an initial.pak on the Home page first.");
+        public static string AssetsMissing => StringResources.Get("General.AssetsMissing", "General mod assets were not found.");
+        public static string CameraTitle => StringResources.Get("General.CameraTitle", "Camera collisions");
+        public static string CameraHint => StringResources.Get("General.CameraHint", "Sets ClipCamera on map object models. Pass through stops the chase camera from clipping against buildings, bridges, and similar objects.");
+        public static string CameraModeLabel => StringResources.Get("General.CameraModeLabel", "Mode");
+        public static string CameraCollisionsOff => StringResources.Get("General.CameraCollisionsOff", "Pass through objects");
+        public static string CameraCollisionsOn => StringResources.Get("General.CameraCollisionsOn", "Game default (collisions)");
+        public static string ApplyCamera => StringResources.Get("General.ApplyCamera", "Apply camera setting");
+        public static string RestoreCameraBaseline => StringResources.Get("General.RestoreCameraBaseline", "Restore camera baseline");
+        public static string RockTitle => StringResources.Get("General.RockTitle", "Trail rock size");
+        public static string RockHint => StringResources.Get("General.RockHint", "Adjusts trail pebbles (SmallRock plants: small_rock, small_forest_rock, burnt_small_rock — base game and DLC). Left = no collision; right = vanilla baseline.");
+        public static string RockSizeDefault => StringResources.Get("General.RockSizeDefault", "Rock physics: Vanilla (baseline)");
+        public static string ApplyRockSize => StringResources.Get("General.ApplyRockSize", "Apply rock size");
+        public static string RestoreRockBaseline => StringResources.Get("General.RestoreRockBaseline", "Restore rock baseline");
+        public static string NoChangesToSave => StringResources.Get("General.NoChangesToSave", "No general changes were detected to save.");
+        public static string SaveSuccessTitle => StringResources.Get("General.SaveSuccessTitle", "Saved successfully");
+        public static string SaveErrorTitle => StringResources.Get("General.SaveErrorTitle", "Save error");
         public static string CameraSaved(int files) =>
             $"Camera collisions updated in {files} model file(s). Reload the game to test.";
         public static string RockSaved(int files) =>
@@ -162,111 +150,91 @@ public static class UiText
 
     public static class Vehicles
     {
-        public const string All = "All";
-        public const string Highway = "Highway";
-        public const string HeavyDuty = "Heavy Duty";
-        public const string Heavy = "Heavy";
-        public const string Offroad = "Offroad";
-        public const string Scout = "Scout";
-        public const string BackToList = "← Back to list";
-        public const string ManufacturerLabel = "Manufacturer";
-        public const string BasedOnLabel = "Based on";
-        public const string RoleLabel = "Role";
-        public const string YearsLabel = "Year";
-        public const string CountryLabel = "Country";
-        public const string CountryHint = "Brand origin of the real-world basis.";
-        public const string CatalogMissing = "Vehicle catalog assets were not found.";
-        public const string SearchPlaceholder = "Search by name…";
-        public const string GlobalMultipliersTitle = "Global multipliers (relative to the baseline values)";
-        public const string FuelMultiplierDefault = "Fuel tank: 1 (baseline)";
-        public const string FrontSteerGlobalDefault = "Front steer: Default (baseline)";
-        public const string FrontSteerGlobalMin = "Front steer: Min (10°)";
-        public const string FrontSteerGlobalMax = "Front steer: Max (60°)";
-        public const string ResponsivenessMultiplierDefault = "Responsiveness: 1 (baseline)";
-        public const string PriceMultiplierDefault = "Store price: 1 (baseline)";
-        public const string ApplyGlobalMultipliers = "Apply to all vehicles";
-        public const string GlobalMultipliersHint =
-            "Fuel tank, store price, and responsiveness scale from baseline. Front steer uses three presets: Min (10°), Default (baseline per truck), Max (60°). Independent of the category filter below.";
-        public const string StoreUnlocksTitle = "Store unlocks (all vehicles)";
-        public const string StoreUnlocksHint =
-            "Apply region and rank unlocks across every truck XML. Region-free makes trucks appear in every regional truck store. Unlock all sets UnlockByRank to 0.";
-        public const string ReleaseRegionLock = "Release region lock (all stores)";
-        public const string UnlockAllVehicles = "Unlock all vehicles (rank 0)";
-        public const string ApplyStoreUnlocks = "Apply store unlocks";
-        public const string LoadPakForGlobalHint = "Load an initial.pak on the Home page to enable global vehicle multipliers.";
+        public static string All => StringResources.Get("Vehicles.All", "All");
+        public static string Highway => StringResources.Get("Vehicles.Highway", "Highway");
+        public static string HeavyDuty => StringResources.Get("Vehicles.HeavyDuty", "Heavy Duty");
+        public static string Heavy => StringResources.Get("Vehicles.Heavy", "Heavy");
+        public static string Offroad => StringResources.Get("Vehicles.Offroad", "Offroad");
+        public static string Scout => StringResources.Get("Vehicles.Scout", "Scout");
+        public static string BackToList => StringResources.Get("Vehicles.BackToList", "← Back to list");
+        public static string ManufacturerLabel => StringResources.Get("Vehicles.ManufacturerLabel", "Manufacturer");
+        public static string BasedOnLabel => StringResources.Get("Vehicles.BasedOnLabel", "Based on");
+        public static string RoleLabel => StringResources.Get("Vehicles.RoleLabel", "Role");
+        public static string YearsLabel => StringResources.Get("Vehicles.YearsLabel", "Year");
+        public static string CountryLabel => StringResources.Get("Vehicles.CountryLabel", "Country");
+        public static string CountryHint => StringResources.Get("Vehicles.CountryHint", "Brand origin of the real-world basis.");
+        public static string CatalogMissing => StringResources.Get("Vehicles.CatalogMissing", "Vehicle catalog assets were not found.");
+        public static string SearchPlaceholder => StringResources.Get("Vehicles.SearchPlaceholder", "Search by name…");
+        public static string GlobalMultipliersTitle => StringResources.Get("Vehicles.GlobalMultipliersTitle", "Global multipliers (relative to the baseline values)");
+        public static string FuelMultiplierDefault => StringResources.Get("Vehicles.FuelMultiplierDefault", "Fuel tank: 1 (baseline)");
+        public static string FrontSteerGlobalDefault => StringResources.Get("Vehicles.FrontSteerGlobalDefault", "Front steer: Default (baseline)");
+        public static string FrontSteerGlobalMin => StringResources.Get("Vehicles.FrontSteerGlobalMin", "Front steer: Min (10°)");
+        public static string FrontSteerGlobalMax => StringResources.Get("Vehicles.FrontSteerGlobalMax", "Front steer: Max (60°)");
+        public static string ResponsivenessMultiplierDefault => StringResources.Get("Vehicles.ResponsivenessMultiplierDefault", "Responsiveness: 1 (baseline)");
+        public static string PriceMultiplierDefault => StringResources.Get("Vehicles.PriceMultiplierDefault", "Store price: 1 (baseline)");
+        public static string ApplyGlobalMultipliers => StringResources.Get("Vehicles.ApplyGlobalMultipliers", "Apply to all vehicles");
+        public static string GlobalMultipliersHint => StringResources.Get("Vehicles.GlobalMultipliersHint", "Fuel tank, store price, and responsiveness scale from baseline. Front steer uses three presets: Min (10°), Default (baseline per truck), Max (60°). Independent of the category filter below.");
+        public static string StoreUnlocksTitle => StringResources.Get("Vehicles.StoreUnlocksTitle", "Store unlocks (all vehicles)");
+        public static string StoreUnlocksHint => StringResources.Get("Vehicles.StoreUnlocksHint", "Apply region and rank unlocks across every truck XML. Region-free makes trucks appear in every regional truck store. Unlock all sets UnlockByRank to 0.");
+        public static string ReleaseRegionLock => StringResources.Get("Vehicles.ReleaseRegionLock", "Release region lock (all stores)");
+        public static string UnlockAllVehicles => StringResources.Get("Vehicles.UnlockAllVehicles", "Unlock all vehicles (rank 0)");
+        public static string ApplyStoreUnlocks => StringResources.Get("Vehicles.ApplyStoreUnlocks", "Apply store unlocks");
+        public static string LoadPakForGlobalHint => StringResources.Get("Vehicles.LoadPakForGlobalHint", "Load an initial.pak on the Home page to enable global vehicle multipliers.");
         public static string GlobalMultipliersAppliedStatus(int changedTrucks, int updatedFiles) =>
             $"Applied global vehicle multipliers to {changedTrucks} truck(s) across {updatedFiles} file(s).";
         public static string GlobalMultipliersSavedMessage(int changedTrucks, int updatedFiles) =>
             $"Global vehicle multipliers applied to {changedTrucks} truck(s) ({updatedFiles} file(s) updated).";
         public static string StoreUnlocksSavedMessage(int changedTrucks, int updatedFiles) =>
             $"Store unlocks applied to {changedTrucks} truck(s) ({updatedFiles} file(s) updated).";
-        public const string StoreUnlocksNothingSelected =
-            "Select at least one store unlock option before applying.";
-        public const string TuningTitle = "Vehicle tuning";
-        public const string FuelTankLabel = "Fuel tank";
-        public const string FuelUnit = "L";
-        public const string StorePriceLabel = "Store price";
-        public const string RegionFreeLabel = "Region-free";
-        public const string RegionFreeHint =
-            "When checked, this truck is listed in every regional truck store (GameData Country = all regions).";
-        public const string StoreRegionsLabel = "Store regions";
-        public const string UnlockRankLabel = "Unlock rank";
-        public const string UnlockRankHint =
-            "Player rank required in the truck store (GameData UnlockByRank). Use 0 to clear the rank gate.";
-        public const string FrontSteerLabel = "Front steer";
-        public const string RearSteerLabel = "Rear steer";
-        public const string SteerAngleUnit = "°";
-        public const string ResponsivenessLabel = "Responsiveness";
-        public const string FrontSteerHint =
-            "Maximum turn for front steering wheels. Applies to all front steer axles. Range: 0° to 90°.";
-        public const string RearSteerHint =
-            "Rear-axle counter-steer (turns opposite to the front). Applies to all rear steer axles. Range: −90° to 0°.";
-        public const string ResponsivenessHint =
-            "How quickly the steering wheel returns to center (TruckData Responsiveness). Range: 0–1; higher = snappier.";
-        public const string DiffLockLabel = "Diff lock";
-        public const string DriveLabel = "Drive";
-        public const string DiffLockAlwaysOn = "Always on";
-        public const string DiffLockSwitchable = "Switchable";
-        public const string DiffLockUpgradeable = "Upgradeable";
-        public const string DiffLockNone = "None";
-        public const string DriveRwd = "RWD";
-        public const string DriveAlwaysAwd = "Always AWD";
-        public const string DriveSelectableAwd = "Selectable AWD";
-        public const string DiffLockHintNative =
-            "Switchable and Upgradeable use the truck's built-in diff-lock upgrade slot.";
-        public const string DiffLockHintSimple =
-            "This truck has no diff-lock upgrade in the game. Only None or Always on can be set.";
-        public const string DriveHint =
-            "RWD matches the garage \"AWD: No\". Selectable AWD enables the in-cab switch (Torque full). " +
-            "Upgradeable AWD in-game also needs a transfer-case addon socket; connectable alone is not enough.";
-        public const string SaveChanges = "Save changes";
-        public const string RestoreThisVehicle = "Restore this vehicle to baseline";
-        public const string RestoreAllVehicles = "Restore all vehicles to baseline";
-        public const string RestoreAllVehiclesConfirmTitle = "Restore all vehicles?";
-        public const string RestoreAllVehiclesConfirmMessage =
-            "This restores every truck XML from your baseline pak (fuel, steer, price, unlocks, drive, and other vehicle edits). Continue?";
-        public const string RestoreAllVehiclesSuccessTitle = "Vehicles restored";
+        public static string StoreUnlocksNothingSelected => StringResources.Get("Vehicles.StoreUnlocksNothingSelected", "Select at least one store unlock option before applying.");
+        public static string TuningTitle => StringResources.Get("Vehicles.TuningTitle", "Vehicle tuning");
+        public static string FuelTankLabel => StringResources.Get("Vehicles.FuelTankLabel", "Fuel tank");
+        public static string FuelUnit => StringResources.Get("Vehicles.FuelUnit", "L");
+        public static string StorePriceLabel => StringResources.Get("Vehicles.StorePriceLabel", "Store price");
+        public static string RegionFreeLabel => StringResources.Get("Vehicles.RegionFreeLabel", "Region-free");
+        public static string RegionFreeHint => StringResources.Get("Vehicles.RegionFreeHint", "When checked, this truck is listed in every regional truck store (GameData Country = all regions).");
+        public static string StoreRegionsLabel => StringResources.Get("Vehicles.StoreRegionsLabel", "Store regions");
+        public static string UnlockRankLabel => StringResources.Get("Vehicles.UnlockRankLabel", "Unlock rank");
+        public static string UnlockRankHint => StringResources.Get("Vehicles.UnlockRankHint", "Player rank required in the truck store (GameData UnlockByRank). Use 0 to clear the rank gate.");
+        public static string FrontSteerLabel => StringResources.Get("Vehicles.FrontSteerLabel", "Front steer");
+        public static string RearSteerLabel => StringResources.Get("Vehicles.RearSteerLabel", "Rear steer");
+        public static string SteerAngleUnit => StringResources.Get("Vehicles.SteerAngleUnit", "°");
+        public static string ResponsivenessLabel => StringResources.Get("Vehicles.ResponsivenessLabel", "Responsiveness");
+        public static string FrontSteerHint => StringResources.Get("Vehicles.FrontSteerHint", "Maximum turn for front steering wheels. Applies to all front steer axles. Range: 0° to 90°.");
+        public static string RearSteerHint => StringResources.Get("Vehicles.RearSteerHint", "Rear-axle counter-steer (turns opposite to the front). Applies to all rear steer axles. Range: −90° to 0°.");
+        public static string ResponsivenessHint => StringResources.Get("Vehicles.ResponsivenessHint", "How quickly the steering wheel returns to center (TruckData Responsiveness). Range: 0–1; higher = snappier.");
+        public static string DiffLockLabel => StringResources.Get("Vehicles.DiffLockLabel", "Diff lock");
+        public static string DriveLabel => StringResources.Get("Vehicles.DriveLabel", "Drive");
+        public static string DiffLockAlwaysOn => StringResources.Get("Vehicles.DiffLockAlwaysOn", "Always on");
+        public static string DiffLockSwitchable => StringResources.Get("Vehicles.DiffLockSwitchable", "Switchable");
+        public static string DiffLockUpgradeable => StringResources.Get("Vehicles.DiffLockUpgradeable", "Upgradeable");
+        public static string DiffLockNone => StringResources.Get("Vehicles.DiffLockNone", "None");
+        public static string DriveRwd => StringResources.Get("Vehicles.DriveRwd", "RWD");
+        public static string DriveAlwaysAwd => StringResources.Get("Vehicles.DriveAlwaysAwd", "Always AWD");
+        public static string DriveSelectableAwd => StringResources.Get("Vehicles.DriveSelectableAwd", "Selectable AWD");
+        public static string DiffLockHintNative => StringResources.Get("Vehicles.DiffLockHintNative", "Switchable and Upgradeable use the truck's built-in diff-lock upgrade slot.");
+        public static string DiffLockHintSimple => StringResources.Get("Vehicles.DiffLockHintSimple", "This truck has no diff-lock upgrade in the game. Only None or Always on can be set.");
+        public static string DriveHint => StringResources.Get("Vehicles.DriveHint", "RWD matches the garage \"AWD: No\". Selectable AWD enables the in-cab switch (Torque full). Upgradeable AWD in-game also needs a transfer-case addon socket; connectable alone is not enough.");
+        public static string SaveChanges => StringResources.Get("Vehicles.SaveChanges", "Save changes");
+        public static string RestoreThisVehicle => StringResources.Get("Vehicles.RestoreThisVehicle", "Restore this vehicle to baseline");
+        public static string RestoreAllVehicles => StringResources.Get("Vehicles.RestoreAllVehicles", "Restore all vehicles to baseline");
+        public static string RestoreAllVehiclesConfirmTitle => StringResources.Get("Vehicles.RestoreAllVehiclesConfirmTitle", "Restore all vehicles?");
+        public static string RestoreAllVehiclesConfirmMessage => StringResources.Get("Vehicles.RestoreAllVehiclesConfirmMessage", "This restores every truck XML from your baseline pak (fuel, steer, price, unlocks, drive, and other vehicle edits). Continue?");
+        public static string RestoreAllVehiclesSuccessTitle => StringResources.Get("Vehicles.RestoreAllVehiclesSuccessTitle", "Vehicles restored");
         public static string RestoreAllVehiclesSavedMessage(int changedTrucks, int updatedFiles) =>
             $"Restored {changedTrucks} vehicle(s) from baseline ({updatedFiles} file(s) updated).";
-        public const string LoadPakHint = "Load an initial.pak on the Home page first.";
-        public const string TruckNotFound =
-            "This vehicle could not be matched to a truck XML in the loaded pak.";
-        public const string InvalidFuel =
-            "Fuel tank must be a whole number of liters (1–10000).";
-        public const string InvalidResponsiveness =
-            "Responsiveness must be between 0 and 1.";
-        public const string InvalidFrontSteer =
-            "Front steer must be between 0 and 90 degrees.";
-        public const string InvalidRearSteer =
-            "Rear steer must be between -90 and 0 degrees.";
-        public const string InvalidPrice =
-            "Store price must be a whole number from 0 to 9,999,999.";
-        public const string InvalidUnlockRank =
-            "Unlock rank must be a whole number from 0 to 30.";
-        public const string SaveSuccessTitle = "Saved successfully";
-        public const string SaveErrorTitle = "Save error";
-        public const string RestoreSuccessTitle = "Vehicle restored";
-        public const string NoChangesToSave = "No vehicle changes were detected to save.";
+        public static string LoadPakHint => StringResources.Get("Vehicles.LoadPakHint", "Load an initial.pak on the Home page first.");
+        public static string TruckNotFound => StringResources.Get("Vehicles.TruckNotFound", "This vehicle could not be matched to a truck XML in the loaded pak.");
+        public static string InvalidFuel => StringResources.Get("Vehicles.InvalidFuel", "Fuel tank must be a whole number of liters (1–10000).");
+        public static string InvalidResponsiveness => StringResources.Get("Vehicles.InvalidResponsiveness", "Responsiveness must be between 0 and 1.");
+        public static string InvalidFrontSteer => StringResources.Get("Vehicles.InvalidFrontSteer", "Front steer must be between 0 and 90 degrees.");
+        public static string InvalidRearSteer => StringResources.Get("Vehicles.InvalidRearSteer", "Rear steer must be between -90 and 0 degrees.");
+        public static string InvalidPrice => StringResources.Get("Vehicles.InvalidPrice", "Store price must be a whole number from 0 to 9,999,999.");
+        public static string InvalidUnlockRank => StringResources.Get("Vehicles.InvalidUnlockRank", "Unlock rank must be a whole number from 0 to 30.");
+        public static string SaveSuccessTitle => StringResources.Get("Vehicles.SaveSuccessTitle", "Saved successfully");
+        public static string SaveErrorTitle => StringResources.Get("Vehicles.SaveErrorTitle", "Save error");
+        public static string RestoreSuccessTitle => StringResources.Get("Vehicles.RestoreSuccessTitle", "Vehicle restored");
+        public static string NoChangesToSave => StringResources.Get("Vehicles.NoChangesToSave", "No vehicle changes were detected to save.");
         public static string CountLabel(int count) => $"{count} vehicles";
         public static string SavedMessage() => "Vehicle tuning saved.";
         public static string RestoredMessage() => "This vehicle was restored from the baseline.";
@@ -274,7 +242,7 @@ public static class UiText
 
     public static class SafeRange
     {
-        public const string InvalidNumber = "Enter a valid number.";
+        public static string InvalidNumber => StringResources.Get("SafeRange.InvalidNumber", "Enter a valid number.");
 
         public static string BaselineLabel(string formattedValue) =>
             $"Baseline: {formattedValue}";
@@ -294,62 +262,61 @@ public static class UiText
 
     public static class Settings
     {
-        public const string Title = "Settings";
-        public const string AppearanceTitle = "Appearance";
-        public const string AppearanceHint = "Choose the app color theme. System follows Windows light/dark mode.";
-        public const string ThemeLabel = "Theme";
-        public const string ThemeSystem = "System";
-        public const string ThemeDark = "Dark";
-        public const string ThemeLight = "Light";
-        public const string WorkspaceTitle = "Workspace";
-        public const string WorkspaceHint =
-            "Restore the working pak from the baseline, refresh the baseline after a game update, " +
-            "or reapply your saved tuning profile.";
-        public const string AboutTitle = "About & support";
-        public const string AboutHint =
-            "Project website, releases, and optional support via PayPal.";
-        public static string InstalledVersion => $"Installed version: {AppInfo.Version}";
-        public const string CheckForUpdates = "Check for updates";
-        public const string DownloadUpdate = "Download update";
-        public const string SkipThisVersion = "Skip this version";
-        public const string UpdateAvailableTitle = "App update available";
-        public const string CheckingForUpdates = "Checking for updates…";
-        public const string UpToDate = "You are running the latest version.";
-        public const string UpdateCheckFailed = "Could not check for updates. Try again later.";
+        public static string Title => StringResources.Get("Settings.Title", "Settings");
+        public static string AppearanceTitle => StringResources.Get("Settings.AppearanceTitle", "Appearance");
+        public static string AppearanceHint => StringResources.Get("Settings.AppearanceHint", "Choose the app color theme. System follows Windows light/dark mode.");
+        public static string ThemeLabel => StringResources.Get("Settings.ThemeLabel", "Theme");
+        public static string ThemeSystem => StringResources.Get("Settings.ThemeSystem", "System");
+        public static string ThemeDark => StringResources.Get("Settings.ThemeDark", "Dark");
+        public static string ThemeLight => StringResources.Get("Settings.ThemeLight", "Light");
+        public static string LanguageTitle => StringResources.Get("Settings.LanguageTitle", "Language");
+        public static string LanguageHint => StringResources.Get("Settings.LanguageHint", "Choose the app language. Restart the app to apply a change.");
+        public static string LanguageLabel => StringResources.Get("Settings.LanguageLabel", "Language");
+        public static string LanguageRestartTitle => StringResources.Get("Settings.LanguageRestartTitle", "Restart required");
+        public static string LanguageRestartMessage => StringResources.Get("Settings.LanguageRestartMessage", "Restart SnowRunner Tuning Shop to apply the new language.");
+        public static string WorkspaceTitle => StringResources.Get("Settings.WorkspaceTitle", "Workspace");
+        public static string WorkspaceHint => StringResources.Get("Settings.WorkspaceHint", "Restore the working pak from the baseline, refresh the baseline after a game update, or reapply your saved tuning profile.");
+        public static string AboutTitle => StringResources.Get("Settings.AboutTitle", "About & support");
+        public static string AboutHint => StringResources.Get("Settings.AboutHint", "Project website, releases, and optional support via PayPal.");
+        public static string InstalledVersion => StringResources.Format("Settings.InstalledVersion", "Installed version: {0}", AppInfo.Version);
+        public static string CheckForUpdates => StringResources.Get("Settings.CheckForUpdates", "Check for updates");
+        public static string DownloadUpdate => StringResources.Get("Settings.DownloadUpdate", "Download update");
+        public static string SkipThisVersion => StringResources.Get("Settings.SkipThisVersion", "Skip this version");
+        public static string UpdateAvailableTitle => StringResources.Get("Settings.UpdateAvailableTitle", "App update available");
+        public static string CheckingForUpdates => StringResources.Get("Settings.CheckingForUpdates", "Checking for updates…");
+        public static string UpToDate => StringResources.Get("Settings.UpToDate", "You are running the latest version.");
+        public static string UpdateCheckFailed => StringResources.Get("Settings.UpdateCheckFailed", "Could not check for updates. Try again later.");
         public static string UpdateAvailableMessage(string latest) =>
             $"Version {latest} is available (you have {AppInfo.Version}). Download and install it from inside the app.";
         public static string UpdateAvailableStatus(string latest) =>
             $"Update available: {latest}.";
-        public const string OpenWebsite = "Open website";
-        public const string DonatePayPal = "Donate with PayPal";
-        public const string DonateWith = "Donate with";
-        public const string FeedbackTitle = "Feedback";
-        public const string FeedbackHint =
-            "Found a bug or have an idea? Open an issue on the GitHub tracker.";
-        public const string OpenIssueTracker = "Open issue tracker";
+        public static string OpenWebsite => StringResources.Get("Settings.OpenWebsite", "Open website");
+        public static string DonatePayPal => StringResources.Get("Settings.DonatePayPal", "Donate with PayPal");
+        public static string DonateWith => StringResources.Get("Settings.DonateWith", "Donate with");
+        public static string FeedbackTitle => StringResources.Get("Settings.FeedbackTitle", "Feedback");
+        public static string FeedbackHint => StringResources.Get("Settings.FeedbackHint", "Found a bug or have an idea? Open an issue on the GitHub tracker.");
+        public static string OpenIssueTracker => StringResources.Get("Settings.OpenIssueTracker", "Open issue tracker");
 
-        public const string DebugCrashTitle = "Debug — crash report test";
-        public const string DebugCrashHint =
-            "Debug builds only. Triggers a handled test exception and opens the crash report dialog.";
-        public const string DebugCrashUiButton = "Test crash (Settings)";
-        public const string DebugCrashVehicleButton = "Test crash (vehicle page)";
+        public static string DebugCrashTitle => StringResources.Get("Settings.DebugCrashTitle", "Debug — crash report test");
+        public static string DebugCrashHint => StringResources.Get("Settings.DebugCrashHint", "Debug builds only. Triggers a handled test exception and opens the crash report dialog.");
+        public static string DebugCrashUiButton => StringResources.Get("Settings.DebugCrashUiButton", "Test crash (Settings)");
+        public static string DebugCrashVehicleButton => StringResources.Get("Settings.DebugCrashVehicleButton", "Test crash (vehicle page)");
     }
 
     public static class UpdateDownload
     {
-        public const string Title = "Download update";
-        public const string DownloadingTitle = "Downloading update…";
-        public const string DownloadingDetail = "Downloading the installer. Please wait.";
+        public static string Title => StringResources.Get("UpdateDownload.Title", "Download update");
+        public static string DownloadingTitle => StringResources.Get("UpdateDownload.DownloadingTitle", "Downloading update…");
+        public static string DownloadingDetail => StringResources.Get("UpdateDownload.DownloadingDetail", "Downloading the installer. Please wait.");
         public static string DownloadingDetailVersion(string version) =>
             $"Downloading version {version}. Please wait.";
-        public const string Cancelling = "Cancelling download…";
-        public const string CompleteTitle = "Download complete";
-        public const string CompleteDetail =
-            "The installer is ready. Choose Update and restart to close this app and run the setup.";
-        public const string FailedTitle = "Download failed";
-        public const string UpdateAndRestart = "Update and restart";
-        public const string Cancel = "Cancel";
-        public const string Close = "Close";
+        public static string Cancelling => StringResources.Get("UpdateDownload.Cancelling", "Cancelling download…");
+        public static string CompleteTitle => StringResources.Get("UpdateDownload.CompleteTitle", "Download complete");
+        public static string CompleteDetail => StringResources.Get("UpdateDownload.CompleteDetail", "The installer is ready. Choose Update and restart to close this app and run the setup.");
+        public static string FailedTitle => StringResources.Get("UpdateDownload.FailedTitle", "Download failed");
+        public static string UpdateAndRestart => StringResources.Get("UpdateDownload.UpdateAndRestart", "Update and restart");
+        public static string Cancel => StringResources.Get("UpdateDownload.Cancel", "Cancel");
+        public static string Close => StringResources.Get("UpdateDownload.Close", "Close");
 
         public static string ProgressLabel(double percent, string received, string total) =>
             $"{percent:0}% — {received} / {total}";
@@ -360,44 +327,26 @@ public static class UiText
 
     public static class Workspace
     {
-        public const string RefreshBaseline = "Refresh baseline from game";
-        public const string ReapplySavedChanges = "Reapply saved changes";
-        public const string RefreshBaselineTitle = "Refresh baseline";
-        public const string RefreshBaselineConfirmTitle = "Refresh baseline from the working pak?";
-        public const string RefreshBaselineGameUpdateConfirm =
-            "The game appears to have replaced initial.pak. This saves the current file as the new read-only baseline. " +
-            "Use this only when the pak is the new unmodified vanilla file.\n\n" +
-            "Your saved tuning profile is kept so you can reapply afterwards. Continue?";
-        public const string RefreshBaselineUnknownConfirm =
-            "The working pak differs from the baseline. Replace the baseline with the current file?\n\n" +
-            "Only continue if this is an unmodified vanilla initial.pak (for example after a game update).";
-        public const string RefreshBaselineSuccessMessage =
-            "The baseline was updated from the current working pak. You can reapply saved changes next.";
-        public const string ReapplyTitle = "Reapply saved changes";
-        public const string ReapplyConfirmTitle = "Reapply saved changes?";
-        public const string ReapplyConfirmMessage =
-            "This writes your saved tuning profile back into the working initial.pak. " +
-            "Files that no longer exist after a game update will be skipped and listed in a report. Continue?";
-        public const string ReapplySuccessTitle = "Saved changes reapplied";
-        public const string NoSavedProfile = "No saved tuning profile.";
-        public const string GameUpdateTitle = "Game update detected";
-        public const string GameUpdateMessage =
-            "SnowRunner appears to have replaced initial.pak with a new vanilla file. " +
-            "Refresh the baseline from this file, then reapply your saved tuning changes. " +
-            "Avoid saving new edits until you reapply — a new save would replace the saved profile.";
-        public const string UnknownChangeTitle = "Working pak changed";
-        public const string UnknownChangeMessage =
-            "The working initial.pak differs from the baseline and has no Tuning Shop marker. " +
-            "If the game updated, refresh the baseline. If you edited the file elsewhere, " +
-            "set a new baseline from an original pak instead.";
-        public const string ReadyToReapplyTitle = "Saved changes ready to reapply";
-        public const string ReadyToReapplyMessage =
-            "The working pak matches the baseline. You can reapply your saved tuning profile. " +
-            "Avoid saving new edits first — that would replace the saved profile.";
-        public const string InconsistentMarkerTitle = "Marker mismatch";
-        public const string InconsistentMarkerMessage =
-            "The working pak matches the baseline but still contains a Tuning Shop marker. " +
-            "Restore the full baseline to clean it, or reapply saved changes if a profile exists.";
+        public static string RefreshBaseline => StringResources.Get("Workspace.RefreshBaseline", "Refresh baseline from game");
+        public static string ReapplySavedChanges => StringResources.Get("Workspace.ReapplySavedChanges", "Reapply saved changes");
+        public static string RefreshBaselineTitle => StringResources.Get("Workspace.RefreshBaselineTitle", "Refresh baseline");
+        public static string RefreshBaselineConfirmTitle => StringResources.Get("Workspace.RefreshBaselineConfirmTitle", "Refresh baseline from the working pak?");
+        public static string RefreshBaselineGameUpdateConfirm => StringResources.Get("Workspace.RefreshBaselineGameUpdateConfirm", "The game appears to have replaced initial.pak. This saves the current file as the new read-only baseline. Use this only when the pak is the new unmodified vanilla file.\n\nYour saved tuning profile is kept so you can reapply afterwards. Continue?");
+        public static string RefreshBaselineUnknownConfirm => StringResources.Get("Workspace.RefreshBaselineUnknownConfirm", "The working pak differs from the baseline. Replace the baseline with the current file?\n\nOnly continue if this is an unmodified vanilla initial.pak (for example after a game update).");
+        public static string RefreshBaselineSuccessMessage => StringResources.Get("Workspace.RefreshBaselineSuccessMessage", "The baseline was updated from the current working pak. You can reapply saved changes next.");
+        public static string ReapplyTitle => StringResources.Get("Workspace.ReapplyTitle", "Reapply saved changes");
+        public static string ReapplyConfirmTitle => StringResources.Get("Workspace.ReapplyConfirmTitle", "Reapply saved changes?");
+        public static string ReapplyConfirmMessage => StringResources.Get("Workspace.ReapplyConfirmMessage", "This writes your saved tuning profile back into the working initial.pak. Files that no longer exist after a game update will be skipped and listed in a report. Continue?");
+        public static string ReapplySuccessTitle => StringResources.Get("Workspace.ReapplySuccessTitle", "Saved changes reapplied");
+        public static string NoSavedProfile => StringResources.Get("Workspace.NoSavedProfile", "No saved tuning profile.");
+        public static string GameUpdateTitle => StringResources.Get("Workspace.GameUpdateTitle", "Game update detected");
+        public static string GameUpdateMessage => StringResources.Get("Workspace.GameUpdateMessage", "SnowRunner appears to have replaced initial.pak with a new vanilla file. Refresh the baseline from this file, then reapply your saved tuning changes. Avoid saving new edits until you reapply — a new save would replace the saved profile.");
+        public static string UnknownChangeTitle => StringResources.Get("Workspace.UnknownChangeTitle", "Working pak changed");
+        public static string UnknownChangeMessage => StringResources.Get("Workspace.UnknownChangeMessage", "The working initial.pak differs from the baseline and has no Tuning Shop marker. If the game updated, refresh the baseline. If you edited the file elsewhere, set a new baseline from an original pak instead.");
+        public static string ReadyToReapplyTitle => StringResources.Get("Workspace.ReadyToReapplyTitle", "Saved changes ready to reapply");
+        public static string ReadyToReapplyMessage => StringResources.Get("Workspace.ReadyToReapplyMessage", "The working pak matches the baseline. You can reapply your saved tuning profile. Avoid saving new edits first — that would replace the saved profile.");
+        public static string InconsistentMarkerTitle => StringResources.Get("Workspace.InconsistentMarkerTitle", "Marker mismatch");
+        public static string InconsistentMarkerMessage => StringResources.Get("Workspace.InconsistentMarkerMessage", "The working pak matches the baseline but still contains a Tuning Shop marker. Restore the full baseline to clean it, or reapply saved changes if a profile exists.");
 
         public static string ProfileStatus(int entryCount) =>
             $"Saved profile: {entryCount} file(s).";
@@ -456,30 +405,30 @@ public static class UiText
 
     public static class Engine
     {
-        public const string GlobalMultipliersTitle = "Global multipliers (relative to the baseline values)";
-        public const string TorqueMultiplierDefault = "Torque: 1 (baseline)";
-        public const string FuelMultiplierDefault = "Fuel consumption: 1 (baseline)";
-        public const string DamageMultiplierDefault = "Damage capacity: 1 (baseline)";
-        public const string ResponsivenessMultiplierDefault = "Responsiveness: 1 (baseline)";
-        public const string Apply = "Apply";
-        public const string SaveIndividualChanges = "Save individual changes";
-        public const string RestoreEnginesToBaseline = "Restore engines to baseline";
-        public const string RefreshList = "Refresh list";
-        public const string FilterPlaceholder = "Filter category, name, set, used by…";
-        public const string CategoryColumn = "Category";
-        public const string NameColumn = "Name";
-        public const string UsedByColumn = "Used by";
-        public const string PriceColumn = "Price";
-        public const string TorqueColumn = "Torque";
-        public const string FuelColumn = "Fuel";
-        public const string DamageColumn = "Damage";
-        public const string ResponsivenessColumn = "Responsiveness";
-        public const string NoData = "No engine data loaded.";
-        public const string LoadPakFirst = "Load an initial.pak file first.";
-        public const string SaveSuccessTitle = "Saved successfully";
-        public const string SaveErrorTitle = "Save error";
-        public const string LoadErrorTitle = "Load error";
-        public const string RestoreEnginesSuccessTitle = "Engines restored";
+        public static string GlobalMultipliersTitle => StringResources.Get("Engine.GlobalMultipliersTitle", "Global multipliers (relative to the baseline values)");
+        public static string TorqueMultiplierDefault => StringResources.Get("Engine.TorqueMultiplierDefault", "Torque: 1 (baseline)");
+        public static string FuelMultiplierDefault => StringResources.Get("Engine.FuelMultiplierDefault", "Fuel consumption: 1 (baseline)");
+        public static string DamageMultiplierDefault => StringResources.Get("Engine.DamageMultiplierDefault", "Damage capacity: 1 (baseline)");
+        public static string ResponsivenessMultiplierDefault => StringResources.Get("Engine.ResponsivenessMultiplierDefault", "Responsiveness: 1 (baseline)");
+        public static string Apply => StringResources.Get("Engine.Apply", "Apply");
+        public static string SaveIndividualChanges => StringResources.Get("Engine.SaveIndividualChanges", "Save individual changes");
+        public static string RestoreEnginesToBaseline => StringResources.Get("Engine.RestoreEnginesToBaseline", "Restore engines to baseline");
+        public static string RefreshList => StringResources.Get("Engine.RefreshList", "Refresh list");
+        public static string FilterPlaceholder => StringResources.Get("Engine.FilterPlaceholder", "Filter category, name, set, used by…");
+        public static string CategoryColumn => StringResources.Get("Engine.CategoryColumn", "Category");
+        public static string NameColumn => StringResources.Get("Engine.NameColumn", "Name");
+        public static string UsedByColumn => StringResources.Get("Engine.UsedByColumn", "Used by");
+        public static string PriceColumn => StringResources.Get("Engine.PriceColumn", "Price");
+        public static string TorqueColumn => StringResources.Get("Engine.TorqueColumn", "Torque");
+        public static string FuelColumn => StringResources.Get("Engine.FuelColumn", "Fuel");
+        public static string DamageColumn => StringResources.Get("Engine.DamageColumn", "Damage");
+        public static string ResponsivenessColumn => StringResources.Get("Engine.ResponsivenessColumn", "Responsiveness");
+        public static string NoData => StringResources.Get("Engine.NoData", "No engine data loaded.");
+        public static string LoadPakFirst => StringResources.Get("Engine.LoadPakFirst", "Load an initial.pak file first.");
+        public static string SaveSuccessTitle => StringResources.Get("Engine.SaveSuccessTitle", "Saved successfully");
+        public static string SaveErrorTitle => StringResources.Get("Engine.SaveErrorTitle", "Save error");
+        public static string LoadErrorTitle => StringResources.Get("Engine.LoadErrorTitle", "Load error");
+        public static string RestoreEnginesSuccessTitle => StringResources.Get("Engine.RestoreEnginesSuccessTitle", "Engines restored");
 
         public static string LoadedCount(int count) => $"{count} engines loaded from pak.";
 
@@ -510,28 +459,28 @@ public static class UiText
 
     public static class Gearbox
     {
-        public const string GlobalMultipliersTitle = "Global multipliers (relative to the baseline values)";
-        public const string FuelMultiplierDefault = "Fuel consumption: 1 (baseline)";
-        public const string IdleMultiplierDefault = "Idle fuel modifier: 1 (baseline)";
-        public const string AwdMultiplierDefault = "AWD fuel penalty: 1 (baseline)";
-        public const string Apply = "Apply";
-        public const string SaveIndividualChanges = "Save individual changes";
-        public const string RestoreGearboxesToBaseline = "Restore gearboxes to baseline";
-        public const string RefreshList = "Refresh list";
-        public const string FilterPlaceholder = "Filter category, name, set, used by…";
-        public const string CategoryColumn = "Category";
-        public const string NameColumn = "Name";
-        public const string UsedByColumn = "Used by";
-        public const string PriceColumn = "Price";
-        public const string FuelColumn = "Fuel";
-        public const string IdleColumn = "Idle";
-        public const string AwdColumn = "AWD";
-        public const string NoData = "No gearbox data loaded.";
-        public const string LoadPakFirst = "Load an initial.pak file first.";
-        public const string SaveSuccessTitle = "Saved successfully";
-        public const string SaveErrorTitle = "Save error";
-        public const string LoadErrorTitle = "Load error";
-        public const string RestoreGearboxesSuccessTitle = "Gearboxes restored";
+        public static string GlobalMultipliersTitle => StringResources.Get("Gearbox.GlobalMultipliersTitle", "Global multipliers (relative to the baseline values)");
+        public static string FuelMultiplierDefault => StringResources.Get("Gearbox.FuelMultiplierDefault", "Fuel consumption: 1 (baseline)");
+        public static string IdleMultiplierDefault => StringResources.Get("Gearbox.IdleMultiplierDefault", "Idle fuel modifier: 1 (baseline)");
+        public static string AwdMultiplierDefault => StringResources.Get("Gearbox.AwdMultiplierDefault", "AWD fuel penalty: 1 (baseline)");
+        public static string Apply => StringResources.Get("Gearbox.Apply", "Apply");
+        public static string SaveIndividualChanges => StringResources.Get("Gearbox.SaveIndividualChanges", "Save individual changes");
+        public static string RestoreGearboxesToBaseline => StringResources.Get("Gearbox.RestoreGearboxesToBaseline", "Restore gearboxes to baseline");
+        public static string RefreshList => StringResources.Get("Gearbox.RefreshList", "Refresh list");
+        public static string FilterPlaceholder => StringResources.Get("Gearbox.FilterPlaceholder", "Filter category, name, set, used by…");
+        public static string CategoryColumn => StringResources.Get("Gearbox.CategoryColumn", "Category");
+        public static string NameColumn => StringResources.Get("Gearbox.NameColumn", "Name");
+        public static string UsedByColumn => StringResources.Get("Gearbox.UsedByColumn", "Used by");
+        public static string PriceColumn => StringResources.Get("Gearbox.PriceColumn", "Price");
+        public static string FuelColumn => StringResources.Get("Gearbox.FuelColumn", "Fuel");
+        public static string IdleColumn => StringResources.Get("Gearbox.IdleColumn", "Idle");
+        public static string AwdColumn => StringResources.Get("Gearbox.AwdColumn", "AWD");
+        public static string NoData => StringResources.Get("Gearbox.NoData", "No gearbox data loaded.");
+        public static string LoadPakFirst => StringResources.Get("Gearbox.LoadPakFirst", "Load an initial.pak file first.");
+        public static string SaveSuccessTitle => StringResources.Get("Gearbox.SaveSuccessTitle", "Saved successfully");
+        public static string SaveErrorTitle => StringResources.Get("Gearbox.SaveErrorTitle", "Save error");
+        public static string LoadErrorTitle => StringResources.Get("Gearbox.LoadErrorTitle", "Load error");
+        public static string RestoreGearboxesSuccessTitle => StringResources.Get("Gearbox.RestoreGearboxesSuccessTitle", "Gearboxes restored");
 
         public static string LoadedCount(int count) => $"{count} gearboxes loaded from pak.";
 
@@ -552,34 +501,34 @@ public static class UiText
 
     public static class Suspension
     {
-        public const string GlobalMultipliersTitle = "Global multipliers (relative to the baseline values)";
-        public const string HeightMultiplierDefault = "Height: 1 (baseline)";
-        public const string StrengthMultiplierDefault = "Strength: 1 (baseline)";
-        public const string DampingMultiplierDefault = "Damping: 1 (baseline)";
-        public const string DamageMultiplierDefault = "Damage capacity: 1 (baseline)";
-        public const string Apply = "Apply";
-        public const string SaveIndividualChanges = "Save individual changes";
-        public const string RestoreSuspensionsToBaseline = "Restore suspensions to baseline";
-        public const string RefreshList = "Refresh list";
-        public const string FilterPlaceholder = "Filter category, name, set, used by…";
-        public const string CategoryColumn = "Category";
-        public const string NameColumn = "Name";
-        public const string UsedByColumn = "Used by";
-        public const string PriceColumn = "Price";
-        public const string DamageColumn = "Damage";
-        public const string FrontHeightColumn = "F Height";
-        public const string FrontStrengthColumn = "F Strength";
-        public const string FrontDampingColumn = "F Damping";
-        public const string RearHeightColumn = "R Height";
-        public const string RearStrengthColumn = "R Strength";
-        public const string RearDampingColumn = "R Damping";
+        public static string GlobalMultipliersTitle => StringResources.Get("Suspension.GlobalMultipliersTitle", "Global multipliers (relative to the baseline values)");
+        public static string HeightMultiplierDefault => StringResources.Get("Suspension.HeightMultiplierDefault", "Height: 1 (baseline)");
+        public static string StrengthMultiplierDefault => StringResources.Get("Suspension.StrengthMultiplierDefault", "Strength: 1 (baseline)");
+        public static string DampingMultiplierDefault => StringResources.Get("Suspension.DampingMultiplierDefault", "Damping: 1 (baseline)");
+        public static string DamageMultiplierDefault => StringResources.Get("Suspension.DamageMultiplierDefault", "Damage capacity: 1 (baseline)");
+        public static string Apply => StringResources.Get("Suspension.Apply", "Apply");
+        public static string SaveIndividualChanges => StringResources.Get("Suspension.SaveIndividualChanges", "Save individual changes");
+        public static string RestoreSuspensionsToBaseline => StringResources.Get("Suspension.RestoreSuspensionsToBaseline", "Restore suspensions to baseline");
+        public static string RefreshList => StringResources.Get("Suspension.RefreshList", "Refresh list");
+        public static string FilterPlaceholder => StringResources.Get("Suspension.FilterPlaceholder", "Filter category, name, set, used by…");
+        public static string CategoryColumn => StringResources.Get("Suspension.CategoryColumn", "Category");
+        public static string NameColumn => StringResources.Get("Suspension.NameColumn", "Name");
+        public static string UsedByColumn => StringResources.Get("Suspension.UsedByColumn", "Used by");
+        public static string PriceColumn => StringResources.Get("Suspension.PriceColumn", "Price");
+        public static string DamageColumn => StringResources.Get("Suspension.DamageColumn", "Damage");
+        public static string FrontHeightColumn => StringResources.Get("Suspension.FrontHeightColumn", "F Height");
+        public static string FrontStrengthColumn => StringResources.Get("Suspension.FrontStrengthColumn", "F Strength");
+        public static string FrontDampingColumn => StringResources.Get("Suspension.FrontDampingColumn", "F Damping");
+        public static string RearHeightColumn => StringResources.Get("Suspension.RearHeightColumn", "R Height");
+        public static string RearStrengthColumn => StringResources.Get("Suspension.RearStrengthColumn", "R Strength");
+        public static string RearDampingColumn => StringResources.Get("Suspension.RearDampingColumn", "R Damping");
         /// <summary>Shown when an optional numeric attribute is absent from XML.</summary>
-        public const string MissingValuePlaceholder = "n/a";
-        public const string LoadPakFirst = "Load an initial.pak file first.";
-        public const string SaveSuccessTitle = "Saved successfully";
-        public const string SaveErrorTitle = "Save error";
-        public const string LoadErrorTitle = "Load error";
-        public const string RestoreSuspensionsSuccessTitle = "Suspensions restored";
+        public static string MissingValuePlaceholder => StringResources.Get("Suspension.MissingValuePlaceholder", "n/a");
+        public static string LoadPakFirst => StringResources.Get("Suspension.LoadPakFirst", "Load an initial.pak file first.");
+        public static string SaveSuccessTitle => StringResources.Get("Suspension.SaveSuccessTitle", "Saved successfully");
+        public static string SaveErrorTitle => StringResources.Get("Suspension.SaveErrorTitle", "Save error");
+        public static string LoadErrorTitle => StringResources.Get("Suspension.LoadErrorTitle", "Load error");
+        public static string RestoreSuspensionsSuccessTitle => StringResources.Get("Suspension.RestoreSuspensionsSuccessTitle", "Suspensions restored");
 
         public static string MultipliersSavedMessage(int changedSuspensions, int updatedFiles) =>
             $"Suspension settings saved.{Environment.NewLine}{Environment.NewLine}" +
@@ -598,29 +547,29 @@ public static class UiText
 
     public static class Tires
     {
-        public const string GlobalMultipliersTitle = "Global multipliers (relative to the baseline values)";
-        public const string OnRoadFrictionMultiplierDefault = "On-road: 1 (baseline)";
-        public const string OffRoadFrictionMultiplierDefault = "Off-road: 1 (baseline)";
-        public const string MudFrictionMultiplierDefault = "Mud: 1 (baseline)";
-        public const string IgnoreIceAll = "Ignore ice on all tires";
-        public const string Apply = "Apply";
-        public const string SaveIndividualChanges = "Save individual changes";
-        public const string RestoreTiresToBaseline = "Restore tires to baseline";
-        public const string RefreshList = "Refresh list";
-        public const string FilterPlaceholder = "Filter category, name, set, used by…";
-        public const string CategoryColumn = "Category";
-        public const string NameColumn = "Name";
-        public const string UsedByColumn = "Used by";
-        public const string PriceColumn = "Price";
-        public const string OnRoadFrictionColumn = "On-road";
-        public const string OffRoadFrictionColumn = "Off-road";
-        public const string MudFrictionColumn = "Mud";
-        public const string IgnoreIceColumn = "Ignore ice";
-        public const string LoadPakFirst = "Load an initial.pak file first.";
-        public const string SaveSuccessTitle = "Saved successfully";
-        public const string SaveErrorTitle = "Save error";
-        public const string LoadErrorTitle = "Load error";
-        public const string RestoreTiresSuccessTitle = "Tires restored";
+        public static string GlobalMultipliersTitle => StringResources.Get("Tires.GlobalMultipliersTitle", "Global multipliers (relative to the baseline values)");
+        public static string OnRoadFrictionMultiplierDefault => StringResources.Get("Tires.OnRoadFrictionMultiplierDefault", "On-road: 1 (baseline)");
+        public static string OffRoadFrictionMultiplierDefault => StringResources.Get("Tires.OffRoadFrictionMultiplierDefault", "Off-road: 1 (baseline)");
+        public static string MudFrictionMultiplierDefault => StringResources.Get("Tires.MudFrictionMultiplierDefault", "Mud: 1 (baseline)");
+        public static string IgnoreIceAll => StringResources.Get("Tires.IgnoreIceAll", "Ignore ice on all tires");
+        public static string Apply => StringResources.Get("Tires.Apply", "Apply");
+        public static string SaveIndividualChanges => StringResources.Get("Tires.SaveIndividualChanges", "Save individual changes");
+        public static string RestoreTiresToBaseline => StringResources.Get("Tires.RestoreTiresToBaseline", "Restore tires to baseline");
+        public static string RefreshList => StringResources.Get("Tires.RefreshList", "Refresh list");
+        public static string FilterPlaceholder => StringResources.Get("Tires.FilterPlaceholder", "Filter category, name, set, used by…");
+        public static string CategoryColumn => StringResources.Get("Tires.CategoryColumn", "Category");
+        public static string NameColumn => StringResources.Get("Tires.NameColumn", "Name");
+        public static string UsedByColumn => StringResources.Get("Tires.UsedByColumn", "Used by");
+        public static string PriceColumn => StringResources.Get("Tires.PriceColumn", "Price");
+        public static string OnRoadFrictionColumn => StringResources.Get("Tires.OnRoadFrictionColumn", "On-road");
+        public static string OffRoadFrictionColumn => StringResources.Get("Tires.OffRoadFrictionColumn", "Off-road");
+        public static string MudFrictionColumn => StringResources.Get("Tires.MudFrictionColumn", "Mud");
+        public static string IgnoreIceColumn => StringResources.Get("Tires.IgnoreIceColumn", "Ignore ice");
+        public static string LoadPakFirst => StringResources.Get("Tires.LoadPakFirst", "Load an initial.pak file first.");
+        public static string SaveSuccessTitle => StringResources.Get("Tires.SaveSuccessTitle", "Saved successfully");
+        public static string SaveErrorTitle => StringResources.Get("Tires.SaveErrorTitle", "Save error");
+        public static string LoadErrorTitle => StringResources.Get("Tires.LoadErrorTitle", "Load error");
+        public static string RestoreTiresSuccessTitle => StringResources.Get("Tires.RestoreTiresSuccessTitle", "Tires restored");
 
         public static string MultipliersSavedMessage(int changedTires, int updatedFiles) =>
             $"Tire settings saved.{Environment.NewLine}{Environment.NewLine}" +
@@ -639,27 +588,27 @@ public static class UiText
 
     public static class Winch
     {
-        public const string GlobalMultipliersTitle = "Global multipliers (relative to the baseline values)";
-        public const string LengthMultiplierDefault = "Length multiplier: 1 (baseline)";
-        public const string StrengthMultiplierDefault = "Strength multiplier: 1 (baseline)";
-        public const string AutonomousAll = "Autonomous all";
-        public const string Apply = "Apply";
-        public const string SaveIndividualChanges = "Save individual changes";
-        public const string RestoreWinchesToBaseline = "Restore winches to baseline";
-        public const string RefreshList = "Refresh list";
-        public const string FilterPlaceholder = "Filter category, name…";
-        public const string CategoryColumn = "Category";
-        public const string NameColumn = "Name";
-        public const string PriceColumn = "Price";
-        public const string LengthColumn = "Length (m)";
-        public const string StrengthColumn = "Strength";
-        public const string AutonomousColumn = "Autonomous";
-        public const string NoData = "No winch data loaded.";
-        public const string LoadPakFirst = "Load an initial.pak file first.";
-        public const string SaveSuccessTitle = "Saved successfully";
-        public const string SaveErrorTitle = "Save error";
-        public const string LoadErrorTitle = "Load error";
-        public const string RestoreWinchesSuccessTitle = "Winches restored";
+        public static string GlobalMultipliersTitle => StringResources.Get("Winch.GlobalMultipliersTitle", "Global multipliers (relative to the baseline values)");
+        public static string LengthMultiplierDefault => StringResources.Get("Winch.LengthMultiplierDefault", "Length multiplier: 1 (baseline)");
+        public static string StrengthMultiplierDefault => StringResources.Get("Winch.StrengthMultiplierDefault", "Strength multiplier: 1 (baseline)");
+        public static string AutonomousAll => StringResources.Get("Winch.AutonomousAll", "Autonomous all");
+        public static string Apply => StringResources.Get("Winch.Apply", "Apply");
+        public static string SaveIndividualChanges => StringResources.Get("Winch.SaveIndividualChanges", "Save individual changes");
+        public static string RestoreWinchesToBaseline => StringResources.Get("Winch.RestoreWinchesToBaseline", "Restore winches to baseline");
+        public static string RefreshList => StringResources.Get("Winch.RefreshList", "Refresh list");
+        public static string FilterPlaceholder => StringResources.Get("Winch.FilterPlaceholder", "Filter category, name…");
+        public static string CategoryColumn => StringResources.Get("Winch.CategoryColumn", "Category");
+        public static string NameColumn => StringResources.Get("Winch.NameColumn", "Name");
+        public static string PriceColumn => StringResources.Get("Winch.PriceColumn", "Price");
+        public static string LengthColumn => StringResources.Get("Winch.LengthColumn", "Length (m)");
+        public static string StrengthColumn => StringResources.Get("Winch.StrengthColumn", "Strength");
+        public static string AutonomousColumn => StringResources.Get("Winch.AutonomousColumn", "Autonomous");
+        public static string NoData => StringResources.Get("Winch.NoData", "No winch data loaded.");
+        public static string LoadPakFirst => StringResources.Get("Winch.LoadPakFirst", "Load an initial.pak file first.");
+        public static string SaveSuccessTitle => StringResources.Get("Winch.SaveSuccessTitle", "Saved successfully");
+        public static string SaveErrorTitle => StringResources.Get("Winch.SaveErrorTitle", "Save error");
+        public static string LoadErrorTitle => StringResources.Get("Winch.LoadErrorTitle", "Load error");
+        public static string RestoreWinchesSuccessTitle => StringResources.Get("Winch.RestoreWinchesSuccessTitle", "Winches restored");
 
         public static string LoadedCount(int count) => $"{count} winches loaded from pak.";
 
@@ -692,15 +641,15 @@ public static class UiText
 
     public static class CrashReport
     {
-        public const string Title = "Unexpected error";
-        public const string Heading = "Something went wrong";
-        public const string CopyReport = "Copy report";
-        public const string OpenGitHubIssue = "Open GitHub issue";
-        public const string EmailReport = "Email report";
-        public const string Continue = "Continue";
-        public const string CloseApp = "Close app";
-        public const string Copied = "Crash report copied to the clipboard.";
-        public const string PreparingGitHub = "Checking GitHub…";
+        public static string Title => StringResources.Get("CrashReport.Title", "Unexpected error");
+        public static string Heading => StringResources.Get("CrashReport.Heading", "Something went wrong");
+        public static string CopyReport => StringResources.Get("CrashReport.CopyReport", "Copy report");
+        public static string OpenGitHubIssue => StringResources.Get("CrashReport.OpenGitHubIssue", "Open GitHub issue");
+        public static string EmailReport => StringResources.Get("CrashReport.EmailReport", "Email report");
+        public static string Continue => StringResources.Get("CrashReport.Continue", "Continue");
+        public static string CloseApp => StringResources.Get("CrashReport.CloseApp", "Close app");
+        public static string Copied => StringResources.Get("CrashReport.Copied", "Crash report copied to the clipboard.");
+        public static string PreparingGitHub => StringResources.Get("CrashReport.PreparingGitHub", "Checking GitHub…");
 
         public static string Summary(string exceptionType, string message)
         {

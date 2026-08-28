@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using SnowRunnerTuningShop.Core;
 using SnowRunnerTuningShop.Core.Config;
+using SnowRunnerTuningShop.Core.Localization;
 using SnowRunnerTuningShop.Core.Profile;
 using SnowRunnerTuningShop.Core.Updates;
 using SnowRunnerTuningShop.Localization;
@@ -17,6 +18,7 @@ public partial class SettingsView : UserControl
 
     private AppSession? _session;
     private bool _suppressThemeHandler;
+    private bool _suppressLanguageHandler;
     private AppUpdateCheckResult? _availableUpdate;
 
     public SettingsView()
@@ -54,6 +56,19 @@ public partial class SettingsView : UserControl
             _suppressThemeHandler = false;
         }
 
+        if (LanguageCombo.Items.Count == 0)
+        {
+            LanguageCombo.DisplayMemberPath = nameof(LabeledLanguage.Label);
+            LanguageCombo.SelectedValuePath = nameof(LabeledLanguage.Value);
+            LanguageCombo.ItemsSource = LanguageCatalog.Supported
+                .Select(option => new LabeledLanguage(option.DisplayName, option.UiCulture))
+                .ToArray();
+
+            _suppressLanguageHandler = true;
+            LanguageCombo.SelectedValue = LanguageService.CurrentUiCulture;
+            _suppressLanguageHandler = false;
+        }
+
         RefreshWorkspaceButtons();
         await RefreshUpdateStatusAsync();
     }
@@ -66,6 +81,27 @@ public partial class SettingsView : UserControl
         }
 
         ThemeService.ApplyAndSave(themeMode);
+    }
+
+    private void LanguageCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (_suppressLanguageHandler || LanguageCombo.SelectedValue is not string uiCulture)
+        {
+            return;
+        }
+
+        var previous = LanguageService.CurrentUiCulture;
+        if (string.Equals(previous, uiCulture, StringComparison.OrdinalIgnoreCase))
+        {
+            return;
+        }
+
+        LanguageService.ApplyAndSave(uiCulture);
+        MessageBox.Show(
+            UiText.Settings.LanguageRestartMessage,
+            UiText.Settings.LanguageRestartTitle,
+            MessageBoxButton.OK,
+            MessageBoxImage.Information);
     }
 
     private void RefreshWorkspaceButtons()
@@ -187,4 +223,6 @@ public partial class SettingsView : UserControl
     }
 
     private sealed record LabeledTheme(string Label, string Value);
+
+    private sealed record LabeledLanguage(string Label, string Value);
 }

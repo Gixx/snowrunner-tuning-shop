@@ -8,6 +8,7 @@ public partial class App : Application
     protected override void OnStartup(StartupEventArgs e)
     {
         GlobalExceptionHandler.Register();
+        LanguageService.ApplySavedLanguage();
         ThemeService.ApplySavedTheme();
         base.OnStartup(e);
     }

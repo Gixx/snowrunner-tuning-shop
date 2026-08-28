@@ -47,6 +47,48 @@ MinVersion=10.0
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
+Name: "german"; MessagesFile: "compiler:Languages\German.isl"
+Name: "french"; MessagesFile: "compiler:Languages\French.isl"
+Name: "spanish"; MessagesFile: "compiler:Languages\Spanish.isl"
+Name: "portuguese"; MessagesFile: "compiler:Languages\Portuguese.isl"
+Name: "brazilianportuguese"; MessagesFile: "compiler:Languages\BrazilianPortuguese.isl"
+Name: "polish"; MessagesFile: "compiler:Languages\Polish.isl"
+Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"
+Name: "ukrainian"; MessagesFile: "compiler:Languages\Ukrainian.isl"
+
+[Code]
+function UiCultureFromInnoLanguage(const InnoName: String): String;
+begin
+  if InnoName = 'german' then Result := 'de'
+  else if InnoName = 'french' then Result := 'fr'
+  else if InnoName = 'spanish' then Result := 'es'
+  else if InnoName = 'portuguese' then Result := 'pt'
+  else if InnoName = 'brazilianportuguese' then Result := 'pt-BR'
+  else if InnoName = 'polish' then Result := 'pl'
+  else if InnoName = 'russian' then Result := 'ru'
+  else if InnoName = 'ukrainian' then Result := 'uk'
+  else Result := 'en';
+end;
+
+procedure WriteInstallLanguageSeed;
+var
+  AppDataDir, Path, Json: String;
+  UiCulture: String;
+begin
+  UiCulture := UiCultureFromInnoLanguage(ActiveLanguage);
+  AppDataDir := ExpandConstant('{localappdata}\SnowRunnerTuningShop');
+  Path := AppDataDir + '\install-language.json';
+  if not DirExists(AppDataDir) then
+    ForceDirectories(AppDataDir);
+  Json := '{ "uiCulture": "' + UiCulture + '" }' + #13#10;
+  SaveStringToFile(Path, Json, False);
+end;
+
+procedure CurStepChanged(CurStep: TSetupStep);
+begin
+  if CurStep = ssPostInstall then
+    WriteInstallLanguageSeed;
+end;
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked

@@ -58,6 +58,40 @@
                     Padding="16"
                     Margin="0,0,0,12">
                 <StackPanel>
+                    <TextBlock Text="{x:Static loc:UiText+Settings.LanguageTitle}"
+                               FontWeight="SemiBold"
+                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                               Margin="0,0,0,8"/>
+                    <TextBlock Text="{x:Static loc:UiText+Settings.LanguageHint}"
+                               TextWrapping="Wrap"
+                               FontSize="11"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                               Margin="0,0,0,12"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="180"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="{x:Static loc:UiText+Settings.LanguageLabel}"
+                                   VerticalAlignment="Center"
+                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                        <ComboBox x:Name="LanguageCombo"
+                                  Grid.Column="1"
+                                  MaxWidth="320"
+                                  HorizontalAlignment="Left"
+                                  Padding="8,6"
+                                  SelectionChanged="LanguageCombo_SelectionChanged"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <Border Background="{DynamicResource CardBackgroundFillColorSecondaryBrush}"
+                    BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="16"
+                    Margin="0,0,0,12">
+                <StackPanel>
                     <TextBlock Text="{x:Static loc:UiText+Settings.WorkspaceTitle}"
                                FontWeight="SemiBold"
                                Foreground="{DynamicResource TextFillColorPrimaryBrush}"

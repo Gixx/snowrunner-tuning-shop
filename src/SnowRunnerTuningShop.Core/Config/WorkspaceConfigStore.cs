@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using SnowRunnerTuningShop.Core.Localization;
 using SnowRunnerTuningShop.Core.Profile;
 
 namespace SnowRunnerTuningShop.Core.Config;
@@ -12,6 +13,9 @@ public sealed class WorkspaceConfig
 
     /// <summary>App theme: System, Dark, or Light.</summary>
     public string ThemeMode { get; set; } = ThemeModes.System;
+
+    /// <summary>UI culture code (en, de, fr, es, pt, pt-BR, pl, ru, uk).</summary>
+    public string UiCulture { get; set; } = "en";
 
     /// <summary>Latest GitHub release the user chose not to be notified about.</summary>
     public string? SkippedAppVersion { get; set; }
@@ -202,6 +206,15 @@ public static class WorkspaceConfigStore
     {
         var config = Load();
         config.ThemeMode = ThemeModes.Normalize(themeMode);
+        Save(config);
+    }
+
+    public static string GetUiCulture() => LanguageCatalog.NormalizeUiCulture(Load().UiCulture);
+
+    public static void SetUiCulture(string uiCulture)
+    {
+        var config = Load();
+        config.UiCulture = LanguageCatalog.NormalizeUiCulture(uiCulture);
         Save(config);
     }
 
