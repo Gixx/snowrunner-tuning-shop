@@ -2,6 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Input;
 using SnowRunnerTuningShop.Core.Config;
+using SnowRunnerTuningShop.Core.Diagnostics;
 
 namespace SnowRunnerTuningShop;
 
@@ -21,6 +22,15 @@ public partial class MainWindow : Window
         PartsView.AttachSession(_session);
         VehiclesView.AttachSession(_session);
         SettingsView.AttachSession(_session);
+
+        CrashReportContext.SessionProvider = () =>
+        {
+            var edition = WorkspaceConfigStore.TryGetActiveWorkspace();
+            return new CrashSessionSnapshot(
+                _session.HasPak,
+                _session.PakPath,
+                edition?.DisplayName);
+        };
 
         _sidebarPinned = WorkspaceConfigStore.GetSidebarPinned();
         _suppressPinHandler = true;
@@ -135,6 +145,16 @@ public partial class MainWindow : Window
 
     private void ShowPage(UIElement page)
     {
+        CrashReportContext.SetPage(page switch
+        {
+            _ when ReferenceEquals(page, HomeView) => Localization.UiText.Nav.Home,
+            _ when ReferenceEquals(page, GeneralView) => Localization.UiText.Nav.General,
+            _ when ReferenceEquals(page, PartsView) => Localization.UiText.Nav.Parts,
+            _ when ReferenceEquals(page, VehiclesView) => Localization.UiText.Nav.Vehicles,
+            _ when ReferenceEquals(page, SettingsView) => Localization.UiText.Nav.Settings,
+            _ => page.GetType().Name,
+        });
+
         HomeView.Visibility = Visibility.Collapsed;
         GeneralView.Visibility = Visibility.Collapsed;
         PartsView.Visibility = Visibility.Collapsed;

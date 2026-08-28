@@ -7,6 +7,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using SnowRunnerTuningShop.Controls;
 using SnowRunnerTuningShop.Core.Backup;
+using SnowRunnerTuningShop.Core.Diagnostics;
 using SnowRunnerTuningShop.Core.Models;
 using SnowRunnerTuningShop.Core.Trucks;
 using SnowRunnerTuningShop.Core.Tuning;
@@ -443,11 +444,19 @@ public partial class VehiclesView : UserControl
             return;
         }
 
-        ShowDetail(card);
+        try
+        {
+            ShowDetail(card);
+        }
+        catch (Exception ex)
+        {
+            GlobalExceptionHandler.Handle(ex, isTerminating: false);
+        }
     }
 
     private void ShowDetail(VehicleCard card)
     {
+        CrashReportContext.SetVehicle(card.Id, card.DisplayName);
         _currentCard = card;
         DetailTitleText.Text = card.DisplayName;
         DetailImage.Source = card.Image;
@@ -928,6 +937,7 @@ public partial class VehiclesView : UserControl
     {
         _currentCard = null;
         _currentTruck = null;
+        CrashReportContext.ClearVehicle();
         DetailPanel.Visibility = Visibility.Collapsed;
         ListPanel.Visibility = Visibility.Visible;
     }

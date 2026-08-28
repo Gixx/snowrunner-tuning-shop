@@ -327,6 +327,12 @@ public static class UiText
         public const string FeedbackHint =
             "Found a bug or have an idea? Open an issue on the GitHub tracker.";
         public const string OpenIssueTracker = "Open issue tracker";
+
+        public const string DebugCrashTitle = "Debug — crash report test";
+        public const string DebugCrashHint =
+            "Debug builds only. Triggers a handled test exception and opens the crash report dialog.";
+        public const string DebugCrashUiButton = "Test crash (Settings)";
+        public const string DebugCrashVehicleButton = "Test crash (vehicle page)";
     }
 
     public static class UpdateDownload
@@ -682,5 +688,38 @@ public static class UiText
             $"Winch values were restored from the baseline.{Environment.NewLine}{Environment.NewLine}" +
             $"Updated winches: {changedWinches}{Environment.NewLine}" +
             $"Updated files: {updatedFiles}";
+    }
+
+    public static class CrashReport
+    {
+        public const string Title = "Unexpected error";
+        public const string Heading = "Something went wrong";
+        public const string CopyReport = "Copy report";
+        public const string OpenGitHubIssue = "Open GitHub issue";
+        public const string EmailReport = "Email report";
+        public const string Continue = "Continue";
+        public const string CloseApp = "Close app";
+        public const string Copied = "Crash report copied to the clipboard.";
+        public const string PreparingGitHub = "Checking GitHub…";
+
+        public static string Summary(string exceptionType, string message)
+        {
+            var shortType = exceptionType;
+            var dot = shortType.LastIndexOf('.');
+            if (dot >= 0 && dot + 1 < shortType.Length)
+            {
+                shortType = shortType[(dot + 1)..];
+            }
+
+            return string.IsNullOrWhiteSpace(message)
+                ? shortType
+                : $"{shortType}: {message}";
+        }
+
+        public static string LogSaved(string path) =>
+            $"Saved locally:{Environment.NewLine}{path}";
+
+        public static string ViewExistingIssue(int number) =>
+            $"View existing issue #{number}";
     }
 }

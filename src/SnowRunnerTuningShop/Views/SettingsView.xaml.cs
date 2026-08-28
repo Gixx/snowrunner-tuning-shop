@@ -13,7 +13,7 @@ public partial class SettingsView : UserControl
 {
     private const string WebsiteUrl = "https://gixx.github.io/snowrunner-tuning-shop/";
     private const string PayPalDonateUrl = "https://paypal.me/GaborIvan";
-    private const string IssueTrackerUrl = "https://github.com/Gixx/snowrunner-tuning-shop/issues";
+    private static string IssueTrackerUrl => AppInfo.IssueTrackerUrl;
 
     private AppSession? _session;
     private bool _suppressThemeHandler;
@@ -35,6 +35,9 @@ public partial class SettingsView : UserControl
 
     private async void SettingsView_Loaded(object sender, RoutedEventArgs e)
     {
+#if DEBUG
+        DebugCrashPanel.Visibility = Visibility.Visible;
+#endif
         if (ThemeCombo.Items.Count == 0)
         {
             ThemeCombo.DisplayMemberPath = nameof(LabeledTheme.Label);
@@ -164,6 +167,12 @@ public partial class SettingsView : UserControl
 
     private void OpenIssueTrackerButton_Click(object sender, RoutedEventArgs e) =>
         OpenUrl(IssueTrackerUrl);
+
+    private void DebugCrashUiButton_Click(object sender, RoutedEventArgs e) =>
+        Diagnostics.DebugCrashTools.ThrowUiTestCrash();
+
+    private void DebugCrashVehicleButton_Click(object sender, RoutedEventArgs e) =>
+        Diagnostics.DebugCrashTools.ThrowVehiclePageTestCrash();
 
     private static void OpenUrl(string url)
     {

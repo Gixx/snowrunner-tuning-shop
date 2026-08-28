@@ -7,6 +7,7 @@ public partial class App : Application
 {
     protected override void OnStartup(StartupEventArgs e)
     {
+        GlobalExceptionHandler.Register();
         ThemeService.ApplySavedTheme();
         base.OnStartup(e);
     }

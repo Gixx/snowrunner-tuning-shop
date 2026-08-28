@@ -21,3 +21,6 @@ website/.output/
 website/.tanstack/
 website/.nitro/
 docs/plan/
+
+# Local Blender extract (trailer meshes + DDS)
+assets/trailers/_meta_build/blender-kit/
