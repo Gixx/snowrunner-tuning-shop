@@ -91,6 +91,45 @@ public static class PakBaselineService
     }
 
     /// <summary>
+    /// Clears read-only on the working pak and verifies the file is writable before patching.
+    /// </summary>
+    public static void EnsureWritableWorkingPak(string workingPakPath)
+    {
+        if (string.IsNullOrWhiteSpace(workingPakPath) || !File.Exists(workingPakPath))
+        {
+            throw new FileNotFoundException("Working initial.pak was not found.", workingPakPath);
+        }
+
+        ClearReadOnlyAttribute(workingPakPath);
+
+        var directory = Path.GetDirectoryName(workingPakPath);
+        if (string.IsNullOrWhiteSpace(directory) || !Directory.Exists(directory))
+        {
+            throw new InvalidOperationException("The working pak directory could not be resolved.");
+        }
+
+        var probePath = Path.Combine(directory, $".tuning-shop-write-test-{Guid.NewGuid():N}.tmp");
+        try
+        {
+            File.WriteAllText(probePath, "ok");
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            throw new InvalidOperationException(
+                "Cannot write to the working initial.pak folder. Close SnowRunner if it is running, " +
+                "then verify the game install folder is writable or point the app at a writable copy of initial.pak.",
+                ex);
+        }
+        finally
+        {
+            if (File.Exists(probePath))
+            {
+                File.Delete(probePath);
+            }
+        }
+    }
+
+    /// <summary>
     /// First-time / explicit baseline setup: copy the selected original pak into a read-only
     /// edition baseline and remember it as the working pak path.
     /// </summary>

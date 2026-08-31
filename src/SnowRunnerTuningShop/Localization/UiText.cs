@@ -12,6 +12,7 @@ public static class UiText
         public static string General => StringResources.Get("Nav.General", "General");
         public static string Parts => StringResources.Get("Nav.Parts", "Parts");
         public static string Vehicles => StringResources.Get("Nav.Vehicles", "Vehicles");
+        public static string PhotoMode => StringResources.Get("Nav.PhotoMode", "Photo Mode");
         public static string Settings => StringResources.Get("Nav.Settings", "Settings");
         public static string OpenMenu => StringResources.Get("Nav.OpenMenu", "Menu");
         public static string PinMenu => StringResources.Get("Nav.PinMenu", "Keep menu open");
@@ -146,6 +147,43 @@ public static class UiText
             $"Trail rock settings updated in {files} pak file(s). Reload the game to test.";
         public static string LoadedStatus(int cameraModels, double rockScale) =>
             $"Detected {cameraModels} camera-eligible models; reference rock scale {rockScale:0%}.";
+    }
+
+    public static class PhotoMode
+    {
+        public static string Title => StringResources.Get("PhotoMode.Title", "Photo Mode defaults");
+        public static string Subtitle => StringResources.Get("PhotoMode.Subtitle", "Change the values Photo Mode uses when you open it or press Restore default in-game. Test in the game after saving.");
+        public static string EnvironmentTitle => StringResources.Get("PhotoMode.EnvironmentTitle", "Environment");
+        public static string LookTitle => StringResources.Get("PhotoMode.LookTitle", "Look");
+        public static string CameraTitle => StringResources.Get("PhotoMode.CameraTitle", "Camera & focus");
+        public static string TimeLabel => StringResources.Get("PhotoMode.TimeLabel", "Time");
+        public static string WeatherLabel => StringResources.Get("PhotoMode.WeatherLabel", "Default weather");
+        public static string Exposure => StringResources.Get("PhotoMode.Exposure", "Exposure");
+        public static string Contrast => StringResources.Get("PhotoMode.Contrast", "Contrast");
+        public static string Hue => StringResources.Get("PhotoMode.Hue", "Hue");
+        public static string Saturation => StringResources.Get("PhotoMode.Saturation", "Saturation");
+        public static string ColorGrading => StringResources.Get("PhotoMode.ColorGrading", "Color grading");
+        public static string ColorGradingIntensity => StringResources.Get("PhotoMode.ColorGradingIntensity", "Color grading intensity");
+        public static string Vignette => StringResources.Get("PhotoMode.Vignette", "Vignette");
+        public static string FilmGrain => StringResources.Get("PhotoMode.FilmGrain", "Film grain");
+        public static string FieldOfView => StringResources.Get("PhotoMode.FieldOfView", "Field of view");
+        public static string Aperture => StringResources.Get("PhotoMode.Aperture", "Aperture");
+        public static string FocusPoint => StringResources.Get("PhotoMode.FocusPoint", "Focus point");
+        public static string FocusSpan => StringResources.Get("PhotoMode.FocusSpan", "Depth of field span");
+        public static string WeatherDefault => StringResources.Get("PhotoMode.WeatherDefault", "Default");
+        public static string WeatherClearSky => StringResources.Get("PhotoMode.WeatherClearSky", "Clear sky");
+        public static string WeatherLightRain => StringResources.Get("PhotoMode.WeatherLightRain", "Light rain");
+        public static string WeatherHeavyRain => StringResources.Get("PhotoMode.WeatherHeavyRain", "Heavy rain");
+        public static string WeatherHeavySnow => StringResources.Get("PhotoMode.WeatherHeavySnow", "Heavy snow");
+        public static string Apply => StringResources.Get("PhotoMode.Apply", "Apply photo mode defaults");
+        public static string RestoreBaseline => StringResources.Get("PhotoMode.RestoreBaseline", "Restore photo mode baseline");
+        public static string LoadPakHint => StringResources.Get("PhotoMode.LoadPakHint", "Load an initial.pak on the Home page first.");
+        public static string LoadedStatus => StringResources.Get("PhotoMode.LoadedStatus", "Loaded current photo mode defaults from the working pak.");
+        public static string NoChangesToSave => StringResources.Get("PhotoMode.NoChangesToSave", "No photo mode changes were detected to save.");
+        public static string SaveSuccessTitle => StringResources.Get("PhotoMode.SaveSuccessTitle", "Saved successfully");
+        public static string SaveErrorTitle => StringResources.Get("PhotoMode.SaveErrorTitle", "Save error");
+        public static string Saved(int entries) =>
+            StringResources.Format("PhotoMode.Saved", "Photo mode defaults updated in {0} pak file(s). Reload the game to test.", entries);
     }
 
     public static class Vehicles

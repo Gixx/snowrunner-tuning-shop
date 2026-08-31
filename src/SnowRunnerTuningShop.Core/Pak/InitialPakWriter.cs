@@ -33,9 +33,11 @@ public static class InitialPakWriter
             pair => pair.Value,
             StringComparer.Ordinal);
 
-        var directory = Path.GetDirectoryName(pakPath)
-            ?? throw new InvalidOperationException("Invalid pak path.");
-        var tempPath = Path.Combine(directory, $"{Path.GetFileName(pakPath)}.{Guid.NewGuid():N}.tmp");
+        var tempPath = Path.Combine(
+            Path.GetTempPath(),
+            $"SnowRunnerTuningShop-{Guid.NewGuid():N}.pak.tmp");
+
+        ClearReadOnlyAttribute(pakPath);
 
         try
         {
@@ -70,16 +72,18 @@ public static class InitialPakWriter
                 }
             }
 
-            if (File.Exists(pakPath))
+            ClearReadOnlyAttribute(pakPath);
+            try
             {
-                var attributes = File.GetAttributes(pakPath);
-                if ((attributes & FileAttributes.ReadOnly) != 0)
-                {
-                    File.SetAttributes(pakPath, attributes & ~FileAttributes.ReadOnly);
-                }
+                File.Move(tempPath, pakPath, overwrite: true);
             }
-
-            File.Move(tempPath, pakPath, overwrite: true);
+            catch (IOException ex)
+            {
+                throw new InvalidOperationException(
+                    "Cannot update initial.pak because another program is using it. " +
+                    "Close SnowRunner if it is running, then try again.",
+                    ex);
+            }
 
             if (syncProfile)
             {
@@ -124,9 +128,11 @@ public static class InitialPakWriter
             entryPaths.Select(path => PakEntryLocator.NormalizeEntryPath(path)),
             StringComparer.OrdinalIgnoreCase);
 
-        var directory = Path.GetDirectoryName(pakPath)
-            ?? throw new InvalidOperationException("Invalid pak path.");
-        var tempPath = Path.Combine(directory, $"{Path.GetFileName(pakPath)}.{Guid.NewGuid():N}.tmp");
+        var tempPath = Path.Combine(
+            Path.GetTempPath(),
+            $"SnowRunnerTuningShop-{Guid.NewGuid():N}.pak.tmp");
+
+        ClearReadOnlyAttribute(pakPath);
         var removedCount = 0;
 
         try
@@ -157,11 +163,7 @@ public static class InitialPakWriter
 
             if (File.Exists(pakPath))
             {
-                var attributes = File.GetAttributes(pakPath);
-                if ((attributes & FileAttributes.ReadOnly) != 0)
-                {
-                    File.SetAttributes(pakPath, attributes & ~FileAttributes.ReadOnly);
-                }
+                ClearReadOnlyAttribute(pakPath);
             }
 
             File.Move(tempPath, pakPath, overwrite: true);
@@ -179,6 +181,20 @@ public static class InitialPakWriter
             {
                 File.Delete(tempPath);
             }
+        }
+    }
+
+    private static void ClearReadOnlyAttribute(string path)
+    {
+        if (!File.Exists(path))
+        {
+            return;
+        }
+
+        var attributes = File.GetAttributes(path);
+        if ((attributes & FileAttributes.ReadOnly) != 0)
+        {
+            File.SetAttributes(path, attributes & ~FileAttributes.ReadOnly);
         }
     }
 }

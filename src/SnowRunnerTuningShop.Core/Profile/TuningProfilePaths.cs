@@ -19,6 +19,14 @@ public static class TuningProfilePaths
 
     private static readonly HashSet<string> RockMeshEntries = new(RockMeshEntryNames, StringComparer.OrdinalIgnoreCase);
 
+    private static readonly HashSet<string> PhotoModeEntries = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "initial.cache_block",
+        "[ssl_cache]/initial_release.sslbundle",
+        "[ssl_cache]/initial_debug.sslbundle",
+        "[ssl_cache]/initial_profile.sslbundle",
+    };
+
     public static bool IsTrackedEntry(string entryPath)
     {
         if (TuningProfileMarker.IsMarkerEntry(entryPath))
@@ -28,6 +36,11 @@ public static class TuningProfilePaths
 
         var normalized = entryPath.Replace('\\', '/');
         if (RockMeshEntries.Contains(normalized))
+        {
+            return true;
+        }
+
+        if (PhotoModeEntries.Contains(normalized))
         {
             return true;
         }

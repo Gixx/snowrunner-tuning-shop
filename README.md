@@ -50,6 +50,11 @@ Also:
 - Restore that part category to baseline values
 - Loading overlay while large lists are read
 
+### Photo Mode
+- Edit default time, weather, and camera/look sliders written into `initial.pak`
+- Apply defaults or restore only photo mode entries from baseline
+- Close the game before saving — `initial.pak` must not be locked
+
 ### Vehicles
 - Catalog browser with images and categories (highway, scout, etc.)
 - Per-vehicle deep tuning is planned

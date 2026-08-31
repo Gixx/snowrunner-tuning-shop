@@ -21,6 +21,7 @@ public partial class MainWindow : Window
         GeneralView.AttachSession(_session);
         PartsView.AttachSession(_session);
         VehiclesView.AttachSession(_session);
+        PhotoModeView.AttachSession(_session);
         SettingsView.AttachSession(_session);
 
         CrashReportContext.SessionProvider = () =>
@@ -131,6 +132,10 @@ public partial class MainWindow : Window
         {
             ShowPage(VehiclesView);
         }
+        else if (ReferenceEquals(radio, NavPhotoMode))
+        {
+            ShowPage(PhotoModeView);
+        }
         else if (ReferenceEquals(radio, NavSettings))
         {
             ShowPage(SettingsView);
@@ -151,6 +156,7 @@ public partial class MainWindow : Window
             _ when ReferenceEquals(page, GeneralView) => Localization.UiText.Nav.General,
             _ when ReferenceEquals(page, PartsView) => Localization.UiText.Nav.Parts,
             _ when ReferenceEquals(page, VehiclesView) => Localization.UiText.Nav.Vehicles,
+            _ when ReferenceEquals(page, PhotoModeView) => Localization.UiText.Nav.PhotoMode,
             _ when ReferenceEquals(page, SettingsView) => Localization.UiText.Nav.Settings,
             _ => page.GetType().Name,
         });
@@ -159,6 +165,7 @@ public partial class MainWindow : Window
         GeneralView.Visibility = Visibility.Collapsed;
         PartsView.Visibility = Visibility.Collapsed;
         VehiclesView.Visibility = Visibility.Collapsed;
+        PhotoModeView.Visibility = Visibility.Collapsed;
         SettingsView.Visibility = Visibility.Collapsed;
         page.Visibility = Visibility.Visible;
     }

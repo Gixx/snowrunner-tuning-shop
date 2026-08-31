@@ -49,6 +49,7 @@
                 <views:GeneralView x:Name="GeneralView" Visibility="Collapsed"/>
                 <views:PartsView x:Name="PartsView" Visibility="Collapsed"/>
                 <views:VehiclesView x:Name="VehiclesView" Visibility="Collapsed"/>
+                <views:PhotoModeView x:Name="PhotoModeView" Visibility="Collapsed"/>
                 <views:SettingsView x:Name="SettingsView" Visibility="Collapsed"/>
             </Grid>
         </Grid>
@@ -115,6 +116,11 @@
                     <RadioButton x:Name="NavVehicles"
                                  GroupName="MainNav"
                                  Content="{x:Static loc:UiText+Nav.Vehicles}"
+                                 Style="{StaticResource NavRadioStyle}"
+                                 Checked="Nav_Checked"/>
+                    <RadioButton x:Name="NavPhotoMode"
+                                 GroupName="MainNav"
+                                 Content="{x:Static loc:UiText+Nav.PhotoMode}"
                                  Style="{StaticResource NavRadioStyle}"
                                  Checked="Nav_Checked"/>
                     <RadioButton x:Name="NavSettings"

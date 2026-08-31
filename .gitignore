@@ -24,3 +24,8 @@ docs/plan/
 
 # Local Blender extract (trailer meshes + DDS)
 assets/trailers/_meta_build/blender-kit/
+
+# Trailer screenshot tool backups (local save copies)
+tools/trailer-shots/backups/
+tools/trailer-shots/platform-pins.json
+tools/

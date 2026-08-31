@@ -9,6 +9,24 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ---
 
+## [1.2.2] — 2026-08-31
+
+### Added
+- **Photo Mode defaults:** new nav page (above Settings) to edit photo mode defaults stored in `initial.pak` — time, weather, exposure/contrast/hue/saturation, color grading, vignette, film grain, FOV, aperture, focus point, and depth-of-field span. Changes apply when you open photo mode or press **Restore default** in game.
+- **Photo Mode baseline restore:** restore only photo-mode-related pak entries (`initial.cache_block` and sslbundles) from your configured baseline without resetting other tunings.
+
+### Fixed
+- **Photo Mode — load:** weather preset parsing now targets the photo mode controller block (not an unrelated `presetUiNames` list); line-ending regex and sslbundle time marker detection fixed so current values load correctly.
+- **Photo Mode — save:** pak was kept open while writing, causing *“The process cannot access the file because it is being used by another process”* on Apply/Restore; archives are closed before `initial.pak` is replaced.
+- **Pak writes:** temp rebuild files go to `%TEMP%` instead of the game install folder; clearer error when SnowRunner or another process locks the pak.
+- **Photo Mode — Time = Default:** ComboBox now selects index `0` correctly when loading settings.
+
+### Notes
+- Close SnowRunner before applying or restoring photo mode defaults.
+- Standalone CLI patch script remains in `tools/photo-mode-defaults/`; the in-app page is the preferred workflow.
+
+---
+
 ## [1.2.1] — 2026-08-28
 
 ### Fixed
@@ -187,6 +205,7 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ---
 
+[1.2.2]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.2.2
 [1.2.1]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.2.1
 [1.2.0]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.2.0
 [1.1.4]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.1.4
