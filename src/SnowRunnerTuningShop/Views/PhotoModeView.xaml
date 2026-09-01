@@ -16,11 +16,16 @@
                        FontWeight="SemiBold"
                        Foreground="{DynamicResource TextFillColorPrimaryBrush}"
                        Margin="0,0,0,8"/>
-            <TextBlock Text="{x:Static loc:UiText+PhotoMode.Subtitle}"
-                       TextWrapping="Wrap"
-                       FontSize="12"
-                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                       Margin="0,0,0,16"/>
+            <Border Background="#C42B1C"
+                    CornerRadius="6"
+                    Padding="12,10"
+                    Margin="0,0,0,12">
+                <TextBlock Text="{x:Static loc:UiText+PhotoMode.ExperimentalWarning}"
+                           Foreground="White"
+                           FontWeight="Bold"
+                           FontSize="13"
+                           TextWrapping="Wrap"/>
+            </Border>
 
             <Border Background="{DynamicResource CardBackgroundFillColorSecondaryBrush}"
                     BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
@@ -39,13 +44,12 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <TextBlock Text="{x:Static loc:UiText+PhotoMode.TimeLabel}"
-                                   VerticalAlignment="Center"
+                                   VerticalAlignment="Top"
                                    Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
-                        <ComboBox x:Name="TimeCombo"
-                                  Grid.Column="1"
-                                  MaxWidth="320"
-                                  HorizontalAlignment="Left"
-                                  Padding="8,6"/>
+                        <TextBlock Grid.Column="1"
+                                   Text="{x:Static loc:UiText+PhotoMode.TimeNote}"
+                                   TextWrapping="Wrap"
+                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
                     </Grid>
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -95,10 +99,16 @@
             </Border>
 
             <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
-                <Button Content="{x:Static loc:UiText+PhotoMode.Apply}"
+                <Button x:Name="ApplyButton"
+                        Content="{x:Static loc:UiText+PhotoMode.Apply}"
                         Padding="14,8"
                         Margin="0,0,8,0"
                         Click="ApplyButton_Click"/>
+                <Button x:Name="ReapplySavedButton"
+                        Content="{x:Static loc:UiText+PhotoMode.ReapplySaved}"
+                        Padding="14,8"
+                        Margin="0,0,8,0"
+                        Click="ReapplySavedButton_Click"/>
                 <Button x:Name="RestoreButton"
                         Content="{x:Static loc:UiText+PhotoMode.RestoreBaseline}"
                         Padding="14,8"

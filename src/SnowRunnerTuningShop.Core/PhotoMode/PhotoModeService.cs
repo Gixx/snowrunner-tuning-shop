@@ -1,5 +1,6 @@
 using System.IO.Compression;
 using SnowRunnerTuningShop.Core.Backup;
+using SnowRunnerTuningShop.Core.Config;
 using SnowRunnerTuningShop.Core.Pak;
 
 namespace SnowRunnerTuningShop.Core.PhotoMode;
@@ -36,11 +37,30 @@ public static class PhotoModeService
         return settings;
     }
 
-    public static PhotoModeSaveResult ApplySettings(string pakPath, PhotoModeSettings settings)
+    public static IReadOnlyList<PhotoModeSliderConstraint> LoadSliderConstraints(string pakPath)
+    {
+        using var archive = ZipFile.OpenRead(pakPath);
+        var cacheEntry = archive.GetEntry(CacheBlockEntry)
+            ?? throw new PhotoModeLoadException($"Missing {CacheBlockEntry} in pak.");
+
+        using var stream = cacheEntry.Open();
+        using var memory = new MemoryStream();
+        stream.CopyTo(memory);
+        return PhotoModeSliderConstraints.Resolve(memory.ToArray());
+    }
+
+    public static PhotoModeSaveResult ApplySettings(
+        string pakPath,
+        PhotoModeSettings settings,
+        bool saveProfile = true)
     {
         _ = PakBaselineService.RequireBaseline(pakPath);
         PakBaselineService.EnsureWritableWorkingPak(pakPath);
+        EnsureCacheBlockLayoutOrThrow(pakPath);
 
+        settings = settings.With(timeIndex: ReadTimeIndexFromPak(pakPath));
+
+        var updatedCount = 0;
         Dictionary<string, byte[]> replacements;
         using (var archive = ZipFile.OpenRead(pakPath))
         {
@@ -57,42 +77,39 @@ public static class PhotoModeService
             }
 
             var updatedCache = PhotoModeCacheBlockEditor.ApplySettings(cacheBytes, settings);
+            PhotoModeCacheBlockEditor.ValidateAppliedSettings(updatedCache, settings);
             if (!cacheBytes.AsSpan().SequenceEqual(updatedCache))
             {
                 replacements[CacheBlockEntry] = updatedCache;
             }
-
-            foreach (var bundlePath in PhotoModeSslBundleEditor.BundlePaths)
-            {
-                var entry = archive.GetEntry(bundlePath);
-                if (entry is null)
-                {
-                    continue;
-                }
-
-                byte[] bundleBytes;
-                using (var stream = entry.Open())
-                using (var memory = new MemoryStream())
-                {
-                    stream.CopyTo(memory);
-                    bundleBytes = memory.ToArray();
-                }
-
-                var updatedBundle = PhotoModeSslBundleEditor.WriteTimeIndex(bundleBytes, settings.TimeIndex);
-                if (!bundleBytes.AsSpan().SequenceEqual(updatedBundle))
-                {
-                    replacements[bundlePath] = updatedBundle;
-                }
-            }
         }
 
-        if (replacements.Count == 0)
+        if (replacements.Count > 0)
         {
-            return new PhotoModeSaveResult(0);
+            updatedCount += InitialPakWriter.ReplaceEntries(pakPath, replacements, syncProfile: false);
         }
 
-        var updated = InitialPakWriter.ReplaceEntries(pakPath, replacements);
-        return new PhotoModeSaveResult(updated);
+        if (saveProfile)
+        {
+            PhotoModeProfileService.SaveProfile(pakPath, settings);
+        }
+
+        return new PhotoModeSaveResult(updatedCount);
+    }
+
+    private static int ReadTimeIndexFromPak(string pakPath)
+    {
+        using var archive = ZipFile.OpenRead(pakPath);
+        var releaseEntry = archive.GetEntry(PhotoModeSslBundleEditor.ReleaseBundle);
+        if (releaseEntry is null)
+        {
+            return PhotoModeTimeIndex.GameDefault;
+        }
+
+        using var stream = releaseEntry.Open();
+        using var memory = new MemoryStream();
+        stream.CopyTo(memory);
+        return PhotoModeSslBundleEditor.ReadTimeIndex(memory.ToArray());
     }
 
     public static PhotoModeSaveResult RestoreBaseline(string pakPath)
@@ -100,33 +117,47 @@ public static class PhotoModeService
         var baselinePath = PakBaselineService.RequireBaseline(pakPath);
         PakBaselineService.EnsureWritableWorkingPak(pakPath);
 
-        Dictionary<string, byte[]> replacements;
+        var entriesToRestore = new List<string>();
         using (var baseline = ZipFile.OpenRead(baselinePath))
         using (var working = ZipFile.OpenRead(pakPath))
         {
-            replacements = new Dictionary<string, byte[]>(StringComparer.Ordinal);
-            AddIfDifferent(baseline, working, CacheBlockEntry, replacements);
+            AddIfDifferentEntry(baseline, working, CacheBlockEntry, entriesToRestore);
 
             foreach (var bundlePath in PhotoModeSslBundleEditor.BundlePaths)
             {
-                AddIfDifferent(baseline, working, bundlePath, replacements);
+                AddIfDifferentEntry(baseline, working, bundlePath, entriesToRestore);
             }
         }
 
-        if (replacements.Count == 0)
+        if (entriesToRestore.Count == 0)
         {
+            ClearSavedProfileIfKnown(pakPath);
             return new PhotoModeSaveResult(0);
         }
 
-        var updated = InitialPakWriter.ReplaceEntries(pakPath, replacements);
+        var updated = InitialPakWriter.CopyEntriesFromPak(
+            pakPath,
+            baselinePath,
+            entriesToRestore,
+            syncProfile: false);
+        ClearSavedProfileIfKnown(pakPath);
         return new PhotoModeSaveResult(updated);
     }
 
-    private static void AddIfDifferent(
+    private static void ClearSavedProfileIfKnown(string pakPath)
+    {
+        var editionId = WorkspaceConfigStore.TryResolveEditionId(pakPath);
+        if (!string.IsNullOrWhiteSpace(editionId))
+        {
+            PhotoModeProfileService.ClearProfile(editionId);
+        }
+    }
+
+    private static void AddIfDifferentEntry(
         ZipArchive baseline,
         ZipArchive working,
         string entryPath,
-        Dictionary<string, byte[]> replacements)
+        List<string> entriesToRestore)
     {
         var baselineEntry = baseline.GetEntry(entryPath);
         var workingEntry = working.GetEntry(entryPath);
@@ -153,7 +184,19 @@ public static class PhotoModeService
 
         if (!workingBytes.AsSpan().SequenceEqual(baselineBytes))
         {
-            replacements[entryPath] = baselineBytes;
+            entriesToRestore.Add(entryPath);
+        }
+    }
+
+    private static void EnsureCacheBlockLayoutOrThrow(string pakPath)
+    {
+        try
+        {
+            PakCacheBlockLayoutGuard.EnsureValidLayout(pakPath);
+        }
+        catch (Exception ex) when (ex is InvalidOperationException or InvalidDataException)
+        {
+            throw new PhotoModeLoadException(ex.Message);
         }
     }
 }

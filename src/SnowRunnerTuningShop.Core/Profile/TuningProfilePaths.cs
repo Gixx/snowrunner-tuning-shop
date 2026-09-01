@@ -1,4 +1,5 @@
 using SnowRunnerTuningShop.Core.Constants;
+using SnowRunnerTuningShop.Core.Pak;
 
 namespace SnowRunnerTuningShop.Core.Profile;
 
@@ -19,14 +20,6 @@ public static class TuningProfilePaths
 
     private static readonly HashSet<string> RockMeshEntries = new(RockMeshEntryNames, StringComparer.OrdinalIgnoreCase);
 
-    private static readonly HashSet<string> PhotoModeEntries = new(StringComparer.OrdinalIgnoreCase)
-    {
-        "initial.cache_block",
-        "[ssl_cache]/initial_release.sslbundle",
-        "[ssl_cache]/initial_debug.sslbundle",
-        "[ssl_cache]/initial_profile.sslbundle",
-    };
-
     public static bool IsTrackedEntry(string entryPath)
     {
         if (TuningProfileMarker.IsMarkerEntry(entryPath))
@@ -40,9 +33,15 @@ public static class TuningProfilePaths
             return true;
         }
 
-        if (PhotoModeEntries.Contains(normalized))
+        if (normalized.Equals(PakCacheBlockLayoutGuard.CacheBlockEntry, StringComparison.OrdinalIgnoreCase))
         {
-            return true;
+            return false;
+        }
+
+        if (normalized.StartsWith("[ssl_cache]/", StringComparison.OrdinalIgnoreCase)
+            && normalized.EndsWith(".sslbundle", StringComparison.OrdinalIgnoreCase))
+        {
+            return false;
         }
 
         if (!normalized.EndsWith(".xml", StringComparison.OrdinalIgnoreCase))

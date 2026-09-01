@@ -31,6 +31,12 @@ internal static class PhotoModeSslBundleEditor
         0x04, 0x28, 0x86, 0x02, 0x42, 0x04, 0x08, 0x31, 0x10,
     ];
 
+    internal static int ReadInitTimeIndex(byte[] bundleBytes)
+    {
+        var initOffset = FindSingle(bundleBytes, InitTimePrefix, "time init marker");
+        return bundleBytes[initOffset + InitTimePrefix.Length];
+    }
+
     internal static int ReadTimeIndex(byte[] bundleBytes)
     {
         var timeOffset = FindPhotoModeTimeByteOffset(bundleBytes);
@@ -46,11 +52,14 @@ internal static class PhotoModeSslBundleEditor
 
         var updated = (byte[])bundleBytes.Clone();
         var timeOffset = FindPhotoModeTimeByteOffset(updated);
+        if (updated[timeOffset] == (byte)timeIndex)
+        {
+            return bundleBytes;
+        }
+
+        // Only patch the photo-mode preset slot byte. The separate init-time marker
+        // must stay untouched — changing it crashes SnowRunner during boot.
         updated[timeOffset] = (byte)timeIndex;
-
-        var initOffset = FindSingle(updated, InitTimePrefix, "time init marker");
-        updated[initOffset + InitTimePrefix.Length] = (byte)timeIndex;
-
         return updated;
     }
 
