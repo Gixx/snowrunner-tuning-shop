@@ -202,7 +202,9 @@ public static class TuningProfileService
             workingFingerprint: workingFingerprint);
     }
 
-    public static TuningProfileReapplyResult ReapplySavedChanges(string workingPakPath)
+    public static TuningProfileReapplyResult ReapplySavedChanges(
+        string workingPakPath,
+        IProgress<TuningProfileReapplyProgress>? progress = null)
     {
         if (string.IsNullOrWhiteSpace(workingPakPath) || !File.Exists(workingPakPath))
         {
@@ -238,11 +240,24 @@ public static class TuningProfileService
         var replacements = new Dictionary<string, byte[]>(StringComparer.Ordinal);
         var missing = new List<string>();
         var failed = new List<string>();
+        var profileEntryCount = profile.Entries.Count;
+        var preparedCount = 0;
+        var lastPreparingReport = 0;
 
         using (var archive = ZipFile.OpenRead(workingPakPath))
         {
             foreach (var (entryPath, base64) in profile.Entries)
             {
+                preparedCount++;
+                ThrottledProgress.Report(
+                    progress,
+                    new TuningProfileReapplyProgress(
+                        TuningProfileReapplyPhase.Preparing,
+                        preparedCount,
+                        profileEntryCount,
+                        entryPath),
+                    ref lastPreparingReport);
+
                 try
                 {
                     var bytes = Convert.FromBase64String(base64);
@@ -264,8 +279,24 @@ public static class TuningProfileService
 
         if (replacements.Count > 0)
         {
-            InitialPakWriter.ReplaceEntries(workingPakPath, replacements);
+            IProgress<PakWriteProgress>? writeProgress = null;
+            if (progress is not null)
+            {
+                writeProgress = new Progress<PakWriteProgress>(value => progress.Report(
+                    new TuningProfileReapplyProgress(
+                        MapPakWritePhase(value.Phase),
+                        value.Current,
+                        value.Total,
+                        value.EntryName)));
+            }
+
+            InitialPakWriter.ReplaceEntries(workingPakPath, replacements, writeProgress: writeProgress);
         }
+
+        progress?.Report(new TuningProfileReapplyProgress(
+            TuningProfileReapplyPhase.Finalizing,
+            1,
+            1));
 
         return new TuningProfileReapplyResult(replacements.Count, missing, failed);
     }
@@ -353,4 +384,13 @@ public static class TuningProfileService
         stream.CopyTo(memory);
         return memory.ToArray();
     }
+
+    private static TuningProfileReapplyPhase MapPakWritePhase(PakWritePhase phase) =>
+        phase switch
+        {
+            PakWritePhase.Copying or PakWritePhase.Preparing => TuningProfileReapplyPhase.StagingPak,
+            PakWritePhase.Writing => TuningProfileReapplyPhase.WritingPak,
+            PakWritePhase.Saving => TuningProfileReapplyPhase.Finalizing,
+            _ => TuningProfileReapplyPhase.WritingPak,
+        };
 }

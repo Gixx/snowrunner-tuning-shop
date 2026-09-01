@@ -4,6 +4,7 @@ using SnowRunnerTuningShop.Core.Backup;
 using SnowRunnerTuningShop.Core.Pak;
 using SnowRunnerTuningShop.Core.Profile;
 using SnowRunnerTuningShop.Localization;
+using SnowRunnerTuningShop.Views;
 
 namespace SnowRunnerTuningShop;
 
@@ -137,12 +138,26 @@ internal static class WorkspaceCommands
 
         try
         {
-            TuningProfileReapplyResult result;
-            using (OverrideCursor(Cursors.Wait))
+            var dialog = new ReapplyProgressWindow(session.PakPath)
             {
-                result = TuningProfileService.ReapplySavedChanges(session.PakPath);
-                ReloadPak(session, session.PakPath);
+                Owner = Application.Current.MainWindow,
+            };
+
+            if (dialog.ShowDialog() != true || dialog.Result is not { } result)
+            {
+                if (!string.IsNullOrWhiteSpace(dialog.ErrorMessage))
+                {
+                    MessageBox.Show(
+                        dialog.ErrorMessage,
+                        UiText.Workspace.ReapplyTitle,
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                }
+
+                return false;
             }
+
+            ReloadPak(session, session.PakPath);
 
             var image = result.MissingEntryPaths.Count > 0 || result.FailedEntryPaths.Count > 0
                 ? MessageBoxImage.Warning

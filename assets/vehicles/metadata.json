@@ -458,7 +458,7 @@
     {
       "id": "gmc_8000",
       "manufacturerId": "gm",
-      "basedOn": "[[:wikipedia:GMC_Brigadier",
+      "basedOn": "GMC Brigadier",
       "countryCode": "US",
       "countryName": "United States",
       "year": 1978
@@ -1058,7 +1058,7 @@
     {
       "id": "b6x6",
       "manufacturerId": "burlak",
-      "basedOn": "[https://burlakoffroad.com/en/models/13 Burlak Mobile Crane 6x6]",
+      "basedOn": "Burlak Mobile Crane 6x6",
       "countryCode": "RU",
       "countryName": "Russia",
       "year": 2022
@@ -1138,7 +1138,7 @@
     {
       "id": "loadstar",
       "manufacturerId": "international",
-      "basedOn": "[[:wikipedia:International_Loadstar",
+      "basedOn": "International Loadstar",
       "countryCode": "US",
       "countryName": "United States",
       "year": 1962
@@ -1146,7 +1146,7 @@
     {
       "id": "jcj7r",
       "manufacturerId": "jeep",
-      "basedOn": "[[:wikipedia:Jeep_CJ",
+      "basedOn": "Jeep CJ",
       "countryCode": "US",
       "countryName": "United States",
       "year": 1976
@@ -1154,7 +1154,7 @@
     {
       "id": "jw",
       "manufacturerId": "jeep",
-      "basedOn": "[[:wikipedia:Jeep_Wrangler",
+      "basedOn": "Jeep Wrangler",
       "countryCode": "US",
       "countryName": "United States",
       "year": 1986
@@ -1186,7 +1186,7 @@
     {
       "id": "landroverdefender110",
       "manufacturerId": "landrover-main",
-      "basedOn": "[[:wikipedia:Land_Rover_Defender",
+      "basedOn": "Land Rover Defender",
       "countryCode": "GB",
       "countryName": "United Kingdom",
       "year": 1983
@@ -1194,7 +1194,7 @@
     {
       "id": "landroverdefender90",
       "manufacturerId": "landrover-main",
-      "basedOn": "[[:wikipedia:Land_Rover_Defender",
+      "basedOn": "Land Rover Defender",
       "countryCode": "GB",
       "countryName": "United Kingdom",
       "year": 1984
@@ -1226,7 +1226,7 @@
     {
       "id": "rt",
       "manufacturerId": "rezvani",
-      "basedOn": "[https://en.wikipedia.org/wiki/Rezvani_Tank Rezvani Tank]",
+      "basedOn": "Rezvani Tank",
       "countryCode": "US",
       "countryName": "United States",
       "year": 2020
@@ -1274,7 +1274,7 @@
     {
       "id": "veh_c770g_alt",
       "manufacturerId": "cat",
-      "basedOn": "[https://www.cat.com/en_US/products/new/equipment/off-highway-trucks/off-highway-trucks-bare-chassis/1000005264.html Caterpillar 770G]",
+      "basedOn": "Caterpillar 770G",
       "countryCode": "US",
       "countryName": "United States",
       "year": 2012

@@ -1,10 +1,13 @@
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using SnowRunnerTuningShop.Controls;
 using SnowRunnerTuningShop.Core.Backup;
 using SnowRunnerTuningShop.Core.Diagnostics;
@@ -479,7 +482,8 @@ public partial class VehiclesView : UserControl
         ManufacturerLogoPlate.Visibility = logo is null ? Visibility.Collapsed : Visibility.Visible;
         ManufacturerLogoPlate.ToolTip = manufacturer?.Name;
 
-        var hasBasedOn = !string.IsNullOrWhiteSpace(meta?.BasedOn);
+        var basedOn = VehicleBasedOnFormatter.Parse(meta?.BasedOn);
+        var hasBasedOn = basedOn is not null;
         var hasRole = !string.IsNullOrWhiteSpace(role);
         var hasYear = !string.IsNullOrWhiteSpace(meta?.YearDisplay);
         var hasCountry = meta?.Country is not null;
@@ -488,7 +492,7 @@ public partial class VehiclesView : UserControl
             : Visibility.Collapsed;
 
         BasedOnRow.Visibility = hasBasedOn ? Visibility.Visible : Visibility.Collapsed;
-        DetailBasedOnText.Text = meta?.BasedOn ?? "";
+        SetBasedOnDisplay(basedOn);
         BasedOnRow.Margin = hasRole || hasYear || hasCountry ? new Thickness(0, 0, 0, 10) : new Thickness(0);
 
         RoleRow.Visibility = hasRole ? Visibility.Visible : Visibility.Collapsed;
@@ -998,6 +1002,34 @@ public partial class VehiclesView : UserControl
             ResponsivenessSafeRangeHint,
             ResponsivenessTextBox,
             TuningFieldRange.Responsiveness(_currentTruck.BaselineResponsiveness));
+    }
+
+    private void SetBasedOnDisplay(VehicleBasedOnFormatter.ParsedBasedOn? basedOn)
+    {
+        DetailBasedOnText.Inlines.Clear();
+        if (basedOn is null)
+        {
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(basedOn.Url))
+        {
+            DetailBasedOnText.Inlines.Add(new Run(basedOn.DisplayText));
+            return;
+        }
+
+        var link = new Hyperlink(new Run(basedOn.DisplayText))
+        {
+            NavigateUri = new Uri(basedOn.Url, UriKind.Absolute),
+        };
+        link.RequestNavigate += BasedOnLink_RequestNavigate;
+        DetailBasedOnText.Inlines.Add(link);
+    }
+
+    private static void BasedOnLink_RequestNavigate(object sender, RequestNavigateEventArgs e)
+    {
+        Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
+        e.Handled = true;
     }
 
     public sealed record LabeledValue<T>(string Label, T Value);

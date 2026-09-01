@@ -16,6 +16,9 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 - **Photo Mode baseline restore:** restore only photo-mode-related pak entries (`initial.cache_block` and sslbundles) from your configured baseline without resetting other tunings.
 
 ### Fixed
+- **Photo Mode — cache_block encoding:** the game file embeds binary data; saving it as UTF-8 corrupted ~13M bytes and prevented SnowRunner from starting. Photo mode edits now use a byte-preserving Latin-1 round-trip.
+- **Photo Mode — sslbundle:** compiled sslbundle patching is disabled for now (it crashed SnowRunner on boot). Apply writes slider and weather defaults to `initial.cache_block` only; the Time preset UI is not applied to the game yet.
+- **Pak writes — in-place cache_block patch:** photo mode saves now overwrite the existing compressed `initial.cache_block` slot (same byte length, padded tail) so later pak entries stay at their original offsets. Re-splicing or Store compression shifted those offsets and crashed SnowRunner; Store also bloated the pak to ~44 MB.
 - **Photo Mode — load:** weather preset parsing now targets the photo mode controller block (not an unrelated `presetUiNames` list); line-ending regex and sslbundle time marker detection fixed so current values load correctly.
 - **Photo Mode — save:** pak was kept open while writing, causing *“The process cannot access the file because it is being used by another process”* on Apply/Restore; archives are closed before `initial.pak` is replaced.
 - **Pak writes:** temp rebuild files go to `%TEMP%` instead of the game install folder; clearer error when SnowRunner or another process locks the pak.

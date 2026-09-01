@@ -152,14 +152,37 @@ public static class UiText
     public static class PhotoMode
     {
         public static string Title => StringResources.Get("PhotoMode.Title", "Photo Mode defaults");
+        public static string ExperimentalWarning => StringResources.Get(
+            "PhotoMode.ExperimentalWarning",
+            "Experimental feature. Not included in Reapply saved changes on Home — use Reapply saved photo mode here instead. Restore baseline if you see errors.");
+        public static string ReapplySaved =>
+            StringResources.Get("PhotoMode.ReapplySaved", "Reapply saved photo mode");
+        public static string ReappliedSaved(int entries) =>
+            StringResources.Format(
+                "PhotoMode.ReappliedSaved",
+                "Saved photo mode settings reapplied ({0} pak file(s) updated). Reload the game to test.",
+                entries);
+        public static string ReappliedSavedNoChanges =>
+            StringResources.Get(
+                "PhotoMode.ReappliedSavedNoChanges",
+                "Saved photo mode settings are already applied to the working pak.");
         public static string Subtitle => StringResources.Get("PhotoMode.Subtitle", "Change the values Photo Mode uses when you open it or press Restore default in-game. Test in the game after saving.");
         public static string EnvironmentTitle => StringResources.Get("PhotoMode.EnvironmentTitle", "Environment");
         public static string LookTitle => StringResources.Get("PhotoMode.LookTitle", "Look");
         public static string CameraTitle => StringResources.Get("PhotoMode.CameraTitle", "Camera & focus");
         public static string TimeLabel => StringResources.Get("PhotoMode.TimeLabel", "Time");
+        public static string TimeNote => StringResources.Get(
+            "PhotoMode.TimeNote",
+            "Cannot be safely changed from the default value stored in the pak.");
         public static string WeatherLabel => StringResources.Get("PhotoMode.WeatherLabel", "Default weather");
         public static string Exposure => StringResources.Get("PhotoMode.Exposure", "Exposure");
+        public static string ExposureNote => StringResources.Get(
+            "PhotoMode.ExposureNote",
+            "Cannot be safely changed from the default value stored in the pak.");
         public static string Contrast => StringResources.Get("PhotoMode.Contrast", "Contrast");
+        public static string ContrastNote => StringResources.Get(
+            "PhotoMode.ContrastNote",
+            "Cannot be safely changed from the default value stored in the pak.");
         public static string Hue => StringResources.Get("PhotoMode.Hue", "Hue");
         public static string Saturation => StringResources.Get("PhotoMode.Saturation", "Saturation");
         public static string ColorGrading => StringResources.Get("PhotoMode.ColorGrading", "Color grading");
@@ -167,6 +190,12 @@ public static class UiText
         public static string Vignette => StringResources.Get("PhotoMode.Vignette", "Vignette");
         public static string FilmGrain => StringResources.Get("PhotoMode.FilmGrain", "Film grain");
         public static string FieldOfView => StringResources.Get("PhotoMode.FieldOfView", "Field of view");
+        public static string FieldOfViewNote => StringResources.Get(
+            "PhotoMode.FieldOfViewNote",
+            "Not editable here. Photo Mode uses your gameplay camera FOV from Settings → Gameplay.");
+        public static string GameDefaultsNote => StringResources.Get(
+            "PhotoMode.GameDefaultsNote",
+            "After saving, press Restore default (R) in Photo Mode to load these pak defaults. Sliders may show your last in-game session until then.");
         public static string Aperture => StringResources.Get("PhotoMode.Aperture", "Aperture");
         public static string FocusPoint => StringResources.Get("PhotoMode.FocusPoint", "Focus point");
         public static string FocusSpan => StringResources.Get("PhotoMode.FocusSpan", "Depth of field span");
@@ -179,6 +208,22 @@ public static class UiText
         public static string RestoreBaseline => StringResources.Get("PhotoMode.RestoreBaseline", "Restore photo mode baseline");
         public static string LoadPakHint => StringResources.Get("PhotoMode.LoadPakHint", "Load an initial.pak on the Home page first.");
         public static string LoadedStatus => StringResources.Get("PhotoMode.LoadedStatus", "Loaded current photo mode defaults from the working pak.");
+        public static string SliderRangeLimited =>
+            StringResources.Get(
+                "PhotoMode.SliderRangeLimited",
+                "Some sliders are limited to values that fit in the pak file. Vignette and film grain usually allow the most freedom.");
+        public static string SliderFixedPakField(string label) =>
+            StringResources.Format(
+                "PhotoMode.SliderFixedPakField",
+                "{0} cannot be changed here — the pak field is too narrow to store other values.",
+                label);
+        public static string SliderLimitedPakField(string label, int count, int fieldWidth) =>
+            StringResources.Format(
+                "PhotoMode.SliderLimitedPakField",
+                "{0}: only {1} saveable values (pak field is {2} characters wide).",
+                label,
+                count,
+                fieldWidth);
         public static string NoChangesToSave => StringResources.Get("PhotoMode.NoChangesToSave", "No photo mode changes were detected to save.");
         public static string SaveSuccessTitle => StringResources.Get("PhotoMode.SaveSuccessTitle", "Saved successfully");
         public static string SaveErrorTitle => StringResources.Get("PhotoMode.SaveErrorTitle", "Save error");
@@ -376,6 +421,18 @@ public static class UiText
         public static string ReapplyConfirmTitle => StringResources.Get("Workspace.ReapplyConfirmTitle", "Reapply saved changes?");
         public static string ReapplyConfirmMessage => StringResources.Get("Workspace.ReapplyConfirmMessage", "This writes your saved tuning profile back into the working initial.pak. Files that no longer exist after a game update will be skipped and listed in a report. Continue?");
         public static string ReapplySuccessTitle => StringResources.Get("Workspace.ReapplySuccessTitle", "Saved changes reapplied");
+        public static string ReapplyProgressTitle => StringResources.Get("Workspace.ReapplyProgressTitle", "Reapplying saved changes");
+        public static string ReapplyProgressStarting => StringResources.Get("Workspace.ReapplyProgressStarting", "Starting…");
+        public static string ReapplyProgressFinalizing => StringResources.Get("Workspace.ReapplyProgressFinalizing", "Finalizing…");
+        public static string ReapplyProgressWritingPakStart =>
+            StringResources.Get("Workspace.ReapplyProgressWritingPakStart", "Writing initial.pak…");
+        public static string ReapplyProgressStagingCopy =>
+            StringResources.Get("Workspace.ReapplyProgressStagingCopy", "Copying pak to a temporary file…");
+        public static string ReapplyProgressStagingPrepare(string categoryKey) =>
+            StringResources.Format(
+                "Workspace.ReapplyProgressStagingPrepare",
+                "Preparing replacements: {0}",
+                ReapplyProgressCategory(categoryKey));
         public static string NoSavedProfile => StringResources.Get("Workspace.NoSavedProfile", "No saved tuning profile.");
         public static string GameUpdateTitle => StringResources.Get("Workspace.GameUpdateTitle", "Game update detected");
         public static string GameUpdateMessage => StringResources.Get("Workspace.GameUpdateMessage", "SnowRunner appears to have replaced initial.pak with a new vanilla file. Refresh the baseline from this file, then reapply your saved tuning changes. Avoid saving new edits until you reapply — a new save would replace the saved profile.");
@@ -418,6 +475,51 @@ public static class UiText
             AppendPathList(lines, "Failed", result.FailedEntryPaths);
             return string.Join(Environment.NewLine, lines);
         }
+
+        public static string ReapplyProgressCounter(int current, int total) =>
+            StringResources.Format("Workspace.ReapplyProgressCounter", "{0} / {1}", current, total);
+
+        public static string ReapplyProgressProfileCounter(int current, int total) =>
+            StringResources.Format("Workspace.ReapplyProgressProfileCounter", "Profile {0} / {1}", current, total);
+
+        public static string ReapplyProgressPakCounter(int current, int total) =>
+            StringResources.Format("Workspace.ReapplyProgressPakCounter", "Pak {0} / {1}", current, total);
+
+        public static string ReapplyProgressStagingCounter(int current, int total) =>
+            StringResources.Format("Workspace.ReapplyProgressStagingCounter", "Staging {0} / {1}", current, total);
+
+        public static string ReapplyProgressElapsed(TimeSpan elapsed) =>
+            StringResources.Format(
+                "Workspace.ReapplyProgressElapsed",
+                "{0:mm\\:ss}",
+                elapsed);
+
+        public static string ReapplyProgressPreparing(string categoryKey) =>
+            StringResources.Format(
+                "Workspace.ReapplyProgressPreparing",
+                "Preparing saved profile: {0}",
+                ReapplyProgressCategory(categoryKey));
+
+        public static string ReapplyProgressWriting(string categoryKey) =>
+            StringResources.Format(
+                "Workspace.ReapplyProgressWriting",
+                "Applying: {0}",
+                ReapplyProgressCategory(categoryKey));
+
+        public static string ReapplyProgressCategory(string categoryKey) =>
+            categoryKey switch
+            {
+                TuningProfileEntryCategories.Engines => StringResources.Get("Workspace.ReapplyCategory.Engines", "engines"),
+                TuningProfileEntryCategories.Gearboxes => StringResources.Get("Workspace.ReapplyCategory.Gearboxes", "gearboxes"),
+                TuningProfileEntryCategories.Suspensions => StringResources.Get("Workspace.ReapplyCategory.Suspensions", "suspensions"),
+                TuningProfileEntryCategories.Winches => StringResources.Get("Workspace.ReapplyCategory.Winches", "winches"),
+                TuningProfileEntryCategories.Tires => StringResources.Get("Workspace.ReapplyCategory.Tires", "tires"),
+                TuningProfileEntryCategories.Vehicles => StringResources.Get("Workspace.ReapplyCategory.Vehicles", "vehicles"),
+                TuningProfileEntryCategories.Rocks => StringResources.Get("Workspace.ReapplyCategory.Rocks", "rocks"),
+                TuningProfileEntryCategories.General => StringResources.Get("Workspace.ReapplyCategory.General", "general"),
+                TuningProfileEntryCategories.PhotoMode => StringResources.Get("Workspace.ReapplyCategory.PhotoMode", "photo mode"),
+                _ => StringResources.Get("Workspace.ReapplyCategory.Pak", "pak files"),
+            };
 
         private static void AppendPathList(List<string> lines, string heading, IReadOnlyList<string> paths)
         {
