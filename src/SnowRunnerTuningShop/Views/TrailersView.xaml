@@ -1,0 +1,616 @@
+<UserControl x:Class="SnowRunnerTuningShop.Views.TrailersView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="clr-namespace:SnowRunnerTuningShop.Localization">
+    <UserControl.Resources>
+        <Style x:Key="FilterChipRadioStyle" TargetType="RadioButton">
+            <Setter Property="MinWidth" Value="0"/>
+            <Setter Property="Margin" Value="0,0,6,4"/>
+            <Setter Property="Padding" Value="8,5"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}"/>
+            <Setter Property="Background" Value="{DynamicResource ControlFillColorDefaultBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource ControlStrokeColorDefaultBrush}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Border x:Name="Root"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="1"
+                                CornerRadius="6"
+                                Padding="{TemplateBinding Padding}"
+                                SnapsToDevicePixels="True">
+                            <StackPanel Orientation="Horizontal">
+                                <Grid Width="14" Height="14" VerticalAlignment="Center">
+                                    <Ellipse Stroke="{TemplateBinding Foreground}"
+                                             StrokeThickness="1.5"
+                                             Fill="Transparent"/>
+                                    <Ellipse x:Name="Dot"
+                                             Width="8"
+                                             Height="8"
+                                             Fill="{TemplateBinding Foreground}"
+                                             Visibility="Collapsed"/>
+                                </Grid>
+                                <ContentPresenter Margin="6,0,0,0"
+                                                  VerticalAlignment="Center"
+                                                  RecognizesAccessKey="True"/>
+                            </StackPanel>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Dot" Property="Visibility" Value="Visible"/>
+                                <Setter TargetName="Root" Property="Background" Value="{DynamicResource SubtleFillColorTertiaryBrush}"/>
+                                <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AccentFillColorDefaultBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Root" Property="Background" Value="{DynamicResource SubtleFillColorSecondaryBrush}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <Grid x:Name="ListPanel">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Expander Grid.Row="0"
+                      Style="{StaticResource CollapsibleCardExpanderStyle}"
+                      Header="{x:Static loc:UiText+Trailers.GlobalMultipliersTitle}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0"
+                               Grid.ColumnSpan="4"
+                               Text="{x:Static loc:UiText+Trailers.GlobalMultipliersHint}"
+                               TextWrapping="Wrap"
+                               FontSize="11"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                               Margin="0,0,0,12"/>
+
+                    <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,12,0">
+                        <TextBlock x:Name="FuelMultiplierLabel"
+                                   Text="{x:Static loc:UiText+Trailers.FuelMultiplierDefault}"
+                                   Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                        <Slider x:Name="FuelMultiplierSlider"
+                                Minimum="0"
+                                Maximum="8"
+                                Value="4"
+                                TickFrequency="1"
+                                IsSnapToTickEnabled="True"
+                                IsEnabled="False"
+                                ValueChanged="GlobalMultiplierSlider_ValueChanged"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="1" Grid.Column="1" Margin="12,0,12,0">
+                        <TextBlock x:Name="RepairsMultiplierLabel"
+                                   Text="{x:Static loc:UiText+Trailers.RepairsMultiplierDefault}"
+                                   Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                        <Slider x:Name="RepairsMultiplierSlider"
+                                Minimum="0"
+                                Maximum="8"
+                                Value="4"
+                                TickFrequency="1"
+                                IsSnapToTickEnabled="True"
+                                IsEnabled="False"
+                                ValueChanged="GlobalMultiplierSlider_ValueChanged"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="1" Grid.Column="2" Margin="12,0,12,0">
+                        <TextBlock x:Name="WheelsMultiplierLabel"
+                                   Text="{x:Static loc:UiText+Trailers.WheelsMultiplierDefault}"
+                                   Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                        <Slider x:Name="WheelsMultiplierSlider"
+                                Minimum="0"
+                                Maximum="8"
+                                Value="4"
+                                TickFrequency="1"
+                                IsSnapToTickEnabled="True"
+                                IsEnabled="False"
+                                ValueChanged="GlobalMultiplierSlider_ValueChanged"/>
+                    </StackPanel>
+
+                    <Button x:Name="ApplyGlobalMultipliersButton"
+                            Grid.Row="1"
+                            Grid.RowSpan="2"
+                            Grid.Column="3"
+                            Content="{x:Static loc:UiText+Trailers.ApplyGlobalMultipliers}"
+                            Padding="14,8"
+                            VerticalAlignment="Center"
+                            IsEnabled="False"
+                            Click="ApplyGlobalMultipliersButton_Click"/>
+
+                    <StackPanel Grid.Row="2" Grid.Column="0" Margin="0,12,12,0">
+                        <TextBlock x:Name="PriceMultiplierLabel"
+                                   Text="{x:Static loc:UiText+Trailers.PriceMultiplierDefault}"
+                                   Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                        <Slider x:Name="PriceMultiplierSlider"
+                                Minimum="0"
+                                Maximum="8"
+                                Value="4"
+                                TickFrequency="1"
+                                IsSnapToTickEnabled="True"
+                                IsEnabled="False"
+                                ValueChanged="GlobalMultiplierSlider_ValueChanged"/>
+                    </StackPanel>
+                </Grid>
+            </Expander>
+
+            <Expander Grid.Row="1"
+                      Style="{StaticResource CollapsibleCardExpanderStyle}"
+                      Header="{x:Static loc:UiText+Trailers.StoreUnlocksTitle}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Text="{x:Static loc:UiText+Trailers.StoreUnlocksHint}"
+                               TextWrapping="Wrap"
+                               FontSize="11"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                               VerticalAlignment="Center"
+                               Margin="0,0,16,0"/>
+
+                    <Button x:Name="MakeMissionTrailersPurchasableButton"
+                            Grid.Column="1"
+                            Content="{x:Static loc:UiText+Trailers.MakeMissionTrailersPurchasable}"
+                            Padding="14,8"
+                            VerticalAlignment="Center"
+                            IsEnabled="False"
+                            Click="MakeMissionTrailersPurchasableButton_Click"/>
+                </Grid>
+            </Expander>
+
+            <Grid Grid.Row="2" Margin="0,0,0,12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="260" MinWidth="160"/>
+                </Grid.ColumnDefinitions>
+
+                <WrapPanel Grid.Column="0" VerticalAlignment="Center">
+                    <RadioButton x:Name="FilterAll"
+                                 Style="{StaticResource FilterChipRadioStyle}"
+                                 Content="{x:Static loc:UiText+Trailers.All}"
+                                 Checked="Filter_Checked"/>
+                    <RadioButton Style="{StaticResource FilterChipRadioStyle}"
+                                 Content="{x:Static loc:UiText+Trailers.HitchScout}"
+                                 Tag="scout"
+                                 Checked="Filter_Checked"/>
+                    <RadioButton Style="{StaticResource FilterChipRadioStyle}"
+                                 Content="{x:Static loc:UiText+Trailers.HitchStandard}"
+                                 Tag="standard"
+                                 Checked="Filter_Checked"/>
+                    <RadioButton Style="{StaticResource FilterChipRadioStyle}"
+                                 Content="{x:Static loc:UiText+Trailers.HitchSaddleLow}"
+                                 Tag="saddle-low"
+                                 Checked="Filter_Checked"/>
+                    <RadioButton Style="{StaticResource FilterChipRadioStyle}"
+                                 Content="{x:Static loc:UiText+Trailers.HitchSaddleHigh}"
+                                 Tag="saddle-high"
+                                 Checked="Filter_Checked"/>
+                    <RadioButton Style="{StaticResource FilterChipRadioStyle}"
+                                 Content="{x:Static loc:UiText+Trailers.Mission}"
+                                 Tag="mission"
+                                 Checked="Filter_Checked"/>
+                </WrapPanel>
+
+                <Button x:Name="RestoreAllTrailersButton"
+                        Grid.Column="1"
+                        Content="{x:Static loc:UiText+Trailers.RestoreAllTrailers}"
+                        Padding="14,8"
+                        Margin="12,0,12,0"
+                        VerticalAlignment="Center"
+                        IsEnabled="False"
+                        Click="RestoreAllTrailersButton_Click"/>
+
+                <Grid Grid.Column="2" VerticalAlignment="Center">
+                    <TextBox x:Name="SearchTextBox"
+                             Padding="10,7"
+                             VerticalContentAlignment="Center"
+                             TextChanged="SearchTextBox_TextChanged"/>
+                    <TextBlock x:Name="SearchPlaceholder"
+                               Text="{x:Static loc:UiText+Trailers.SearchPlaceholder}"
+                               Margin="14,0,0,0"
+                               VerticalAlignment="Center"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                               IsHitTestVisible="False"/>
+                </Grid>
+            </Grid>
+
+            <TextBlock x:Name="CountTextBlock"
+                       Grid.Row="3"
+                       Margin="0,0,0,8"
+                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+
+            <ScrollViewer Grid.Row="4" VerticalScrollBarVisibility="Auto">
+                <ItemsControl x:Name="TrailersItems">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Width="168"
+                                    Margin="0,0,12,12"
+                                    Padding="8"
+                                    Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                                    BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="8"
+                                    Cursor="Hand"
+                                    MouseLeftButtonUp="TrailerCard_Click">
+                                <StackPanel>
+                                    <Grid Height="200">
+                                        <Image Source="{Binding Image}"
+                                               Stretch="Uniform"
+                                               RenderOptions.BitmapScalingMode="HighQuality"/>
+                                        <Border VerticalAlignment="Top"
+                                                Height="24"
+                                                Background="{Binding HeaderBrush}"
+                                                IsHitTestVisible="False">
+                                            <Grid Margin="5,0">
+                                                <TextBlock Text="{Binding HitchLabel}"
+                                                           HorizontalAlignment="Left"
+                                                           VerticalAlignment="Center"
+                                                           FontSize="10"
+                                                           FontWeight="SemiBold"
+                                                           Foreground="White"/>
+                                                <Border HorizontalAlignment="Right"
+                                                        VerticalAlignment="Center"
+                                                        Background="#CC111111"
+                                                        CornerRadius="4"
+                                                        Padding="5,1"
+                                                        Visibility="{Binding MissionBadgeVisibility}">
+                                                    <TextBlock Text="{x:Static loc:UiText+Trailers.Mission}"
+                                                               FontSize="10"
+                                                               FontWeight="SemiBold"
+                                                               Foreground="White"
+                                                               VerticalAlignment="Center"/>
+                                                </Border>
+                                            </Grid>
+                                        </Border>
+                                    </Grid>
+                                    <TextBlock Text="{Binding DisplayName}"
+                                               Margin="0,8,0,0"
+                                               TextWrapping="Wrap"
+                                               TextAlignment="Center"
+                                               FontWeight="SemiBold"
+                                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                    <TextBlock Text="{Binding FunctionLabel}"
+                                               Margin="0,2,0,0"
+                                               TextAlignment="Center"
+                                               FontSize="11"
+                                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Grid>
+
+        <Grid x:Name="DetailPanel" Visibility="Collapsed">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Button Grid.Row="0"
+                    Content="{x:Static loc:UiText+Trailers.BackToList}"
+                    HorizontalAlignment="Left"
+                    Padding="12,6"
+                    Margin="0,0,0,12"
+                    Click="BackButton_Click"/>
+
+            <ScrollViewer Grid.Row="1"
+                          VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="320"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0" Margin="0,0,16,0">
+                        <TextBlock x:Name="DetailTitleText"
+                                   FontSize="22"
+                                   FontWeight="SemiBold"
+                                   TextWrapping="Wrap"
+                                   Margin="0,0,0,12"
+                                   Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                        <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                                BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="1"
+                                CornerRadius="8"
+                                Padding="8">
+                            <Image x:Name="DetailImage"
+                                   MaxHeight="360"
+                                   Stretch="Uniform"
+                                   RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </Border>
+
+                        <Border Margin="0,12,0,0"
+                                Padding="12"
+                                Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                                BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="1"
+                                CornerRadius="8">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                    <TextBlock Text="{x:Static loc:UiText+Trailers.HitchLabel}"
+                                               Width="100"
+                                               VerticalAlignment="Center"
+                                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                    <TextBlock x:Name="DetailHitchText"
+                                               VerticalAlignment="Center"
+                                               TextWrapping="Wrap"
+                                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                    <TextBlock Text="{x:Static loc:UiText+Trailers.FunctionLabel}"
+                                               Width="100"
+                                               VerticalAlignment="Center"
+                                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                    <TextBlock x:Name="DetailFunctionText"
+                                               VerticalAlignment="Center"
+                                               TextWrapping="Wrap"
+                                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{x:Static loc:UiText+Trailers.Mission}"
+                                               Width="100"
+                                               VerticalAlignment="Center"
+                                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                    <TextBlock x:Name="DetailMissionText"
+                                               VerticalAlignment="Center"
+                                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+
+                    <Border Grid.Column="1"
+                            Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                            BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            Padding="16">
+                        <Grid>
+                            <TextBlock x:Name="TuningHintText"
+                                       Text="{x:Static loc:UiText+Trailers.LoadPakHint}"
+                                       TextWrapping="Wrap"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+
+                            <StackPanel x:Name="TuningForm"
+                                        Visibility="Collapsed">
+                                <TextBlock Text="{x:Static loc:UiText+Trailers.TuningTitle}"
+                                           FontWeight="SemiBold"
+                                           FontSize="16"
+                                           Margin="0,0,0,16"
+                                           Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+
+                                <Grid x:Name="FuelRow" Margin="0,0,0,6">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="140"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{x:Static loc:UiText+Trailers.FuelTankLabel}"
+                                               VerticalAlignment="Center"
+                                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                    <Grid Grid.Column="1">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="140"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBox x:Name="FuelCapacityTextBox"
+                                                 Padding="10,7"
+                                                 VerticalContentAlignment="Center"
+                                                 TextChanged="TuningNumericTextBox_TextChanged"/>
+                                        <TextBlock Grid.Column="1"
+                                                   Text="{x:Static loc:UiText+Trailers.FuelUnit}"
+                                                   Margin="10,0,0,0"
+                                                   VerticalAlignment="Center"
+                                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                    </Grid>
+                                </Grid>
+                                <TextBlock x:Name="FuelSafeRangeHint"
+                                           Margin="140,0,0,14"
+                                           FontSize="11"
+                                           TextWrapping="Wrap"
+                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+
+                                <Grid x:Name="WaterRow" Margin="0,0,0,6">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="140"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{x:Static loc:UiText+Trailers.WaterTankLabel}"
+                                               VerticalAlignment="Center"
+                                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                    <Grid Grid.Column="1">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="140"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBox x:Name="WaterCapacityTextBox"
+                                                 Padding="10,7"
+                                                 VerticalContentAlignment="Center"
+                                                 TextChanged="TuningNumericTextBox_TextChanged"/>
+                                        <TextBlock Grid.Column="1"
+                                                   Text="{x:Static loc:UiText+Trailers.FuelUnit}"
+                                                   Margin="10,0,0,0"
+                                                   VerticalAlignment="Center"
+                                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                    </Grid>
+                                </Grid>
+                                <TextBlock x:Name="WaterSafeRangeHint"
+                                           Margin="140,0,0,14"
+                                           FontSize="11"
+                                           TextWrapping="Wrap"
+                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+
+                                <Grid x:Name="RepairsRow" Margin="0,0,0,6">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="140"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{x:Static loc:UiText+Trailers.RepairPartsLabel}"
+                                               VerticalAlignment="Center"
+                                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                    <TextBox x:Name="RepairsCapacityTextBox"
+                                             Grid.Column="1"
+                                             MaxWidth="140"
+                                             HorizontalAlignment="Left"
+                                             Padding="10,7"
+                                             VerticalContentAlignment="Center"
+                                             TextChanged="TuningNumericTextBox_TextChanged"/>
+                                </Grid>
+                                <TextBlock x:Name="RepairsSafeRangeHint"
+                                           Margin="140,0,0,14"
+                                           FontSize="11"
+                                           TextWrapping="Wrap"
+                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+
+                                <Grid x:Name="WheelsRow" Margin="0,0,0,6">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="140"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{x:Static loc:UiText+Trailers.SpareWheelsLabel}"
+                                               VerticalAlignment="Center"
+                                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                    <TextBox x:Name="WheelRepairsTextBox"
+                                             Grid.Column="1"
+                                             MaxWidth="140"
+                                             HorizontalAlignment="Left"
+                                             Padding="10,7"
+                                             VerticalContentAlignment="Center"
+                                             TextChanged="TuningNumericTextBox_TextChanged"/>
+                                </Grid>
+                                <TextBlock x:Name="WheelsSafeRangeHint"
+                                           Margin="140,0,0,14"
+                                           FontSize="11"
+                                           TextWrapping="Wrap"
+                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+
+                                <Grid x:Name="PriceRow" Margin="0,0,0,6">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="140"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{x:Static loc:UiText+Trailers.StorePriceLabel}"
+                                               VerticalAlignment="Center"
+                                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                    <TextBox x:Name="StorePriceTextBox"
+                                             Grid.Column="1"
+                                             MaxWidth="140"
+                                             HorizontalAlignment="Left"
+                                             Padding="10,7"
+                                             VerticalContentAlignment="Center"
+                                             TextChanged="TuningNumericTextBox_TextChanged"/>
+                                </Grid>
+                                <TextBlock x:Name="PriceSafeRangeHint"
+                                           Margin="140,0,0,14"
+                                           FontSize="11"
+                                           TextWrapping="Wrap"
+                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+
+                                <Grid x:Name="AvailableInStoreRow" Margin="0,0,0,6">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="140"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{x:Static loc:UiText+Trailers.AvailableInStoreLabel}"
+                                               VerticalAlignment="Center"
+                                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                    <CheckBox x:Name="AvailableInStoreCheckBox"
+                                              Grid.Column="1"
+                                              VerticalAlignment="Center"/>
+                                </Grid>
+                                <TextBlock x:Name="AvailableInStoreHintText"
+                                           Text="{x:Static loc:UiText+Trailers.AvailableInStoreHint}"
+                                           Margin="140,0,0,14"
+                                           TextWrapping="Wrap"
+                                           FontSize="11"
+                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+
+                                <Grid x:Name="UnlockRankRow" Margin="0,0,0,6">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="140"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{x:Static loc:UiText+Trailers.UnlockRankLabel}"
+                                               VerticalAlignment="Center"
+                                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                    <Grid Grid.Column="1">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="180"/>
+                                            <ColumnDefinition Width="60"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Slider x:Name="UnlockRankSlider"
+                                                Minimum="0"
+                                                Maximum="30"
+                                                TickFrequency="1"
+                                                IsSnapToTickEnabled="True"
+                                                VerticalAlignment="Center"
+                                                ValueChanged="UnlockRankSlider_ValueChanged"/>
+                                        <TextBox x:Name="UnlockRankTextBox"
+                                                 Grid.Column="1"
+                                                 Margin="10,0,0,0"
+                                                 Padding="8,6"
+                                                 VerticalContentAlignment="Center"
+                                                 TextChanged="UnlockRankTextBox_TextChanged"/>
+                                    </Grid>
+                                </Grid>
+                                <TextBlock x:Name="UnlockRankHintText"
+                                           Text="{x:Static loc:UiText+Trailers.UnlockRankHint}"
+                                           Margin="140,0,0,18"
+                                           TextWrapping="Wrap"
+                                           FontSize="11"
+                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Content="{x:Static loc:UiText+Trailers.SaveChanges}"
+                                            Padding="14,8"
+                                            Margin="0,0,8,0"
+                                            Click="SaveTuningButton_Click"/>
+                                    <Button x:Name="RestoreTrailerButton"
+                                            Content="{x:Static loc:UiText+Trailers.RestoreThisTrailer}"
+                                            Padding="14,8"
+                                            Click="RestoreTrailerButton_Click"/>
+                                </StackPanel>
+
+                                <TextBlock x:Name="TuningStatusText"
+                                           Margin="0,12,0,0"
+                                           TextWrapping="Wrap"
+                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+</UserControl>

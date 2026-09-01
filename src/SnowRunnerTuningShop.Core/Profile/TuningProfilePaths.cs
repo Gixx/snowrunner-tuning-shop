@@ -67,7 +67,7 @@ public static class TuningProfilePaths
             }
 
             return category.Equals("trucks", StringComparison.OrdinalIgnoreCase)
-                ? IsTruckEntry(normalized)
+                ? IsTruckEntry(normalized) || IsTrailerEntry(normalized)
                 : true;
         }
 
@@ -88,4 +88,7 @@ public static class TuningProfilePaths
             && !relative.Contains('/')
             && !relative.Contains('\\');
     }
+
+    private static bool IsTrailerEntry(string entryPath) =>
+        entryPath.Contains("/classes/trucks/trailers/", StringComparison.OrdinalIgnoreCase);
 }

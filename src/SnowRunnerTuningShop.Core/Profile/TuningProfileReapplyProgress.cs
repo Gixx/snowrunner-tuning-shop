@@ -22,6 +22,7 @@ public static class TuningProfileEntryCategories
     public const string Winches = "winches";
     public const string Tires = "tires";
     public const string Vehicles = "vehicles";
+    public const string Trailers = "trailers";
     public const string Rocks = "rocks";
     public const string General = "general";
     public const string PhotoMode = "photo-mode";
@@ -59,6 +60,11 @@ public static class TuningProfileEntryCategories
             || normalized.Contains("/classes/tires/", StringComparison.Ordinal))
         {
             return Tires;
+        }
+
+        if (normalized.Contains("/classes/trucks/trailers/", StringComparison.Ordinal))
+        {
+            return Trailers;
         }
 
         if (normalized.Contains("/classes/trucks/", StringComparison.Ordinal))

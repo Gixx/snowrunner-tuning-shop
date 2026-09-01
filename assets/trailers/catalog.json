@@ -1,0 +1,538 @@
+[
+    {
+        "id": "semitrailer_rocket",
+        "displayName": "Assembled rocket",
+        "hitch": "saddle-high",
+        "function": "mission",
+        "isQuest": false,
+        "imageFile": "assembled-rocket.jpg"
+    },
+    {
+        "id": "scout_trailer_offroad_cargo",
+        "displayName": "Cargo Scout Trailer",
+        "hitch": "scout",
+        "function": "mission",
+        "isQuest": true,
+        "imageFile": "offroad-scout-packed.jpg"
+    },
+    {
+        "id": "semitrailer_coiled_tubing",
+        "displayName": "Coiled Tubing Semi-Trailer",
+        "hitch": "saddle-high",
+        "function": "mission",
+        "isQuest": true,
+        "imageFile": "coiled-tubing.jpg"
+    },
+    {
+        "id": "semitrailer_heavy_construction_equipment",
+        "displayName": "Construction Rig Semi-Trailer",
+        "hitch": "saddle-high",
+        "function": "mission",
+        "isQuest": true,
+        "imageFile": "contruction-rig.jpg"
+    },
+    {
+        "id": "trailer_cultivator",
+        "displayName": "Cultivator",
+        "hitch": "standard",
+        "function": "farming",
+        "isQuest": false,
+        "imageFile": "cultivator.jpg"
+    },
+    {
+        "id": "scout_trailer_offroad_tent",
+        "displayName": "Curtainside Scout Trailer",
+        "hitch": "scout",
+        "function": "mission",
+        "isQuest": true,
+        "imageFile": "curtainside-scout.jpg"
+    },
+    {
+        "id": "trailer_flatbed_special_2",
+        "displayName": "Curtainside Trailer",
+        "hitch": "standard",
+        "function": "mission",
+        "isQuest": true,
+        "imageFile": "curtainside.jpg"
+    },
+    {
+        "id": "train",
+        "displayName": "Diesel Locomotive",
+        "hitch": "other",
+        "function": "mission",
+        "isQuest": false,
+        "imageFile": "diesel-locomotive.jpg"
+    },
+    {
+        "id": "train_dlc_17",
+        "displayName": "Diesel Locomotive (Season 17)",
+        "hitch": "other",
+        "function": "mission",
+        "isQuest": false,
+        "imageFile": "diesel-locomotive-season17.jpg"
+    },
+    {
+        "id": "semitrailer_special_w_cat_770",
+        "displayName": "Disassembled Caterpillar 770G",
+        "hitch": "saddle-low",
+        "function": "mission",
+        "isQuest": true,
+        "imageFile": "disassembled-catepillar.jpg"
+    },
+    {
+        "id": "semitrailer_log_double_hinge",
+        "displayName": "Double Logging Semi-Trailer",
+        "hitch": "saddle-low",
+        "function": "logging",
+        "isQuest": false,
+        "imageFile": "double-logging.jpg"
+    },
+    {
+        "id": "trailer_drilling_machine",
+        "displayName": "Driller Trailer",
+        "hitch": "standard",
+        "function": "mission",
+        "isQuest": true,
+        "imageFile": "driller.jpg"
+    },
+    {
+        "id": "scout_trailer_fishing_1",
+        "displayName": "Fishing Trailer",
+        "hitch": "scout",
+        "function": "mission",
+        "isQuest": true,
+        "imageFile": "fishing-blue.jpg"
+    },
+    {
+        "id": "scout_trailer_fishing_2",
+        "displayName": "Fishing Trailer",
+        "hitch": "scout",
+        "function": "mission",
+        "isQuest": true,
+        "imageFile": "fishing-red.jpg"
+    },
+    {
+        "id": "semitrailer_flatbed_5",
+        "displayName": "Flatbed Semi-Trailer",
+        "hitch": "saddle-low",
+        "function": "cargo",
+        "isQuest": false,
+        "imageFile": "flatbed-semi.jpg"
+    },
+    {
+        "id": "semitrailer_flatbed_6",
+        "displayName": "Flatbed Semi-Trailer Loaded with Parts",
+        "hitch": "saddle-high",
+        "function": "cargo",
+        "isQuest": false,
+        "imageFile": "flatbed-semi-parts.jpg"
+    },
+    {
+        "id": "trailer_flatbed_2",
+        "displayName": "Flatbed Trailer",
+        "hitch": "standard",
+        "function": "cargo",
+        "isQuest": false,
+        "imageFile": "flatbed.jpg"
+    },
+    {
+        "id": "semitrailer_foldable_log",
+        "displayName": "Foldable Logging Semi-Trailer",
+        "hitch": "saddle-low",
+        "function": "logging",
+        "isQuest": false,
+        "imageFile": "foldable-logging.jpg"
+    },
+    {
+        "id": "semitrailer_log_double_ls",
+        "displayName": "Forwood-LS Logging Semi-Trailer",
+        "hitch": "saddle-low",
+        "function": "logging",
+        "isQuest": false,
+        "imageFile": "forwood-logging.jpg"
+    },
+    {
+        "id": "semitrailer_oiltank",
+        "displayName": "Fuel Carrier Semi-Trailer",
+        "hitch": "saddle-low",
+        "function": "maintenance",
+        "isQuest": false,
+        "imageFile": "fuel-carrier-semi.jpg"
+    },
+    {
+        "id": "trailer_oiltank",
+        "displayName": "Fuel Carrier Trailer",
+        "hitch": "standard",
+        "function": "maintenance",
+        "isQuest": false,
+        "imageFile": "fuel-carrier.jpg"
+    },
+    {
+        "id": "trailer_log_medium",
+        "displayName": "Futom-M Logging Trailer",
+        "hitch": "standard",
+        "function": "logging",
+        "isQuest": false,
+        "imageFile": "futom-m-logging.jpg"
+    },
+    {
+        "id": "trailer_log_short",
+        "displayName": "Futom-S Logging Trailer",
+        "hitch": "standard",
+        "function": "logging",
+        "isQuest": false,
+        "imageFile": "futom-s-logging.jpg"
+    },
+    {
+        "id": "trailer_generator",
+        "displayName": "Generator",
+        "hitch": "standard",
+        "function": "maintenance",
+        "isQuest": false,
+        "imageFile": "generator.jpg"
+    },
+    {
+        "id": "semitrailer_gooseneck_4",
+        "displayName": "Gooseneck Semi-Trailer",
+        "hitch": "saddle-low",
+        "function": "cargo",
+        "isQuest": false,
+        "imageFile": "gooseneck.jpg"
+    },
+    {
+        "id": "semitrailer_gooseneck_3",
+        "displayName": "Gooseneck Semi-Trailer with Parts",
+        "hitch": "saddle-low",
+        "function": "cargo",
+        "isQuest": false,
+        "imageFile": "gooseneck-parts.jpg"
+    },
+    {
+        "id": "semitrailer_m747",
+        "displayName": "Heavy Duty Lowboy Trailer",
+        "hitch": "saddle-high",
+        "function": "cargo",
+        "isQuest": false,
+        "imageFile": "heavy-duty-lowboy.jpg"
+    },
+    {
+        "id": "semitrailer_heavy_oiltank",
+        "displayName": "Heavy Fuel Tanker Semi-Trailer",
+        "hitch": "saddle-high",
+        "function": "maintenance",
+        "isQuest": false,
+        "imageFile": "heavy-fuel-tanker.jpg"
+    },
+    {
+        "id": "semitrailer_cat770g",
+        "displayName": "Heavy Rock Trailer",
+        "hitch": "saddle-low",
+        "function": "mission",
+        "isQuest": true,
+        "imageFile": "heavy-rock-trailer.jpg"
+    },
+    {
+        "id": "semitrailer_watertank",
+        "displayName": "Heavy Water Carrier Trailer",
+        "hitch": "saddle-low",
+        "function": "maintenance",
+        "isQuest": false,
+        "imageFile": "heavy-water-carrier.jpg"
+    },
+    {
+        "id": "scout_trailer_heavy_repair",
+        "displayName": "Large Service Scout Trailer",
+        "hitch": "scout",
+        "function": "maintenance",
+        "isQuest": false,
+        "imageFile": "large-service-scout.jpg"
+    },
+    {
+        "id": "trailer_log_pole",
+        "displayName": "Log Carrier Rear",
+        "hitch": "standard",
+        "function": "logging",
+        "isQuest": false,
+        "imageFile": "log-carrier-rear.jpg"
+    },
+    {
+        "id": "trailer_log",
+        "displayName": "Log Trailer",
+        "hitch": "standard",
+        "function": "logging",
+        "isQuest": false,
+        "imageFile": "log-trailer.jpg"
+    },
+    {
+        "id": "trailer_addon_maintainer",
+        "displayName": "Maintenance Trailer",
+        "hitch": "standard",
+        "function": "maintenance",
+        "isQuest": false,
+        "imageFile": "maintenance-trailer.jpg"
+    },
+    {
+        "id": "semitrailer_star",
+        "displayName": "Movie Star's Trailer",
+        "hitch": "saddle-low",
+        "function": "mission",
+        "isQuest": true,
+        "imageFile": "movie-star-trailer.jpg"
+    },
+    {
+        "id": "trailer_planter",
+        "displayName": "Multi-row Planter",
+        "hitch": "standard",
+        "function": "farming",
+        "isQuest": false,
+        "imageFile": "multi-row-planner.jpg"
+    },
+    {
+        "id": "scout_trailer_offroad",
+        "displayName": "Offroad Scout Trailer",
+        "hitch": "scout",
+        "function": "cargo",
+        "isQuest": false,
+        "imageFile": "offroad-scout.jpg"
+    },
+    {
+        "id": "semitrailer_anchor",
+        "displayName": "Oil Platform Anchor",
+        "hitch": "saddle-high",
+        "function": "mission",
+        "isQuest": true,
+        "imageFile": "oil-platform-anchor.jpg"
+    },
+    {
+        "id": "semitrailer_oil_rig",
+        "displayName": "Oil Rig Salvage Semi-Trailer",
+        "hitch": "saddle-high",
+        "function": "mission",
+        "isQuest": true,
+        "imageFile": "oil-rig-salvage.jpg"
+    },
+    {
+        "id": "semitrailer_oil_refinery",
+        "displayName": "Oil Tank Semi-Trailer",
+        "hitch": "saddle-high",
+        "function": "mission",
+        "isQuest": true,
+        "imageFile": "oil-tank.jpg"
+    },
+    {
+        "id": "pacific_p16_trailer_log_pole",
+        "displayName": "Pacific P16 Logging Trailer",
+        "hitch": "standard",
+        "function": "logging",
+        "isQuest": false,
+        "imageFile": "log-carrier-rear-p16.jpg"
+    },
+    {
+        "id": "cargo_cabin_01",
+        "displayName": "Portable Cabin",
+        "hitch": "standard",
+        "function": "cargo",
+        "isQuest": false,
+        "imageFile": "portable-cabin.jpg"
+    },
+    {
+        "id": "trailer_harvester",
+        "displayName": "Potato Harvester",
+        "hitch": "standard",
+        "function": "farming",
+        "isQuest": false,
+        "imageFile": "potato-harvester.jpg"
+    },
+    {
+        "id": "scout_trailer_radar",
+        "displayName": "Prototype Exploration Unit",
+        "hitch": "scout",
+        "function": "maintenance",
+        "isQuest": false,
+        "imageFile": "prototype-exploration-unit.jpg"
+    },
+    {
+        "id": "trailer_flatbed_ramps_4",
+        "displayName": "Ramped Flatbed Trailer",
+        "hitch": "standard",
+        "function": "cargo",
+        "isQuest": false,
+        "imageFile": "ramped-flatbed.jpg"
+    },
+    {
+        "id": "trailer_train_rocket",
+        "displayName": "Rocket Carrier Platform",
+        "hitch": "other",
+        "function": "mission",
+        "isQuest": false,
+        "imageFile": "rocket-carrier-platform.jpg"
+    },
+    {
+        "id": "semitrailer_for_rocket",
+        "displayName": "Rocket Carrier Semi-trailer",
+        "hitch": "saddle-high",
+        "function": "mission",
+        "isQuest": true,
+        "imageFile": "rocket-carrier.jpg"
+    },
+    {
+        "id": "scout_trailer_flatbed_2",
+        "displayName": "Scout Flatbed",
+        "hitch": "scout",
+        "function": "cargo",
+        "isQuest": false,
+        "imageFile": "scout-flatbed.jpg"
+    },
+    {
+        "id": "scout_trailer_oiltank",
+        "displayName": "Scout Fuel Carrier",
+        "hitch": "scout",
+        "function": "maintenance",
+        "isQuest": false,
+        "imageFile": "scout-fuel-carrier.jpg"
+    },
+    {
+        "id": "semitrailer_fishing_boat",
+        "displayName": "Semi-Trailer with a fishing boat",
+        "hitch": "saddle-high",
+        "function": "mission",
+        "isQuest": true,
+        "imageFile": "semi-trailer-with-boat.jpg"
+    },
+    {
+        "id": "scout_trailer_light_repair",
+        "displayName": "Service Scout Trailer",
+        "hitch": "scout",
+        "function": "maintenance",
+        "isQuest": false,
+        "imageFile": "service-scout.jpg"
+    },
+    {
+        "id": "trailer_service_2",
+        "displayName": "Service Trailer",
+        "hitch": "standard",
+        "function": "maintenance",
+        "isQuest": false,
+        "imageFile": "service-trailer.jpg"
+    },
+    {
+        "id": "train_wagons_dlc_17",
+        "displayName": "Set of Train Cars",
+        "hitch": "other",
+        "function": "mission",
+        "isQuest": false,
+        "imageFile": "set-of-trai-cars.jpg"
+    },
+    {
+        "id": "semitrailer_flatbed_3",
+        "displayName": "Short Flatbed Semi-Trailer with Parts",
+        "hitch": "saddle-low",
+        "function": "cargo",
+        "isQuest": false,
+        "imageFile": "short-flatbed-semi.jpg"
+    },
+    {
+        "id": "semitrailer_sideboard_5",
+        "displayName": "Sideboard Semi-Trailer",
+        "hitch": "saddle-low",
+        "function": "cargo",
+        "isQuest": false,
+        "imageFile": "sideboard-semi.jpg"
+    },
+    {
+        "id": "trailer_sideboard_2",
+        "displayName": "Sideboard Trailer",
+        "hitch": "standard",
+        "function": "cargo",
+        "isQuest": false,
+        "imageFile": "sideboard-trailer.jpg"
+    },
+    {
+        "id": "scout_trailer_flatbed_1",
+        "displayName": "Small Scout Flatbed",
+        "hitch": "scout",
+        "function": "cargo",
+        "isQuest": false,
+        "imageFile": "small-scout-flatbed.jpg"
+    },
+    {
+        "id": "semitrailer_big_crane",
+        "displayName": "Special Crane Trailer",
+        "hitch": "saddle-high",
+        "function": "mission",
+        "isQuest": true,
+        "imageFile": "special-crane-trailer.jpg"
+    },
+    {
+        "id": "semitrailer_steam_turbine",
+        "displayName": "Steam Turbine",
+        "hitch": "saddle-high",
+        "function": "mission",
+        "isQuest": true,
+        "imageFile": "steam-turbine.jpg"
+    },
+    {
+        "id": "semitrailer_stepdeck_5",
+        "displayName": "Stepdeck Semi-Trailer",
+        "hitch": "saddle-low",
+        "function": "cargo",
+        "isQuest": false,
+        "imageFile": "stepdeck-semi.jpg"
+    },
+    {
+        "id": "semitrailer_gooseneck_8",
+        "displayName": "Superheavy Semi-Trailer",
+        "hitch": "saddle-high",
+        "function": "cargo",
+        "isQuest": false,
+        "imageFile": "superheavy-semi.jpg"
+    },
+    {
+        "id": "semitrailer_star_dlc_18",
+        "displayName": "Trailer Home",
+        "hitch": "saddle-low",
+        "function": "mission",
+        "isQuest": true,
+        "imageFile": "trailer-home.jpg"
+    },
+    {
+        "id": "semitrailer_reactor_starter",
+        "displayName": "Turbo Generator Stator",
+        "hitch": "saddle-high",
+        "function": "mission",
+        "isQuest": true,
+        "imageFile": "turbo-generator-strator.jpg"
+    },
+    {
+        "id": "trailer_watertank",
+        "displayName": "Water Carrier Trailer",
+        "hitch": "standard",
+        "function": "maintenance",
+        "isQuest": false,
+        "imageFile": "water-carrier.jpg"
+    },
+    {
+        "id": "semitrailer_stepdeck_plane_02",
+        "displayName": "Wide Flatbed 3-Axle Semi",
+        "hitch": "saddle-high",
+        "function": "cargo",
+        "isQuest": false,
+        "imageFile": "wide-flatbed-3-axle.jpg"
+    },
+    {
+        "id": "semitrailer_stepdeck_plane_01",
+        "displayName": "Wide Flatbed Semi-Trailer",
+        "hitch": "saddle-high",
+        "function": "cargo",
+        "isQuest": false,
+        "imageFile": "wide-flatbed-semi.jpg"
+    },
+    {
+        "id": "semitrailer_wind_blade",
+        "displayName": "Wind Turbine Blade",
+        "hitch": "saddle-high",
+        "function": "mission",
+        "isQuest": false,
+        "imageFile": "wind-turbine-blade.jpg"
+    }
+]

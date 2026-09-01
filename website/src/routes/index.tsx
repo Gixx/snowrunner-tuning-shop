@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
 import {
   Download,
   Github,
@@ -13,11 +14,16 @@ import {
 
 import { Snowfall } from "@/components/Snowfall";
 import { Reveal } from "@/components/Reveal";
-import shotHome from "@/assets/shot-193429.png";
-import shotGeneral from "@/assets/shot-193436.png";
-import shotParts from "@/assets/shot-193445.png";
-import shotVehicles from "@/assets/shot-193453.png";
-import shotVehicle from "@/assets/shot-193501.png";
+import { Lightbox, type GalleryShot } from "@/components/Lightbox";
+import shotHome from "@/assets/shot-home.png";
+import shotGeneral from "@/assets/shot-general.png";
+import shotParts from "@/assets/shot-parts.png";
+import shotVehicles from "@/assets/shot-vehicles.png";
+import shotVehicle from "@/assets/shot-vehicle.png";
+import shotTrailers from "@/assets/shot-trailers.png";
+import shotTrailer from "@/assets/shot-trailer.png";
+import shotPhotoMode from "@/assets/shot-photo-mode.png";
+import shotSettings from "@/assets/shot-settings.png";
 
 const RELEASE_URL = "https://github.com/Gixx/snowrunner-tuning-shop/releases/latest";
 const REPO_URL = "https://github.com/Gixx/snowrunner-tuning-shop";
@@ -128,15 +134,59 @@ const features = [
   },
 ];
 
-const shots = [
-  { src: shotHome, alt: "SnowRunner Tuning Shop home screen showing baseline status and pak overview", label: "Home — baseline status" },
-  { src: shotParts, alt: "Engine list with global torque, fuel and responsiveness multipliers", label: "Parts — engines" },
-  { src: shotVehicles, alt: "Grid of 116 SnowRunner vehicles filtered by class", label: "Vehicles — 116 trucks" },
-  { src: shotVehicle, alt: "Vehicle tuning panel for the AVENHORN A15 with fuel tank, steering and diff lock", label: "Vehicle tuning" },
-  { src: shotGeneral, alt: "General tuning with camera collision mode and trail rock size slider", label: "General tuning" },
+const shots: GalleryShot[] = [
+  {
+    src: shotTrailer,
+    alt: "Trailer tuning panel for the fishing-boat semi with store price, store availability and unlock rank",
+    label: "Trailer tuning",
+  },
+  {
+    src: shotHome,
+    alt: "SnowRunner Tuning Shop home screen showing baseline status and pak overview",
+    label: "Home — baseline status",
+  },
+  {
+    src: shotGeneral,
+    alt: "General tuning with camera collision mode and trail rock size slider",
+    label: "General tuning",
+  },
+  {
+    src: shotParts,
+    alt: "Engine list with global torque, fuel and responsiveness multipliers",
+    label: "Parts — engines",
+  },
+  {
+    src: shotVehicles,
+    alt: "Grid of 116 SnowRunner vehicles filtered by class",
+    label: "Vehicles — 116 trucks",
+  },
+  {
+    src: shotTrailers,
+    alt: "Trailer catalog grid filtered by hitch, with per-trailer photos",
+    label: "Trailers — 67 trailers",
+  },
+  {
+    src: shotVehicle,
+    alt: "Vehicle tuning panel for the Futom 7290RA with fuel tank, steering and store settings",
+    label: "Vehicle tuning",
+  },
+  {
+    src: shotPhotoMode,
+    alt: "Photo Mode defaults with weather, color grading, vignette and film grain",
+    label: "Photo Mode defaults",
+  },
+  {
+    src: shotSettings,
+    alt: "Settings page with theme, language, workspace restore and update check",
+    label: "Settings",
+  },
 ];
 
+const HERO_INDEX = shots.findIndex((shot) => shot.src === shotVehicle);
+
 function Index() {
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-background font-sans text-foreground">
       {/* Hero */}
@@ -205,15 +255,20 @@ function Index() {
           </Reveal>
 
           <Reveal delay={320}>
-            <div className="mt-16 overflow-hidden rounded-md border border-border bg-card/70 shadow-[0_40px_80px_-30px_rgba(0,0,0,0.9)] backdrop-blur">
+            <button
+              type="button"
+              onClick={() => setLightboxIndex(HERO_INDEX >= 0 ? HERO_INDEX : 0)}
+              className="mt-16 block w-full overflow-hidden rounded-md border border-border bg-card/70 p-0 text-left shadow-[0_40px_80px_-30px_rgba(0,0,0,0.9)] backdrop-blur transition-transform hover:scale-[1.01]"
+              aria-label="View vehicle tuning screenshot full size"
+            >
               <img
                 src={shotVehicle}
                 alt="SnowRunner Tuning Shop vehicle tuning panel with fuel tank, front steer, responsiveness, diff lock and drive settings"
                 width={1782}
                 height={1221}
-                className="h-auto w-full"
+                className="h-auto w-full cursor-zoom-in"
               />
-            </div>
+            </button>
           </Reveal>
         </div>
       </section>
@@ -263,19 +318,27 @@ function Index() {
         <div className="mx-auto max-w-6xl px-6">
           <Reveal>
             <h2 className="font-display text-5xl tracking-tight md:text-6xl">INSIDE THE SHOP</h2>
+            <p className="mt-4 text-muted-foreground">Click a screenshot to open it full size. Arrow keys and Esc work in the viewer.</p>
           </Reveal>
           <div className="mt-12 grid gap-8 md:grid-cols-2">
             {shots.map((s, i) => (
               <Reveal key={s.label} delay={(i % 2) * 120} className={i === 0 ? "md:col-span-2" : ""}>
                 <figure className="overflow-hidden rounded-md border border-border bg-card shadow-[0_30px_60px_-35px_rgba(0,0,0,0.9)]">
-                  <img
-                    src={s.src}
-                    alt={s.alt}
-                    width={1782}
-                    height={1221}
-                    loading="lazy"
-                    className="h-auto w-full transition-transform duration-700 hover:scale-[1.02]"
-                  />
+                  <button
+                    type="button"
+                    onClick={() => setLightboxIndex(i)}
+                    className="m-0 block w-full cursor-zoom-in border-0 bg-transparent p-0 text-left"
+                    aria-label={`View ${s.label} full size`}
+                  >
+                    <img
+                      src={s.src}
+                      alt={s.alt}
+                      width={1782}
+                      height={1221}
+                      loading="lazy"
+                      className="h-auto w-full transition-transform duration-700 hover:scale-[1.02]"
+                    />
+                  </button>
                   <figcaption className="border-t border-border px-5 py-3 text-xs uppercase tracking-[0.2em] text-muted-foreground">
                     {s.label}
                   </figcaption>
@@ -317,7 +380,7 @@ function Index() {
               <span className="shine-text">GET THE TUNING SHOP</span>
             </h2>
             <p className="mt-5 text-muted-foreground">
-              Version 1.2.2 · Windows installer · free forever · no account, no telemetry.
+              Version 1.3.0 · Windows installer · free forever · no account, no telemetry.
             </p>
             <a
               href={RELEASE_URL}
@@ -349,6 +412,12 @@ function Index() {
           </a>
         </div>
       </footer>
+      <Lightbox
+        shots={shots}
+        index={lightboxIndex}
+        onClose={() => setLightboxIndex(null)}
+        onIndexChange={setLightboxIndex}
+      />
     </main>
   );
 }

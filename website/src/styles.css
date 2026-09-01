@@ -240,3 +240,91 @@
   .snow-layer, .aurora-blob, .shine-text { animation: none !important; }
   .reveal { opacity: 1; transform: none; transition: none; }
 }
+
+.lightbox-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3.5rem 4.5rem 2rem;
+  background: oklch(0.12 0.012 250 / 88%);
+  backdrop-filter: blur(10px);
+}
+.lightbox-frame {
+  display: flex;
+  max-height: 100%;
+  max-width: min(92vw, 1400px);
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.lightbox-image {
+  max-height: calc(100vh - 7.5rem);
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+  border-radius: 0.25rem;
+  border: 1px solid var(--color-border);
+  box-shadow: 0 40px 80px -24px oklch(0 0 0 / 80%);
+}
+.lightbox-caption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-muted-foreground);
+}
+.lightbox-count {
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-primary);
+}
+.lightbox-hint {
+  margin: 0;
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: oklch(0.7 0.02 250 / 70%);
+}
+.lightbox-close,
+.lightbox-nav {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-border);
+  background: oklch(0.21 0.014 250 / 90%);
+  color: var(--color-foreground);
+  transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease;
+}
+.lightbox-close:hover,
+.lightbox-nav:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+.lightbox-close {
+  top: 1rem;
+  right: 1rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.25rem;
+}
+.lightbox-nav {
+  top: 50%;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 999px;
+  transform: translateY(-50%);
+}
+.lightbox-nav-prev { left: 0.75rem; }
+.lightbox-nav-next { right: 0.75rem; }
+
+@media (max-width: 700px) {
+  .lightbox-backdrop { padding: 4rem 0.75rem 1.5rem; }
+  .lightbox-nav { display: none; }
+}

@@ -9,6 +9,22 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ---
 
+## [Unreleased]
+
+---
+
+## [1.3.0] — 2026-09-01
+
+### Added
+- **Trailers page:** new nav page (below Vehicles) listing every trailer from `initial.pak`, filtered by hitch (Scout, Standard, Saddle Low, Saddle High) plus Mission. Cards and the detail page use per-trailer photos from `assets/trailers` (hitch defaults remain as fallback).
+- **Trailer XML tuning:** edit store price, unlock rank, store availability (GameData IsQuest), and existing fuel / water / repair / spare-wheel capacities (fields are not added if the trailer never had them). Global multipliers scale those values from the baseline; restore this trailer or all trailers from baseline. Trailer XML is included in the tuning profile reapply.
+- **Mission trailers in the trailer store:** **Make mission trailers purchasable** sets `IsQuest` to false, including values inherited from a parent XML (rocket / wind-blade). Trains and other special hitches get an extra `InstallSocket Type="Trailer"` so they can appear in the regular trailer store. Per-trailer **Available in store** does the same for one XML.
+
+### Fixed
+- **Trailer store names:** Season 17's diesel locomotive no longer shares the DLC 3 "Diesel Locomotive" label (now "Diesel Locomotive (Season 17)"). The wind-turbine-blade semi no longer uses the assembled-rocket name; both get unique string-table keys so the in-game store matches the catalog.
+
+---
+
 ## [1.2.2] — 2026-08-31
 
 ### Added
@@ -208,6 +224,8 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ---
 
+[Unreleased]: https://github.com/Gixx/snowrunner-tuning-shop/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.3.0
 [1.2.2]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.2.2
 [1.2.1]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.2.1
 [1.2.0]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.2.0

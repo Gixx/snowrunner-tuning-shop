@@ -12,6 +12,7 @@ public static class UiText
         public static string General => StringResources.Get("Nav.General", "General");
         public static string Parts => StringResources.Get("Nav.Parts", "Parts");
         public static string Vehicles => StringResources.Get("Nav.Vehicles", "Vehicles");
+        public static string Trailers => StringResources.Get("Nav.Trailers", "Trailers");
         public static string PhotoMode => StringResources.Get("Nav.PhotoMode", "Photo Mode");
         public static string Settings => StringResources.Get("Nav.Settings", "Settings");
         public static string OpenMenu => StringResources.Get("Nav.OpenMenu", "Menu");
@@ -323,6 +324,100 @@ public static class UiText
         public static string RestoredMessage() => "This vehicle was restored from the baseline.";
     }
 
+    public static class Trailers
+    {
+        public static string All => StringResources.Get("Trailers.All", "All");
+        public static string HitchScout => StringResources.Get("Trailers.HitchScout", "Scout");
+        public static string HitchStandard => StringResources.Get("Trailers.HitchStandard", "Standard");
+        public static string HitchSaddleLow => StringResources.Get("Trailers.HitchSaddleLow", "Saddle Low");
+        public static string HitchSaddleHigh => StringResources.Get("Trailers.HitchSaddleHigh", "Saddle High");
+        public static string HitchOther => StringResources.Get("Trailers.HitchOther", "Special");
+        public static string Mission => StringResources.Get("Trailers.Mission", "Mission");
+        public static string BackToList => StringResources.Get("Trailers.BackToList", "← Back to list");
+        public static string CatalogMissing => StringResources.Get("Trailers.CatalogMissing", "Trailer catalog assets were not found.");
+        public static string SearchPlaceholder => StringResources.Get("Trailers.SearchPlaceholder", "Search by name…");
+        public static string HitchLabel => StringResources.Get("Trailers.HitchLabel", "Hitch");
+        public static string FunctionLabel => StringResources.Get("Trailers.FunctionLabel", "Function");
+        public static string MissionYes => StringResources.Get("Trailers.MissionYes", "Yes");
+        public static string MissionNo => StringResources.Get("Trailers.MissionNo", "No");
+        public static string LoadPakHint => StringResources.Get("Trailers.LoadPakHint", "Load an initial.pak on the Home page first.");
+        public static string TrailerNotFound => StringResources.Get("Trailers.TrailerNotFound", "This trailer could not be matched to an XML file in the loaded pak.");
+        public static string TuningTitle => StringResources.Get("Trailers.TuningTitle", "Trailer tuning");
+        public static string FuelTankLabel => StringResources.Get("Trailers.FuelTankLabel", "Fuel tank");
+        public static string FuelUnit => StringResources.Get("Trailers.FuelUnit", "L");
+        public static string WaterTankLabel => StringResources.Get("Trailers.WaterTankLabel", "Water tank");
+        public static string RepairPartsLabel => StringResources.Get("Trailers.RepairPartsLabel", "Repair parts");
+        public static string SpareWheelsLabel => StringResources.Get("Trailers.SpareWheelsLabel", "Spare wheels");
+        public static string StorePriceLabel => StringResources.Get("Trailers.StorePriceLabel", "Store price");
+        public static string UnlockRankLabel => StringResources.Get("Trailers.UnlockRankLabel", "Unlock rank");
+        public static string UnlockRankHint => StringResources.Get("Trailers.UnlockRankHint", "Player rank required in the trailer store (GameData UnlockByRank). Use 0 to clear the rank gate.");
+        public static string SaveChanges => StringResources.Get("Trailers.SaveChanges", "Save changes");
+        public static string RestoreThisTrailer => StringResources.Get("Trailers.RestoreThisTrailer", "Restore this trailer to baseline");
+        public static string RestoreAllTrailers => StringResources.Get("Trailers.RestoreAllTrailers", "Restore all trailers to baseline");
+        public static string RestoreAllTrailersConfirmTitle => StringResources.Get("Trailers.RestoreAllTrailersConfirmTitle", "Restore all trailers?");
+        public static string RestoreAllTrailersConfirmMessage => StringResources.Get("Trailers.RestoreAllTrailersConfirmMessage", "This restores every trailer XML from your baseline pak (fuel, water, repairs, wheels, price, unlock rank, and store availability). Continue?");
+        public static string RestoreAllTrailersSuccessTitle => StringResources.Get("Trailers.RestoreAllTrailersSuccessTitle", "Trailers restored");
+        public static string RestoreSuccessTitle => StringResources.Get("Trailers.RestoreSuccessTitle", "Trailer restored");
+        public static string SaveSuccessTitle => StringResources.Get("Trailers.SaveSuccessTitle", "Saved successfully");
+        public static string SaveErrorTitle => StringResources.Get("Trailers.SaveErrorTitle", "Save error");
+        public static string LoadPakForGlobalHint => StringResources.Get("Trailers.LoadPakForGlobalHint", "Load an initial.pak on the Home page to enable global trailer multipliers.");
+        public static string GlobalMultipliersTitle => StringResources.Get("Trailers.GlobalMultipliersTitle", "Global multipliers (relative to the baseline values)");
+        public static string GlobalMultipliersHint => StringResources.Get("Trailers.GlobalMultipliersHint", "Fuel, repair parts, spare wheels, and store price scale from baseline on trailers that already have those fields. Independent of the hitch filter below.");
+        public static string ApplyGlobalMultipliers => StringResources.Get("Trailers.ApplyGlobalMultipliers", "Apply to all trailers");
+        public static string StoreUnlocksTitle => StringResources.Get("Trailers.StoreUnlocksTitle", "Trailer store");
+        public static string StoreUnlocksHint => StringResources.Get("Trailers.StoreUnlocksHint", "Quest trailers are hidden by GameData IsQuest (including values inherited from a parent XML). Trains and similar special hitches also need a regular trailer socket so the store can list them. Restore all trailers to undo.");
+        public static string MakeMissionTrailersPurchasable => StringResources.Get("Trailers.MakeMissionTrailersPurchasable", "Make mission trailers purchasable");
+        public static string AvailableInStoreLabel => StringResources.Get("Trailers.AvailableInStoreLabel", "Available in store");
+        public static string AvailableInStoreHint => StringResources.Get("Trailers.AvailableInStoreHint", "Unchecked keeps GameData IsQuest=true. Special hitches (train, rocket platform) get an extra Type=Trailer socket so they appear next to pintle trailers.");
+        public static string FuelMultiplierDefault => StringResources.Get("Trailers.FuelMultiplierDefault", "Fuel tank: 1 (baseline)");
+        public static string RepairsMultiplierDefault => StringResources.Get("Trailers.RepairsMultiplierDefault", "Repair parts: 1 (baseline)");
+        public static string WheelsMultiplierDefault => StringResources.Get("Trailers.WheelsMultiplierDefault", "Spare wheels: 1 (baseline)");
+        public static string PriceMultiplierDefault => StringResources.Get("Trailers.PriceMultiplierDefault", "Store price: 1 (baseline)");
+        public static string InvalidFuel => StringResources.Get("Trailers.InvalidFuel", "Fuel tank must be a whole number of liters (1–10000).");
+        public static string InvalidWater => StringResources.Get("Trailers.InvalidWater", "Water tank must be a whole number of liters (1–10000).");
+        public static string InvalidRepairs => StringResources.Get("Trailers.InvalidRepairs", "Repair parts must be a whole number from 0 to 10,000.");
+        public static string InvalidWheels => StringResources.Get("Trailers.InvalidWheels", "Spare wheels must be a whole number from 0 to 99.");
+        public static string InvalidPrice => StringResources.Get("Trailers.InvalidPrice", "Store price must be a whole number from 0 to 9,999,999.");
+        public static string InvalidUnlockRank => StringResources.Get("Trailers.InvalidUnlockRank", "Unlock rank must be a whole number from 0 to 30.");
+        public static string NoChangesToSave => StringResources.Get("Trailers.NoChangesToSave", "No trailer changes were detected to save.");
+        public static string NoTunableFields => StringResources.Get("Trailers.NoTunableFields", "This trailer has no fuel, water, repair, wheel, or store-price fields to edit.");
+
+        public static string GlobalMultipliersSavedMessage(int changedTrailers, int updatedFiles) =>
+            $"Global trailer multipliers applied to {changedTrailers} trailer(s) ({updatedFiles} file(s) updated).";
+
+        public static string StoreUnlocksSavedMessage(int changedTrailers, int updatedFiles) =>
+            $"Made {changedTrailers} mission trailer(s) purchasable ({updatedFiles} file(s) updated).";
+
+        public static string RestoreAllTrailersSavedMessage(int changedTrailers, int updatedFiles) =>
+            $"Restored {changedTrailers} trailer(s) from baseline ({updatedFiles} file(s) updated).";
+
+        public static string SavedMessage() => "Trailer tuning saved.";
+        public static string RestoredMessage() => "This trailer was restored from the baseline.";
+
+        public static string CountLabel(int count) =>
+            StringResources.Format("Trailers.CountLabel", "{0} trailers", count);
+
+        public static string HitchName(string hitch) => hitch.Trim().ToLowerInvariant() switch
+        {
+            "scout" => HitchScout,
+            "standard" => HitchStandard,
+            "saddle-low" => HitchSaddleLow,
+            "saddle-high" => HitchSaddleHigh,
+            "other" => HitchOther,
+            _ => hitch,
+        };
+
+        public static string FunctionName(string function) => function.Trim().ToLowerInvariant() switch
+        {
+            "cargo" => StringResources.Get("Trailers.FunctionCargo", "Cargo"),
+            "logging" => StringResources.Get("Trailers.FunctionLogging", "Logging"),
+            "maintenance" => StringResources.Get("Trailers.FunctionMaintenance", "Maintenance"),
+            "mission" => Mission,
+            "farming" => StringResources.Get("Trailers.FunctionFarming", "Farming"),
+            _ => function,
+        };
+    }
+
     public static class SafeRange
     {
         public static string InvalidNumber => StringResources.Get("SafeRange.InvalidNumber", "Enter a valid number.");
@@ -515,6 +610,7 @@ public static class UiText
                 TuningProfileEntryCategories.Winches => StringResources.Get("Workspace.ReapplyCategory.Winches", "winches"),
                 TuningProfileEntryCategories.Tires => StringResources.Get("Workspace.ReapplyCategory.Tires", "tires"),
                 TuningProfileEntryCategories.Vehicles => StringResources.Get("Workspace.ReapplyCategory.Vehicles", "vehicles"),
+                TuningProfileEntryCategories.Trailers => StringResources.Get("Workspace.ReapplyCategory.Trailers", "trailers"),
                 TuningProfileEntryCategories.Rocks => StringResources.Get("Workspace.ReapplyCategory.Rocks", "rocks"),
                 TuningProfileEntryCategories.General => StringResources.Get("Workspace.ReapplyCategory.General", "general"),
                 TuningProfileEntryCategories.PhotoMode => StringResources.Get("Workspace.ReapplyCategory.PhotoMode", "photo mode"),

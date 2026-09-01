@@ -47,4 +47,20 @@ public sealed class TuningFieldRange
         Baseline = baseline,
         UnitSuffix = "°",
     };
+
+    public static TuningFieldRange RepairParts(double? baseline) => new()
+    {
+        Min = 0,
+        Max = 10_000,
+        Baseline = baseline,
+    };
+
+    public static TuningFieldRange SpareWheels(double? baseline) => new()
+    {
+        Min = 0,
+        Max = 99,
+        Baseline = baseline,
+    };
+
+    public static TuningFieldRange WaterLiters(double? baseline) => FuelLiters(baseline);
 }

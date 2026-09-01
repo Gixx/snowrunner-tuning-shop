@@ -37,19 +37,25 @@ internal static class AppPaths
         return null;
     }
 
-    public static string? TryFindVehiclesAssetsDirectory()
+    public static string? TryFindVehiclesAssetsDirectory() =>
+        TryFindCatalogAssetsDirectory("vehicles");
+
+    public static string? TryFindTrailersAssetsDirectory() =>
+        TryFindCatalogAssetsDirectory("trailers");
+
+    private static string? TryFindCatalogAssetsDirectory(string folderName)
     {
         var root = TryFindRepoRoot();
         if (root is not null)
         {
-            var fromRepo = Path.Combine(root, "assets", "vehicles");
+            var fromRepo = Path.Combine(root, "assets", folderName);
             if (Directory.Exists(fromRepo) && File.Exists(Path.Combine(fromRepo, "catalog.json")))
             {
                 return fromRepo;
             }
         }
 
-        var fromOutput = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "assets", "vehicles"));
+        var fromOutput = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "assets", folderName));
         if (Directory.Exists(fromOutput) && File.Exists(Path.Combine(fromOutput, "catalog.json")))
         {
             return fromOutput;
