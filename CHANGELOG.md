@@ -16,6 +16,7 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 ## [1.3.0] — 2026-09-01
 
 ### Added
+- **Mercedes-Benz Trucks Dual Pack 2:** Mercedes 3850 (Heavy Duty) and Mercedes Mamute (Offroad) on the Vehicles list and edit page. New DLC engines, gearboxes, suspensions and tires load from the pak automatically; both trucks use the existing medium-truck winches.
 - **Trailers page:** new nav page (below Vehicles) listing every trailer from `initial.pak`, filtered by hitch (Scout, Standard, Saddle Low, Saddle High) plus Mission. Cards and the detail page use per-trailer photos from `assets/trailers` (hitch defaults remain as fallback).
 - **Trailer XML tuning:** edit store price, unlock rank, store availability (GameData IsQuest), and existing fuel / water / repair / spare-wheel capacities (fields are not added if the trailer never had them). Global multipliers scale those values from the baseline; restore this trailer or all trailers from baseline. Trailer XML is included in the tuning profile reapply.
 - **Mission trailers in the trailer store:** **Make mission trailers purchasable** sets `IsQuest` to false, including values inherited from a parent XML (rocket / wind-blade). Trains and other special hitches get an extra `InstallSocket Type="Trailer"` so they can appear in the regular trailer store. Per-trailer **Available in store** does the same for one XML.

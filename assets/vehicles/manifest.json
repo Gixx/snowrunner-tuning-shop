@@ -119,6 +119,13 @@
         "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/1/10/Store_mp.jpg/revision/latest/scale-to-width-down/512?format=original"
     },
     {
+        "file":  "Store_mercedes_3850.png",
+        "sourceWikiFile":  "store-screenshot-cleaned.png",
+        "displayName":  "Mercedes 3850",
+        "bytes":  490728,
+        "sourceUrl":  "in-game store screenshot (DLC overlay removed)"
+    },
+    {
         "file":  "Store_pstd4.png",
         "sourceWikiFile":  "Store_pstd4.jpg",
         "displayName":  "Padera STD-4",
@@ -474,6 +481,13 @@
         "displayName":  "Mack Defense M917",
         "bytes":  148362,
         "sourceUrl":  "https://static.wikia.nocookie.net/spintires/images/b/b6/Store_mdm917.png/revision/latest/scale-to-width-down/512?format=original"
+    },
+    {
+        "file":  "Store_mercedes_mamute.png",
+        "sourceWikiFile":  "store-screenshot-cleaned.png",
+        "displayName":  "Mercedes Mamute",
+        "bytes":  520531,
+        "sourceUrl":  "in-game store screenshot (DLC overlay removed)"
     },
     {
         "file":  "Store_mba3332.png",

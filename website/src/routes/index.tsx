@@ -24,6 +24,9 @@ import shotTrailers from "@/assets/shot-trailers.png";
 import shotTrailer from "@/assets/shot-trailer.png";
 import shotPhotoMode from "@/assets/shot-photo-mode.png";
 import shotSettings from "@/assets/shot-settings.png";
+import mercedes3850 from "@/assets/mercedes-3850.png";
+import mercedesMamute from "@/assets/mercedes-mamute.png";
+import { SITE_DESCRIPTION, SITE_TITLE } from "@/lib/site";
 
 const RELEASE_URL = "https://github.com/Gixx/snowrunner-tuning-shop/releases/latest";
 const REPO_URL = "https://github.com/Gixx/snowrunner-tuning-shop";
@@ -82,20 +85,8 @@ function BadgeRow({ className = "" }: { className?: string }) {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "SnowRunner Tuning Shop — Tune the Game's Default Settings" },
-      {
-        name: "description",
-        content:
-          "Free, open-source desktop tool to fine-tune SnowRunner's initial.pak: engines, gearboxes, suspensions, fuel consumption, steering, AWD and diff lock — with a one-click baseline restore.",
-      },
-      { property: "og:title", content: "SnowRunner Tuning Shop — Tune the Game's Defaults" },
-      {
-        property: "og:description",
-        content:
-          "Open-source tweaker for SnowRunner: parts, vehicles, fuel, steering, AWD and diff lock. Safe baseline backup and restore.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
+      { title: SITE_TITLE },
+      { name: "description", content: SITE_DESCRIPTION },
     ],
   }),
   component: Index,
@@ -129,8 +120,8 @@ const features = [
   },
   {
     icon: Layers,
-    title: "Base game + 48 DLC packs",
-    body: "Reads all 11 500+ XML entries, 116 vehicles and every DLC package straight out of the archive.",
+    title: "Base game + 49 DLC packs",
+    body: "Reads all 11 700+ XML entries, 118 vehicles and every DLC package straight out of the archive.",
   },
 ];
 
@@ -157,8 +148,8 @@ const shots: GalleryShot[] = [
   },
   {
     src: shotVehicles,
-    alt: "Grid of 116 SnowRunner vehicles filtered by class",
-    label: "Vehicles — 116 trucks",
+    alt: "Grid of 118 SnowRunner vehicles filtered by class",
+    label: "Vehicles — 118 trucks",
   },
   {
     src: shotTrailers,
@@ -273,14 +264,61 @@ function Index() {
         </div>
       </section>
 
+      {/* Mercedes Pack 2 */}
+      <section className="border-t border-border bg-background">
+        <div className="mx-auto max-w-6xl px-6 py-20">
+          <Reveal>
+            <h2 className="font-display text-5xl tracking-tight md:text-6xl">Mercedes Pack 2 supported</h2>
+            <p className="mt-4 max-w-2xl text-muted-foreground">
+              Dual Pack 2's Mercedes 3850 and Mercedes Mamute are on the Vehicles page — fuel, steering, store
+              price and the rest, same as every other truck.
+            </p>
+          </Reveal>
+          <div className="mt-10 grid max-w-3xl gap-6 sm:grid-cols-2">
+            {[
+              {
+                src: mercedes3850,
+                name: "Mercedes 3850",
+                cls: "Heavy Duty",
+                alt: "Mercedes 3850 Heavy Duty truck from Dual Pack 2",
+              },
+              {
+                src: mercedesMamute,
+                name: "Mercedes Mamute",
+                cls: "Offroad",
+                alt: "Mercedes Mamute Offroad truck from Dual Pack 2",
+              },
+            ].map((truck, i) => (
+              <Reveal key={truck.name} delay={i * 100}>
+                <figure className="overflow-hidden rounded-md border border-border bg-card shadow-[0_24px_50px_-30px_rgba(0,0,0,0.85)]">
+                  <img
+                    src={truck.src}
+                    alt={truck.alt}
+                    width={423}
+                    height={602}
+                    className="h-auto w-full"
+                  />
+                  <figcaption className="border-t border-border px-4 py-3">
+                    <span className="block text-sm font-medium text-foreground">{truck.name}</span>
+                    <span className="mt-0.5 block text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                      {truck.cls}
+                    </span>
+                  </figcaption>
+                </figure>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Stats */}
       <section className="border-y border-border bg-card/40">
         <div className="mx-auto grid max-w-6xl grid-cols-2 gap-px px-6 md:grid-cols-4">
           {[
-            ["116", "vehicles"],
+            ["118", "vehicles"],
             ["125", "engines"],
             ["214", "suspensions"],
-            ["48", "DLC packs"],
+            ["49", "DLC packs"],
           ].map(([n, l], i) => (
             <Reveal key={l} delay={i * 90}>
               <div className="py-10 text-center">

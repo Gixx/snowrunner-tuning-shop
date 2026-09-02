@@ -8,6 +8,7 @@ public static class CountryMarks
     {
         ["AU"] = "AUS",
         ["BE"] = "B",
+        ["BR"] = "BR",
         ["BY"] = "BY",
         ["CA"] = "CDN",
         ["CN"] = "CHN",

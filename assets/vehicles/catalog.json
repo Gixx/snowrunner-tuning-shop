@@ -102,6 +102,12 @@
         "imageFile":  "Store_mp.png"
     },
     {
+        "id":  "mercedes_3850",
+        "displayName":  "Mercedes 3850",
+        "category":  "Heavy Duty",
+        "imageFile":  "Store_mercedes_3850.png"
+    },
+    {
         "id":  "pstd4",
         "displayName":  "Padera STD-4",
         "category":  "Heavy Duty",
@@ -406,6 +412,12 @@
         "displayName":  "Mack Defense M917",
         "category":  "Offroad",
         "imageFile":  "Store_mdm917.png"
+    },
+    {
+        "id":  "mercedes_mamute_1519",
+        "displayName":  "Mercedes Mamute",
+        "category":  "Offroad",
+        "imageFile":  "Store_mercedes_mamute.png"
     },
     {
         "id":  "mba3332",

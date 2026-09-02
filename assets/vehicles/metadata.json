@@ -270,6 +270,11 @@
       "flagFile": "flags/be.png"
     },
     {
+      "code": "BR",
+      "name": "Brazil",
+      "flagFile": "flags/br.png"
+    },
+    {
       "code": "BY",
       "name": "Belarus",
       "flagFile": "flags/by.png"
@@ -894,6 +899,22 @@
       "countryCode": "US",
       "countryName": "United States",
       "year": 2019
+    },
+    {
+      "id": "mercedes_3850",
+      "manufacturerId": "mercedes-benz",
+      "basedOn": "Mercedes-Benz NG 3850",
+      "countryCode": "DE",
+      "countryName": "Germany",
+      "year": 1980
+    },
+    {
+      "id": "mercedes_mamute_1519",
+      "manufacturerId": "mercedes-benz",
+      "basedOn": "Mercedes-Benz/Engesa LG-1519",
+      "countryCode": "BR",
+      "countryName": "Brazil",
+      "year": 1976
     },
     {
       "id": "mba3332",

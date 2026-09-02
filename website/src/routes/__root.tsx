@@ -9,6 +9,17 @@ import {
 import type { ReactNode } from "react";
 
 import appCss from "../styles.css?url";
+import {
+  OG_IMAGE_ALT,
+  OG_IMAGE_HEIGHT,
+  OG_IMAGE_TYPE,
+  OG_IMAGE_URL,
+  OG_IMAGE_WIDTH,
+  SITE_DESCRIPTION,
+  SITE_NAME,
+  SITE_TITLE,
+  SITE_URL,
+} from "@/lib/site";
 
 function NotFoundComponent() {
   return (
@@ -72,23 +83,30 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "SnowRunner Tuning Shop" },
-      {
-        name: "description",
-        content:
-          "Free, open-source desktop tool to fine-tune SnowRunner's initial.pak.",
-      },
+      { title: SITE_TITLE },
+      { name: "description", content: SITE_DESCRIPTION },
       { name: "author", content: "Gixx" },
-      { property: "og:title", content: "SnowRunner Tuning Shop" },
-      {
-        property: "og:description",
-        content:
-          "Open-source tweaker for SnowRunner: parts, vehicles, fuel, steering, AWD and diff lock.",
-      },
+      { name: "robots", content: "index, follow, max-image-preview:large" },
+      { property: "og:site_name", content: SITE_NAME },
+      { property: "og:locale", content: "en_US" },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: SITE_URL },
+      { property: "og:title", content: SITE_TITLE },
+      { property: "og:description", content: SITE_DESCRIPTION },
+      { property: "og:image", content: OG_IMAGE_URL },
+      { property: "og:image:secure_url", content: OG_IMAGE_URL },
+      { property: "og:image:type", content: OG_IMAGE_TYPE },
+      { property: "og:image:width", content: String(OG_IMAGE_WIDTH) },
+      { property: "og:image:height", content: String(OG_IMAGE_HEIGHT) },
+      { property: "og:image:alt", content: OG_IMAGE_ALT },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: SITE_TITLE },
+      { name: "twitter:description", content: SITE_DESCRIPTION },
+      { name: "twitter:image", content: OG_IMAGE_URL },
+      { name: "twitter:image:alt", content: OG_IMAGE_ALT },
     ],
     links: [
+      { rel: "canonical", href: SITE_URL },
       { rel: "stylesheet", href: appCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
