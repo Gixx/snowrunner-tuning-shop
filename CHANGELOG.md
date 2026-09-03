@@ -13,6 +13,17 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ---
 
+## [1.3.1] — 2026-09-03
+
+### Added
+- **Always-on diff lock and AWD (all vehicles):** two checkboxes on the Vehicles global multipliers panel. When checked, Apply to all vehicles sets every truck to always-on diff lock and/or always-on AWD (same XML as the per-truck Drive / Diff lock controls).
+
+### Fixed
+- **Global sliders skipped new DLC files:** after Dual Pack 2, Mercedes engines, gearboxes, suspensions, wheels and the two new trucks were listed from the working pak but ignored by global multipliers when they were not yet in the baseline snapshot. Global applies on Parts, Vehicles, Trailers, and General now scale from the working file when the baseline has no copy.
+- **Parts decimal typing:** editing values such as `4.05` in the Parts grids rejected `.` and cropped `3.0` back to `3` while typing (`PropertyChanged` + `0.##` format). Numeric cells now commit on LostFocus with invariant decimal parsing.
+
+---
+
 ## [1.3.0] — 2026-09-01
 
 ### Added
@@ -225,7 +236,8 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ---
 
-[Unreleased]: https://github.com/Gixx/snowrunner-tuning-shop/compare/v1.3.0...HEAD
+[Unreleased]: https://github.com/Gixx/snowrunner-tuning-shop/compare/v1.3.1...HEAD
+[1.3.1]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.3.1
 [1.3.0]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.3.0
 [1.2.2]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.2.2
 [1.2.1]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.2.1

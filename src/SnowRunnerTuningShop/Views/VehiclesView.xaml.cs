@@ -106,6 +106,8 @@ public partial class VehiclesView : UserControl
         FrontSteerGlobalSlider.IsEnabled = canApply;
         ResponsivenessMultiplierSlider.IsEnabled = canApply;
         PriceMultiplierSlider.IsEnabled = canApply;
+        AlwaysOnDiffLockCheckBox.IsEnabled = canApply;
+        AlwaysOnAwdCheckBox.IsEnabled = canApply;
         ReleaseRegionLockCheckBox.IsEnabled = canApply;
         UnlockAllVehiclesCheckBox.IsEnabled = canApply;
         ApplyStoreUnlocksButton.IsEnabled = canApply;
@@ -202,7 +204,9 @@ public partial class VehiclesView : UserControl
                 GetMultiplier(FuelMultiplierSlider),
                 GetFrontSteerGlobalMode(FrontSteerGlobalSlider),
                 GetMultiplier(ResponsivenessMultiplierSlider),
-                GetMultiplier(PriceMultiplierSlider));
+                GetMultiplier(PriceMultiplierSlider),
+                AlwaysOnDiffLockCheckBox.IsChecked == true,
+                AlwaysOnAwdCheckBox.IsChecked == true);
 
             _trucksPakPath = null;
             if (_currentCard is not null && DetailPanel.Visibility == Visibility.Visible)

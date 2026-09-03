@@ -121,7 +121,9 @@ public static class TruckTuningService
         double fuelMultiplier,
         TruckFrontSteerGlobalMode frontSteerMode,
         double responsivenessMultiplier,
-        double priceMultiplier)
+        double priceMultiplier,
+        bool alwaysOnDiffLock = false,
+        bool alwaysOnAwd = false)
     {
         ValidateMultiplier(fuelMultiplier, nameof(fuelMultiplier));
         ValidateMultiplier(responsivenessMultiplier, nameof(responsivenessMultiplier));
@@ -133,12 +135,16 @@ public static class TruckTuningService
 
         return MutateDirectTrucksFromBaseline(
             pakPath,
-            baselineText => ApplyGlobalMultipliersToText(
+            (workingArchive, entryPath, baselineText) => ApplyGlobalMultipliersToText(
+                workingArchive,
+                Path.GetFileNameWithoutExtension(entryPath),
                 baselineText,
                 fuelMultiplier,
                 frontSteerMode,
                 responsivenessMultiplier,
-                priceMultiplier));
+                priceMultiplier,
+                alwaysOnDiffLock,
+                alwaysOnAwd));
     }
 
     public static TruckTuningSaveResult ApplyGlobalStoreUnlocks(
@@ -220,7 +226,7 @@ public static class TruckTuningService
 
     private static TruckTuningSaveResult MutateDirectTrucksFromBaseline(
         string pakPath,
-        Func<string, string> transformBaselineText)
+        Func<ZipArchive, string, string, string> transformBaselineText)
     {
         var baselinePath = PakBaselineService.RequireBaseline(pakPath);
 
@@ -240,14 +246,8 @@ public static class TruckTuningService
                     continue;
                 }
 
-                var baselineEntry = PakEntryLocator.FindEntry(baselineArchive, entryPath);
-                if (baselineEntry is null)
-                {
-                    continue;
-                }
-
-                var baselineText = ReadEntryText(baselineEntry);
-                var updatedText = transformBaselineText(baselineText);
+                var baselineText = PakVanillaText.Read(baselineArchive, entry, ReadEntryText);
+                var updatedText = transformBaselineText(currentArchive, entryPath, baselineText);
 
                 var currentText = ReadEntryText(entry);
                 if (!string.Equals(currentText, updatedText, StringComparison.Ordinal))
@@ -450,16 +450,20 @@ public static class TruckTuningService
     }
 
     private static string ApplyGlobalMultipliersToText(
+        ZipArchive archive,
+        string truckId,
         string baselineText,
         double fuelMultiplier,
         TruckFrontSteerGlobalMode frontSteerMode,
         double responsivenessMultiplier,
-        double priceMultiplier)
+        double priceMultiplier,
+        bool alwaysOnDiffLock,
+        bool alwaysOnAwd)
     {
         var truckData = TruckDataOpenRegex.Match(baselineText);
         if (!truckData.Success)
         {
-            return baselineText;
+            return ApplyGlobalDriveFlags(archive, truckId, baselineText, alwaysOnDiffLock, alwaysOnAwd);
         }
 
         var attrs = ParseAttributes(truckData.Groups["attrs"].Value);
@@ -508,7 +512,40 @@ public static class TruckTuningService
             };
         }
 
+        return ApplyGlobalDriveFlags(archive, truckId, updated, alwaysOnDiffLock, alwaysOnAwd);
+    }
+
+    private static string ApplyGlobalDriveFlags(
+        ZipArchive archive,
+        string truckId,
+        string truckXml,
+        bool alwaysOnDiffLock,
+        bool alwaysOnAwd)
+    {
+        var updated = truckXml;
+        if (alwaysOnDiffLock)
+        {
+            updated = ApplyAlwaysOnDiffLock(archive, updated, truckId);
+        }
+
+        if (alwaysOnAwd)
+        {
+            updated = ApplyDriveLayout(updated, TruckDriveLayout.AlwaysAwd);
+        }
+
         return updated;
+    }
+
+    private static string ApplyAlwaysOnDiffLock(ZipArchive archive, string truckXml, string truckId)
+    {
+        if (!HasNativeDiffLockInfrastructure(archive, truckXml, truckId))
+        {
+            return SetTruckDataAttribute(truckXml, "DiffLockType", "Always");
+        }
+
+        ResolveDiffLockAddonNames(archive, truckId, truckXml, out _, out var defaultAddon);
+        truckXml = SetTruckDataAttribute(truckXml, "DiffLockType", "Always");
+        return SetDiffLockDefaultAddon(truckXml, defaultAddon);
     }
 
     private static void ValidateMultiplier(double value, string parameterName)

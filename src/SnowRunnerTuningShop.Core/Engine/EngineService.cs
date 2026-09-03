@@ -101,13 +101,7 @@ public static class EngineService
                     continue;
                 }
 
-                var baselineEntry = PakEntryLocator.FindEntry(baselineArchive, entryPath);
-                if (baselineEntry is null)
-                {
-                    continue;
-                }
-
-                var baselineText = ReadEntryText(baselineEntry);
+                var baselineText = PakVanillaText.Read(baselineArchive, entry, ReadEntryText);
                 var updatedText = ApplyMultipliersToText(
                     baselineText,
                     torqueMultiplier,

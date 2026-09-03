@@ -75,13 +75,7 @@ public static class WinchService
                     continue;
                 }
 
-                var backupEntry = PakEntryLocator.FindEntry(backupArchive, entryPath);
-                if (backupEntry is null)
-                {
-                    continue;
-                }
-
-                var backupText = ReadEntryText(backupEntry);
+                var backupText = PakVanillaText.Read(backupArchive, entry, ReadEntryText);
                 var updatedText = ApplyMultipliersToText(
                     backupText,
                     lengthMultiplier,

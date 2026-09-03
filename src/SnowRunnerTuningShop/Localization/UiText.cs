@@ -257,7 +257,9 @@ public static class UiText
         public static string ResponsivenessMultiplierDefault => StringResources.Get("Vehicles.ResponsivenessMultiplierDefault", "Responsiveness: 1 (baseline)");
         public static string PriceMultiplierDefault => StringResources.Get("Vehicles.PriceMultiplierDefault", "Store price: 1 (baseline)");
         public static string ApplyGlobalMultipliers => StringResources.Get("Vehicles.ApplyGlobalMultipliers", "Apply to all vehicles");
-        public static string GlobalMultipliersHint => StringResources.Get("Vehicles.GlobalMultipliersHint", "Fuel tank, store price, and responsiveness scale from baseline. Front steer uses three presets: Min (10°), Default (baseline per truck), Max (60°). Independent of the category filter below.");
+        public static string GlobalMultipliersHint => StringResources.Get("Vehicles.GlobalMultipliersHint", "Fuel tank, store price, and responsiveness scale from baseline. Front steer uses three presets: Min (10°), Default (baseline per truck), Max (60°). Always-on diff lock and AWD, when checked, are forced on every truck. Independent of the category filter below.");
+        public static string AlwaysOnDiffLock => StringResources.Get("Vehicles.AlwaysOnDiffLock", "Always on diff lock");
+        public static string AlwaysOnAwd => StringResources.Get("Vehicles.AlwaysOnAwd", "Always on AWD");
         public static string StoreUnlocksTitle => StringResources.Get("Vehicles.StoreUnlocksTitle", "Store unlocks (all vehicles)");
         public static string StoreUnlocksHint => StringResources.Get("Vehicles.StoreUnlocksHint", "Apply region and rank unlocks across every truck XML. Region-free makes trucks appear in every regional truck store. Unlock all sets UnlockByRank to 0.");
         public static string ReleaseRegionLock => StringResources.Get("Vehicles.ReleaseRegionLock", "Release region lock (all stores)");

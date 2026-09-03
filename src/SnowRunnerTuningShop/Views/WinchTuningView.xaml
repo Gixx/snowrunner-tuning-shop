@@ -120,12 +120,12 @@
                 <DataGridTextColumn Header="{x:Static loc:UiText+Winch.PriceColumn}" Binding="{Binding Price}" Width="80" IsReadOnly="True"
                                     ElementStyle="{StaticResource TuningGridTextElementStyle}"/>
                 <DataGridTextColumn Header="{x:Static loc:UiText+Winch.LengthColumn}"
-                                    Binding="{Binding Length, StringFormat=0.##, UpdateSourceTrigger=PropertyChanged}"
+                                    Binding="{Binding Length, Converter={StaticResource InvariantDoubleConverter}, UpdateSourceTrigger=LostFocus}"
                                     Width="90"
                                     ElementStyle="{StaticResource TuningGridTextElementStyle}"
                                     EditingElementStyle="{StaticResource TuningGridTextEditingStyle}"/>
                 <DataGridTextColumn Header="{x:Static loc:UiText+Winch.StrengthColumn}"
-                                    Binding="{Binding StrengthMult, StringFormat=0.##, UpdateSourceTrigger=PropertyChanged}"
+                                    Binding="{Binding StrengthMult, Converter={StaticResource InvariantDoubleConverter}, UpdateSourceTrigger=LostFocus}"
                                     Width="80"
                                     ElementStyle="{StaticResource TuningGridTextElementStyle}"
                                     EditingElementStyle="{StaticResource TuningGridTextEditingStyle}"/>

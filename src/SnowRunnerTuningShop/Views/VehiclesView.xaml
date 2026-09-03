@@ -152,6 +152,22 @@
                                 IsEnabled="False"
                                 ValueChanged="GlobalMultiplierSlider_ValueChanged"/>
                     </StackPanel>
+
+                    <CheckBox x:Name="AlwaysOnDiffLockCheckBox"
+                              Grid.Row="2"
+                              Grid.Column="1"
+                              Content="{x:Static loc:UiText+Vehicles.AlwaysOnDiffLock}"
+                              VerticalAlignment="Center"
+                              Margin="12,12,12,0"
+                              IsEnabled="False"/>
+
+                    <CheckBox x:Name="AlwaysOnAwdCheckBox"
+                              Grid.Row="2"
+                              Grid.Column="2"
+                              Content="{x:Static loc:UiText+Vehicles.AlwaysOnAwd}"
+                              VerticalAlignment="Center"
+                              Margin="12,12,12,0"
+                              IsEnabled="False"/>
                 </Grid>
             </Expander>
 

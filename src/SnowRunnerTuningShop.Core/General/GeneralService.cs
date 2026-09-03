@@ -194,13 +194,13 @@ public static class GeneralService
             var modKey = $"plants/{plantFile}";
 
             var currentEntry = PakEntryLocator.FindEntry(currentArchive, entryPath);
-            var baselineEntry = PakEntryLocator.FindEntry(baselineArchive, entryPath);
-            if (currentEntry is null || baselineEntry is null)
+            if (currentEntry is null)
             {
                 continue;
             }
 
-            var baselineText = ReadEntryText(baselineEntry);
+            var baselineEntry = PakEntryLocator.FindEntry(baselineArchive, entryPath);
+            var baselineText = ReadEntryText(baselineEntry ?? currentEntry);
             var modText = modAssets.TryGetValue(modKey, out var modBytes)
                 ? Encoding.UTF8.GetString(modBytes)
                 : CreateSyntheticNoStonesPlantText(baselineText);

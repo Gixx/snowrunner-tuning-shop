@@ -157,16 +157,16 @@
                 </DataGridTextColumn>
                 <DataGridTextColumn Header="{x:Static loc:UiText+Engine.PriceColumn}" Binding="{Binding Price}" Width="80" IsReadOnly="True"
                                     ElementStyle="{StaticResource TuningGridTextElementStyle}"/>
-                <DataGridTextColumn Header="{x:Static loc:UiText+Engine.TorqueColumn}" Binding="{Binding Torque, StringFormat=0.##, UpdateSourceTrigger=PropertyChanged}" Width="100"
+                <DataGridTextColumn Header="{x:Static loc:UiText+Engine.TorqueColumn}" Binding="{Binding Torque, Converter={StaticResource InvariantDoubleConverter}, UpdateSourceTrigger=LostFocus}" Width="100"
                                     ElementStyle="{StaticResource TuningGridTextElementStyle}"
                                     EditingElementStyle="{StaticResource TuningGridTextEditingStyle}"/>
-                <DataGridTextColumn Header="{x:Static loc:UiText+Engine.FuelColumn}" Binding="{Binding FuelConsumption, StringFormat=0.##, UpdateSourceTrigger=PropertyChanged}" Width="80"
+                <DataGridTextColumn Header="{x:Static loc:UiText+Engine.FuelColumn}" Binding="{Binding FuelConsumption, Converter={StaticResource InvariantDoubleConverter}, UpdateSourceTrigger=LostFocus}" Width="80"
                                     ElementStyle="{StaticResource TuningGridTextElementStyle}"
                                     EditingElementStyle="{StaticResource TuningGridTextEditingStyle}"/>
-                <DataGridTextColumn Header="{x:Static loc:UiText+Engine.DamageColumn}" Binding="{Binding DamageCapacity, StringFormat=0.##, UpdateSourceTrigger=PropertyChanged}" Width="90"
+                <DataGridTextColumn Header="{x:Static loc:UiText+Engine.DamageColumn}" Binding="{Binding DamageCapacity, Converter={StaticResource InvariantDoubleConverter}, UpdateSourceTrigger=LostFocus}" Width="90"
                                     ElementStyle="{StaticResource TuningGridTextElementStyle}"
                                     EditingElementStyle="{StaticResource TuningGridTextEditingStyle}"/>
-                <DataGridTextColumn Header="{x:Static loc:UiText+Engine.ResponsivenessColumn}" Binding="{Binding EngineResponsiveness, StringFormat=0.####, UpdateSourceTrigger=PropertyChanged}" Width="110"
+                <DataGridTextColumn Header="{x:Static loc:UiText+Engine.ResponsivenessColumn}" Binding="{Binding EngineResponsiveness, Converter={StaticResource InvariantDoubleConverter}, UpdateSourceTrigger=LostFocus}" Width="110"
                                     ElementStyle="{StaticResource TuningGridTextElementStyle}"
                                     EditingElementStyle="{StaticResource TuningGridTextEditingStyle}"/>
             </DataGrid.Columns>

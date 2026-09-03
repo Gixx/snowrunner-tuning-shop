@@ -146,13 +146,13 @@
                 </DataGridTextColumn>
                 <DataGridTextColumn Header="{x:Static loc:UiText+Tires.PriceColumn}" Binding="{Binding Price}" Width="80" IsReadOnly="True"
                                     ElementStyle="{StaticResource TuningGridTextElementStyle}"/>
-                <DataGridTextColumn Header="{x:Static loc:UiText+Tires.OnRoadFrictionColumn}" Binding="{Binding OnRoadFriction, StringFormat=0.##, UpdateSourceTrigger=PropertyChanged}" Width="90"
+                <DataGridTextColumn Header="{x:Static loc:UiText+Tires.OnRoadFrictionColumn}" Binding="{Binding OnRoadFriction, Converter={StaticResource InvariantDoubleConverter}, UpdateSourceTrigger=LostFocus}" Width="90"
                                     ElementStyle="{StaticResource TuningGridTextElementStyle}"
                                     EditingElementStyle="{StaticResource TuningGridTextEditingStyle}"/>
-                <DataGridTextColumn Header="{x:Static loc:UiText+Tires.OffRoadFrictionColumn}" Binding="{Binding OffRoadFriction, StringFormat=0.##, UpdateSourceTrigger=PropertyChanged}" Width="90"
+                <DataGridTextColumn Header="{x:Static loc:UiText+Tires.OffRoadFrictionColumn}" Binding="{Binding OffRoadFriction, Converter={StaticResource InvariantDoubleConverter}, UpdateSourceTrigger=LostFocus}" Width="90"
                                     ElementStyle="{StaticResource TuningGridTextElementStyle}"
                                     EditingElementStyle="{StaticResource TuningGridTextEditingStyle}"/>
-                <DataGridTextColumn Header="{x:Static loc:UiText+Tires.MudFrictionColumn}" Binding="{Binding MudFriction, StringFormat=0.##, UpdateSourceTrigger=PropertyChanged}" Width="80"
+                <DataGridTextColumn Header="{x:Static loc:UiText+Tires.MudFrictionColumn}" Binding="{Binding MudFriction, Converter={StaticResource InvariantDoubleConverter}, UpdateSourceTrigger=LostFocus}" Width="80"
                                     ElementStyle="{StaticResource TuningGridTextElementStyle}"
                                     EditingElementStyle="{StaticResource TuningGridTextEditingStyle}"/>
                 <DataGridCheckBoxColumn Header="{x:Static loc:UiText+Tires.IgnoreIceColumn}"
