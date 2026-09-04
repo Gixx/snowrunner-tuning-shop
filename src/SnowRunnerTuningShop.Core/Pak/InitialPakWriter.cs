@@ -33,10 +33,7 @@ public static class InitialPakWriter
             return 0;
         }
 
-        var normalizedReplacements = replacements.ToDictionary(
-            pair => pair.Key.Replace('\\', '/'),
-            pair => pair.Value,
-            StringComparer.Ordinal);
+        var normalizedReplacements = PakEntryNameMap.ToOrdinalIgnoreCaseDictionary(replacements);
 
         byte[]? cacheBlockBytes = null;
         if (normalizedReplacements.Remove(PakCacheBlockLayoutGuard.CacheBlockEntry, out var cacheBytes))
@@ -61,20 +58,20 @@ public static class InitialPakWriter
             File.Copy(pakPath, tempPath, overwrite: true);
             writeProgress?.Report(new PakWriteProgress(PakWritePhase.Copying, 1, 1));
 
-            var existingEntries = ReadPakEntryNames(tempPath);
+            var existingEntries = PakEntryNameMap.ReadCanonicalNames(tempPath);
             var replacementKeys = normalizedReplacements.Keys.ToArray();
             var toReplace = new Dictionary<string, byte[]>(StringComparer.Ordinal);
             var toAdd = new Dictionary<string, byte[]>(StringComparer.Ordinal);
             for (var index = 0; index < replacementKeys.Length; index++)
             {
                 var key = replacementKeys[index];
-                if (existingEntries.Contains(key))
+                if (existingEntries.TryGetValue(key, out var canonicalName))
                 {
-                    toReplace[key] = normalizedReplacements[key];
+                    toReplace[canonicalName] = normalizedReplacements[key];
                 }
                 else
                 {
-                    toAdd[key] = normalizedReplacements[key];
+                    toAdd[PakEntryLocator.NormalizeEntryPath(key)] = normalizedReplacements[key];
                 }
 
                 var current = index + 1;
@@ -179,8 +176,8 @@ public static class InitialPakWriter
         }
 
         var normalizedPaths = entryPaths
-            .Select(path => path.Replace('\\', '/'))
-            .Distinct(StringComparer.Ordinal)
+            .Select(path => PakEntryLocator.NormalizeEntryPath(path))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToArray();
 
         var tempPath = Path.Combine(
@@ -192,7 +189,19 @@ public static class InitialPakWriter
         try
         {
             File.Copy(targetPakPath, tempPath, overwrite: true);
-            PakRawZipReplacer.CopyEntriesFromSource(tempPath, sourcePakPath, normalizedPaths);
+            var canonicalByRequest = PakEntryNameMap.ReadCanonicalNames(tempPath);
+            var resolvedPaths = new List<string>(normalizedPaths.Length);
+            foreach (var path in normalizedPaths)
+            {
+                if (!canonicalByRequest.TryGetValue(path, out var canonical))
+                {
+                    throw new FileNotFoundException($"Pak entry was not found in target: {path}", targetPakPath);
+                }
+
+                resolvedPaths.Add(canonical);
+            }
+
+            PakRawZipReplacer.CopyEntriesFromSource(tempPath, sourcePakPath, resolvedPaths);
             ClearReadOnlyAttribute(targetPakPath);
 
             try
@@ -296,14 +305,6 @@ public static class InitialPakWriter
                 File.Delete(tempPath);
             }
         }
-    }
-
-    private static HashSet<string> ReadPakEntryNames(string pakPath)
-    {
-        using var archive = ZipFile.OpenRead(pakPath);
-        return archive.Entries
-            .Select(entry => PakEntryLocator.NormalizeEntryPath(entry.FullName))
-            .ToHashSet(StringComparer.OrdinalIgnoreCase);
     }
 
     private static void AddEntries(string pakPath, IReadOnlyDictionary<string, byte[]> entries)

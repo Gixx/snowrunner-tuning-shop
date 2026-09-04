@@ -56,6 +56,14 @@ public partial class MainWindow : Window
             _gameRunningMonitor.Start();
             NavHome.IsChecked = true;
             ShowPage(HomeView);
+            if (WorkspaceConfigStore.ConsumeCorruptConfigWarning())
+            {
+                MessageBox.Show(
+                    Localization.UiText.Main.ConfigCorruptMessage,
+                    Localization.UiText.Main.ConfigCorruptTitle,
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+            }
         };
 
         Closed += (_, _) => _gameRunningMonitor.Dispose();

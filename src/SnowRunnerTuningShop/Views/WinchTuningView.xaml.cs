@@ -80,24 +80,9 @@ public partial class WinchTuningView : UserControl
 
     private void RestoreWinchesButton_Click(object sender, RoutedEventArgs e)
     {
-        if (!PakWriteUi.TryProceed(_session) || !_pakWritesAllowed)
+        if (!PakWriteUi.TryBeginWrite(_session, PakPath, _pakWritesAllowed, requireBaseline: true,
+                () => ReportStatus(UiText.Winch.LoadPakFirst)))
         {
-            return;
-        }
-
-        if (string.IsNullOrWhiteSpace(PakPath))
-        {
-            ReportStatus(UiText.Winch.LoadPakFirst);
-            return;
-        }
-
-        if (!PakBaselineService.HasBaseline(PakPath))
-        {
-            MessageBox.Show(
-                UiText.Main.BaselineMissingShort,
-                UiText.Main.BaselineTitle,
-                MessageBoxButton.OK,
-                MessageBoxImage.Warning);
             return;
         }
 
@@ -128,24 +113,9 @@ public partial class WinchTuningView : UserControl
 
     private void ApplyMultipliersButton_Click(object sender, RoutedEventArgs e)
     {
-        if (!PakWriteUi.TryProceed(_session) || !_pakWritesAllowed)
+        if (!PakWriteUi.TryBeginWrite(_session, PakPath, _pakWritesAllowed, requireBaseline: true,
+                () => ReportStatus(UiText.Winch.LoadPakFirst)))
         {
-            return;
-        }
-
-        if (string.IsNullOrWhiteSpace(PakPath))
-        {
-            ReportStatus(UiText.Winch.LoadPakFirst);
-            return;
-        }
-
-        if (!PakBaselineService.HasBaseline(PakPath))
-        {
-            MessageBox.Show(
-                UiText.Main.BaselineMissingShort,
-                UiText.Main.BaselineTitle,
-                MessageBoxButton.OK,
-                MessageBoxImage.Warning);
             return;
         }
 
@@ -179,14 +149,9 @@ public partial class WinchTuningView : UserControl
 
     private void SaveIndividualButton_Click(object sender, RoutedEventArgs e)
     {
-        if (!PakWriteUi.TryProceed(_session) || !_pakWritesAllowed)
+        if (!PakWriteUi.TryBeginWrite(_session, PakPath, _pakWritesAllowed, requireBaseline: false,
+                () => MessageBox.Show(UiText.Winch.LoadPakFirst, UiText.Winch.LoadErrorTitle, MessageBoxButton.OK, MessageBoxImage.Information)))
         {
-            return;
-        }
-
-        if (string.IsNullOrWhiteSpace(PakPath))
-        {
-            MessageBox.Show(UiText.Winch.LoadPakFirst, UiText.Winch.LoadErrorTitle, MessageBoxButton.OK, MessageBoxImage.Information);
             return;
         }
 

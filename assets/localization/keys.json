@@ -121,6 +121,8 @@
     "Main.BaselineCreatedMessage",
     "Main.BaselineErrorTitle",
     "Main.BaselineMissingShort",
+    "Main.ConfigCorruptTitle",
+    "Main.ConfigCorruptMessage",
     "Main.BaselineReadyNote",
     "Main.BaselineReadyStatus",
     "Main.BaselineReadyTitle",

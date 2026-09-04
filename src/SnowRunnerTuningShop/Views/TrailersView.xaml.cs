@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using SnowRunnerTuningShop.Controls;
 using SnowRunnerTuningShop.Core.Backup;
@@ -28,6 +29,9 @@ public partial class TrailersView : UserControl
     private string _filter = "All";
     private bool _ready;
     private bool _suppressUnlockRankSync;
+    private int _loadVersion;
+    private CancellationTokenSource? _loadCts;
+    private Storyboard? _spinnerStoryboard;
 
     public TrailersView()
     {
@@ -74,7 +78,7 @@ public partial class TrailersView : UserControl
         RefreshGlobalMultipliersPanel();
         if (_currentCard is not null && DetailPanel.Visibility == Visibility.Visible)
         {
-            LoadTuning(_currentCard);
+            _ = LoadTuningAsync(_currentCard);
         }
         else
         {
@@ -184,7 +188,7 @@ public partial class TrailersView : UserControl
             _trailersPakPath = null;
             if (_currentCard is not null && DetailPanel.Visibility == Visibility.Visible)
             {
-                LoadTuning(_currentCard);
+                _ = LoadTuningAsync(_currentCard);
             }
 
             MessageBox.Show(
@@ -232,7 +236,7 @@ public partial class TrailersView : UserControl
             _trailersPakPath = null;
             if (_currentCard is not null && DetailPanel.Visibility == Visibility.Visible)
             {
-                LoadTuning(_currentCard);
+                _ = LoadTuningAsync(_currentCard);
             }
 
             MessageBox.Show(
@@ -293,7 +297,7 @@ public partial class TrailersView : UserControl
             UpdateGlobalMultiplierLabels();
             if (_currentCard is not null && DetailPanel.Visibility == Visibility.Visible)
             {
-                LoadTuning(_currentCard);
+                _ = LoadTuningAsync(_currentCard);
             }
 
             MessageBox.Show(
@@ -404,7 +408,7 @@ public partial class TrailersView : UserControl
         CountTextBlock.Text = UiText.Trailers.CountLabel(_visible.Count);
     }
 
-    private void TrailerCard_Click(object sender, MouseButtonEventArgs e)
+    private async void TrailerCard_Click(object sender, MouseButtonEventArgs e)
     {
         if (sender is not FrameworkElement element || element.DataContext is not TrailerCard card)
         {
@@ -413,7 +417,7 @@ public partial class TrailersView : UserControl
 
         try
         {
-            ShowDetail(card);
+            await ShowDetailAsync(card);
         }
         catch (Exception ex)
         {
@@ -421,7 +425,7 @@ public partial class TrailersView : UserControl
         }
     }
 
-    private void ShowDetail(TrailerCard card)
+    private async Task ShowDetailAsync(TrailerCard card)
     {
         CrashReportContext.SetVehicle(card.Id, card.DisplayName);
         _currentCard = card;
@@ -430,14 +434,20 @@ public partial class TrailersView : UserControl
         DetailHitchText.Text = card.HitchLabel;
         DetailFunctionText.Text = card.FunctionLabel;
         DetailMissionText.Text = card.IsMission ? UiText.Trailers.MissionYes : UiText.Trailers.MissionNo;
-        LoadTuning(card);
 
         ListPanel.Visibility = Visibility.Collapsed;
         DetailPanel.Visibility = Visibility.Visible;
+        await LoadTuningAsync(card);
     }
 
-    private void LoadTuning(TrailerCard card)
+    private async Task LoadTuningAsync(TrailerCard card)
     {
+        var version = ++_loadVersion;
+        _loadCts?.Cancel();
+        _loadCts?.Dispose();
+        _loadCts = new CancellationTokenSource();
+        var cancellationToken = _loadCts.Token;
+
         _currentTrailer = null;
         TuningStatusText.Text = "";
         RefreshRestoreButton();
@@ -448,60 +458,94 @@ public partial class TrailersView : UserControl
             return;
         }
 
+        var pakPath = _session.PakPath;
+        var needsLoad = !string.Equals(_trailersPakPath, pakPath, StringComparison.OrdinalIgnoreCase)
+            || _trailers.Count == 0;
+        if (needsLoad)
+        {
+            SetLoading(true);
+        }
+
         try
         {
-            EnsureTrailersLoaded(_session.PakPath);
+            try
+            {
+                await EnsureTrailersLoadedAsync(pakPath, cancellationToken);
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
+            catch (Exception ex)
+            {
+                if (version != _loadVersion)
+                {
+                    return;
+                }
+
+                ShowTuningHint(ex.Message);
+                return;
+            }
+
+            if (cancellationToken.IsCancellationRequested
+                || version != _loadVersion
+                || !ReferenceEquals(_currentCard, card))
+            {
+                return;
+            }
+
+            var trailer = TrailerTuningService.FindByCatalog(_trailers, card.Id);
+            if (trailer is null)
+            {
+                ShowTuningHint(UiText.Trailers.TrailerNotFound);
+                return;
+            }
+
+            _currentTrailer = trailer;
+            BindCapacityField(FuelRow, FuelCapacityTextBox, trailer.HasFuel, trailer.FuelCapacity);
+            BindCapacityField(WaterRow, WaterCapacityTextBox, trailer.HasWater, trailer.WaterCapacity);
+            BindCapacityField(RepairsRow, RepairsCapacityTextBox, trailer.HasRepairs, trailer.RepairsCapacity);
+            BindCapacityField(WheelsRow, WheelRepairsTextBox, trailer.HasWheels, trailer.WheelRepairsCapacity);
+
+            FuelSafeRangeHint.Visibility = trailer.HasFuel ? Visibility.Visible : Visibility.Collapsed;
+            WaterSafeRangeHint.Visibility = trailer.HasWater ? Visibility.Visible : Visibility.Collapsed;
+            RepairsSafeRangeHint.Visibility = trailer.HasRepairs ? Visibility.Visible : Visibility.Collapsed;
+            WheelsSafeRangeHint.Visibility = trailer.HasWheels ? Visibility.Visible : Visibility.Collapsed;
+
+            PriceRow.Visibility = trailer.HasGameData ? Visibility.Visible : Visibility.Collapsed;
+            PriceSafeRangeHint.Visibility = trailer.HasGameData ? Visibility.Visible : Visibility.Collapsed;
+            AvailableInStoreRow.Visibility = trailer.HasGameData ? Visibility.Visible : Visibility.Collapsed;
+            AvailableInStoreHintText.Visibility = trailer.HasGameData ? Visibility.Visible : Visibility.Collapsed;
+            UnlockRankRow.Visibility = trailer.HasGameData ? Visibility.Visible : Visibility.Collapsed;
+            UnlockRankHintText.Visibility = trailer.HasGameData ? Visibility.Visible : Visibility.Collapsed;
+            if (trailer.HasGameData)
+            {
+                StorePriceTextBox.Text = trailer.Price.ToString(CultureInfo.InvariantCulture);
+                AvailableInStoreCheckBox.IsChecked = trailer.IsAvailableInStore;
+                _suppressUnlockRankSync = true;
+                UnlockRankSlider.Value = trailer.UnlockByRank;
+                UnlockRankTextBox.Text = trailer.UnlockByRank.ToString(CultureInfo.InvariantCulture);
+                _suppressUnlockRankSync = false;
+            }
+
+            if (!trailer.HasFuel && !trailer.HasWater && !trailer.HasRepairs && !trailer.HasWheels && !trailer.HasGameData)
+            {
+                ShowTuningHint(UiText.Trailers.NoTunableFields);
+                return;
+            }
+
+            RefreshSafeRangeHints();
+            TuningHintText.Visibility = Visibility.Collapsed;
+            TuningForm.Visibility = Visibility.Visible;
+            RefreshRestoreButton();
         }
-        catch (Exception ex)
+        finally
         {
-            ShowTuningHint(ex.Message);
-            return;
+            if (version == _loadVersion)
+            {
+                SetLoading(false);
+            }
         }
-
-        var trailer = TrailerTuningService.FindByCatalog(_trailers, card.Id);
-        if (trailer is null)
-        {
-            ShowTuningHint(UiText.Trailers.TrailerNotFound);
-            return;
-        }
-
-        _currentTrailer = trailer;
-        BindCapacityField(FuelRow, FuelCapacityTextBox, trailer.HasFuel, trailer.FuelCapacity);
-        BindCapacityField(WaterRow, WaterCapacityTextBox, trailer.HasWater, trailer.WaterCapacity);
-        BindCapacityField(RepairsRow, RepairsCapacityTextBox, trailer.HasRepairs, trailer.RepairsCapacity);
-        BindCapacityField(WheelsRow, WheelRepairsTextBox, trailer.HasWheels, trailer.WheelRepairsCapacity);
-
-        FuelSafeRangeHint.Visibility = trailer.HasFuel ? Visibility.Visible : Visibility.Collapsed;
-        WaterSafeRangeHint.Visibility = trailer.HasWater ? Visibility.Visible : Visibility.Collapsed;
-        RepairsSafeRangeHint.Visibility = trailer.HasRepairs ? Visibility.Visible : Visibility.Collapsed;
-        WheelsSafeRangeHint.Visibility = trailer.HasWheels ? Visibility.Visible : Visibility.Collapsed;
-
-        PriceRow.Visibility = trailer.HasGameData ? Visibility.Visible : Visibility.Collapsed;
-        PriceSafeRangeHint.Visibility = trailer.HasGameData ? Visibility.Visible : Visibility.Collapsed;
-        AvailableInStoreRow.Visibility = trailer.HasGameData ? Visibility.Visible : Visibility.Collapsed;
-        AvailableInStoreHintText.Visibility = trailer.HasGameData ? Visibility.Visible : Visibility.Collapsed;
-        UnlockRankRow.Visibility = trailer.HasGameData ? Visibility.Visible : Visibility.Collapsed;
-        UnlockRankHintText.Visibility = trailer.HasGameData ? Visibility.Visible : Visibility.Collapsed;
-        if (trailer.HasGameData)
-        {
-            StorePriceTextBox.Text = trailer.Price.ToString(CultureInfo.InvariantCulture);
-            AvailableInStoreCheckBox.IsChecked = trailer.IsAvailableInStore;
-            _suppressUnlockRankSync = true;
-            UnlockRankSlider.Value = trailer.UnlockByRank;
-            UnlockRankTextBox.Text = trailer.UnlockByRank.ToString(CultureInfo.InvariantCulture);
-            _suppressUnlockRankSync = false;
-        }
-
-        if (!trailer.HasFuel && !trailer.HasWater && !trailer.HasRepairs && !trailer.HasWheels && !trailer.HasGameData)
-        {
-            ShowTuningHint(UiText.Trailers.NoTunableFields);
-            return;
-        }
-
-        RefreshSafeRangeHints();
-        TuningHintText.Visibility = Visibility.Collapsed;
-        TuningForm.Visibility = Visibility.Visible;
-        RefreshRestoreButton();
     }
 
     private static void BindCapacityField(FrameworkElement row, TextBox box, bool visible, int value)
@@ -510,15 +554,57 @@ public partial class TrailersView : UserControl
         box.Text = visible ? value.ToString(CultureInfo.InvariantCulture) : "";
     }
 
-    private void EnsureTrailersLoaded(string pakPath)
+    private async Task EnsureTrailersLoadedAsync(string pakPath, CancellationToken cancellationToken = default)
     {
         if (string.Equals(_trailersPakPath, pakPath, StringComparison.OrdinalIgnoreCase) && _trailers.Count > 0)
         {
             return;
         }
 
-        _trailers = TrailerTuningService.LoadTrailers(pakPath, AppLanguage.Current);
+        var language = AppLanguage.Current;
+        var trailers = await Task.Run(() => TrailerTuningService.LoadTrailers(pakPath, language), cancellationToken);
+        cancellationToken.ThrowIfCancellationRequested();
+        _trailers = trailers;
         _trailersPakPath = pakPath;
+    }
+
+    private void SetLoading(bool isLoading)
+    {
+        LoadingOverlay.Visibility = isLoading ? Visibility.Visible : Visibility.Collapsed;
+        if (isLoading)
+        {
+            StartSpinner();
+        }
+        else
+        {
+            StopSpinner();
+        }
+    }
+
+    private void StartSpinner()
+    {
+        _spinnerStoryboard ??= CreateSpinnerStoryboard();
+        _spinnerStoryboard.Begin();
+    }
+
+    private void StopSpinner()
+    {
+        _spinnerStoryboard?.Stop();
+        LoadingSpinnerRotate.Angle = 0;
+    }
+
+    private Storyboard CreateSpinnerStoryboard()
+    {
+        var animation = new DoubleAnimation(0, 360, TimeSpan.FromSeconds(0.85))
+        {
+            RepeatBehavior = RepeatBehavior.Forever,
+        };
+        Storyboard.SetTarget(animation, LoadingSpinnerRotate);
+        Storyboard.SetTargetProperty(animation, new PropertyPath(RotateTransform.AngleProperty));
+
+        var storyboard = new Storyboard();
+        storyboard.Children.Add(animation);
+        return storyboard;
     }
 
     private void ShowTuningHint(string message)
@@ -539,7 +625,7 @@ public partial class TrailersView : UserControl
         SaveTuningButton.IsEnabled = _currentTrailer is not null && canWrite;
     }
 
-    private void SaveTuningButton_Click(object sender, RoutedEventArgs e)
+    private async void SaveTuningButton_Click(object sender, RoutedEventArgs e)
     {
         if (!PakWriteUi.TryProceed(_session))
         {
@@ -592,7 +678,7 @@ public partial class TrailersView : UserControl
         {
             var result = TrailerTuningService.SaveTrailerChanges(_session.PakPath, _currentTrailer);
             _trailersPakPath = null;
-            LoadTuning(_currentCard);
+            await LoadTuningAsync(_currentCard);
             TuningStatusText.Text = result.UpdatedFiles <= 0
                 ? UiText.Trailers.NoChangesToSave
                 : UiText.Trailers.SavedMessage();
@@ -613,7 +699,7 @@ public partial class TrailersView : UserControl
         }
     }
 
-    private void RestoreTrailerButton_Click(object sender, RoutedEventArgs e)
+    private async void RestoreTrailerButton_Click(object sender, RoutedEventArgs e)
     {
         if (!PakWriteUi.TryProceed(_session))
         {
@@ -640,7 +726,7 @@ public partial class TrailersView : UserControl
         {
             var result = TrailerTuningService.RestoreTrailerFromBaseline(_session.PakPath, _currentTrailer.EntryPath);
             _trailersPakPath = null;
-            LoadTuning(_currentCard);
+            await LoadTuningAsync(_currentCard);
             TuningStatusText.Text = result.UpdatedFiles <= 0
                 ? UiText.Trailers.NoChangesToSave
                 : UiText.Trailers.RestoredMessage();
@@ -761,6 +847,9 @@ public partial class TrailersView : UserControl
 
     private void BackButton_Click(object sender, RoutedEventArgs e)
     {
+        _loadVersion++;
+        _loadCts?.Cancel();
+        SetLoading(false);
         _currentCard = null;
         _currentTrailer = null;
         CrashReportContext.ClearVehicle();

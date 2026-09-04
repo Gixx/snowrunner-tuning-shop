@@ -1,4 +1,6 @@
 using System.Globalization;
+using System.IO.Compression;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace SnowRunnerTuningShop.Core.Xml;
@@ -41,4 +43,21 @@ public static class PartXmlHelpers
         vehicleNames.Count == 0
             ? emptyMessage
             : string.Join(", ", vehicleNames);
+
+    public static string ReadEntryUtf8(ZipArchiveEntry entry)
+    {
+        ArgumentNullException.ThrowIfNull(entry);
+        using var stream = entry.Open();
+        using var reader = new StreamReader(stream, Encoding.UTF8, detectEncodingFromByteOrderMarks: true);
+        return reader.ReadToEnd();
+    }
+
+    public static byte[] ReadEntryBytes(ZipArchiveEntry entry)
+    {
+        ArgumentNullException.ThrowIfNull(entry);
+        using var stream = entry.Open();
+        using var memory = new MemoryStream();
+        stream.CopyTo(memory);
+        return memory.ToArray();
+    }
 }

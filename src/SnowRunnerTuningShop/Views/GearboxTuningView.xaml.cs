@@ -78,24 +78,9 @@ public partial class GearboxTuningView : UserControl
 
     private void RestoreGearboxesButton_Click(object sender, RoutedEventArgs e)
     {
-        if (!PakWriteUi.TryProceed(_session) || !_pakWritesAllowed)
+        if (!PakWriteUi.TryBeginWrite(_session, PakPath, _pakWritesAllowed, requireBaseline: true,
+                () => MessageBox.Show(UiText.Gearbox.LoadPakFirst, UiText.Gearbox.LoadErrorTitle, MessageBoxButton.OK, MessageBoxImage.Information)))
         {
-            return;
-        }
-
-        if (string.IsNullOrWhiteSpace(PakPath))
-        {
-            MessageBox.Show(UiText.Gearbox.LoadPakFirst, UiText.Gearbox.LoadErrorTitle, MessageBoxButton.OK, MessageBoxImage.Information);
-            return;
-        }
-
-        if (!PakBaselineService.HasBaseline(PakPath))
-        {
-            MessageBox.Show(
-                UiText.Main.BaselineMissingShort,
-                UiText.Main.BaselineTitle,
-                MessageBoxButton.OK,
-                MessageBoxImage.Warning);
             return;
         }
 
@@ -120,24 +105,9 @@ public partial class GearboxTuningView : UserControl
 
     private void ApplyMultipliersButton_Click(object sender, RoutedEventArgs e)
     {
-        if (!PakWriteUi.TryProceed(_session) || !_pakWritesAllowed)
+        if (!PakWriteUi.TryBeginWrite(_session, PakPath, _pakWritesAllowed, requireBaseline: true,
+                () => MessageBox.Show(UiText.Gearbox.LoadPakFirst, UiText.Gearbox.LoadErrorTitle, MessageBoxButton.OK, MessageBoxImage.Information)))
         {
-            return;
-        }
-
-        if (string.IsNullOrWhiteSpace(PakPath))
-        {
-            MessageBox.Show(UiText.Gearbox.LoadPakFirst, UiText.Gearbox.LoadErrorTitle, MessageBoxButton.OK, MessageBoxImage.Information);
-            return;
-        }
-
-        if (!PakBaselineService.HasBaseline(PakPath))
-        {
-            MessageBox.Show(
-                UiText.Main.BaselineMissingShort,
-                UiText.Main.BaselineTitle,
-                MessageBoxButton.OK,
-                MessageBoxImage.Warning);
             return;
         }
 
@@ -166,14 +136,9 @@ public partial class GearboxTuningView : UserControl
 
     private void SaveIndividualButton_Click(object sender, RoutedEventArgs e)
     {
-        if (!PakWriteUi.TryProceed(_session) || !_pakWritesAllowed)
+        if (!PakWriteUi.TryBeginWrite(_session, PakPath, _pakWritesAllowed, requireBaseline: false,
+                () => MessageBox.Show(UiText.Gearbox.LoadPakFirst, UiText.Gearbox.LoadErrorTitle, MessageBoxButton.OK, MessageBoxImage.Information)))
         {
-            return;
-        }
-
-        if (string.IsNullOrWhiteSpace(PakPath))
-        {
-            MessageBox.Show(UiText.Gearbox.LoadPakFirst, UiText.Gearbox.LoadErrorTitle, MessageBoxButton.OK, MessageBoxImage.Information);
             return;
         }
 

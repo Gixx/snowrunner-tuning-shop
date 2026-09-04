@@ -760,6 +760,31 @@
                 </Border>
             </Grid>
             </ScrollViewer>
+
+            <Border x:Name="LoadingOverlay"
+                    Grid.Row="0"
+                    Grid.RowSpan="2"
+                    Background="#99000000"
+                    Visibility="Collapsed"
+                    CornerRadius="8"
+                    IsHitTestVisible="True">
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <Ellipse Width="42"
+                             Height="42"
+                             StrokeThickness="3.5"
+                             StrokeDashArray="3 1.4"
+                             Stroke="{DynamicResource AccentFillColorDefaultBrush}"
+                             RenderTransformOrigin="0.5,0.5">
+                        <Ellipse.RenderTransform>
+                            <RotateTransform x:Name="LoadingSpinnerRotate"/>
+                        </Ellipse.RenderTransform>
+                    </Ellipse>
+                    <TextBlock Text="{x:Static loc:UiText+Parts.Loading}"
+                               Margin="0,14,0,0"
+                               HorizontalAlignment="Center"
+                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                </StackPanel>
+            </Border>
         </Grid>
     </Grid>
 </UserControl>

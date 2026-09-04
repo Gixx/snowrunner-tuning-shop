@@ -48,42 +48,30 @@ Baseline Trailer socketek megmaradnak; csak a pótlólag beszúrtakat veszi ki. 
 
 ## P1 — magas értékű karbantartás / regresszió
 
-### 6. Parts szolgáltatások másolása (Engine / Gearbox / Suspension / Tires / Winch)
-**Hol:** `Core/{Engine,Gearbox,Suspension,Tires,Winch}/*Service.cs`  
-**Miért:** Ugyanaz a pipeline (zip scan → regex → UsedBy → baseline multipliers → replace) százsoronként. Winch ráadásul `XDocument` (whitespace churn), a többi regex.  
-**Javaslat:** Közös „part set” helper (`PartXmlHelpers` bővítése); egy XML stratégia.
+> **Státusz (2026-09-04):** P1 nagy része kész. Teljes Parts-service unifikáció és Truck God-class szétvágás továbbra is nyitott (inkrementális extractekkel indult).
 
-### 7. Truck / Trailer God class
-**Hol:** `TruckTuningService.cs` (~1.2k), `TrailerTuningService.cs` (~1k)  
-**Miért:** Parse + global apply + store unlock + hitch/quest egy static típusban. Nehéz teszteni és review-zni.  
-**Javaslat:** Szétválasztás: Load/Parse | Mutate | Persist; hitch/quest külön típus.
+### 6. Parts szolgáltatások másolása — **részben**
+`PartXmlHelpers.ReadEntryUtf8` / `ReadEntryBytes` hozzáadva. A öt `*Service` teljes közös pipeline még nincs összevonva (Winch XDocument vs regex).
 
-### 8. UI code-behind klónok
-**Hol:** öt `*TuningView` (~400–520 sor), `VehiclesView` (~1100), `TrailersView` (~860)  
-**Miért:** Write-gate, MessageBox, filter, row VM ismétlődik; könnyű elcsúszni (lásd `TryProceed(null)`).  
-**Javaslat:** Nem kötelező teljes MVVM; elég közös `TuningGridController` / write-gate helper + session injection a Parts gyermekekbe.
+### 7. Truck / Trailer God class — **részben**
+Hitch/store socket → `TrailerHitchXml`. Truck service és trailer persist/parse továbbra is monolit.
 
-### 9. `PakWriteUi.TryProceed(null)` a Parts tabokon — **kész (P0)**
-Session átadás a PartsView-ból; lásd fent.
-### 10. Zip entry név: Ordinal vs OrdinalIgnoreCase
-**Hol:** `InitialPakWriter.ReadPakEntryNames` vs `PakRawZipReplacer`  
-**Miért:** Ignore-case osztályozás után Ordinal lookup → „entry not found” vagy silent miss.  
-**Javaslat:** Egy normalizálás + egy összehasonlító végig.
+### 8. UI code-behind klónok — **részben**
+`PakWriteUi.TryBeginWrite` / `CanRestore` a Parts tuning tabokon. Teljes TuningGridController / Vehicles–Trailers klóncsökkentés nincs.
 
-### 11. Pak I/O és restore tesztek hiánya
-**Hol:** `tests/SnowRunnerTuningShop.Tests` (jelenleg locale + PakFileId + hitch)  
-**Miért:** A legveszélyesebb kód (raw zip, in-place patch, baseline restore, process guard) nincs lefedve.  
-**Javaslat:** Fixture mini-pak → ReplaceEntries round-trip; restore temp+move; hitch undo round-trip.
+### 9. `PakWriteUi.TryProceed(null)` — **kész (P0)**
 
-### 12. Vehicles/Trailers szinkron load a UI szálon
-**Hol:** `VehiclesView` / `TrailersView` `Ensure*Loaded`  
-**Miért:** Nagy pak → UI fagyás detail megnyitáskor. Parts már `Task.Run`.  
-**Javaslat:** Ugyanaz az async + overlay minta.
+### 10. Zip entry név casing — **kész**
+`PakEntryNameMap` + IgnoreCase lookup, canonical casing a raw write-hoz (`InitialPakWriter` / `PakRawZipReplacer`).
 
-### 13. `WorkspaceConfigStore` race + silent corrupt
-**Hol:** `Core/Config/WorkspaceConfigStore.cs`  
-**Miért:** Load-mutate-save lock nélkül; hibás JSON → üres config, user jelzés nélkül.  
-**Javaslat:** Egyszerű lock; corrupt esetén backup + UI figyelmeztetés.
+### 11. Pak I/O és restore tesztek — **kész**
+`tests/.../PakIoTests.cs`: ReplaceEntries round-trip, case-insensitive replace, RemoveEntries, CopyEntriesFromPak, hitch undo.
+
+### 12. Vehicles/Trailers szinkron load — **kész**
+Async `Ensure*Loaded` + DetailPanel loading overlay (Parts minta).
+
+### 13. `WorkspaceConfigStore` race + silent corrupt — **kész**
+Lock; atomikus save; corrupt → `.corrupt.bak` + `ConsumeCorruptConfigWarning` a MainWindow-on.
 
 ---
 
@@ -170,16 +158,15 @@ Vehicles még „planned”; Trailers / General / tests / close-game hiányzik.
 
 | # | Tétel | Típus |
 |---|--------|--------|
-| ~~1~~ | ~~Atomikus full restore~~ | **kész** |
-| ~~2~~ | ~~Marker remove a safe writer útvonalon~~ | **kész** |
-| ~~3~~ | ~~Parts load cancellation~~ | **kész** |
-| ~~4~~ | ~~`TryProceed(_session)` Parts-ben~~ | **kész** |
-| ~~5~~ | ~~Release: test + AppInfo↔tag~~ | **kész** |
-| ~~7~~ | ~~RemoveSupplementalStoreHitch szigorítás~~ | **kész** |
-| 6 | Mini-pak I/O + hitch undo tesztek (bővebb I/O) | P1 regresszió |
-| 8 | Entry-name casing egységesítés | P1 |
+| ~~1–5, 7 hitch, P0~~ | ~~P0 biztonság + hitch undo~~ | **kész** |
+| ~~10~~ | ~~Entry-name casing~~ | **kész** |
+| ~~11~~ | ~~Mini-pak I/O tesztek~~ | **kész** |
+| ~~12~~ | ~~Vehicles/Trailers async~~ | **kész** |
+| ~~13~~ | ~~WorkspaceConfigStore lock/corrupt~~ | **kész** |
+| 6 | Parts service pipeline unifikáció (tovább) | P1 nyitott |
+| 7 | Truck/Trailer további szétválasztás | P1 nyitott |
+| 8 | TuningGridController / UI klóncsökkentés | P1 nyitott |
 | 9 | Vehicles `_meta_build` exclude + README | P2 hygiene |
-| 10 | Közös tuning write-gate / partial extract | P1 karbantartás |
 
 ---
 

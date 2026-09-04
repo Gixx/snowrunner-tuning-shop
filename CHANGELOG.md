@@ -21,10 +21,13 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 - **Safer pak writes (P0):** full baseline restore copies to a temp file and moves into place; marker remove/add no longer uses in-place `ZipArchiveMode.Update` (untouched zip local records stay verbatim).
 - **Trailer store hitch undo:** undoing “Available in store” no longer strips vanilla `Trailer` sockets that already existed beside Train/rocket hitches.
 - **Parts tab load races:** cancelled when switching tabs / pak; write clicks use the shared session so the game-running gate updates immediately.
+- **Zip entry name casing:** replace/add/copy resolve archive names case-insensitively while writing the pak’s canonical casing.
+- **Workspace config:** load/save are locked; corrupt `config.json` is backed up and the user is warned once on startup instead of silently resetting.
+- **Vehicles / Trailers detail load:** truck/trailer XML lists load off the UI thread with a loading overlay (Parts-style), so large paks no longer freeze the window on open.
 
 ### Changed
 - **Release workflow:** runs `dotnet test` and fails if `AppInfo.Version` does not match the `v*` tag before publishing the installer.
-
+- **Trailer hitch logic** extracted to `TrailerHitchXml`; Parts write clicks share `PakWriteUi.TryBeginWrite`; `PartXmlHelpers` gains shared entry read helpers.
 ---
 
 ## [1.3.3] — 2026-09-04

@@ -119,6 +119,8 @@
   "Main.BaselineCreatedMessage": "Baseline created for {0}.\n\nWorking pak:\n{1}\n\nRead-only baseline:\n{2}",
   "Main.BaselineErrorTitle": "Baseline error",
   "Main.BaselineMissingShort": "Baseline is not set. On Home, use Set baseline from original.",
+  "Main.ConfigCorruptTitle": "Settings reset",
+  "Main.ConfigCorruptMessage": "Your Tuning Shop settings file was damaged and has been reset. A backup was saved as config.json.corrupt.bak in the app data folder.",
   "Main.BaselineReadyNote": "Baseline is healthy and ready. Keep the baseline file read-only.",
   "Main.BaselineReadyStatus": "Baseline OK for {0} ({1}, {2:yyyy-MM-dd HH:mm}).",
   "Main.BaselineReadyTitle": "Baseline ready",

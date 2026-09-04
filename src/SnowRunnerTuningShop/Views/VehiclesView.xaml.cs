@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using SnowRunnerTuningShop.Controls;
@@ -34,6 +35,9 @@ public partial class VehiclesView : UserControl
     private bool _ready;
     private bool _suppressUnlockRankSync;
     private bool _suppressRegionFreeSync;
+    private int _loadVersion;
+    private CancellationTokenSource? _loadCts;
+    private Storyboard? _spinnerStoryboard;
 
     public VehiclesView()
     {
@@ -92,7 +96,7 @@ public partial class VehiclesView : UserControl
         RefreshGlobalMultipliersPanel();
         if (_currentCard is not null && DetailPanel.Visibility == Visibility.Visible)
         {
-            LoadTuning(_currentCard);
+            _ = LoadTuningAsync(_currentCard);
         }
         else
         {
@@ -222,7 +226,7 @@ public partial class VehiclesView : UserControl
             _trucksPakPath = null;
             if (_currentCard is not null && DetailPanel.Visibility == Visibility.Visible)
             {
-                LoadTuning(_currentCard);
+                _ = LoadTuningAsync(_currentCard);
             }
 
             MessageBox.Show(
@@ -286,7 +290,7 @@ public partial class VehiclesView : UserControl
             _trucksPakPath = null;
             if (_currentCard is not null && DetailPanel.Visibility == Visibility.Visible)
             {
-                LoadTuning(_currentCard);
+                _ = LoadTuningAsync(_currentCard);
             }
 
             MessageBox.Show(
@@ -466,7 +470,7 @@ public partial class VehiclesView : UserControl
         CountTextBlock.Text = UiText.Vehicles.CountLabel(_visible.Count);
     }
 
-    private void VehicleCard_Click(object sender, MouseButtonEventArgs e)
+    private async void VehicleCard_Click(object sender, MouseButtonEventArgs e)
     {
         if (sender is not FrameworkElement element || element.DataContext is not VehicleCard card)
         {
@@ -475,7 +479,7 @@ public partial class VehiclesView : UserControl
 
         try
         {
-            ShowDetail(card);
+            await ShowDetailAsync(card);
         }
         catch (Exception ex)
         {
@@ -483,7 +487,7 @@ public partial class VehiclesView : UserControl
         }
     }
 
-    private void ShowDetail(VehicleCard card)
+    private async Task ShowDetailAsync(VehicleCard card)
     {
         CrashReportContext.SetVehicle(card.PakId, card.DisplayName);
         _currentCard = card;
@@ -492,10 +496,10 @@ public partial class VehiclesView : UserControl
 
         _metadata.TryGetValue(card.Id, out var meta);
         BindDetailMetadata(meta, card.Category);
-        LoadTuning(card);
 
         ListPanel.Visibility = Visibility.Collapsed;
         DetailPanel.Visibility = Visibility.Visible;
+        await LoadTuningAsync(card);
     }
 
     private void BindDetailMetadata(VehicleMetaInfo? meta, string role)
@@ -546,8 +550,14 @@ public partial class VehiclesView : UserControl
         }
     }
 
-    private void LoadTuning(VehicleCard card)
+    private async Task LoadTuningAsync(VehicleCard card)
     {
+        var version = ++_loadVersion;
+        _loadCts?.Cancel();
+        _loadCts?.Dispose();
+        _loadCts = new CancellationTokenSource();
+        var cancellationToken = _loadCts.Token;
+
         _currentTruck = null;
         TuningStatusText.Text = "";
         RefreshRestoreButton();
@@ -558,67 +568,143 @@ public partial class VehiclesView : UserControl
             return;
         }
 
+        var pakPath = _session.PakPath;
+        var needsLoad = !string.Equals(_trucksPakPath, pakPath, StringComparison.OrdinalIgnoreCase)
+            || _trucks.Count == 0;
+        if (needsLoad)
+        {
+            SetLoading(true);
+        }
+
         try
         {
-            EnsureTrucksLoaded(_session.PakPath);
-        }
-        catch (Exception ex)
-        {
-            ShowTuningHint(ex.Message);
-            return;
-        }
+            try
+            {
+                await EnsureTrucksLoadedAsync(pakPath, cancellationToken);
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
+            catch (Exception ex)
+            {
+                if (version != _loadVersion)
+                {
+                    return;
+                }
 
-        var truck = TruckTuningService.FindByCatalog(_trucks, card.Id, card.PakId);
-        if (truck is null)
-        {
-            ShowTuningHint(UiText.Vehicles.TruckNotFound);
-            return;
-        }
+                ShowTuningHint(ex.Message);
+                return;
+            }
 
-        _currentTruck = truck;
-        FuelCapacityTextBox.Text = truck.FuelCapacity.ToString(CultureInfo.InvariantCulture);
-        StorePriceTextBox.Text = truck.Price.ToString(CultureInfo.InvariantCulture);
-        ResponsivenessTextBox.Text = truck.Responsiveness.ToString("0.######", CultureInfo.InvariantCulture);
-        BindStoreUnlockFields(truck);
-        FrontSteerRow.Visibility = truck.HasFrontSteer ? Visibility.Visible : Visibility.Collapsed;
-        FrontSteerHintText.Visibility = truck.HasFrontSteer ? Visibility.Visible : Visibility.Collapsed;
-        if (truck.HasFrontSteer && truck.FrontSteerAngle is { } frontAngle)
-        {
-            FrontSteerTextBox.Text = frontAngle.ToString("0.######", CultureInfo.InvariantCulture);
-        }
-        else
-        {
-            FrontSteerTextBox.Text = "";
-        }
+            if (cancellationToken.IsCancellationRequested
+                || version != _loadVersion
+                || !ReferenceEquals(_currentCard, card))
+            {
+                return;
+            }
 
-        RearSteerRow.Visibility = truck.HasRearSteer ? Visibility.Visible : Visibility.Collapsed;
-        RearSteerHintText.Visibility = truck.HasRearSteer ? Visibility.Visible : Visibility.Collapsed;
-        if (truck.HasRearSteer && truck.RearSteerAngle is { } rearAngle)
-        {
-            RearSteerTextBox.Text = rearAngle.ToString("0.######", CultureInfo.InvariantCulture);
-        }
-        else
-        {
-            RearSteerTextBox.Text = "";
-        }
+            var truck = TruckTuningService.FindByCatalog(_trucks, card.Id, card.PakId);
+            if (truck is null)
+            {
+                ShowTuningHint(UiText.Vehicles.TruckNotFound);
+                return;
+            }
 
-        BindDiffLockOptions(truck);
-        DriveCombo.SelectedValue = truck.DriveLayout;
-        RefreshSafeRangeHints();
-        TuningHintText.Visibility = Visibility.Collapsed;
-        TuningForm.Visibility = Visibility.Visible;
-        RefreshRestoreButton();
+            _currentTruck = truck;
+            FuelCapacityTextBox.Text = truck.FuelCapacity.ToString(CultureInfo.InvariantCulture);
+            StorePriceTextBox.Text = truck.Price.ToString(CultureInfo.InvariantCulture);
+            ResponsivenessTextBox.Text = truck.Responsiveness.ToString("0.######", CultureInfo.InvariantCulture);
+            BindStoreUnlockFields(truck);
+            FrontSteerRow.Visibility = truck.HasFrontSteer ? Visibility.Visible : Visibility.Collapsed;
+            FrontSteerHintText.Visibility = truck.HasFrontSteer ? Visibility.Visible : Visibility.Collapsed;
+            if (truck.HasFrontSteer && truck.FrontSteerAngle is { } frontAngle)
+            {
+                FrontSteerTextBox.Text = frontAngle.ToString("0.######", CultureInfo.InvariantCulture);
+            }
+            else
+            {
+                FrontSteerTextBox.Text = "";
+            }
+
+            RearSteerRow.Visibility = truck.HasRearSteer ? Visibility.Visible : Visibility.Collapsed;
+            RearSteerHintText.Visibility = truck.HasRearSteer ? Visibility.Visible : Visibility.Collapsed;
+            if (truck.HasRearSteer && truck.RearSteerAngle is { } rearAngle)
+            {
+                RearSteerTextBox.Text = rearAngle.ToString("0.######", CultureInfo.InvariantCulture);
+            }
+            else
+            {
+                RearSteerTextBox.Text = "";
+            }
+
+            BindDiffLockOptions(truck);
+            DriveCombo.SelectedValue = truck.DriveLayout;
+            RefreshSafeRangeHints();
+            TuningHintText.Visibility = Visibility.Collapsed;
+            TuningForm.Visibility = Visibility.Visible;
+            RefreshRestoreButton();
+        }
+        finally
+        {
+            if (version == _loadVersion)
+            {
+                SetLoading(false);
+            }
+        }
     }
 
-    private void EnsureTrucksLoaded(string pakPath)
+    private async Task EnsureTrucksLoadedAsync(string pakPath, CancellationToken cancellationToken = default)
     {
         if (string.Equals(_trucksPakPath, pakPath, StringComparison.OrdinalIgnoreCase) && _trucks.Count > 0)
         {
             return;
         }
 
-        _trucks = TruckTuningService.LoadTrucks(pakPath, AppLanguage.Current);
+        var language = AppLanguage.Current;
+        var trucks = await Task.Run(() => TruckTuningService.LoadTrucks(pakPath, language), cancellationToken);
+        cancellationToken.ThrowIfCancellationRequested();
+        _trucks = trucks;
         _trucksPakPath = pakPath;
+    }
+
+    private void SetLoading(bool isLoading)
+    {
+        LoadingOverlay.Visibility = isLoading ? Visibility.Visible : Visibility.Collapsed;
+        if (isLoading)
+        {
+            StartSpinner();
+        }
+        else
+        {
+            StopSpinner();
+        }
+    }
+
+    private void StartSpinner()
+    {
+        _spinnerStoryboard ??= CreateSpinnerStoryboard();
+        _spinnerStoryboard.Begin();
+    }
+
+    private void StopSpinner()
+    {
+        _spinnerStoryboard?.Stop();
+        LoadingSpinnerRotate.Angle = 0;
+    }
+
+    private Storyboard CreateSpinnerStoryboard()
+    {
+        var animation = new DoubleAnimation(0, 360, TimeSpan.FromSeconds(0.85))
+        {
+            RepeatBehavior = RepeatBehavior.Forever,
+        };
+        Storyboard.SetTarget(animation, LoadingSpinnerRotate);
+        Storyboard.SetTargetProperty(animation, new PropertyPath(RotateTransform.AngleProperty));
+
+        var storyboard = new Storyboard();
+        storyboard.Children.Add(animation);
+        return storyboard;
     }
 
     private void ShowTuningHint(string message)
@@ -675,7 +761,7 @@ public partial class VehiclesView : UserControl
         SaveTuningButton.IsEnabled = _currentTruck is not null && canWrite;
     }
 
-    private void SaveTuningButton_Click(object sender, RoutedEventArgs e)
+    private async void SaveTuningButton_Click(object sender, RoutedEventArgs e)
     {
         if (!PakWriteUi.TryProceed(_session))
         {
@@ -716,7 +802,7 @@ public partial class VehiclesView : UserControl
         {
             var result = TruckTuningService.SaveTruckChanges(_session.PakPath, _currentTruck);
             _trucksPakPath = null;
-            LoadTuning(_currentCard);
+            await LoadTuningAsync(_currentCard);
             TuningStatusText.Text = result.UpdatedFiles <= 0
                 ? UiText.Vehicles.NoChangesToSave
                 : UiText.Vehicles.SavedMessage();
@@ -737,7 +823,7 @@ public partial class VehiclesView : UserControl
         }
     }
 
-    private void RestoreVehicleButton_Click(object sender, RoutedEventArgs e)
+    private async void RestoreVehicleButton_Click(object sender, RoutedEventArgs e)
     {
         if (!PakWriteUi.TryProceed(_session))
         {
@@ -764,7 +850,7 @@ public partial class VehiclesView : UserControl
         {
             var result = TruckTuningService.RestoreTruckFromBaseline(_session.PakPath, _currentTruck.EntryPath);
             _trucksPakPath = null;
-            LoadTuning(_currentCard);
+            await LoadTuningAsync(_currentCard);
             TuningStatusText.Text = result.UpdatedFiles <= 0
                 ? UiText.Vehicles.NoChangesToSave
                 : UiText.Vehicles.RestoredMessage();
@@ -978,6 +1064,9 @@ public partial class VehiclesView : UserControl
 
     private void BackButton_Click(object sender, RoutedEventArgs e)
     {
+        _loadVersion++;
+        _loadCts?.Cancel();
+        SetLoading(false);
         _currentCard = null;
         _currentTruck = null;
         CrashReportContext.ClearVehicle();

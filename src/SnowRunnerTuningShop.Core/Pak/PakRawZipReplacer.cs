@@ -66,10 +66,7 @@ internal static class PakRawZipReplacer
         }
 
         var sourceBytes = File.ReadAllBytes(pakPath);
-        var addByName = entries.ToDictionary(
-            pair => pair.Key.Replace('\\', '/'),
-            pair => pair.Value,
-            StringComparer.Ordinal);
+        var addByName = PakEntryNameMap.ToOrdinalIgnoreCaseDictionary(entries);
         var replaceKeys = new HashSet<string>(addByName.Keys, StringComparer.OrdinalIgnoreCase);
         var kept = ReadCentralDirectory(sourceBytes)
             .Where(entry => !replaceKeys.Contains(entry.Name))
@@ -79,11 +76,12 @@ internal static class PakRawZipReplacer
         var append = new List<(byte[] Record, CentralDirectoryEntry Metadata)>(addByName.Count);
         foreach (var (name, payload) in addByName)
         {
+            var entryName = PakEntryLocator.NormalizeEntryPath(name);
             var prepared = PrepareDeflatePayload(payload);
             using var record = new MemoryStream();
             WriteLocalFileHeader(
                 record,
-                name,
+                entryName,
                 flags: 0,
                 lastModTime: 0,
                 lastModDate: 0,
@@ -97,7 +95,7 @@ internal static class PakRawZipReplacer
                 record.ToArray(),
                 new CentralDirectoryEntry
                 {
-                    Name = name,
+                    Name = entryName,
                     Flags = 0,
                     CompressionMethod = prepared.CompressionMethod,
                     LastModTime = 0,
@@ -127,13 +125,13 @@ internal static class PakRawZipReplacer
         var sourceBytes = File.ReadAllBytes(sourcePakPath);
         var targetBytes = File.ReadAllBytes(targetPakPath);
         var sourceEntries = ReadCentralDirectory(sourceBytes)
-            .ToDictionary(entry => entry.Name, StringComparer.Ordinal);
+            .ToDictionary(entry => entry.Name, StringComparer.OrdinalIgnoreCase);
         var targetEntries = ReadCentralDirectory(targetBytes)
             .OrderBy(entry => entry.LocalHeaderOffset)
             .ToArray();
         var copyKeys = new HashSet<string>(
-            entryNames.Select(key => key.Replace('\\', '/')),
-            StringComparer.Ordinal);
+            entryNames.Select(PakEntryLocator.NormalizeEntryPath),
+            StringComparer.OrdinalIgnoreCase);
 
         foreach (var key in copyKeys)
         {
@@ -142,7 +140,7 @@ internal static class PakRawZipReplacer
                 throw new FileNotFoundException($"Pak entry was not found in source: {key}", sourcePakPath);
             }
 
-            if (targetEntries.All(entry => !string.Equals(entry.Name, key, StringComparison.Ordinal)))
+            if (targetEntries.All(entry => !string.Equals(entry.Name, key, StringComparison.OrdinalIgnoreCase)))
             {
                 throw new FileNotFoundException($"Pak entry was not found in target: {key}", targetPakPath);
             }
@@ -172,13 +170,11 @@ internal static class PakRawZipReplacer
     {
         var sourceBytes = File.ReadAllBytes(pakPath);
         var entries = ReadCentralDirectory(sourceBytes);
-        var replacementKeys = new HashSet<string>(
-            replacements.Keys.Select(key => key.Replace('\\', '/')),
-            StringComparer.Ordinal);
+        var replacementPayloads = PakEntryNameMap.ToOrdinalIgnoreCaseDictionary(replacements);
 
-        foreach (var key in replacementKeys)
+        foreach (var key in replacementPayloads.Keys)
         {
-            if (entries.All(entry => !string.Equals(entry.Name, key, StringComparison.Ordinal)))
+            if (entries.All(entry => !string.Equals(entry.Name, key, StringComparison.OrdinalIgnoreCase)))
             {
                 throw new FileNotFoundException($"Pak entry was not found: {key}", pakPath);
             }
@@ -191,12 +187,11 @@ internal static class PakRawZipReplacer
             sourceBytes,
             entry =>
             {
-                if (!replacementKeys.Contains(entry.Name))
+                if (!replacementPayloads.TryGetValue(entry.Name, out var payload))
                 {
                     return (ReadLocalFileRecordBytes(sourceBytes, entry), entry);
                 }
 
-                var payload = replacements[entry.Name];
                 var prepared = useStoreCompression
                     ? PrepareStoredPayload(payload)
                     : PrepareDeflatePayload(payload);

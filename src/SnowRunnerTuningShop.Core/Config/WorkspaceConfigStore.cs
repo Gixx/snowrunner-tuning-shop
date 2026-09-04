@@ -59,6 +59,9 @@ public sealed record ActiveWorkspace(
 
 public static class WorkspaceConfigStore
 {
+    private static readonly object Gate = new();
+    private static bool _pendingCorruptWarning;
+
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
         WriteIndented = true,
@@ -85,38 +88,39 @@ public static class WorkspaceConfigStore
         return directory;
     }
 
+    /// <summary>
+    /// Returns true once after a corrupt config was detected, then clears the flag.
+    /// UI should show a warning and continue with a fresh config.
+    /// </summary>
+    public static bool ConsumeCorruptConfigWarning()
+    {
+        lock (Gate)
+        {
+            if (!_pendingCorruptWarning)
+            {
+                return false;
+            }
+
+            _pendingCorruptWarning = false;
+            return true;
+        }
+    }
+
     public static WorkspaceConfig Load()
     {
-        var path = GetConfigPath();
-        if (!File.Exists(path))
+        lock (Gate)
         {
-            return new WorkspaceConfig
-            {
-                UiCulture = LanguageCatalog.DetectUiCultureFromSystem(),
-            };
-        }
-
-        try
-        {
-            var json = File.ReadAllText(path);
-            var config = JsonSerializer.Deserialize<WorkspaceConfig>(json, JsonOptions) ?? new WorkspaceConfig();
-            config.Editions = new Dictionary<string, EditionConfig>(
-                config.Editions ?? [],
-                StringComparer.OrdinalIgnoreCase);
-            return config;
-        }
-        catch
-        {
-            return new WorkspaceConfig();
+            return LoadUnlocked();
         }
     }
 
     public static void Save(WorkspaceConfig config)
     {
         ArgumentNullException.ThrowIfNull(config);
-        var path = GetConfigPath();
-        var json = JsonSerializer.Serialize(config, JsonOptions);
-        File.WriteAllText(path, json);
+        lock (Gate)
+        {
+            SaveUnlocked(config);
+        }
     }
 
     public static ActiveWorkspace? TryGetActiveWorkspace()
@@ -144,18 +148,21 @@ public static class WorkspaceConfigStore
 
     public static void SetActiveEdition(string editionId, string displayName, string workingPakPath)
     {
-        var config = Load();
-        var id = GameEditionDetector.SanitizeEditionId(editionId);
-        config.ActiveEditionId = id;
-        if (!config.Editions.TryGetValue(id, out var edition))
+        lock (Gate)
         {
-            edition = new EditionConfig();
-        }
+            var config = LoadUnlocked();
+            var id = GameEditionDetector.SanitizeEditionId(editionId);
+            config.ActiveEditionId = id;
+            if (!config.Editions.TryGetValue(id, out var edition))
+            {
+                edition = new EditionConfig();
+            }
 
-        edition.DisplayName = displayName;
-        edition.WorkingPakPath = Path.GetFullPath(workingPakPath);
-        config.Editions[id] = edition;
-        Save(config);
+            edition.DisplayName = displayName;
+            edition.WorkingPakPath = Path.GetFullPath(workingPakPath);
+            config.Editions[id] = edition;
+            SaveUnlocked(config);
+        }
     }
 
     public static void UpdateEditionFingerprints(
@@ -164,70 +171,85 @@ public static class WorkspaceConfigStore
         string? workingPakPath = null,
         PakFingerprintSnapshot? workingFingerprint = null)
     {
-        var config = Load();
-        var id = GameEditionDetector.SanitizeEditionId(editionId);
-        if (!config.Editions.TryGetValue(id, out var edition))
+        lock (Gate)
         {
-            edition = new EditionConfig();
-            config.Editions[id] = edition;
-        }
+            var config = LoadUnlocked();
+            var id = GameEditionDetector.SanitizeEditionId(editionId);
+            if (!config.Editions.TryGetValue(id, out var edition))
+            {
+                edition = new EditionConfig();
+                config.Editions[id] = edition;
+            }
 
-        if (baselineFingerprint is not null)
-        {
-            edition.BaselineFingerprint = baselineFingerprint;
-        }
+            if (baselineFingerprint is not null)
+            {
+                edition.BaselineFingerprint = baselineFingerprint;
+            }
 
-        if (workingFingerprint is not null)
-        {
-            edition.LastKnownWorkingFingerprint = workingFingerprint;
-        }
-        else if (!string.IsNullOrWhiteSpace(workingPakPath) && File.Exists(workingPakPath))
-        {
-            edition.LastKnownWorkingFingerprint = PakFingerprintService.ComputeFileFingerprint(workingPakPath);
-        }
+            if (workingFingerprint is not null)
+            {
+                edition.LastKnownWorkingFingerprint = workingFingerprint;
+            }
+            else if (!string.IsNullOrWhiteSpace(workingPakPath) && File.Exists(workingPakPath))
+            {
+                edition.LastKnownWorkingFingerprint = PakFingerprintService.ComputeFileFingerprint(workingPakPath);
+            }
 
-        if (!string.IsNullOrWhiteSpace(workingPakPath))
-        {
-            edition.WorkingPakPath = Path.GetFullPath(workingPakPath);
-        }
+            if (!string.IsNullOrWhiteSpace(workingPakPath))
+            {
+                edition.WorkingPakPath = Path.GetFullPath(workingPakPath);
+            }
 
-        Save(config);
+            SaveUnlocked(config);
+        }
     }
 
     public static bool GetSidebarPinned() => Load().SidebarPinned;
 
     public static void SetSidebarPinned(bool pinned)
     {
-        var config = Load();
-        config.SidebarPinned = pinned;
-        Save(config);
+        lock (Gate)
+        {
+            var config = LoadUnlocked();
+            config.SidebarPinned = pinned;
+            SaveUnlocked(config);
+        }
     }
 
     public static string GetThemeMode() => ThemeModes.Normalize(Load().ThemeMode);
 
     public static void SetThemeMode(string themeMode)
     {
-        var config = Load();
-        config.ThemeMode = ThemeModes.Normalize(themeMode);
-        Save(config);
+        lock (Gate)
+        {
+            var config = LoadUnlocked();
+            config.ThemeMode = ThemeModes.Normalize(themeMode);
+            SaveUnlocked(config);
+        }
     }
 
     public static string GetUiCulture() => LanguageCatalog.NormalizeUiCulture(Load().UiCulture);
 
     public static void SetUiCulture(string uiCulture)
     {
-        var config = Load();
-        config.UiCulture = LanguageCatalog.NormalizeUiCulture(uiCulture);
-        Save(config);
+        lock (Gate)
+        {
+            var config = LoadUnlocked();
+            config.UiCulture = LanguageCatalog.NormalizeUiCulture(uiCulture);
+            SaveUnlocked(config);
+        }
     }
 
     public static string? GetSkippedAppVersion() => Load().SkippedAppVersion;
 
     public static void SetSkippedAppVersion(string? version)
     {
-        var config = Load();
-        config.SkippedAppVersion = string.IsNullOrWhiteSpace(version) ? null : version.Trim();
-        Save(config);
+        lock (Gate)
+        {
+            var config = LoadUnlocked();
+            config.SkippedAppVersion = string.IsNullOrWhiteSpace(version) ? null : version.Trim();
+            SaveUnlocked(config);
+        }
     }
 
     public static string? TryResolveEditionId(string workingPakPath)
@@ -256,5 +278,68 @@ public static class WorkspaceConfigStore
         }
 
         return null;
+    }
+
+    private static WorkspaceConfig LoadUnlocked()
+    {
+        var path = GetConfigPath();
+        if (!File.Exists(path))
+        {
+            return new WorkspaceConfig
+            {
+                UiCulture = LanguageCatalog.DetectUiCultureFromSystem(),
+            };
+        }
+
+        try
+        {
+            var json = File.ReadAllText(path);
+            var config = JsonSerializer.Deserialize<WorkspaceConfig>(json, JsonOptions) ?? new WorkspaceConfig();
+            config.Editions = new Dictionary<string, EditionConfig>(
+                config.Editions ?? [],
+                StringComparer.OrdinalIgnoreCase);
+            return config;
+        }
+        catch
+        {
+            TryBackupCorruptConfig(path);
+            _pendingCorruptWarning = true;
+            return new WorkspaceConfig
+            {
+                UiCulture = LanguageCatalog.DetectUiCultureFromSystem(),
+            };
+        }
+    }
+
+    private static void SaveUnlocked(WorkspaceConfig config)
+    {
+        var path = GetConfigPath();
+        var json = JsonSerializer.Serialize(config, JsonOptions);
+        var tempPath = path + $".{Guid.NewGuid():N}.tmp";
+        try
+        {
+            File.WriteAllText(tempPath, json);
+            File.Move(tempPath, path, overwrite: true);
+        }
+        finally
+        {
+            if (File.Exists(tempPath))
+            {
+                File.Delete(tempPath);
+            }
+        }
+    }
+
+    private static void TryBackupCorruptConfig(string path)
+    {
+        try
+        {
+            var backupPath = path + ".corrupt.bak";
+            File.Copy(path, backupPath, overwrite: true);
+        }
+        catch
+        {
+            // Best-effort backup only.
+        }
     }
 }

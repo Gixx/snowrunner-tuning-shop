@@ -80,24 +80,9 @@ public partial class EngineTuningView : UserControl
 
     private void RestoreEnginesButton_Click(object sender, RoutedEventArgs e)
     {
-        if (!PakWriteUi.TryProceed(_session) || !_pakWritesAllowed)
+        if (!PakWriteUi.TryBeginWrite(_session, PakPath, _pakWritesAllowed, requireBaseline: true,
+                () => ReportStatus(UiText.Engine.LoadPakFirst)))
         {
-            return;
-        }
-
-        if (string.IsNullOrWhiteSpace(PakPath))
-        {
-            ReportStatus(UiText.Engine.LoadPakFirst);
-            return;
-        }
-
-        if (!PakBaselineService.HasBaseline(PakPath))
-        {
-            MessageBox.Show(
-                UiText.Main.BaselineMissingShort,
-                UiText.Main.BaselineTitle,
-                MessageBoxButton.OK,
-                MessageBoxImage.Warning);
             return;
         }
 
@@ -127,24 +112,9 @@ public partial class EngineTuningView : UserControl
 
     private void ApplyMultipliersButton_Click(object sender, RoutedEventArgs e)
     {
-        if (!PakWriteUi.TryProceed(_session) || !_pakWritesAllowed)
+        if (!PakWriteUi.TryBeginWrite(_session, PakPath, _pakWritesAllowed, requireBaseline: true,
+                () => ReportStatus(UiText.Engine.LoadPakFirst)))
         {
-            return;
-        }
-
-        if (string.IsNullOrWhiteSpace(PakPath))
-        {
-            ReportStatus(UiText.Engine.LoadPakFirst);
-            return;
-        }
-
-        if (!PakBaselineService.HasBaseline(PakPath))
-        {
-            MessageBox.Show(
-                UiText.Main.BaselineMissingShort,
-                UiText.Main.BaselineTitle,
-                MessageBoxButton.OK,
-                MessageBoxImage.Warning);
             return;
         }
 
@@ -179,14 +149,9 @@ public partial class EngineTuningView : UserControl
 
     private void SaveIndividualButton_Click(object sender, RoutedEventArgs e)
     {
-        if (!PakWriteUi.TryProceed(_session) || !_pakWritesAllowed)
+        if (!PakWriteUi.TryBeginWrite(_session, PakPath, _pakWritesAllowed, requireBaseline: false,
+                () => ReportStatus(UiText.Engine.LoadPakFirst)))
         {
-            return;
-        }
-
-        if (string.IsNullOrWhiteSpace(PakPath))
-        {
-            ReportStatus(UiText.Engine.LoadPakFirst);
             return;
         }
 

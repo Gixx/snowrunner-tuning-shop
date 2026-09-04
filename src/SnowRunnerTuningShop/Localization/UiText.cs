@@ -81,6 +81,10 @@ public static class UiText
         public static string BaselineReadyTitle => StringResources.Get("Main.BaselineReadyTitle", "Baseline ready");
         public static string BaselineReadyNote => StringResources.Get("Main.BaselineReadyNote", "Baseline is healthy and ready. Keep the baseline file read-only.");
         public static string BaselineMissingShort => StringResources.Get("Main.BaselineMissingShort", "Baseline is not set. On Home, use Set baseline from original.");
+        public static string ConfigCorruptTitle => StringResources.Get("Main.ConfigCorruptTitle", "Settings reset");
+        public static string ConfigCorruptMessage => StringResources.Get(
+            "Main.ConfigCorruptMessage",
+            "Your Tuning Shop settings file was damaged and has been reset. A backup was saved as config.json.corrupt.bak in the app data folder.");
         public static string SetBaselineFromOriginal => StringResources.Get("Main.SetBaselineFromOriginal", "Set baseline from original...");
         public static string ChangeLocation => StringResources.Get("Main.ChangeLocation", "Change location...");
         public static string RestoreFullBaseline => StringResources.Get("Main.RestoreFullBaseline", "Restore full baseline");

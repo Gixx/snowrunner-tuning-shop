@@ -78,7 +78,7 @@ public sealed class TrailerStoreAvailabilityTests
             </Truck>
             """;
 
-        Assert.False(TrailerTuningService_IsStoreHitchReady(xml));
+        Assert.False(TrailerHitchXml.IsStoreHitchReady(xml));
     }
 
     [Fact]
@@ -95,7 +95,7 @@ public sealed class TrailerStoreAvailabilityTests
             </Truck>
             """;
 
-        Assert.True(TrailerTuningService_IsStoreHitchReady(xml));
+        Assert.True(TrailerHitchXml.IsStoreHitchReady(xml));
     }
 
     [Fact]
@@ -138,14 +138,14 @@ public sealed class TrailerStoreAvailabilityTests
             </Truck>
             """;
 
-        var withStore = TrailerTuningService.EnsureStoreHitch(baseline);
+        var withStore = TrailerHitchXml.EnsureStoreHitch(baseline);
         Assert.Contains("""Type="Trailer" """, withStore, StringComparison.Ordinal);
         Assert.Contains("""Type="Train" """, withStore, StringComparison.Ordinal);
 
-        var undone = TrailerTuningService.RemoveSupplementalStoreHitch(withStore, baseline);
+        var undone = TrailerHitchXml.RemoveSupplementalStoreHitch(withStore, baseline);
         Assert.DoesNotContain("""Type="Trailer" """, undone, StringComparison.Ordinal);
         Assert.Contains("""Type="Train" """, undone, StringComparison.Ordinal);
-        Assert.False(TrailerTuningService.IsStoreHitchReady(undone));
+        Assert.False(TrailerHitchXml.IsStoreHitchReady(undone));
     }
 
     [Fact]
@@ -162,12 +162,8 @@ public sealed class TrailerStoreAvailabilityTests
             </Truck>
             """;
 
-        var undone = TrailerTuningService.RemoveSupplementalStoreHitch(baseline, baseline);
+        var undone = TrailerHitchXml.RemoveSupplementalStoreHitch(baseline, baseline);
         Assert.Contains("""Type="Trailer" """, undone, StringComparison.Ordinal);
         Assert.Contains("""Type="Train" """, undone, StringComparison.Ordinal);
     }
-
-    // InternalsVisibleTo bridge — keeps call sites readable without InternalsVisibleTo imports noise.
-    private static bool TrailerTuningService_IsStoreHitchReady(string xml) =>
-        TrailerTuningService.IsStoreHitchReady(xml);
 }

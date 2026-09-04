@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using System.Windows.Threading;
 using SnowRunnerTuningShop.Core.Game;
@@ -57,6 +58,12 @@ internal static class PakWriteUi
     public static bool CanWrite(AppSession? session) =>
         session is not null && !session.IsGameRunning;
 
+    public static bool CanRestore(AppSession? session, string? pakPath, bool writesAllowed) =>
+        writesAllowed
+        && !string.IsNullOrWhiteSpace(pakPath)
+        && CanWrite(session)
+        && Core.Backup.PakBaselineService.HasBaseline(pakPath);
+
     public static bool TryProceed(AppSession? session)
     {
         if (session?.IsGameRunning == true || SnowRunnerProcessGuard.IsRunning())
@@ -65,6 +72,45 @@ internal static class PakWriteUi
             MessageBox.Show(
                 Localization.UiText.Main.GameRunningMessage,
                 Localization.UiText.Main.GameRunningTitle,
+                MessageBoxButton.OK,
+                MessageBoxImage.Warning);
+            return false;
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// Shared click preamble: game-running gate, empty pak path, optional baseline check.
+    /// </summary>
+    public static bool TryBeginWrite(
+        AppSession? session,
+        [NotNullWhen(true)] string? pakPath,
+        bool writesAllowed,
+        bool requireBaseline,
+        Action? onMissingPak = null)
+    {
+        if (!writesAllowed)
+        {
+            return false;
+        }
+
+        if (!TryProceed(session))
+        {
+            return false;
+        }
+
+        if (string.IsNullOrWhiteSpace(pakPath))
+        {
+            onMissingPak?.Invoke();
+            return false;
+        }
+
+        if (requireBaseline && !Core.Backup.PakBaselineService.HasBaseline(pakPath))
+        {
+            MessageBox.Show(
+                Localization.UiText.Main.BaselineMissingShort,
+                Localization.UiText.Main.BaselineTitle,
                 MessageBoxButton.OK,
                 MessageBoxImage.Warning);
             return false;
