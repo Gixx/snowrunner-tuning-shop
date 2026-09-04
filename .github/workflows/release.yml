@@ -32,6 +32,27 @@ jobs:
           "version=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
           "tag=$tag" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
 
+      - name: Verify AppInfo.Version matches tag
+        shell: pwsh
+        run: |
+          $expected = "${{ steps.version.outputs.version }}"
+          $appInfoPath = "src/SnowRunnerTuningShop.Core/AppInfo.cs"
+          $text = Get-Content -Path $appInfoPath -Raw
+          if ($text -notmatch 'public const string Version = "(?<ver>[^"]+)"') {
+            throw "Could not parse AppInfo.Version from $appInfoPath"
+          }
+          $actual = $Matches['ver']
+          if ($actual -ne $expected) {
+            throw "AppInfo.Version ($actual) does not match release tag version ($expected). Bump AppInfo.cs before tagging."
+          }
+          Write-Host "AppInfo.Version matches tag: $actual"
+
+      - name: Restore
+        run: dotnet restore SnowRunnerTuningShop.slnx
+
+      - name: Test
+        run: dotnet test tests/SnowRunnerTuningShop.Tests/SnowRunnerTuningShop.Tests.csproj -c Release --verbosity normal
+
       - name: Publish win-x64 (self-contained)
         run: >
           dotnet publish src/SnowRunnerTuningShop/SnowRunnerTuningShop.csproj

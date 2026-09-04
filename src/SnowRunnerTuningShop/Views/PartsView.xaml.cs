@@ -11,6 +11,7 @@ public partial class PartsView : UserControl
     private string? _loadedPakPath;
     private readonly HashSet<string> _loadedTabs = new(StringComparer.Ordinal);
     private int _loadVersion;
+    private CancellationTokenSource? _loadCts;
     private Storyboard? _spinnerStoryboard;
     private bool _selectionHandlerReady;
 
@@ -23,6 +24,11 @@ public partial class PartsView : UserControl
     public void AttachSession(AppSession session)
     {
         _session = session;
+        WinchTuningView.AttachSession(session);
+        EngineTuningView.AttachSession(session);
+        GearboxTuningView.AttachSession(session);
+        SuspensionTuningView.AttachSession(session);
+        TireTuningView.AttachSession(session);
         _session.PakChanged += (_, _) => _ = ReloadPartsAsync();
         _session.BaselineChanged += (_, _) => RefreshWriteGates();
         _session.GameRunningChanged += (_, _) => RefreshWriteGates();
@@ -97,35 +103,44 @@ public partial class PartsView : UserControl
         }
 
         var version = ++_loadVersion;
+        _loadCts?.Cancel();
+        _loadCts?.Dispose();
+        _loadCts = new CancellationTokenSource();
+        var cancellationToken = _loadCts.Token;
+
         SetLoading(true);
         try
         {
             switch (tabKey)
             {
                 case "winch":
-                    await WinchTuningView.LoadFromPakAsync(pakPath);
+                    await WinchTuningView.LoadFromPakAsync(pakPath, cancellationToken);
                     break;
                 case "engine":
-                    await EngineTuningView.LoadFromPakAsync(pakPath);
+                    await EngineTuningView.LoadFromPakAsync(pakPath, cancellationToken);
                     break;
                 case "gearbox":
-                    await GearboxTuningView.LoadFromPakAsync(pakPath);
+                    await GearboxTuningView.LoadFromPakAsync(pakPath, cancellationToken);
                     break;
                 case "suspension":
-                    await SuspensionTuningView.LoadFromPakAsync(pakPath);
+                    await SuspensionTuningView.LoadFromPakAsync(pakPath, cancellationToken);
                     break;
                 case "tires":
-                    await TireTuningView.LoadFromPakAsync(pakPath);
+                    await TireTuningView.LoadFromPakAsync(pakPath, cancellationToken);
                     break;
             }
 
-            if (version != _loadVersion)
+            if (cancellationToken.IsCancellationRequested || version != _loadVersion)
             {
                 return;
             }
 
             _loadedPakPath = pakPath;
             _loadedTabs.Add(tabKey);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            return;
         }
         finally
         {

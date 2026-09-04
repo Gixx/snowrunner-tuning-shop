@@ -22,6 +22,103 @@ internal static class PakRawZipReplacer
         IProgress<PakWriteProgress>? progress = null) =>
         ReplaceEntries(pakPath, replacements, useStoreCompression: false, progress);
 
+    /// <summary>
+    /// Rebuilds the pak without the given entries, copying every kept local file record verbatim.
+    /// </summary>
+    internal static int RemoveEntries(string pakPath, IReadOnlyCollection<string> entryNames)
+    {
+        if (entryNames.Count == 0)
+        {
+            return 0;
+        }
+
+        var sourceBytes = File.ReadAllBytes(pakPath);
+        var removeKeys = new HashSet<string>(
+            entryNames.Select(key => key.Replace('\\', '/')),
+            StringComparer.OrdinalIgnoreCase);
+        var allEntries = ReadCentralDirectory(sourceBytes);
+        var kept = allEntries
+            .Where(entry => !removeKeys.Contains(entry.Name))
+            .OrderBy(entry => entry.LocalHeaderOffset)
+            .ToArray();
+        var removedCount = allEntries.Count - kept.Length;
+        if (removedCount == 0)
+        {
+            return 0;
+        }
+
+        WritePak(
+            pakPath,
+            kept,
+            sourceBytes,
+            entry => (ReadLocalFileRecordBytes(sourceBytes, entry), entry));
+        return removedCount;
+    }
+
+    /// <summary>
+    /// Appends new entries (or replaces same-named ones) while copying untouched local records verbatim.
+    /// </summary>
+    internal static void AddEntries(string pakPath, IReadOnlyDictionary<string, byte[]> entries)
+    {
+        if (entries.Count == 0)
+        {
+            return;
+        }
+
+        var sourceBytes = File.ReadAllBytes(pakPath);
+        var addByName = entries.ToDictionary(
+            pair => pair.Key.Replace('\\', '/'),
+            pair => pair.Value,
+            StringComparer.Ordinal);
+        var replaceKeys = new HashSet<string>(addByName.Keys, StringComparer.OrdinalIgnoreCase);
+        var kept = ReadCentralDirectory(sourceBytes)
+            .Where(entry => !replaceKeys.Contains(entry.Name))
+            .OrderBy(entry => entry.LocalHeaderOffset)
+            .ToArray();
+
+        var append = new List<(byte[] Record, CentralDirectoryEntry Metadata)>(addByName.Count);
+        foreach (var (name, payload) in addByName)
+        {
+            var prepared = PrepareDeflatePayload(payload);
+            using var record = new MemoryStream();
+            WriteLocalFileHeader(
+                record,
+                name,
+                flags: 0,
+                lastModTime: 0,
+                lastModDate: 0,
+                extraField: ReadOnlySpan<byte>.Empty,
+                prepared.Payload,
+                prepared.Crc32,
+                payload.Length,
+                prepared.CompressionMethod);
+            record.Write(prepared.Payload, 0, prepared.Payload.Length);
+            append.Add((
+                record.ToArray(),
+                new CentralDirectoryEntry
+                {
+                    Name = name,
+                    Flags = 0,
+                    CompressionMethod = prepared.CompressionMethod,
+                    LastModTime = 0,
+                    LastModDate = 0,
+                    Crc32 = prepared.Crc32,
+                    CompressedSize = (uint)prepared.Payload.Length,
+                    UncompressedSize = (uint)payload.Length,
+                    ExternalAttributes = 0,
+                    LocalHeaderOffset = 0,
+                    ExtraField = [],
+                }));
+        }
+
+        WritePak(
+            pakPath,
+            kept,
+            sourceBytes,
+            entry => (ReadLocalFileRecordBytes(sourceBytes, entry), entry),
+            appendEntries: append);
+    }
+
     internal static void CopyEntriesFromSource(
         string targetPakPath,
         string sourcePakPath,
@@ -136,15 +233,17 @@ internal static class PakRawZipReplacer
         IReadOnlyList<CentralDirectoryEntry> orderedEntries,
         byte[] sourceBytes,
         Func<CentralDirectoryEntry, (byte[] Record, CentralDirectoryEntry Metadata)> buildEntry,
-        IProgress<PakWriteProgress>? progress = null)
+        IProgress<PakWriteProgress>? progress = null,
+        IReadOnlyList<(byte[] Record, CentralDirectoryEntry Metadata)>? appendEntries = null)
     {
+        var appendCount = appendEntries?.Count ?? 0;
         var output = new MemoryStream(sourceBytes.Length);
-        var updatedCentral = new List<CentralDirectoryEntry>(orderedEntries.Count);
-        var total = orderedEntries.Count;
+        var updatedCentral = new List<CentralDirectoryEntry>(orderedEntries.Count + appendCount);
+        var total = orderedEntries.Count + appendCount;
         var lastReportedStep = 0;
         var lastReportUtc = DateTime.MinValue;
 
-        progress?.Report(new PakWriteProgress(PakWritePhase.Writing, 0, total));
+        progress?.Report(new PakWriteProgress(PakWritePhase.Writing, 0, Math.Max(total, 1)));
 
         for (var index = 0; index < orderedEntries.Count; index++)
         {
@@ -167,6 +266,20 @@ internal static class PakRawZipReplacer
                 lastReportedStep = current;
                 lastReportUtc = now;
                 progress.Report(new PakWriteProgress(PakWritePhase.Writing, current, total, entry.Name));
+            }
+        }
+
+        if (appendEntries is not null)
+        {
+            for (var index = 0; index < appendEntries.Count; index++)
+            {
+                var (record, metadata) = appendEntries[index];
+                var localOffset = (uint)output.Length;
+                output.Write(record, 0, record.Length);
+                updatedCentral.Add(metadata with { LocalHeaderOffset = localOffset });
+
+                var current = orderedEntries.Count + index + 1;
+                progress?.Report(new PakWriteProgress(PakWritePhase.Writing, current, total, metadata.Name));
             }
         }
 

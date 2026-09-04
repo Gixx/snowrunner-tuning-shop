@@ -256,7 +256,8 @@ public static class TrailerTuningService
 
             var text = ReadEntryText(entry);
             replacements = new Dictionary<string, byte[]>(StringComparer.Ordinal);
-            var updated = ApplyTuning(text, trailer);
+            var baselineText = TryReadBaselineEntryText(pakPath, trailer.EntryPath);
+            var updated = ApplyTuning(text, trailer, baselineText);
             var key = entry.FullName.Replace('\\', '/');
             if (!string.Equals(text, updated, StringComparison.Ordinal))
             {
@@ -385,7 +386,7 @@ public static class TrailerTuningService
         return true;
     }
 
-    private static string ApplyTuning(string text, TrailerTuningDefinition trailer)
+    private static string ApplyTuning(string text, TrailerTuningDefinition trailer, string? baselineText = null)
     {
         var updated = text;
         if (trailer.HasFuel)
@@ -424,7 +425,7 @@ public static class TrailerTuningService
             else if (trailer.IsQuest)
             {
                 updated = SetGameDataAttribute(updated, "IsQuest", "true");
-                updated = RemoveSupplementalStoreHitch(updated);
+                updated = RemoveSupplementalStoreHitch(updated, baselineText, trailer.BaselineHasStoreCompatibleHitch);
             }
             else if (trailer.BaselineIsQuest)
             {
@@ -433,7 +434,7 @@ public static class TrailerTuningService
             else
             {
                 updated = RemoveGameDataAttribute(updated, "IsQuest");
-                updated = RemoveSupplementalStoreHitch(updated);
+                updated = RemoveSupplementalStoreHitch(updated, baselineText, trailer.BaselineHasStoreCompatibleHitch);
             }
         }
 
@@ -702,7 +703,7 @@ public static class TrailerTuningService
         return Path.GetFileNameWithoutExtension(match.Groups["file"].Value);
     }
 
-    private static string EnsureStoreHitch(string text)
+    internal static string EnsureStoreHitch(string text)
     {
         var sockets = InstallSocketRegex.Matches(text);
         foreach (Match socket in sockets)
@@ -820,21 +821,75 @@ public static class TrailerTuningService
 
     /// <summary>
     /// Removes Type=Trailer sockets we add beside Train/rocket hitches when undoing store availability.
+    /// Never strips Trailer sockets that already existed in the baseline.
     /// </summary>
-    private static string RemoveSupplementalStoreHitch(string text)
+    internal static string RemoveSupplementalStoreHitch(
+        string text,
+        string? baselineText = null,
+        bool baselineHadStoreCompatibleHitch = false)
     {
         if (!HasNonStoreHitchSocket(text))
         {
             return text;
         }
 
+        if (baselineText is not null)
+        {
+            if (HasStoreHitchSocket(baselineText))
+            {
+                return text;
+            }
+
+            var baselineTrailerKeys = CollectTrailerSocketKeys(baselineText);
+            return RemoveTrailerSockets(text, attrs =>
+            {
+                var key = TrailerSocketKey(attrs);
+                return !baselineTrailerKeys.Contains(key);
+            });
+        }
+
+        if (baselineHadStoreCompatibleHitch)
+        {
+            return text;
+        }
+
+        return RemoveTrailerSockets(text, _ => true);
+    }
+
+    private static HashSet<string> CollectTrailerSocketKeys(string text)
+    {
+        var keys = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (Match socket in InstallSocketRegex.Matches(text))
+        {
+            var attrs = ParseAttributes(socket.Groups["attrs"].Value);
+            if (attrs.TryGetValue("Type", out var type)
+                && type.Trim().Equals("Trailer", StringComparison.OrdinalIgnoreCase))
+            {
+                keys.Add(TrailerSocketKey(attrs));
+            }
+        }
+
+        return keys;
+    }
+
+    private static string TrailerSocketKey(IReadOnlyDictionary<string, string> attrs)
+    {
+        attrs.TryGetValue("Offset", out var offset);
+        return string.IsNullOrWhiteSpace(offset) ? "(0; 0; 0)" : offset.Trim();
+    }
+
+    private static string RemoveTrailerSockets(
+        string text,
+        Func<Dictionary<string, string>, bool> shouldRemove)
+    {
         var matches = InstallSocketRegex.Matches(text);
         for (var i = matches.Count - 1; i >= 0; i--)
         {
             var socket = matches[i];
             var attrs = ParseAttributes(socket.Groups["attrs"].Value);
             if (!attrs.TryGetValue("Type", out var type)
-                || !type.Trim().Equals("Trailer", StringComparison.OrdinalIgnoreCase))
+                || !type.Trim().Equals("Trailer", StringComparison.OrdinalIgnoreCase)
+                || !shouldRemove(attrs))
             {
                 continue;
             }
@@ -862,6 +917,18 @@ public static class TrailerTuningService
         }
 
         return text;
+    }
+
+    private static string? TryReadBaselineEntryText(string workingPakPath, string entryPath)
+    {
+        var baselineInfo = PakBaselineService.TryGetBaselineInfo(workingPakPath);
+        if (baselineInfo is null || !File.Exists(baselineInfo.BaselinePath))
+        {
+            return null;
+        }
+
+        using var baselineArchive = ZipFile.OpenRead(baselineInfo.BaselinePath);
+        return TryReadText(baselineArchive, entryPath);
     }
 
     private static string SetInstallSocketType(string text, Match socket, string type)

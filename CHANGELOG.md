@@ -18,6 +18,12 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ### Fixed
 - **Trailer “Available in store” on Diesel Locomotive:** vanilla trains have no `IsQuest` flag but only a Train hitch, so the checkbox stayed checked after restore even though they are not in the trailer store. The checkbox now follows effective store readiness (quest flag + hitch).
+- **Safer pak writes (P0):** full baseline restore copies to a temp file and moves into place; marker remove/add no longer uses in-place `ZipArchiveMode.Update` (untouched zip local records stay verbatim).
+- **Trailer store hitch undo:** undoing “Available in store” no longer strips vanilla `Trailer` sockets that already existed beside Train/rocket hitches.
+- **Parts tab load races:** cancelled when switching tabs / pak; write clicks use the shared session so the game-running gate updates immediately.
+
+### Changed
+- **Release workflow:** runs `dotnet test` and fails if `AppInfo.Version` does not match the `v*` tag before publishing the installer.
 
 ---
 

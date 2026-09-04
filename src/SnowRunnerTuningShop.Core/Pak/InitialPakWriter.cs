@@ -224,7 +224,7 @@ public static class InitialPakWriter
     }
 
     /// <summary>
-    /// Rebuilds the pak without the specified entries.
+    /// Rebuilds the pak without the specified entries, keeping untouched local records verbatim.
     /// </summary>
     public static int RemoveEntries(
         string pakPath,
@@ -248,49 +248,54 @@ public static class InitialPakWriter
             return 0;
         }
 
-        var removedPaths = new HashSet<string>(
-            entryPaths.Select(path => PakEntryLocator.NormalizeEntryPath(path)),
-            StringComparer.OrdinalIgnoreCase);
+        var normalizedPaths = entryPaths
+            .Select(path => PakEntryLocator.NormalizeEntryPath(path))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+
+        var tempPath = Path.Combine(
+            Path.GetTempPath(),
+            $"SnowRunnerTuningShop-{Guid.NewGuid():N}.pak.tmp");
 
         ClearReadOnlyAttribute(pakPath);
-        var removedCount = 0;
 
         try
         {
-            using (var archive = ZipFile.Open(pakPath, ZipArchiveMode.Update))
+            File.Copy(pakPath, tempPath, overwrite: true);
+            var removedCount = PakRawZipReplacer.RemoveEntries(tempPath, normalizedPaths);
+            if (removedCount == 0)
             {
-                foreach (var entry in archive.Entries.ToArray())
-                {
-                    var entryName = entry.FullName.Replace('\\', '/');
-                    if (!removedPaths.Contains(entryName))
-                    {
-                        continue;
-                    }
+                return 0;
+            }
 
-                    entry.Delete();
-                    removedCount++;
-                }
+            ClearReadOnlyAttribute(pakPath);
+
+            try
+            {
+                File.Move(tempPath, pakPath, overwrite: true);
+            }
+            catch (IOException ex)
+            {
+                throw new InvalidOperationException(
+                    "Cannot update initial.pak because another program is using it. " +
+                    "Close SnowRunner if it is running, then try again.",
+                    ex);
+            }
+
+            if (syncProfile)
+            {
+                TuningProfileService.SyncAfterPakWrite(pakPath);
+            }
+
+            return removedCount;
+        }
+        finally
+        {
+            if (File.Exists(tempPath))
+            {
+                File.Delete(tempPath);
             }
         }
-        catch (IOException ex)
-        {
-            throw new InvalidOperationException(
-                "Cannot update initial.pak because another program is using it. " +
-                "Close SnowRunner if it is running, then try again.",
-                ex);
-        }
-
-        if (removedCount == 0)
-        {
-            return 0;
-        }
-
-        if (syncProfile)
-        {
-            TuningProfileService.SyncAfterPakWrite(pakPath);
-        }
-
-        return removedCount;
     }
 
     private static HashSet<string> ReadPakEntryNames(string pakPath)
@@ -310,16 +315,7 @@ public static class InitialPakWriter
 
         try
         {
-            using var archive = ZipFile.Open(pakPath, ZipArchiveMode.Update);
-            foreach (var (entryPath, payload) in entries)
-            {
-                var normalized = PakEntryLocator.NormalizeEntryPath(entryPath);
-                PakEntryLocator.FindEntry(archive, normalized)?.Delete();
-
-                var entry = archive.CreateEntry(normalized, CompressionLevel.Optimal);
-                using var stream = entry.Open();
-                stream.Write(payload, 0, payload.Length);
-            }
+            PakRawZipReplacer.AddEntries(pakPath, entries);
         }
         catch (IOException ex)
         {

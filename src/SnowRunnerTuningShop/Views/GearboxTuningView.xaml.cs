@@ -16,6 +16,7 @@ public partial class GearboxTuningView : UserControl
     private readonly ObservableCollection<GearboxRowViewModel> _gearboxes = [];
     private readonly ICollectionView _gearboxesView;
     private bool _pakWritesAllowed = true;
+    private AppSession? _session;
 
     public GearboxTuningView()
     {
@@ -27,6 +28,8 @@ public partial class GearboxTuningView : UserControl
     }
 
     public string? PakPath { get; private set; }
+
+    public void AttachSession(AppSession session) => _session = session;
 
     public void SetPakWritesAllowed(bool allowed)
     {
@@ -41,11 +44,11 @@ public partial class GearboxTuningView : UserControl
         ReloadGearboxes();
     }
 
-    public async Task LoadFromPakAsync(string pakPath)
+    public async Task LoadFromPakAsync(string pakPath, CancellationToken cancellationToken = default)
     {
         PakPath = pakPath;
         RefreshRestoreButton();
-        await ReloadGearboxesAsync();
+        await ReloadGearboxesAsync(cancellationToken);
     }
 
     public void Clear()
@@ -75,7 +78,7 @@ public partial class GearboxTuningView : UserControl
 
     private void RestoreGearboxesButton_Click(object sender, RoutedEventArgs e)
     {
-        if (!PakWriteUi.TryProceed(null) || !_pakWritesAllowed)
+        if (!PakWriteUi.TryProceed(_session) || !_pakWritesAllowed)
         {
             return;
         }
@@ -117,7 +120,7 @@ public partial class GearboxTuningView : UserControl
 
     private void ApplyMultipliersButton_Click(object sender, RoutedEventArgs e)
     {
-        if (!PakWriteUi.TryProceed(null) || !_pakWritesAllowed)
+        if (!PakWriteUi.TryProceed(_session) || !_pakWritesAllowed)
         {
             return;
         }
@@ -163,7 +166,7 @@ public partial class GearboxTuningView : UserControl
 
     private void SaveIndividualButton_Click(object sender, RoutedEventArgs e)
     {
-        if (!PakWriteUi.TryProceed(null) || !_pakWritesAllowed)
+        if (!PakWriteUi.TryProceed(_session) || !_pakWritesAllowed)
         {
             return;
         }
@@ -216,7 +219,7 @@ public partial class GearboxTuningView : UserControl
         }
     }
 
-    private async Task ReloadGearboxesAsync()
+    private async Task ReloadGearboxesAsync(CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(PakPath))
         {
@@ -228,8 +231,13 @@ public partial class GearboxTuningView : UserControl
         {
             var path = PakPath;
             var language = AppLanguage.Current;
-            var gearboxes = await Task.Run(() => GearboxService.LoadGearboxes(path, language));
+            var gearboxes = await Task.Run(() => GearboxService.LoadGearboxes(path, language), cancellationToken);
+            cancellationToken.ThrowIfCancellationRequested();
             ApplyGearboxes(gearboxes);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            // Stale load discarded after tab/pak switch.
         }
         catch (Exception ex)
         {

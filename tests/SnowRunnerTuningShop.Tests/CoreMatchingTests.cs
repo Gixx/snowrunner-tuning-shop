@@ -1,5 +1,6 @@
 using SnowRunnerTuningShop.Core.Models;
 using SnowRunnerTuningShop.Core.Pak;
+using SnowRunnerTuningShop.Core.Trailers;
 
 namespace SnowRunnerTuningShop.Tests;
 
@@ -124,7 +125,49 @@ public sealed class TrailerStoreAvailabilityTests
         Assert.True(unlocked.IsAvailableInStore);
     }
 
+    [Fact]
+    public void Undo_store_availability_removes_only_supplemental_Trailer_socket()
+    {
+        const string baseline =
+            """
+            <Truck>
+              <TruckData />
+              <GameData Price="18800">
+                <InstallSocket Offset="(0; 0; 0)" Type="Train" />
+              </GameData>
+            </Truck>
+            """;
+
+        var withStore = TrailerTuningService.EnsureStoreHitch(baseline);
+        Assert.Contains("""Type="Trailer" """, withStore, StringComparison.Ordinal);
+        Assert.Contains("""Type="Train" """, withStore, StringComparison.Ordinal);
+
+        var undone = TrailerTuningService.RemoveSupplementalStoreHitch(withStore, baseline);
+        Assert.DoesNotContain("""Type="Trailer" """, undone, StringComparison.Ordinal);
+        Assert.Contains("""Type="Train" """, undone, StringComparison.Ordinal);
+        Assert.False(TrailerTuningService.IsStoreHitchReady(undone));
+    }
+
+    [Fact]
+    public void Undo_does_not_strip_vanilla_Trailer_beside_Train()
+    {
+        const string baseline =
+            """
+            <Truck>
+              <TruckData />
+              <GameData Price="18800">
+                <InstallSocket Offset="(0; 0; 0)" Type="Train" />
+                <InstallSocket Offset="(1; 0; 0)" Type="Trailer" />
+              </GameData>
+            </Truck>
+            """;
+
+        var undone = TrailerTuningService.RemoveSupplementalStoreHitch(baseline, baseline);
+        Assert.Contains("""Type="Trailer" """, undone, StringComparison.Ordinal);
+        Assert.Contains("""Type="Train" """, undone, StringComparison.Ordinal);
+    }
+
     // InternalsVisibleTo bridge — keeps call sites readable without InternalsVisibleTo imports noise.
     private static bool TrailerTuningService_IsStoreHitchReady(string xml) =>
-        SnowRunnerTuningShop.Core.Trailers.TrailerTuningService.IsStoreHitchReady(xml);
+        TrailerTuningService.IsStoreHitchReady(xml);
 }

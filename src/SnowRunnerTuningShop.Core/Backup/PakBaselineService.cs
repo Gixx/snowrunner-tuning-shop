@@ -195,12 +195,46 @@ public static class PakBaselineService
 
         var baselinePath = RequireBaseline(workingPakPath);
         var editionId = ResolveEditionId(workingPakPath);
-        ClearReadOnlyAttribute(workingPakPath);
-        File.Copy(baselinePath, workingPakPath, overwrite: true);
+        var expectedLength = new FileInfo(baselinePath).Length;
+        var tempPath = Path.Combine(
+            Path.GetTempPath(),
+            $"SnowRunnerTuningShop-restore-{Guid.NewGuid():N}.pak.tmp");
 
-        if (!string.IsNullOrWhiteSpace(editionId))
+        try
         {
-            TuningProfileService.OnWorkingPakRestoredFromBaseline(editionId, workingPakPath);
+            File.Copy(baselinePath, tempPath, overwrite: true);
+            var copiedLength = new FileInfo(tempPath).Length;
+            if (copiedLength != expectedLength)
+            {
+                throw new InvalidOperationException(
+                    "Baseline restore copy verification failed (size mismatch). The working pak was not changed.");
+            }
+
+            ClearReadOnlyAttribute(workingPakPath);
+
+            try
+            {
+                File.Move(tempPath, workingPakPath, overwrite: true);
+            }
+            catch (IOException ex)
+            {
+                throw new InvalidOperationException(
+                    "Cannot restore initial.pak because another program is using it. " +
+                    "Close SnowRunner if it is running, then try again.",
+                    ex);
+            }
+
+            if (!string.IsNullOrWhiteSpace(editionId))
+            {
+                TuningProfileService.OnWorkingPakRestoredFromBaseline(editionId, workingPakPath);
+            }
+        }
+        finally
+        {
+            if (File.Exists(tempPath))
+            {
+                File.Delete(tempPath);
+            }
         }
     }
 

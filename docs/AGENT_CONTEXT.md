@@ -37,6 +37,8 @@ Build (Release):
 Tests: `tests/SnowRunnerTuningShop.Tests` — `dotnet test tests/SnowRunnerTuningShop.Tests/SnowRunnerTuningShop.Tests.csproj`  
 (locale keys vs `en.json`, `PakFileId`, trailer store hitch rules).
 
+Senior review snapshot (prioritized debt): `docs/CODE_REVIEW.md`.
+
 If Debug build fails with DLL lock, the app or debugger is still running — close it or build to another `-o` folder.
 
 ---

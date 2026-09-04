@@ -16,6 +16,7 @@ public partial class EngineTuningView : UserControl
     private readonly ObservableCollection<EngineRowViewModel> _engines = [];
     private readonly ICollectionView _enginesView;
     private bool _pakWritesAllowed = true;
+    private AppSession? _session;
 
     public EngineTuningView()
     {
@@ -30,6 +31,8 @@ public partial class EngineTuningView : UserControl
 
     public string? PakPath { get; private set; }
 
+    public void AttachSession(AppSession session) => _session = session;
+
     public void SetPakWritesAllowed(bool allowed)
     {
         _pakWritesAllowed = allowed;
@@ -43,11 +46,11 @@ public partial class EngineTuningView : UserControl
         ReloadEngines();
     }
 
-    public async Task LoadFromPakAsync(string pakPath)
+    public async Task LoadFromPakAsync(string pakPath, CancellationToken cancellationToken = default)
     {
         PakPath = pakPath;
         RefreshRestoreButton();
-        await ReloadEnginesAsync();
+        await ReloadEnginesAsync(cancellationToken);
     }
 
     public void Clear()
@@ -77,7 +80,7 @@ public partial class EngineTuningView : UserControl
 
     private void RestoreEnginesButton_Click(object sender, RoutedEventArgs e)
     {
-        if (!PakWriteUi.TryProceed(null) || !_pakWritesAllowed)
+        if (!PakWriteUi.TryProceed(_session) || !_pakWritesAllowed)
         {
             return;
         }
@@ -124,7 +127,7 @@ public partial class EngineTuningView : UserControl
 
     private void ApplyMultipliersButton_Click(object sender, RoutedEventArgs e)
     {
-        if (!PakWriteUi.TryProceed(null) || !_pakWritesAllowed)
+        if (!PakWriteUi.TryProceed(_session) || !_pakWritesAllowed)
         {
             return;
         }
@@ -176,7 +179,7 @@ public partial class EngineTuningView : UserControl
 
     private void SaveIndividualButton_Click(object sender, RoutedEventArgs e)
     {
-        if (!PakWriteUi.TryProceed(null) || !_pakWritesAllowed)
+        if (!PakWriteUi.TryProceed(_session) || !_pakWritesAllowed)
         {
             return;
         }
@@ -233,7 +236,7 @@ public partial class EngineTuningView : UserControl
         }
     }
 
-    private async Task ReloadEnginesAsync()
+    private async Task ReloadEnginesAsync(CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(PakPath))
         {
@@ -245,8 +248,13 @@ public partial class EngineTuningView : UserControl
         {
             var path = PakPath;
             var language = AppLanguage.Current;
-            var engines = await Task.Run(() => EngineService.LoadEngines(path, language));
+            var engines = await Task.Run(() => EngineService.LoadEngines(path, language), cancellationToken);
+            cancellationToken.ThrowIfCancellationRequested();
             ApplyEngines(engines);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            // Stale load discarded after tab/pak switch.
         }
         catch (Exception ex)
         {

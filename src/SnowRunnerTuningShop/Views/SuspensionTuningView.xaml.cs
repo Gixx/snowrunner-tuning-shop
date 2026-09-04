@@ -17,6 +17,7 @@ public partial class SuspensionTuningView : UserControl
     private readonly ObservableCollection<SuspensionRowViewModel> _suspensions = [];
     private readonly ICollectionView _suspensionsView;
     private bool _pakWritesAllowed = true;
+    private AppSession? _session;
 
     public SuspensionTuningView()
     {
@@ -28,6 +29,8 @@ public partial class SuspensionTuningView : UserControl
     }
 
     public string? PakPath { get; private set; }
+
+    public void AttachSession(AppSession session) => _session = session;
 
     public void SetPakWritesAllowed(bool allowed)
     {
@@ -42,11 +45,11 @@ public partial class SuspensionTuningView : UserControl
         ReloadSuspensions();
     }
 
-    public async Task LoadFromPakAsync(string pakPath)
+    public async Task LoadFromPakAsync(string pakPath, CancellationToken cancellationToken = default)
     {
         PakPath = pakPath;
         RefreshRestoreButton();
-        await ReloadSuspensionsAsync();
+        await ReloadSuspensionsAsync(cancellationToken);
     }
 
     public void Clear()
@@ -76,7 +79,7 @@ public partial class SuspensionTuningView : UserControl
 
     private void RestoreSuspensionsButton_Click(object sender, RoutedEventArgs e)
     {
-        if (!PakWriteUi.TryProceed(null) || !_pakWritesAllowed)
+        if (!PakWriteUi.TryProceed(_session) || !_pakWritesAllowed)
         {
             return;
         }
@@ -118,7 +121,7 @@ public partial class SuspensionTuningView : UserControl
 
     private void ApplyMultipliersButton_Click(object sender, RoutedEventArgs e)
     {
-        if (!PakWriteUi.TryProceed(null) || !_pakWritesAllowed)
+        if (!PakWriteUi.TryProceed(_session) || !_pakWritesAllowed)
         {
             return;
         }
@@ -165,7 +168,7 @@ public partial class SuspensionTuningView : UserControl
 
     private void SaveIndividualButton_Click(object sender, RoutedEventArgs e)
     {
-        if (!PakWriteUi.TryProceed(null) || !_pakWritesAllowed)
+        if (!PakWriteUi.TryProceed(_session) || !_pakWritesAllowed)
         {
             return;
         }
@@ -218,7 +221,7 @@ public partial class SuspensionTuningView : UserControl
         }
     }
 
-    private async Task ReloadSuspensionsAsync()
+    private async Task ReloadSuspensionsAsync(CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(PakPath))
         {
@@ -230,8 +233,13 @@ public partial class SuspensionTuningView : UserControl
         {
             var path = PakPath;
             var language = AppLanguage.Current;
-            var suspensions = await Task.Run(() => SuspensionService.LoadSuspensions(path, language));
+            var suspensions = await Task.Run(() => SuspensionService.LoadSuspensions(path, language), cancellationToken);
+            cancellationToken.ThrowIfCancellationRequested();
             ApplySuspensions(suspensions);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            // Stale load discarded after tab/pak switch.
         }
         catch (Exception ex)
         {

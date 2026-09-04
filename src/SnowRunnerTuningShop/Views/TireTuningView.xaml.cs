@@ -17,6 +17,7 @@ public partial class TireTuningView : UserControl
     private readonly ObservableCollection<TireRowViewModel> _tires = [];
     private readonly ICollectionView _tiresView;
     private bool _pakWritesAllowed = true;
+    private AppSession? _session;
 
     public TireTuningView()
     {
@@ -28,6 +29,8 @@ public partial class TireTuningView : UserControl
     }
 
     public string? PakPath { get; private set; }
+
+    public void AttachSession(AppSession session) => _session = session;
 
     public void SetPakWritesAllowed(bool allowed)
     {
@@ -42,11 +45,11 @@ public partial class TireTuningView : UserControl
         ReloadTires();
     }
 
-    public async Task LoadFromPakAsync(string pakPath)
+    public async Task LoadFromPakAsync(string pakPath, CancellationToken cancellationToken = default)
     {
         PakPath = pakPath;
         RefreshRestoreButton();
-        await ReloadTiresAsync();
+        await ReloadTiresAsync(cancellationToken);
     }
 
     public void Clear()
@@ -76,7 +79,7 @@ public partial class TireTuningView : UserControl
 
     private void RestoreTiresButton_Click(object sender, RoutedEventArgs e)
     {
-        if (!PakWriteUi.TryProceed(null) || !_pakWritesAllowed)
+        if (!PakWriteUi.TryProceed(_session) || !_pakWritesAllowed)
         {
             return;
         }
@@ -119,7 +122,7 @@ public partial class TireTuningView : UserControl
 
     private void ApplyMultipliersButton_Click(object sender, RoutedEventArgs e)
     {
-        if (!PakWriteUi.TryProceed(null) || !_pakWritesAllowed)
+        if (!PakWriteUi.TryProceed(_session) || !_pakWritesAllowed)
         {
             return;
         }
@@ -167,7 +170,7 @@ public partial class TireTuningView : UserControl
 
     private void SaveIndividualButton_Click(object sender, RoutedEventArgs e)
     {
-        if (!PakWriteUi.TryProceed(null) || !_pakWritesAllowed)
+        if (!PakWriteUi.TryProceed(_session) || !_pakWritesAllowed)
         {
             return;
         }
@@ -220,7 +223,7 @@ public partial class TireTuningView : UserControl
         }
     }
 
-    private async Task ReloadTiresAsync()
+    private async Task ReloadTiresAsync(CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(PakPath))
         {
@@ -232,8 +235,13 @@ public partial class TireTuningView : UserControl
         {
             var path = PakPath;
             var language = AppLanguage.Current;
-            var tires = await Task.Run(() => TireService.LoadTires(path, language));
+            var tires = await Task.Run(() => TireService.LoadTires(path, language), cancellationToken);
+            cancellationToken.ThrowIfCancellationRequested();
             ApplyTires(tires);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            // Stale load discarded after tab/pak switch.
         }
         catch (Exception ex)
         {

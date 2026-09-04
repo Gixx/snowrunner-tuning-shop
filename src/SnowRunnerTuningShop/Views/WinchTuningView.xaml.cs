@@ -16,6 +16,7 @@ public partial class WinchTuningView : UserControl
     private readonly ObservableCollection<WinchRowViewModel> _winches = [];
     private readonly ICollectionView _winchesView;
     private bool _pakWritesAllowed = true;
+    private AppSession? _session;
 
     public WinchTuningView()
     {
@@ -30,6 +31,8 @@ public partial class WinchTuningView : UserControl
 
     public string? PakPath { get; private set; }
 
+    public void AttachSession(AppSession session) => _session = session;
+
     public void SetPakWritesAllowed(bool allowed)
     {
         _pakWritesAllowed = allowed;
@@ -43,11 +46,11 @@ public partial class WinchTuningView : UserControl
         ReloadWinches();
     }
 
-    public async Task LoadFromPakAsync(string pakPath)
+    public async Task LoadFromPakAsync(string pakPath, CancellationToken cancellationToken = default)
     {
         PakPath = pakPath;
         RefreshRestoreButton();
-        await ReloadWinchesAsync();
+        await ReloadWinchesAsync(cancellationToken);
     }
 
     public void Clear()
@@ -77,7 +80,7 @@ public partial class WinchTuningView : UserControl
 
     private void RestoreWinchesButton_Click(object sender, RoutedEventArgs e)
     {
-        if (!PakWriteUi.TryProceed(null) || !_pakWritesAllowed)
+        if (!PakWriteUi.TryProceed(_session) || !_pakWritesAllowed)
         {
             return;
         }
@@ -125,7 +128,7 @@ public partial class WinchTuningView : UserControl
 
     private void ApplyMultipliersButton_Click(object sender, RoutedEventArgs e)
     {
-        if (!PakWriteUi.TryProceed(null) || !_pakWritesAllowed)
+        if (!PakWriteUi.TryProceed(_session) || !_pakWritesAllowed)
         {
             return;
         }
@@ -176,7 +179,7 @@ public partial class WinchTuningView : UserControl
 
     private void SaveIndividualButton_Click(object sender, RoutedEventArgs e)
     {
-        if (!PakWriteUi.TryProceed(null) || !_pakWritesAllowed)
+        if (!PakWriteUi.TryProceed(_session) || !_pakWritesAllowed)
         {
             return;
         }
@@ -231,7 +234,7 @@ public partial class WinchTuningView : UserControl
         }
     }
 
-    private async Task ReloadWinchesAsync()
+    private async Task ReloadWinchesAsync(CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(PakPath))
         {
@@ -243,8 +246,13 @@ public partial class WinchTuningView : UserControl
         {
             var path = PakPath;
             var language = AppLanguage.Current;
-            var winches = await Task.Run(() => WinchService.LoadWinches(path, language));
+            var winches = await Task.Run(() => WinchService.LoadWinches(path, language), cancellationToken);
+            cancellationToken.ThrowIfCancellationRequested();
             ApplyWinches(winches);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            // Stale load discarded after tab/pak switch.
         }
         catch (Exception ex)
         {
