@@ -54,7 +54,8 @@
                     <CheckBox x:Name="AutonomousAllCheckBox"
                               Content="{x:Static loc:UiText+Winch.AutonomousAll}"
                               Margin="0,0,0,8"/>
-                    <Button Content="{x:Static loc:UiText+Winch.Apply}"
+                    <Button x:Name="ApplyMultipliersButton"
+                            Content="{x:Static loc:UiText+Winch.Apply}"
                             Padding="14,8"
                             Click="ApplyMultipliersButton_Click"/>
                 </StackPanel>
@@ -75,7 +76,8 @@
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <Button Content="{x:Static loc:UiText+Winch.SaveIndividualChanges}"
+                    <Button x:Name="SaveIndividualButton"
+                            Content="{x:Static loc:UiText+Winch.SaveIndividualChanges}"
                             Padding="14,8"
                             Margin="0,0,8,0"
                             Click="SaveIndividualButton_Click"/>

@@ -592,7 +592,8 @@
                                            Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
 
                                 <StackPanel Orientation="Horizontal">
-                                    <Button Content="{x:Static loc:UiText+Trailers.SaveChanges}"
+                                    <Button x:Name="SaveTuningButton"
+                                            Content="{x:Static loc:UiText+Trailers.SaveChanges}"
                                             Padding="14,8"
                                             Margin="0,0,8,0"
                                             Click="SaveTuningButton_Click"/>

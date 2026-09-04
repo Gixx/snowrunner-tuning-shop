@@ -24,15 +24,25 @@ public partial class PartsView : UserControl
     {
         _session = session;
         _session.PakChanged += (_, _) => _ = ReloadPartsAsync();
-        _session.BaselineChanged += (_, _) =>
-        {
-            WinchTuningView.RefreshRestoreButton();
-            EngineTuningView.RefreshRestoreButton();
-            GearboxTuningView.RefreshRestoreButton();
-            SuspensionTuningView.RefreshRestoreButton();
-            TireTuningView.RefreshRestoreButton();
-        };
+        _session.BaselineChanged += (_, _) => RefreshWriteGates();
+        _session.GameRunningChanged += (_, _) => RefreshWriteGates();
         _ = ReloadPartsAsync();
+        RefreshWriteGates();
+    }
+
+    private void RefreshWriteGates()
+    {
+        var allowed = PakWriteUi.CanWrite(_session);
+        WinchTuningView.SetPakWritesAllowed(allowed);
+        EngineTuningView.SetPakWritesAllowed(allowed);
+        GearboxTuningView.SetPakWritesAllowed(allowed);
+        SuspensionTuningView.SetPakWritesAllowed(allowed);
+        TireTuningView.SetPakWritesAllowed(allowed);
+        WinchTuningView.RefreshRestoreButton();
+        EngineTuningView.RefreshRestoreButton();
+        GearboxTuningView.RefreshRestoreButton();
+        SuspensionTuningView.RefreshRestoreButton();
+        TireTuningView.RefreshRestoreButton();
     }
 
     private async void PartsTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)

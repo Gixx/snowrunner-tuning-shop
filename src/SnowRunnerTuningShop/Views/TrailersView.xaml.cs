@@ -45,6 +45,11 @@ public partial class TrailersView : UserControl
             RefreshRestoreButton();
             RefreshGlobalMultipliersPanel();
         };
+        _session.GameRunningChanged += (_, _) =>
+        {
+            RefreshRestoreButton();
+            RefreshGlobalMultipliersPanel();
+        };
         OnPakChanged();
     }
 
@@ -81,7 +86,8 @@ public partial class TrailersView : UserControl
     {
         var canApply = _session?.HasPak == true
             && !string.IsNullOrWhiteSpace(_session.PakPath)
-            && PakBaselineService.HasBaseline(_session.PakPath);
+            && PakBaselineService.HasBaseline(_session.PakPath)
+            && PakWriteUi.CanWrite(_session);
 
         ApplyGlobalMultipliersButton.IsEnabled = canApply;
         FuelMultiplierSlider.IsEnabled = canApply;
@@ -141,6 +147,11 @@ public partial class TrailersView : UserControl
 
     private void ApplyGlobalMultipliersButton_Click(object sender, RoutedEventArgs e)
     {
+        if (!PakWriteUi.TryProceed(_session))
+        {
+            return;
+        }
+
         if (_session?.HasPak != true || string.IsNullOrWhiteSpace(_session.PakPath))
         {
             MessageBox.Show(
@@ -190,6 +201,11 @@ public partial class TrailersView : UserControl
 
     private void MakeMissionTrailersPurchasableButton_Click(object sender, RoutedEventArgs e)
     {
+        if (!PakWriteUi.TryProceed(_session))
+        {
+            return;
+        }
+
         if (_session?.HasPak != true || string.IsNullOrWhiteSpace(_session.PakPath))
         {
             MessageBox.Show(
@@ -233,6 +249,11 @@ public partial class TrailersView : UserControl
 
     private void RestoreAllTrailersButton_Click(object sender, RoutedEventArgs e)
     {
+        if (!PakWriteUi.TryProceed(_session))
+        {
+            return;
+        }
+
         if (_session?.HasPak != true || string.IsNullOrWhiteSpace(_session.PakPath))
         {
             MessageBox.Show(
@@ -464,7 +485,7 @@ public partial class TrailersView : UserControl
         if (trailer.HasGameData)
         {
             StorePriceTextBox.Text = trailer.Price.ToString(CultureInfo.InvariantCulture);
-            AvailableInStoreCheckBox.IsChecked = !trailer.IsQuest;
+            AvailableInStoreCheckBox.IsChecked = trailer.IsAvailableInStore;
             _suppressUnlockRankSync = true;
             UnlockRankSlider.Value = trailer.UnlockByRank;
             UnlockRankTextBox.Text = trailer.UnlockByRank.ToString(CultureInfo.InvariantCulture);
@@ -510,13 +531,21 @@ public partial class TrailersView : UserControl
 
     private void RefreshRestoreButton()
     {
+        var canWrite = PakWriteUi.CanWrite(_session);
         RestoreTrailerButton.IsEnabled = _currentTrailer is not null
             && !string.IsNullOrWhiteSpace(_session?.PakPath)
-            && PakBaselineService.HasBaseline(_session.PakPath);
+            && PakBaselineService.HasBaseline(_session.PakPath)
+            && canWrite;
+        SaveTuningButton.IsEnabled = _currentTrailer is not null && canWrite;
     }
 
     private void SaveTuningButton_Click(object sender, RoutedEventArgs e)
     {
+        if (!PakWriteUi.TryProceed(_session))
+        {
+            return;
+        }
+
         if (_currentTrailer is null || string.IsNullOrWhiteSpace(_session?.PakPath) || _currentCard is null)
         {
             TuningStatusText.Text = UiText.Trailers.LoadPakHint;
@@ -552,7 +581,11 @@ public partial class TrailersView : UserControl
         {
             _currentTrailer.Price = price;
             _currentTrailer.UnlockByRank = unlockRank;
-            _currentTrailer.IsQuest = AvailableInStoreCheckBox.IsChecked != true;
+            var wantAvailable = AvailableInStoreCheckBox.IsChecked == true;
+            _currentTrailer.MakeAvailableInStore = wantAvailable;
+            // Special hitches (train) stay IsQuest=false when unavailable — hitch alone keeps them out of the store.
+            _currentTrailer.IsQuest = !wantAvailable
+                && (_currentTrailer.HasStoreCompatibleHitch || _currentTrailer.BaselineIsQuest);
         }
 
         try
@@ -582,6 +615,11 @@ public partial class TrailersView : UserControl
 
     private void RestoreTrailerButton_Click(object sender, RoutedEventArgs e)
     {
+        if (!PakWriteUi.TryProceed(_session))
+        {
+            return;
+        }
+
         if (_currentTrailer is null || string.IsNullOrWhiteSpace(_session?.PakPath) || _currentCard is null)
         {
             TuningStatusText.Text = UiText.Trailers.LoadPakHint;

@@ -103,6 +103,7 @@ public partial class PhotoModeView : UserControl
         _session = session;
         _session.PakChanged += (_, _) => ReloadFromPak();
         _session.BaselineChanged += (_, _) => ReloadFromPak();
+        _session.GameRunningChanged += (_, _) => ReloadFromPak();
         ReloadFromPak();
     }
 
@@ -267,7 +268,8 @@ public partial class PhotoModeView : UserControl
         }
 
         HintText.Visibility = Visibility.Collapsed;
-        RestoreButton.IsEnabled = PakBaselineService.HasBaseline(_session.PakPath);
+        RestoreButton.IsEnabled = PakBaselineService.HasBaseline(_session.PakPath)
+            && PakWriteUi.CanWrite(_session);
         UpdateReapplySavedButton();
 
         try
@@ -285,7 +287,7 @@ public partial class PhotoModeView : UserControl
                     && !constraint.SettingKey.Equals(PhotoModeSettingKeys.Contrast, StringComparison.Ordinal))
                 ? $"{UiText.PhotoMode.LoadedStatus} {UiText.PhotoMode.SliderRangeLimited}"
                 : UiText.PhotoMode.LoadedStatus;
-            ApplyButton.IsEnabled = true;
+            ApplyButton.IsEnabled = PakWriteUi.CanWrite(_session);
             _pakLoadedSuccessfully = true;
         }
         catch (Exception ex)
@@ -370,7 +372,8 @@ public partial class PhotoModeView : UserControl
             && PhotoModeProfileService.HasProfile(editionId);
         ReapplySavedButton.Visibility = hasSavedProfile ? Visibility.Visible : Visibility.Collapsed;
         ReapplySavedButton.IsEnabled = hasSavedProfile
-            && PakBaselineService.HasBaseline(_session.PakPath);
+            && PakBaselineService.HasBaseline(_session.PakPath)
+            && PakWriteUi.CanWrite(_session);
     }
 
     private void ApplyButton_Click(object sender, RoutedEventArgs e) => SaveSettings(restoreBaseline: false);
@@ -381,6 +384,11 @@ public partial class PhotoModeView : UserControl
 
     private void SaveSettings(bool restoreBaseline = false, bool reapplySaved = false)
     {
+        if (!PakWriteUi.TryProceed(_session))
+        {
+            return;
+        }
+
         if (_session is null || string.IsNullOrWhiteSpace(_session.PakPath))
         {
             StatusText.Text = UiText.PhotoMode.LoadPakHint;

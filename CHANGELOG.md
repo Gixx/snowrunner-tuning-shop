@@ -11,6 +11,14 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ## [Unreleased]
 
+### Added
+- **Block pak writes while SnowRunner is running:** Apply / Save / Restore (and related working-pak writes) are disabled when a SnowRunner process is detected, with a header banner until the game is closed. Writes are also refused in Core so a locked `initial.pak` is harder to corrupt.
+- **Refresh baseline tooltips:** Home and Settings explain why the button is disabled (Tuning Shop marker still present, pak already matches baseline, or workspace not ready), including on the disabled control.
+- **Automated Core tests:** `tests/SnowRunnerTuningShop.Tests` covers locale key catalog vs `en.json`, `PakFileId` matching, and trailer store-availability hitch rules. CI runs `dotnet test` on Windows.
+
+### Fixed
+- **Trailer “Available in store” on Diesel Locomotive:** vanilla trains have no `IsQuest` flag but only a Train hitch, so the checkbox stayed checked after restore even though they are not in the trailer store. The checkbox now follows effective store readiness (quest flag + hitch).
+
 ---
 
 ## [1.3.3] — 2026-09-04

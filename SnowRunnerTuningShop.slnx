@@ -3,4 +3,7 @@
     <Project Path="src/SnowRunnerTuningShop.Core/SnowRunnerTuningShop.Core.csproj" />
     <Project Path="src/SnowRunnerTuningShop/SnowRunnerTuningShop.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/SnowRunnerTuningShop.Tests/SnowRunnerTuningShop.Tests.csproj" />
+  </Folder>
 </Solution>

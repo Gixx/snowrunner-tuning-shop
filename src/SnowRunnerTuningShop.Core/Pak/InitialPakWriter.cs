@@ -1,4 +1,5 @@
 using System.IO.Compression;
+using SnowRunnerTuningShop.Core.Game;
 using SnowRunnerTuningShop.Core.Profile;
 
 namespace SnowRunnerTuningShop.Core.Pak;
@@ -15,6 +16,8 @@ public static class InitialPakWriter
         bool syncProfile = true,
         IProgress<PakWriteProgress>? writeProgress = null)
     {
+        SnowRunnerProcessGuard.ThrowIfRunning();
+
         if (string.IsNullOrWhiteSpace(pakPath))
         {
             throw new ArgumentException("Pak file path is required.", nameof(pakPath));
@@ -153,6 +156,8 @@ public static class InitialPakWriter
         IReadOnlyCollection<string> entryPaths,
         bool syncProfile = true)
     {
+        SnowRunnerProcessGuard.ThrowIfRunning();
+
         if (string.IsNullOrWhiteSpace(targetPakPath))
         {
             throw new ArgumentException("Pak file path is required.", nameof(targetPakPath));
@@ -226,6 +231,8 @@ public static class InitialPakWriter
         IReadOnlyCollection<string> entryPaths,
         bool syncProfile = true)
     {
+        SnowRunnerProcessGuard.ThrowIfRunning();
+
         if (string.IsNullOrWhiteSpace(pakPath))
         {
             throw new ArgumentException("Pak file path is required.", nameof(pakPath));

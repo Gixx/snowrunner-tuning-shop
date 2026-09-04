@@ -11,9 +11,14 @@ public sealed class AppSession
 
     public bool HasPak => !string.IsNullOrWhiteSpace(PakPath) && Summary is not null;
 
+    /// <summary>True when a SnowRunner process is detected; pak writes must be blocked.</summary>
+    public bool IsGameRunning { get; private set; }
+
     public event EventHandler? PakChanged;
 
     public event EventHandler? BaselineChanged;
+
+    public event EventHandler? GameRunningChanged;
 
     public void SetPak(string pakPath, PakSummary summary)
     {
@@ -31,4 +36,15 @@ public sealed class AppSession
 
     public void NotifyBaselineChanged() =>
         BaselineChanged?.Invoke(this, EventArgs.Empty);
+
+    public void SetGameRunning(bool isRunning)
+    {
+        if (IsGameRunning == isRunning)
+        {
+            return;
+        }
+
+        IsGameRunning = isRunning;
+        GameRunningChanged?.Invoke(this, EventArgs.Empty);
+    }
 }

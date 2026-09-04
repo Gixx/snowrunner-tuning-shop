@@ -16,6 +16,7 @@ public partial class SuspensionTuningView : UserControl
 {
     private readonly ObservableCollection<SuspensionRowViewModel> _suspensions = [];
     private readonly ICollectionView _suspensionsView;
+    private bool _pakWritesAllowed = true;
 
     public SuspensionTuningView()
     {
@@ -27,6 +28,12 @@ public partial class SuspensionTuningView : UserControl
     }
 
     public string? PakPath { get; private set; }
+
+    public void SetPakWritesAllowed(bool allowed)
+    {
+        _pakWritesAllowed = allowed;
+        RefreshRestoreButton();
+    }
 
     public void LoadFromPak(string pakPath)
     {
@@ -46,13 +53,19 @@ public partial class SuspensionTuningView : UserControl
     {
         PakPath = null;
         _suspensions.Clear();
+        ApplyMultipliersButton.IsEnabled = false;
+        SaveIndividualButton.IsEnabled = false;
         RestoreSuspensionsButton.IsEnabled = false;
     }
 
     public void RefreshRestoreButton()
     {
-        RestoreSuspensionsButton.IsEnabled = !string.IsNullOrWhiteSpace(PakPath)
-            && PakBaselineService.HasBaseline(PakPath);
+        var hasPak = !string.IsNullOrWhiteSpace(PakPath);
+        ApplyMultipliersButton.IsEnabled = hasPak && _pakWritesAllowed;
+        SaveIndividualButton.IsEnabled = hasPak && _pakWritesAllowed;
+        RestoreSuspensionsButton.IsEnabled = hasPak
+            && _pakWritesAllowed
+            && PakBaselineService.HasBaseline(PakPath!);
     }
 
     private void ReloadButton_Click(object sender, RoutedEventArgs e)
@@ -63,6 +76,11 @@ public partial class SuspensionTuningView : UserControl
 
     private void RestoreSuspensionsButton_Click(object sender, RoutedEventArgs e)
     {
+        if (!PakWriteUi.TryProceed(null) || !_pakWritesAllowed)
+        {
+            return;
+        }
+
         if (string.IsNullOrWhiteSpace(PakPath))
         {
             MessageBox.Show(UiText.Suspension.LoadPakFirst, UiText.Suspension.LoadErrorTitle, MessageBoxButton.OK, MessageBoxImage.Information);
@@ -100,6 +118,11 @@ public partial class SuspensionTuningView : UserControl
 
     private void ApplyMultipliersButton_Click(object sender, RoutedEventArgs e)
     {
+        if (!PakWriteUi.TryProceed(null) || !_pakWritesAllowed)
+        {
+            return;
+        }
+
         if (string.IsNullOrWhiteSpace(PakPath))
         {
             MessageBox.Show(UiText.Suspension.LoadPakFirst, UiText.Suspension.LoadErrorTitle, MessageBoxButton.OK, MessageBoxImage.Information);
@@ -142,6 +165,11 @@ public partial class SuspensionTuningView : UserControl
 
     private void SaveIndividualButton_Click(object sender, RoutedEventArgs e)
     {
+        if (!PakWriteUi.TryProceed(null) || !_pakWritesAllowed)
+        {
+            return;
+        }
+
         if (string.IsNullOrWhiteSpace(PakPath))
         {
             MessageBox.Show(UiText.Suspension.LoadPakFirst, UiText.Suspension.LoadErrorTitle, MessageBoxButton.OK, MessageBoxImage.Information);

@@ -79,7 +79,8 @@
                 </StackPanel>
 
                 <StackPanel Grid.Column="4" VerticalAlignment="Center">
-                    <Button Content="{x:Static loc:UiText+Suspension.Apply}"
+                    <Button x:Name="ApplyMultipliersButton"
+                            Content="{x:Static loc:UiText+Suspension.Apply}"
                             Padding="14,8"
                             Click="ApplyMultipliersButton_Click"/>
                 </StackPanel>
@@ -100,7 +101,8 @@
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <Button Content="{x:Static loc:UiText+Suspension.SaveIndividualChanges}"
+                    <Button x:Name="SaveIndividualButton"
+                            Content="{x:Static loc:UiText+Suspension.SaveIndividualChanges}"
                             Padding="14,8"
                             Margin="0,0,8,0"
                             Click="SaveIndividualButton_Click"/>

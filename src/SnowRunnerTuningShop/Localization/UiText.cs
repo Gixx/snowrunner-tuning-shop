@@ -70,6 +70,13 @@ public static class UiText
         public static string LoadErrorTitle => StringResources.Get("Main.LoadErrorTitle", "Load error");
 
         public static string BaselineTitle => StringResources.Get("Main.BaselineTitle", "Baseline required");
+        public static string GameRunningTitle => StringResources.Get("Main.GameRunningTitle", "SnowRunner is running");
+        public static string GameRunningMessage => StringResources.Get(
+            "Main.GameRunningMessage",
+            "Close SnowRunner before applying, saving, or restoring changes to initial.pak.");
+        public static string GameRunningBanner => StringResources.Get(
+            "Main.GameRunningBanner",
+            "SnowRunner is running — Apply, Save, and Restore are disabled until you close the game.");
         public static string BaselineWarning => StringResources.Get("Main.BaselineWarning", "Choose your unmodified original initial.pak (Steam, GOG, Epic, Xbox, etc.). The app saves a read-only baseline for that edition and remembers this file as the one you will edit.");
         public static string BaselineReadyTitle => StringResources.Get("Main.BaselineReadyTitle", "Baseline ready");
         public static string BaselineReadyNote => StringResources.Get("Main.BaselineReadyNote", "Baseline is healthy and ready. Keep the baseline file read-only.");
@@ -487,7 +494,9 @@ public static class UiText
         public static string StoreUnlocksHint => StringResources.Get("Trailers.StoreUnlocksHint", "Quest trailers are hidden by GameData IsQuest (including values inherited from a parent XML). Trains and similar special hitches also need a regular trailer socket so the store can list them. Restore all trailers to undo.");
         public static string MakeMissionTrailersPurchasable => StringResources.Get("Trailers.MakeMissionTrailersPurchasable", "Make mission trailers purchasable");
         public static string AvailableInStoreLabel => StringResources.Get("Trailers.AvailableInStoreLabel", "Available in store");
-        public static string AvailableInStoreHint => StringResources.Get("Trailers.AvailableInStoreHint", "Unchecked keeps GameData IsQuest=true. Special hitches (train, rocket platform) get an extra Type=Trailer socket so they appear next to pintle trailers.");
+        public static string AvailableInStoreHint => StringResources.Get(
+            "Trailers.AvailableInStoreHint",
+            "Checked lists the trailer in the store (clears IsQuest and adds a regular hitch socket for trains). Unchecked hides it. Vanilla trains look “off” here even when IsQuest is absent, because they only have a Train hitch.");
         public static string FuelMultiplierDefault => StringResources.Get("Trailers.FuelMultiplierDefault", "Fuel tank: 1 (baseline)");
         public static string RepairsMultiplierDefault => StringResources.Get("Trailers.RepairsMultiplierDefault", "Repair parts: 1 (baseline)");
         public static string WheelsMultiplierDefault => StringResources.Get("Trailers.WheelsMultiplierDefault", "Spare wheels: 1 (baseline)");
@@ -731,6 +740,39 @@ public static class UiText
         public static string RefreshBaselineGameUpdateConfirm => StringResources.Get("Workspace.RefreshBaselineGameUpdateConfirm", "The game appears to have replaced initial.pak. This saves the current file as the new read-only baseline. Use this only when the pak is the new unmodified vanilla file.\n\nYour saved tuning profile is kept so you can reapply afterwards. Continue?");
         public static string RefreshBaselineUnknownConfirm => StringResources.Get("Workspace.RefreshBaselineUnknownConfirm", "The working pak differs from the baseline. Replace the baseline with the current file?\n\nOnly continue if this is an unmodified vanilla initial.pak (for example after a game update).");
         public static string RefreshBaselineSuccessMessage => StringResources.Get("Workspace.RefreshBaselineSuccessMessage", "The baseline was updated from the current working pak. You can reapply saved changes next.");
+        public static string RefreshBaselineTooltipEnabled => StringResources.Get(
+            "Workspace.RefreshBaselineTooltipEnabled",
+            "Save the current working pak as the new read-only baseline. Use only when it is unmodified vanilla (for example after a game update).");
+        public static string RefreshBaselineTooltipHasMarker => StringResources.Get(
+            "Workspace.RefreshBaselineTooltipHasMarker",
+            "Unavailable: the working pak still has Tuning Shop edits. Restore the full baseline first (or wait until the game replaces the file), then refresh.");
+        public static string RefreshBaselineTooltipMatchesBaseline => StringResources.Get(
+            "Workspace.RefreshBaselineTooltipMatchesBaseline",
+            "Unavailable: the working pak already matches the baseline.");
+        public static string RefreshBaselineTooltipNotReady => StringResources.Get(
+            "Workspace.RefreshBaselineTooltipNotReady",
+            "Unavailable: set a baseline and load a workspace first.");
+
+        public static string RefreshBaselineTooltip(WorkspaceHealth health)
+        {
+            if (health.CanRefreshBaseline)
+            {
+                return RefreshBaselineTooltipEnabled;
+            }
+
+            if (health.HasMarker)
+            {
+                return RefreshBaselineTooltipHasMarker;
+            }
+
+            if (health.WorkingMatchesBaseline)
+            {
+                return RefreshBaselineTooltipMatchesBaseline;
+            }
+
+            return RefreshBaselineTooltipNotReady;
+        }
+
         public static string ReapplyTitle => StringResources.Get("Workspace.ReapplyTitle", "Reapply saved changes");
         public static string ReapplyConfirmTitle => StringResources.Get("Workspace.ReapplyConfirmTitle", "Reapply saved changes?");
         public static string ReapplyConfirmMessage => StringResources.Get("Workspace.ReapplyConfirmMessage", "This writes your saved tuning profile back into the working initial.pak. Files that no longer exist after a game update will be skipped and listed in a report. Continue?");

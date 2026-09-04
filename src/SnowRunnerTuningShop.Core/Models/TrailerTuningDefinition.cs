@@ -25,6 +25,26 @@ public sealed class TrailerTuningDefinition
 
     public bool BaselineIsQuest { get; init; }
 
+    /// <summary>
+    /// True when XML already has a hitch the trailer store can use (not Train-only, etc.).
+    /// </summary>
+    public bool HasStoreCompatibleHitch { get; init; }
+
+    public bool BaselineHasStoreCompatibleHitch { get; init; }
+
+    /// <summary>
+    /// Effective store listing: not quest and hitch is store-compatible.
+    /// Trains are quest-listed in the UI until an extra Trailer socket is added.
+    /// </summary>
+    public bool IsAvailableInStore => !IsQuest && HasStoreCompatibleHitch;
+
+    public bool BaselineIsAvailableInStore => !BaselineIsQuest && BaselineHasStoreCompatibleHitch;
+
+    /// <summary>
+    /// When true, save writes IsQuest=false and ensures a store hitch socket (trains, etc.).
+    /// </summary>
+    public bool MakeAvailableInStore { get; set; }
+
     public bool HasFuel { get; init; }
 
     public int FuelCapacity { get; set; }

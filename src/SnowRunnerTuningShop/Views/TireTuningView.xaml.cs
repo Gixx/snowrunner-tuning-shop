@@ -16,6 +16,7 @@ public partial class TireTuningView : UserControl
 {
     private readonly ObservableCollection<TireRowViewModel> _tires = [];
     private readonly ICollectionView _tiresView;
+    private bool _pakWritesAllowed = true;
 
     public TireTuningView()
     {
@@ -27,6 +28,12 @@ public partial class TireTuningView : UserControl
     }
 
     public string? PakPath { get; private set; }
+
+    public void SetPakWritesAllowed(bool allowed)
+    {
+        _pakWritesAllowed = allowed;
+        RefreshRestoreButton();
+    }
 
     public void LoadFromPak(string pakPath)
     {
@@ -46,13 +53,19 @@ public partial class TireTuningView : UserControl
     {
         PakPath = null;
         _tires.Clear();
+        ApplyMultipliersButton.IsEnabled = false;
+        SaveIndividualButton.IsEnabled = false;
         RestoreTiresButton.IsEnabled = false;
     }
 
     public void RefreshRestoreButton()
     {
-        RestoreTiresButton.IsEnabled = !string.IsNullOrWhiteSpace(PakPath)
-            && PakBaselineService.HasBaseline(PakPath);
+        var hasPak = !string.IsNullOrWhiteSpace(PakPath);
+        ApplyMultipliersButton.IsEnabled = hasPak && _pakWritesAllowed;
+        SaveIndividualButton.IsEnabled = hasPak && _pakWritesAllowed;
+        RestoreTiresButton.IsEnabled = hasPak
+            && _pakWritesAllowed
+            && PakBaselineService.HasBaseline(PakPath!);
     }
 
     private void ReloadButton_Click(object sender, RoutedEventArgs e)
@@ -63,6 +76,11 @@ public partial class TireTuningView : UserControl
 
     private void RestoreTiresButton_Click(object sender, RoutedEventArgs e)
     {
+        if (!PakWriteUi.TryProceed(null) || !_pakWritesAllowed)
+        {
+            return;
+        }
+
         if (string.IsNullOrWhiteSpace(PakPath))
         {
             MessageBox.Show(UiText.Tires.LoadPakFirst, UiText.Tires.LoadErrorTitle, MessageBoxButton.OK, MessageBoxImage.Information);
@@ -101,6 +119,11 @@ public partial class TireTuningView : UserControl
 
     private void ApplyMultipliersButton_Click(object sender, RoutedEventArgs e)
     {
+        if (!PakWriteUi.TryProceed(null) || !_pakWritesAllowed)
+        {
+            return;
+        }
+
         if (string.IsNullOrWhiteSpace(PakPath))
         {
             MessageBox.Show(UiText.Tires.LoadPakFirst, UiText.Tires.LoadErrorTitle, MessageBoxButton.OK, MessageBoxImage.Information);
@@ -144,6 +167,11 @@ public partial class TireTuningView : UserControl
 
     private void SaveIndividualButton_Click(object sender, RoutedEventArgs e)
     {
+        if (!PakWriteUi.TryProceed(null) || !_pakWritesAllowed)
+        {
+            return;
+        }
+
         if (string.IsNullOrWhiteSpace(PakPath))
         {
             MessageBox.Show(UiText.Tires.LoadPakFirst, UiText.Tires.LoadErrorTitle, MessageBoxButton.OK, MessageBoxImage.Information);

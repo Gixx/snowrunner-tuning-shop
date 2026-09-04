@@ -9,6 +9,7 @@ namespace SnowRunnerTuningShop;
 public partial class MainWindow : Window
 {
     private readonly AppSession _session = new();
+    private readonly GameRunningMonitor _gameRunningMonitor;
     private bool _navOpen;
     private bool _sidebarPinned;
     private bool _suppressPinHandler;
@@ -24,6 +25,10 @@ public partial class MainWindow : Window
         TrailersView.AttachSession(_session);
         PhotoModeView.AttachSession(_session);
         SettingsView.AttachSession(_session);
+
+        _gameRunningMonitor = new GameRunningMonitor(_session);
+        _session.GameRunningChanged += (_, _) => UpdateGameRunningBanner();
+        UpdateGameRunningBanner();
 
         CrashReportContext.SessionProvider = () =>
         {
@@ -48,9 +53,19 @@ public partial class MainWindow : Window
 
         Loaded += (_, _) =>
         {
+            _gameRunningMonitor.Start();
             NavHome.IsChecked = true;
             ShowPage(HomeView);
         };
+
+        Closed += (_, _) => _gameRunningMonitor.Dispose();
+    }
+
+    private void UpdateGameRunningBanner()
+    {
+        GameRunningBanner.Visibility = _session.IsGameRunning
+            ? Visibility.Visible
+            : Visibility.Collapsed;
     }
 
     private void MenuButton_Click(object sender, RoutedEventArgs e)

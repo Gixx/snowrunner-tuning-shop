@@ -35,6 +35,7 @@ public partial class HomeView : UserControl
             RefreshFromSession();
         };
         _session.BaselineChanged += (_, _) => RefreshWorkspaceUi();
+        _session.GameRunningChanged += (_, _) => RefreshWorkspaceUi();
 
         if (!_autoLoadAttempted)
         {
@@ -211,7 +212,9 @@ public partial class HomeView : UserControl
             : UiText.Workspace.NoSavedProfile;
 
         RefreshBaselineButton.IsEnabled = health.CanRefreshBaseline;
-        ReapplyButton.IsEnabled = health.CanReapply;
+        RefreshBaselineButton.ToolTip = UiText.Workspace.RefreshBaselineTooltip(health);
+        ReapplyButton.IsEnabled = health.CanReapply && PakWriteUi.CanWrite(_session);
+        RestoreFullBaselineButton.IsEnabled = PakWriteUi.CanWrite(_session);
 
         switch (health.Kind)
         {

@@ -32,6 +32,7 @@ public partial class SettingsView : UserControl
         _session = session;
         _session.PakChanged += (_, _) => RefreshWorkspaceButtons();
         _session.BaselineChanged += (_, _) => RefreshWorkspaceButtons();
+        _session.GameRunningChanged += (_, _) => RefreshWorkspaceButtons();
         RefreshWorkspaceButtons();
     }
 
@@ -128,9 +129,10 @@ public partial class SettingsView : UserControl
             && !string.IsNullOrWhiteSpace(_session.PakPath)
             && health.Kind != WorkspaceHealthKind.NotReady;
 
-        RestoreFullBaselineButton.IsEnabled = hasBaseline;
+        RestoreFullBaselineButton.IsEnabled = hasBaseline && PakWriteUi.CanWrite(_session);
         RefreshBaselineButton.IsEnabled = health.CanRefreshBaseline;
-        ReapplyButton.IsEnabled = health.CanReapply;
+        RefreshBaselineButton.ToolTip = UiText.Workspace.RefreshBaselineTooltip(health);
+        ReapplyButton.IsEnabled = health.CanReapply && PakWriteUi.CanWrite(_session);
         WorkspaceStatusTextBlock.Text = UiText.Workspace.StatusLine(health.Kind, health.ProfileEntryCount);
     }
 

@@ -15,6 +15,7 @@ public partial class EngineTuningView : UserControl
 {
     private readonly ObservableCollection<EngineRowViewModel> _engines = [];
     private readonly ICollectionView _enginesView;
+    private bool _pakWritesAllowed = true;
 
     public EngineTuningView()
     {
@@ -28,6 +29,12 @@ public partial class EngineTuningView : UserControl
     public event EventHandler<string>? StatusChanged;
 
     public string? PakPath { get; private set; }
+
+    public void SetPakWritesAllowed(bool allowed)
+    {
+        _pakWritesAllowed = allowed;
+        RefreshRestoreButton();
+    }
 
     public void LoadFromPak(string pakPath)
     {
@@ -47,13 +54,19 @@ public partial class EngineTuningView : UserControl
     {
         PakPath = null;
         _engines.Clear();
+        ApplyMultipliersButton.IsEnabled = false;
+        SaveIndividualButton.IsEnabled = false;
         RestoreEnginesButton.IsEnabled = false;
     }
 
     public void RefreshRestoreButton()
     {
-        RestoreEnginesButton.IsEnabled = !string.IsNullOrWhiteSpace(PakPath)
-            && PakBaselineService.HasBaseline(PakPath);
+        var hasPak = !string.IsNullOrWhiteSpace(PakPath);
+        ApplyMultipliersButton.IsEnabled = hasPak && _pakWritesAllowed;
+        SaveIndividualButton.IsEnabled = hasPak && _pakWritesAllowed;
+        RestoreEnginesButton.IsEnabled = hasPak
+            && _pakWritesAllowed
+            && PakBaselineService.HasBaseline(PakPath!);
     }
 
     private void ReloadButton_Click(object sender, RoutedEventArgs e)
@@ -64,6 +77,11 @@ public partial class EngineTuningView : UserControl
 
     private void RestoreEnginesButton_Click(object sender, RoutedEventArgs e)
     {
+        if (!PakWriteUi.TryProceed(null) || !_pakWritesAllowed)
+        {
+            return;
+        }
+
         if (string.IsNullOrWhiteSpace(PakPath))
         {
             ReportStatus(UiText.Engine.LoadPakFirst);
@@ -106,6 +124,11 @@ public partial class EngineTuningView : UserControl
 
     private void ApplyMultipliersButton_Click(object sender, RoutedEventArgs e)
     {
+        if (!PakWriteUi.TryProceed(null) || !_pakWritesAllowed)
+        {
+            return;
+        }
+
         if (string.IsNullOrWhiteSpace(PakPath))
         {
             ReportStatus(UiText.Engine.LoadPakFirst);
@@ -153,6 +176,11 @@ public partial class EngineTuningView : UserControl
 
     private void SaveIndividualButton_Click(object sender, RoutedEventArgs e)
     {
+        if (!PakWriteUi.TryProceed(null) || !_pakWritesAllowed)
+        {
+            return;
+        }
+
         if (string.IsNullOrWhiteSpace(PakPath))
         {
             ReportStatus(UiText.Engine.LoadPakFirst);

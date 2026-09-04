@@ -122,6 +122,7 @@
                                 Content="{x:Static loc:UiText+Workspace.RefreshBaseline}"
                                 Padding="14,8"
                                 Margin="0,0,8,8"
+                                ToolTipService.ShowOnDisabled="True"
                                 Click="RefreshBaselineButton_Click"/>
                         <Button x:Name="ReapplyButton"
                                 Content="{x:Static loc:UiText+Workspace.ReapplySavedChanges}"

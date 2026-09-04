@@ -352,6 +352,8 @@ public static class TrailerTuningService
         var baselineText = TryReadText(baselineArchive, entryPath);
         var isQuest = ResolveIsQuest(text, workingById);
         var baselineIsQuest = ResolveIsQuest(baselineText ?? text, baselineById ?? workingById);
+        var hasStoreHitch = IsStoreHitchReady(text);
+        var baselineHasStoreHitch = IsStoreHitchReady(baselineText ?? text);
 
         trailer = new TrailerTuningDefinition
         {
@@ -365,6 +367,8 @@ public static class TrailerTuningService
             BaselineUnlockByRank = Math.Clamp(ExtractGameDataInt(baselineText ?? text, "UnlockByRank", 1), 0, 30),
             IsQuest = isQuest,
             BaselineIsQuest = baselineIsQuest,
+            HasStoreCompatibleHitch = hasStoreHitch,
+            BaselineHasStoreCompatibleHitch = baselineHasStoreHitch,
             HasFuel = hasFuel,
             FuelCapacity = fuel,
             BaselineFuelCapacity = ReadBaselineInt(baselineText, text, "FuelCapacity", fuel),
@@ -411,10 +415,25 @@ public static class TrailerTuningService
                 updated,
                 "UnlockByRank",
                 Math.Clamp(trailer.UnlockByRank, 0, 30).ToString(CultureInfo.InvariantCulture));
-            updated = SetGameDataAttribute(updated, "IsQuest", trailer.IsQuest ? "true" : "false");
-            if (!trailer.IsQuest)
+
+            if (trailer.MakeAvailableInStore)
             {
+                updated = SetGameDataAttribute(updated, "IsQuest", "false");
                 updated = EnsureStoreHitch(updated);
+            }
+            else if (trailer.IsQuest)
+            {
+                updated = SetGameDataAttribute(updated, "IsQuest", "true");
+                updated = RemoveSupplementalStoreHitch(updated);
+            }
+            else if (trailer.BaselineIsQuest)
+            {
+                updated = SetGameDataAttribute(updated, "IsQuest", "false");
+            }
+            else
+            {
+                updated = RemoveGameDataAttribute(updated, "IsQuest");
+                updated = RemoveSupplementalStoreHitch(updated);
             }
         }
 
@@ -560,6 +579,26 @@ public static class TrailerTuningService
         }
 
         var replacement = $"<GameData{attrs}>";
+        return string.Concat(text.AsSpan(0, match.Index), replacement, text.AsSpan(match.Index + match.Length));
+    }
+
+    private static string RemoveGameDataAttribute(string text, string attributeName)
+    {
+        var match = GameDataOpenRegex.Match(text);
+        if (!match.Success)
+        {
+            return text;
+        }
+
+        var attrs = match.Groups["attrs"].Value;
+        var pattern = $@"\s*\b{Regex.Escape(attributeName)}\s*=\s*""[^""]*""";
+        var updatedAttrs = Regex.Replace(attrs, pattern, "", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+        if (string.Equals(attrs, updatedAttrs, StringComparison.Ordinal))
+        {
+            return text;
+        }
+
+        var replacement = $"<GameData{updatedAttrs}>";
         return string.Concat(text.AsSpan(0, match.Index), replacement, text.AsSpan(match.Index + match.Length));
     }
 
@@ -722,6 +761,107 @@ public static class TrailerTuningService
         }
 
         return false;
+    }
+
+    /// <summary>
+    /// True when the trailer can appear in the regular store hitch-wise.
+    /// Train / rocket-platform sockets alone are not enough until EnsureStoreHitch adds a Trailer socket.
+    /// </summary>
+    internal static bool IsStoreHitchReady(string text)
+    {
+        if (HasStoreHitchSocket(text))
+        {
+            return true;
+        }
+
+        var sockets = InstallSocketRegex.Matches(text);
+        if (sockets.Count == 0)
+        {
+            // Parent-only XMLs need EnsureStoreHitch before the store can list them.
+            return !ParentFileRegex.IsMatch(text);
+        }
+
+        foreach (Match socket in sockets)
+        {
+            var attrs = ParseAttributes(socket.Groups["attrs"].Value);
+            if (!attrs.TryGetValue("Type", out var type) || string.IsNullOrWhiteSpace(type))
+            {
+                continue;
+            }
+
+            type = type.Trim();
+            if (StoreHitchTypes.Contains(type))
+            {
+                return true;
+            }
+
+            if (NonStoreHitchTypes.Contains(type))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static bool HasNonStoreHitchSocket(string text)
+    {
+        foreach (Match socket in InstallSocketRegex.Matches(text))
+        {
+            var attrs = ParseAttributes(socket.Groups["attrs"].Value);
+            if (attrs.TryGetValue("Type", out var type) && NonStoreHitchTypes.Contains(type.Trim()))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Removes Type=Trailer sockets we add beside Train/rocket hitches when undoing store availability.
+    /// </summary>
+    private static string RemoveSupplementalStoreHitch(string text)
+    {
+        if (!HasNonStoreHitchSocket(text))
+        {
+            return text;
+        }
+
+        var matches = InstallSocketRegex.Matches(text);
+        for (var i = matches.Count - 1; i >= 0; i--)
+        {
+            var socket = matches[i];
+            var attrs = ParseAttributes(socket.Groups["attrs"].Value);
+            if (!attrs.TryGetValue("Type", out var type)
+                || !type.Trim().Equals("Trailer", StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            var start = socket.Index;
+            var length = socket.Length;
+            while (start > 0 && (text[start - 1] == ' ' || text[start - 1] == '\t'))
+            {
+                start--;
+                length++;
+            }
+
+            if (start > 0 && text[start - 1] == '\n')
+            {
+                start--;
+                length++;
+                if (start > 0 && text[start - 1] == '\r')
+                {
+                    start--;
+                    length++;
+                }
+            }
+
+            text = text.Remove(start, length);
+        }
+
+        return text;
     }
 
     private static string SetInstallSocketType(string text, Match socket, string type)

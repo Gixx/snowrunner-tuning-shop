@@ -15,6 +15,7 @@ public partial class WinchTuningView : UserControl
 {
     private readonly ObservableCollection<WinchRowViewModel> _winches = [];
     private readonly ICollectionView _winchesView;
+    private bool _pakWritesAllowed = true;
 
     public WinchTuningView()
     {
@@ -28,6 +29,12 @@ public partial class WinchTuningView : UserControl
     public event EventHandler<string>? StatusChanged;
 
     public string? PakPath { get; private set; }
+
+    public void SetPakWritesAllowed(bool allowed)
+    {
+        _pakWritesAllowed = allowed;
+        RefreshRestoreButton();
+    }
 
     public void LoadFromPak(string pakPath)
     {
@@ -47,13 +54,19 @@ public partial class WinchTuningView : UserControl
     {
         PakPath = null;
         _winches.Clear();
+        ApplyMultipliersButton.IsEnabled = false;
+        SaveIndividualButton.IsEnabled = false;
         RestoreWinchesButton.IsEnabled = false;
     }
 
     public void RefreshRestoreButton()
     {
-        RestoreWinchesButton.IsEnabled = !string.IsNullOrWhiteSpace(PakPath)
-            && PakBaselineService.HasBaseline(PakPath);
+        var hasPak = !string.IsNullOrWhiteSpace(PakPath);
+        ApplyMultipliersButton.IsEnabled = hasPak && _pakWritesAllowed;
+        SaveIndividualButton.IsEnabled = hasPak && _pakWritesAllowed;
+        RestoreWinchesButton.IsEnabled = hasPak
+            && _pakWritesAllowed
+            && PakBaselineService.HasBaseline(PakPath!);
     }
 
     private void ReloadButton_Click(object sender, RoutedEventArgs e)
@@ -64,6 +77,11 @@ public partial class WinchTuningView : UserControl
 
     private void RestoreWinchesButton_Click(object sender, RoutedEventArgs e)
     {
+        if (!PakWriteUi.TryProceed(null) || !_pakWritesAllowed)
+        {
+            return;
+        }
+
         if (string.IsNullOrWhiteSpace(PakPath))
         {
             ReportStatus(UiText.Winch.LoadPakFirst);
@@ -107,6 +125,11 @@ public partial class WinchTuningView : UserControl
 
     private void ApplyMultipliersButton_Click(object sender, RoutedEventArgs e)
     {
+        if (!PakWriteUi.TryProceed(null) || !_pakWritesAllowed)
+        {
+            return;
+        }
+
         if (string.IsNullOrWhiteSpace(PakPath))
         {
             ReportStatus(UiText.Winch.LoadPakFirst);
@@ -153,6 +176,11 @@ public partial class WinchTuningView : UserControl
 
     private void SaveIndividualButton_Click(object sender, RoutedEventArgs e)
     {
+        if (!PakWriteUi.TryProceed(null) || !_pakWritesAllowed)
+        {
+            return;
+        }
+
         if (string.IsNullOrWhiteSpace(PakPath))
         {
             MessageBox.Show(UiText.Winch.LoadPakFirst, UiText.Winch.LoadErrorTitle, MessageBoxButton.OK, MessageBoxImage.Information);

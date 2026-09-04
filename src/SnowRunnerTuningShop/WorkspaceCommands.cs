@@ -12,6 +12,11 @@ internal static class WorkspaceCommands
 {
     public static bool TryRestoreFullBaseline(AppSession session)
     {
+        if (!PakWriteUi.TryProceed(session))
+        {
+            return false;
+        }
+
         if (session is null || string.IsNullOrWhiteSpace(session.PakPath))
         {
             MessageBox.Show(
@@ -116,6 +121,11 @@ internal static class WorkspaceCommands
 
     public static bool TryReapplySavedChanges(AppSession session)
     {
+        if (!PakWriteUi.TryProceed(session))
+        {
+            return false;
+        }
+
         if (session is null || string.IsNullOrWhiteSpace(session.PakPath))
         {
             MessageBox.Show(

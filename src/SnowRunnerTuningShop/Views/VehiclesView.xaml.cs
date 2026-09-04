@@ -63,6 +63,11 @@ public partial class VehiclesView : UserControl
             RefreshRestoreButton();
             RefreshGlobalMultipliersPanel();
         };
+        _session.GameRunningChanged += (_, _) =>
+        {
+            RefreshRestoreButton();
+            RefreshGlobalMultipliersPanel();
+        };
         OnPakChanged();
     }
 
@@ -99,7 +104,8 @@ public partial class VehiclesView : UserControl
     {
         var canApply = _session?.HasPak == true
             && !string.IsNullOrWhiteSpace(_session.PakPath)
-            && PakBaselineService.HasBaseline(_session.PakPath);
+            && PakBaselineService.HasBaseline(_session.PakPath)
+            && PakWriteUi.CanWrite(_session);
 
         ApplyGlobalMultipliersButton.IsEnabled = canApply;
         FuelMultiplierSlider.IsEnabled = canApply;
@@ -177,6 +183,11 @@ public partial class VehiclesView : UserControl
 
     private void ApplyGlobalMultipliersButton_Click(object sender, RoutedEventArgs e)
     {
+        if (!PakWriteUi.TryProceed(_session))
+        {
+            return;
+        }
+
         if (_session?.HasPak != true || string.IsNullOrWhiteSpace(_session.PakPath))
         {
             MessageBox.Show(
@@ -228,6 +239,11 @@ public partial class VehiclesView : UserControl
 
     private void ApplyStoreUnlocksButton_Click(object sender, RoutedEventArgs e)
     {
+        if (!PakWriteUi.TryProceed(_session))
+        {
+            return;
+        }
+
         if (_session?.HasPak != true || string.IsNullOrWhiteSpace(_session.PakPath))
         {
             MessageBox.Show(
@@ -287,6 +303,11 @@ public partial class VehiclesView : UserControl
 
     private void RestoreAllVehiclesButton_Click(object sender, RoutedEventArgs e)
     {
+        if (!PakWriteUi.TryProceed(_session))
+        {
+            return;
+        }
+
         if (_session?.HasPak != true || string.IsNullOrWhiteSpace(_session.PakPath))
         {
             MessageBox.Show(
@@ -646,13 +667,21 @@ public partial class VehiclesView : UserControl
 
     private void RefreshRestoreButton()
     {
+        var canWrite = PakWriteUi.CanWrite(_session);
         RestoreVehicleButton.IsEnabled = _currentTruck is not null
             && !string.IsNullOrWhiteSpace(_session?.PakPath)
-            && PakBaselineService.HasBaseline(_session.PakPath);
+            && PakBaselineService.HasBaseline(_session.PakPath)
+            && canWrite;
+        SaveTuningButton.IsEnabled = _currentTruck is not null && canWrite;
     }
 
     private void SaveTuningButton_Click(object sender, RoutedEventArgs e)
     {
+        if (!PakWriteUi.TryProceed(_session))
+        {
+            return;
+        }
+
         if (_currentTruck is null || string.IsNullOrWhiteSpace(_session?.PakPath) || _currentCard is null)
         {
             TuningStatusText.Text = UiText.Vehicles.LoadPakHint;
@@ -710,6 +739,11 @@ public partial class VehiclesView : UserControl
 
     private void RestoreVehicleButton_Click(object sender, RoutedEventArgs e)
     {
+        if (!PakWriteUi.TryProceed(_session))
+        {
+            return;
+        }
+
         if (_currentTruck is null || string.IsNullOrWhiteSpace(_session?.PakPath) || _currentCard is null)
         {
             TuningStatusText.Text = UiText.Vehicles.LoadPakHint;

@@ -15,6 +15,7 @@ public partial class GearboxTuningView : UserControl
 {
     private readonly ObservableCollection<GearboxRowViewModel> _gearboxes = [];
     private readonly ICollectionView _gearboxesView;
+    private bool _pakWritesAllowed = true;
 
     public GearboxTuningView()
     {
@@ -26,6 +27,12 @@ public partial class GearboxTuningView : UserControl
     }
 
     public string? PakPath { get; private set; }
+
+    public void SetPakWritesAllowed(bool allowed)
+    {
+        _pakWritesAllowed = allowed;
+        RefreshRestoreButton();
+    }
 
     public void LoadFromPak(string pakPath)
     {
@@ -45,13 +52,19 @@ public partial class GearboxTuningView : UserControl
     {
         PakPath = null;
         _gearboxes.Clear();
+        ApplyMultipliersButton.IsEnabled = false;
+        SaveIndividualButton.IsEnabled = false;
         RestoreGearboxesButton.IsEnabled = false;
     }
 
     public void RefreshRestoreButton()
     {
-        RestoreGearboxesButton.IsEnabled = !string.IsNullOrWhiteSpace(PakPath)
-            && PakBaselineService.HasBaseline(PakPath);
+        var hasPak = !string.IsNullOrWhiteSpace(PakPath);
+        ApplyMultipliersButton.IsEnabled = hasPak && _pakWritesAllowed;
+        SaveIndividualButton.IsEnabled = hasPak && _pakWritesAllowed;
+        RestoreGearboxesButton.IsEnabled = hasPak
+            && _pakWritesAllowed
+            && PakBaselineService.HasBaseline(PakPath!);
     }
 
     private void ReloadButton_Click(object sender, RoutedEventArgs e)
@@ -62,6 +75,11 @@ public partial class GearboxTuningView : UserControl
 
     private void RestoreGearboxesButton_Click(object sender, RoutedEventArgs e)
     {
+        if (!PakWriteUi.TryProceed(null) || !_pakWritesAllowed)
+        {
+            return;
+        }
+
         if (string.IsNullOrWhiteSpace(PakPath))
         {
             MessageBox.Show(UiText.Gearbox.LoadPakFirst, UiText.Gearbox.LoadErrorTitle, MessageBoxButton.OK, MessageBoxImage.Information);
@@ -99,6 +117,11 @@ public partial class GearboxTuningView : UserControl
 
     private void ApplyMultipliersButton_Click(object sender, RoutedEventArgs e)
     {
+        if (!PakWriteUi.TryProceed(null) || !_pakWritesAllowed)
+        {
+            return;
+        }
+
         if (string.IsNullOrWhiteSpace(PakPath))
         {
             MessageBox.Show(UiText.Gearbox.LoadPakFirst, UiText.Gearbox.LoadErrorTitle, MessageBoxButton.OK, MessageBoxImage.Information);
@@ -140,6 +163,11 @@ public partial class GearboxTuningView : UserControl
 
     private void SaveIndividualButton_Click(object sender, RoutedEventArgs e)
     {
+        if (!PakWriteUi.TryProceed(null) || !_pakWritesAllowed)
+        {
+            return;
+        }
+
         if (string.IsNullOrWhiteSpace(PakPath))
         {
             MessageBox.Show(UiText.Gearbox.LoadPakFirst, UiText.Gearbox.LoadErrorTitle, MessageBoxButton.OK, MessageBoxImage.Information);

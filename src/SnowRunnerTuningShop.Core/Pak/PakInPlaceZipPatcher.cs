@@ -1,5 +1,6 @@
 using System.Buffers.Binary;
 using System.IO.Compression;
+using SnowRunnerTuningShop.Core.Game;
 
 namespace SnowRunnerTuningShop.Core.Pak;
 
@@ -14,6 +15,8 @@ internal static class PakInPlaceZipPatcher
 
     internal static bool TryReplaceEntry(string pakPath, string entryName, byte[] uncompressedPayload)
     {
+        SnowRunnerProcessGuard.ThrowIfRunning();
+
         var pakBytes = File.ReadAllBytes(pakPath);
         var entries = PakRawZipReplacer.ReadCentralDirectoryForPatching(pakBytes);
         var normalizedName = entryName.Replace('\\', '/');

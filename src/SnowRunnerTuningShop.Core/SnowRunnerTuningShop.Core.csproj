@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <InternalsVisibleTo Include="PhotoModeLoadTest" />
+    <InternalsVisibleTo Include="SnowRunnerTuningShop.Tests" />
   </ItemGroup>
 
 </Project>

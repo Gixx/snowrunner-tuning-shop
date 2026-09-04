@@ -1,4 +1,5 @@
 using SnowRunnerTuningShop.Core.Config;
+using SnowRunnerTuningShop.Core.Game;
 using SnowRunnerTuningShop.Core.Profile;
 
 namespace SnowRunnerTuningShop.Core.Backup;
@@ -190,6 +191,8 @@ public static class PakBaselineService
 
     public static void RestorePakFromBaseline(string workingPakPath)
     {
+        SnowRunnerProcessGuard.ThrowIfRunning();
+
         var baselinePath = RequireBaseline(workingPakPath);
         var editionId = ResolveEditionId(workingPakPath);
         ClearReadOnlyAttribute(workingPakPath);

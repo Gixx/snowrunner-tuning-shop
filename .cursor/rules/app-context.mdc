@@ -1,0 +1,31 @@
+---
+description: SnowRunner Tuning Shop app map and hard rules for every session
+alwaysApply: true
+---
+
+# SnowRunner Tuning Shop
+
+Full map: `docs/AGENT_CONTEXT.md` — read it when unsure; update it when architecture or hard rules change.
+
+## Product
+
+WPF / .NET 10 desktop app that tunes SnowRunner `initial.pak`. UI in `src/SnowRunnerTuningShop/`, domain in `src/SnowRunnerTuningShop.Core/`. Version: `AppInfo.Version`. Releases: `CHANGELOG.md` + git tag `v*`.
+
+## Hard rules
+
+- **Never match catalog → pak by localized display names.** Vehicles use `pakId` (XML stem) via `PakFileId` / `TruckTuningService.FindByCatalog`. Trailers use catalog `id` as file id. Parts key off XML `Name`.
+- **Localization is last priority.** Data binding and `InvariantCulture` numeric I/O come first. UI language must not hide trucks/parts.
+- **Crash reports stay English** (`StringResources.GetEnglish` / `UiText.CrashReport`).
+- **Do not commit unless the user asks.** Do not invent features or expand scope.
+- **Close SnowRunner before pak writes.** The app disables write buttons and Core refuses `initial.pak` mutation while the game process is running.
+- Skip gitignored noise: `.plan/`, `docs/plan/`, `artifacts/`, `tools/`.
+
+## Where to look
+
+| Need | Start here |
+|------|------------|
+| Workspace / baseline | `Core/Config/WorkspaceConfigStore.cs`, `Core/Backup/PakBaselineService.cs` |
+| Vehicle match | `assets/vehicles/catalog.json` (`pakId`), `Core/Pak/PakFileId.cs` |
+| Parts | `Core/{Engine,Winch,Gearbox,Suspension,Tires}/*Service.cs` |
+| UI / game strings | `Localization/UiText.cs`, `Core/Strings/GameStringsReader.cs` |
+| AppData | `%LocalAppData%\SnowRunnerTuningShop\` |

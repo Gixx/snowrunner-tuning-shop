@@ -25,6 +25,7 @@ public partial class GeneralView : UserControl
         _session = session;
         _session.PakChanged += (_, _) => ReloadFromPak();
         _session.BaselineChanged += (_, _) => ReloadFromPak();
+        _session.GameRunningChanged += (_, _) => ReloadFromPak();
         ReloadFromPak();
     }
 
@@ -47,15 +48,20 @@ public partial class GeneralView : UserControl
             HintText.Text = UiText.General.LoadPakHint;
             HintText.Visibility = Visibility.Visible;
             StatusText.Text = "";
+            ApplyCameraButton.IsEnabled = false;
+            ApplyRockSizeButton.IsEnabled = false;
             RestoreCameraButton.IsEnabled = false;
             RestoreRockSizeButton.IsEnabled = false;
             return;
         }
 
         HintText.Visibility = Visibility.Collapsed;
+        var canWrite = PakWriteUi.CanWrite(_session);
         var hasBaseline = PakBaselineService.HasBaseline(_session.PakPath);
-        RestoreCameraButton.IsEnabled = hasBaseline;
-        RestoreRockSizeButton.IsEnabled = hasBaseline;
+        ApplyCameraButton.IsEnabled = canWrite;
+        ApplyRockSizeButton.IsEnabled = canWrite;
+        RestoreCameraButton.IsEnabled = hasBaseline && canWrite;
+        RestoreRockSizeButton.IsEnabled = hasBaseline && canWrite;
 
         try
         {
@@ -86,6 +92,11 @@ public partial class GeneralView : UserControl
 
     private void ApplyCamera(CameraCollisionMode? mode = null)
     {
+        if (!PakWriteUi.TryProceed(_session))
+        {
+            return;
+        }
+
         if (_session is null || string.IsNullOrWhiteSpace(_session.PakPath))
         {
             StatusText.Text = UiText.General.LoadPakHint;
@@ -137,6 +148,11 @@ public partial class GeneralView : UserControl
 
     private void ApplyRockSize(double scale)
     {
+        if (!PakWriteUi.TryProceed(_session))
+        {
+            return;
+        }
+
         if (_session is null || string.IsNullOrWhiteSpace(_session.PakPath))
         {
             StatusText.Text = UiText.General.LoadPakHint;
