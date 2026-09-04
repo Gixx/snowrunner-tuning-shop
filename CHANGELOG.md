@@ -13,6 +13,21 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ---
 
+## [1.3.2] — 2026-09-04
+
+### Added
+- **Simplified and Traditional Chinese UI:** Settings and the installer gain 简体中文 (`zh-CN`) and 繁體中文 (`zh-TW`). Game pak strings follow `chinese_simplified` / `chinese_traditional`. First launch without a saved config uses the Windows UI language when it matches a supported locale.
+- **Add or Update languages:** Settings can fetch `assets/localization/catalog.json` from GitHub and download extra or newer locale files into AppData. Chinese and the other current languages stay bundled for offline use; only downloaded overlays can be removed.
+- **UI key catalog:** `assets/localization/keys.json` lists every UI string key. English must contain all of them; other languages fall back to English for missing keys. Debug builds add a **DEBUG (keys)** language that renders keys instead of translations so leftover hardcoded text is visible.
+- **Extra downloadable languages:** Magyar (`hu`), Italiano (`it`), and Suomi (`fi`) are in the GitHub locale catalog so **Settings → Add or Update languages** can fetch them. They are not copied into the app output or installer.
+
+### Fixed
+- **Incomplete UI translations:** slider captions, vehicle/trailer counts, Photo Mode, trailers, locale-pack window, reapply progress, and other status strings now have keys in every bundled language instead of falling back to English. Locale catalog revision is 4.
+- **Vehicle editor depended on UI language:** catalog cards were matched to pak XML by localized truck names, so Azov 64131 (and other wiki-id cards) opened in English but failed in Chinese ([#5](https://github.com/Gixx/snowrunner-tuning-shop/issues/5)). Matching now uses stable file ids / catalog names, independent of the UI language. Number parsing uses invariant culture so German/Chinese decimal rules cannot break tuning.
+- **Vehicle edit metadata language:** role (Highway / Heavy / …) and country names on the vehicle detail page use the same UI keys as the list filters, instead of leftover English from `metadata.json`.
+
+---
+
 ## [1.3.1] — 2026-09-03
 
 ### Added
@@ -236,7 +251,8 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ---
 
-[Unreleased]: https://github.com/Gixx/snowrunner-tuning-shop/compare/v1.3.1...HEAD
+[Unreleased]: https://github.com/Gixx/snowrunner-tuning-shop/compare/v1.3.2...HEAD
+[1.3.2]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.3.2
 [1.3.1]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.3.1
 [1.3.0]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.3.0
 [1.2.2]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.2.2

@@ -8,6 +8,7 @@ using SnowRunnerTuningShop.Core.Pak;
 using SnowRunnerTuningShop.Core.Strings;
 using SnowRunnerTuningShop.Core.Tuning;
 using SnowRunnerTuningShop.Core.Xml;
+using SnowRunnerTuningShop.Core.Localization;
 
 namespace SnowRunnerTuningShop.Core.Gearbox;
 
@@ -319,7 +320,7 @@ public static class GearboxService
 
     private static string FormatUsedByTooltip(IReadOnlyList<string> vehicleNames) =>
         vehicleNames.Count == 0
-            ? "No trucks reference this gearbox set."
+            ? PartUsageMessages.NoTrucksGearboxSet
             : string.Join(", ", vehicleNames);
 
     private static string ApplyMultipliersToText(

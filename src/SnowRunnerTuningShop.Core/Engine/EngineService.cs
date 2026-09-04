@@ -8,6 +8,7 @@ using SnowRunnerTuningShop.Core.Pak;
 using SnowRunnerTuningShop.Core.Strings;
 using SnowRunnerTuningShop.Core.Tuning;
 using SnowRunnerTuningShop.Core.Xml;
+using SnowRunnerTuningShop.Core.Localization;
 
 namespace SnowRunnerTuningShop.Core.Engine;
 
@@ -239,7 +240,7 @@ public static class EngineService
                 UsedBy = PartXmlHelpers.FormatUsedBy(usedByNames),
                 UsedByTooltip = PartXmlHelpers.FormatUsedByTooltip(
                     usedByNames,
-                    "No trucks reference this engine set."),
+                    PartUsageMessages.NoTrucksEngineSet),
                 Category = InferCategory(entryPath),
                 Price = PartXmlHelpers.ExtractPrice(block),
                 Torque = ParseDouble(attrs.GetValueOrDefault("Torque"), 0),

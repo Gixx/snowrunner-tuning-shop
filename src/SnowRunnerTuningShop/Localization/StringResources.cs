@@ -18,6 +18,17 @@ public static class StringResources
     private static string _culture = LanguageCatalog.DefaultUiCulture;
     private static bool _initialized;
 
+    public static void Reload()
+    {
+        lock (Gate)
+        {
+            LocaleKeyCatalog.Reload();
+            _initialized = false;
+            EnsureLoaded();
+            LoadOverlay(_culture);
+        }
+    }
+
     public static void SetCulture(string uiCulture)
     {
         lock (Gate)
@@ -33,6 +44,11 @@ public static class StringResources
         lock (Gate)
         {
             EnsureLoaded();
+            if (IsDebugKeysCulture(_culture))
+            {
+                return key;
+            }
+
             if (_overlay.TryGetValue(key, out var overlayValue) && !string.IsNullOrEmpty(overlayValue))
             {
                 return overlayValue;
@@ -49,6 +65,11 @@ public static class StringResources
 
     public static string Format(string key, string fallback, params object?[] args)
     {
+        if (IsDebugKeysCulture(_culture))
+        {
+            return key;
+        }
+
         var template = Get(key, fallback);
         try
         {
@@ -69,18 +90,24 @@ public static class StringResources
 
         _base = LoadFile(LanguageCatalog.DefaultUiCulture);
         _initialized = true;
+        LocaleKeyCatalog.TraceEnglishGaps(_base);
     }
 
     private static void LoadOverlay(string uiCulture)
     {
-        if (string.Equals(uiCulture, LanguageCatalog.DefaultUiCulture, StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(uiCulture, LanguageCatalog.DefaultUiCulture, StringComparison.OrdinalIgnoreCase)
+            || IsDebugKeysCulture(uiCulture))
         {
             _overlay = new Dictionary<string, string>(StringComparer.Ordinal);
             return;
         }
 
         _overlay = LoadFile(uiCulture);
+        LocaleKeyCatalog.TraceGaps(uiCulture, _overlay);
     }
+
+    private static bool IsDebugKeysCulture(string uiCulture) =>
+        string.Equals(uiCulture, LanguageCatalog.DebugUiCulture, StringComparison.OrdinalIgnoreCase);
 
     private static Dictionary<string, string> LoadFile(string uiCulture)
     {
@@ -104,32 +131,6 @@ public static class StringResources
         }
     }
 
-    private static string? FindLocaleFile(string uiCulture)
-    {
-        var fileName = $"{LanguageCatalog.NormalizeUiCulture(uiCulture)}.json";
-        foreach (var root in CandidateRoots())
-        {
-            var direct = Path.Combine(root, fileName);
-            if (File.Exists(direct))
-            {
-                return direct;
-            }
-
-            var nested = Path.Combine(root, "localization", fileName);
-            if (File.Exists(nested))
-            {
-                return nested;
-            }
-        }
-
-        return null;
-    }
-
-    private static IEnumerable<string> CandidateRoots()
-    {
-        var baseDir = AppContext.BaseDirectory;
-        yield return Path.Combine(baseDir, "assets", "localization");
-        yield return Path.Combine(baseDir, "localization");
-        yield return baseDir;
-    }
+    private static string? FindLocaleFile(string uiCulture) =>
+        LocalePackStore.ResolveLocalePath(LanguageCatalog.NormalizeUiCulture(uiCulture));
 }

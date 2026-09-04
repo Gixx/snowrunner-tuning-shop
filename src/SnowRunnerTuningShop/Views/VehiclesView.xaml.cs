@@ -143,15 +143,15 @@ public partial class VehiclesView : UserControl
 
     private void UpdateGlobalMultiplierLabels()
     {
-        FuelMultiplierLabel.Text = TuningMultiplierPresets.FormatSliderCaption(
-            "Fuel tank",
+        FuelMultiplierLabel.Text = UiText.Slider.Caption(
+            UiText.Slider.FuelTank,
             GetMultiplierIndex(FuelMultiplierSlider));
         FrontSteerGlobalLabel.Text = GetFrontSteerGlobalLabel(GetFrontSteerGlobalIndex(FrontSteerGlobalSlider));
-        ResponsivenessMultiplierLabel.Text = TuningMultiplierPresets.FormatSliderCaption(
-            "Responsiveness",
+        ResponsivenessMultiplierLabel.Text = UiText.Slider.Caption(
+            UiText.Slider.Responsiveness,
             GetMultiplierIndex(ResponsivenessMultiplierSlider));
-        PriceMultiplierLabel.Text = TuningMultiplierPresets.FormatSliderCaption(
-            "Store price",
+        PriceMultiplierLabel.Text = UiText.Slider.Caption(
+            UiText.Slider.StorePrice,
             GetMultiplierIndex(PriceMultiplierSlider));
     }
 
@@ -500,7 +500,7 @@ public partial class VehiclesView : UserControl
         BasedOnRow.Margin = hasRole || hasYear || hasCountry ? new Thickness(0, 0, 0, 10) : new Thickness(0);
 
         RoleRow.Visibility = hasRole ? Visibility.Visible : Visibility.Collapsed;
-        DetailRoleText.Text = role;
+        DetailRoleText.Text = UiText.Vehicles.CategoryDisplay(role);
         RoleRow.Margin = hasYear || hasCountry ? new Thickness(0, 0, 0, 10) : new Thickness(0);
 
         YearsRow.Visibility = hasYear ? Visibility.Visible : Visibility.Collapsed;
@@ -515,7 +515,7 @@ public partial class VehiclesView : UserControl
             DetailCountryFlag.Visibility = DetailCountryFlag.Source is null
                 ? Visibility.Collapsed
                 : Visibility.Visible;
-            DetailCountryName.Text = country.Name;
+            DetailCountryName.Text = UiText.Vehicles.CountryDisplay(country.Code, country.Name);
         }
         else
         {

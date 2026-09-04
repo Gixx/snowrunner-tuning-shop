@@ -32,7 +32,8 @@
       <Link>assets\general\%(RecursiveDir)%(Filename)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\..\assets\localization\*.json">
+    <!-- Extra GitHub-only locales (hu/it/fi) stay in the repo for download tests; they are not shipped. -->
+    <Content Include="..\..\assets\localization\*.json" Exclude="..\..\assets\localization\hu.json;..\..\assets\localization\it.json;..\..\assets\localization\fi.json">
       <Link>assets\localization\%(Filename)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

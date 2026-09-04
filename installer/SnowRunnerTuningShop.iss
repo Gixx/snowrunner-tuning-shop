@@ -55,6 +55,8 @@ Name: "brazilianportuguese"; MessagesFile: "compiler:Languages\BrazilianPortugue
 Name: "polish"; MessagesFile: "compiler:Languages\Polish.isl"
 Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"
 Name: "ukrainian"; MessagesFile: "compiler:Languages\Ukrainian.isl"
+Name: "chinesesimplified"; MessagesFile: "compiler:Languages\ChineseSimplified.isl"
+Name: "chinesetraditional"; MessagesFile: "compiler:Languages\ChineseTraditional.isl"
 
 [Code]
 function UiCultureFromInnoLanguage(const InnoName: String): String;
@@ -67,6 +69,8 @@ begin
   else if InnoName = 'polish' then Result := 'pl'
   else if InnoName = 'russian' then Result := 'ru'
   else if InnoName = 'ukrainian' then Result := 'uk'
+  else if InnoName = 'chinesesimplified' then Result := 'zh-CN'
+  else if InnoName = 'chinesetraditional' then Result := 'zh-TW'
   else Result := 'en';
 end;
 

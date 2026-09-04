@@ -261,17 +261,17 @@ public partial class SuspensionTuningView : UserControl
             return;
         }
 
-        HeightMultiplierLabel.Text = TuningMultiplierPresets.FormatSliderCaption(
-            "Height",
+        HeightMultiplierLabel.Text = UiText.Slider.Caption(
+            UiText.Slider.Height,
             GetMultiplierIndex(HeightMultiplierSlider));
-        StrengthMultiplierLabel.Text = TuningMultiplierPresets.FormatSliderCaption(
-            "Strength",
+        StrengthMultiplierLabel.Text = UiText.Slider.Caption(
+            UiText.Slider.Strength,
             GetMultiplierIndex(StrengthMultiplierSlider));
-        DampingMultiplierLabel.Text = TuningMultiplierPresets.FormatSliderCaption(
-            "Damping",
+        DampingMultiplierLabel.Text = UiText.Slider.Caption(
+            UiText.Slider.Damping,
             GetMultiplierIndex(DampingMultiplierSlider));
-        DamageMultiplierLabel.Text = TuningMultiplierPresets.FormatSliderCaption(
-            "Damage capacity",
+        DamageMultiplierLabel.Text = UiText.Slider.Caption(
+            UiText.Slider.DamageCapacity,
             GetMultiplierIndex(DamageMultiplierSlider));
     }
 

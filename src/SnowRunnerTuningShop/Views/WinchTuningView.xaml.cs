@@ -272,11 +272,11 @@ public partial class WinchTuningView : UserControl
             return;
         }
 
-        LengthMultiplierLabel.Text = TuningMultiplierPresets.FormatSliderCaption(
-            "Length multiplier",
+        LengthMultiplierLabel.Text = UiText.Slider.Caption(
+            UiText.Slider.LengthMultiplier,
             GetLengthMultiplierIndex());
-        StrengthMultiplierLabel.Text = TuningMultiplierPresets.FormatSliderCaption(
-            "Strength multiplier",
+        StrengthMultiplierLabel.Text = UiText.Slider.Caption(
+            UiText.Slider.StrengthMultiplier,
             GetStrengthMultiplierIndex());
     }
 

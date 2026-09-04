@@ -86,6 +86,10 @@ public static class TruckTuningService
         }
     }
 
+    /// <summary>
+    /// Resolves a catalog card to a pak truck using stable ids, never localized display names.
+    /// Catalog English names are matched to XML file names (Azov 64131 → azov_64131).
+    /// </summary>
     public static TruckTuningDefinition? FindByCatalog(
         IReadOnlyList<TruckTuningDefinition> trucks,
         string catalogDisplayName,
@@ -96,24 +100,77 @@ public static class TruckTuningService
             return null;
         }
 
+        var idKey = NormalizeKey(catalogId);
         var nameKey = NormalizeKey(catalogDisplayName);
-        if (nameKey.Length > 0)
+
+        if (idKey.Length > 0)
         {
-            var named = trucks.Where(truck => NormalizeKey(truck.DisplayName) == nameKey).ToArray();
-            if (named.Length == 1)
+            var exactId = PickUnique(trucks.Where(truck => NormalizeKey(truck.TruckId) == idKey));
+            if (exactId is not null)
             {
-                return named[0];
+                return exactId;
             }
         }
 
-        var idKey = NormalizeKey(catalogId);
-        if (idKey.Length == 0)
+        if (nameKey.Length > 0)
+        {
+            var exactNameAsId = PickUnique(trucks.Where(truck => NormalizeKey(truck.TruckId) == nameKey));
+            if (exactNameAsId is not null)
+            {
+                return exactNameAsId;
+            }
+        }
+
+        if (idKey.Length >= 3)
+        {
+            var suffix = trucks
+                .Where(truck =>
+                {
+                    var truckKey = NormalizeKey(truck.TruckId);
+                    return truckKey.Length > idKey.Length
+                        && truckKey.EndsWith(idKey, StringComparison.Ordinal);
+                })
+                .ToArray();
+            if (nameKey.Length > 0)
+            {
+                var namedSuffix = PickUnique(suffix.Where(truck =>
+                {
+                    var truckKey = NormalizeKey(truck.TruckId);
+                    return truckKey == nameKey
+                        || truckKey.EndsWith(nameKey, StringComparison.Ordinal);
+                }));
+                if (namedSuffix is not null)
+                {
+                    return namedSuffix;
+                }
+            }
+
+            var uniqueSuffix = PickUnique(suffix);
+            if (uniqueSuffix is not null)
+            {
+                return uniqueSuffix;
+            }
+        }
+
+        return null;
+    }
+
+    private static TruckTuningDefinition? PickUnique(IEnumerable<TruckTuningDefinition> matches)
+    {
+        var list = matches as IList<TruckTuningDefinition> ?? matches.ToArray();
+        if (list.Count == 0)
         {
             return null;
         }
 
-        var byId = trucks.Where(truck => NormalizeKey(truck.TruckId) == idKey).ToArray();
-        return byId.Length == 1 ? byId[0] : null;
+        if (list.Count == 1)
+        {
+            return list[0];
+        }
+
+        return list.FirstOrDefault(truck =>
+                   !truck.EntryPath.Contains("/_dlc/", StringComparison.OrdinalIgnoreCase))
+               ?? list[0];
     }
 
     public static TruckTuningSaveResult ApplyGlobalMultipliers(

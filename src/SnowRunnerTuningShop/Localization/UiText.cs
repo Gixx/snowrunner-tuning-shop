@@ -1,6 +1,8 @@
 namespace SnowRunnerTuningShop.Localization;
 
 using SnowRunnerTuningShop.Core;
+using SnowRunnerTuningShop.Core.General;
+using SnowRunnerTuningShop.Core.Localization;
 using SnowRunnerTuningShop.Core.Profile;
 using SnowRunnerTuningShop.Core.Tuning;
 
@@ -18,6 +20,39 @@ public static class UiText
         public static string OpenMenu => StringResources.Get("Nav.OpenMenu", "Menu");
         public static string PinMenu => StringResources.Get("Nav.PinMenu", "Keep menu open");
         public static string VersionLabel => StringResources.Format("Nav.VersionLabel", "Version {0}", AppInfo.Version);
+    }
+
+    public static class Slider
+    {
+        public static string Caption(string prefix, int index) =>
+            StringResources.Format("Slider.Caption", "{0}: {1}", prefix, ValueLabel(index));
+
+        public static string ValueLabel(int index)
+        {
+            index = TuningMultiplierPresets.ClampIndex(index);
+            return index == TuningMultiplierPresets.BaselineIndex
+                ? StringResources.Get("Slider.MultiplierBaseline", "1 (baseline)")
+                : TuningMultiplierPresets.GetLabel(index);
+        }
+
+        public static string FuelTank => StringResources.Get("Vehicles.FuelTankLabel", "Fuel tank");
+        public static string Responsiveness => StringResources.Get("Vehicles.ResponsivenessLabel", "Responsiveness");
+        public static string StorePrice => StringResources.Get("Vehicles.StorePriceLabel", "Store price");
+        public static string Torque => StringResources.Get("Engine.TorqueColumn", "Torque");
+        public static string FuelConsumption => StringResources.Get("Slider.FuelConsumption", "Fuel consumption");
+        public static string DamageCapacity => StringResources.Get("Slider.DamageCapacity", "Damage capacity");
+        public static string IdleFuelModifier => StringResources.Get("Slider.IdleFuelModifier", "Idle fuel modifier");
+        public static string AwdFuelPenalty => StringResources.Get("Slider.AwdFuelPenalty", "AWD fuel penalty");
+        public static string Height => StringResources.Get("Slider.Height", "Height");
+        public static string Strength => StringResources.Get("Slider.Strength", "Strength");
+        public static string Damping => StringResources.Get("Slider.Damping", "Damping");
+        public static string OnRoad => StringResources.Get("Tires.OnRoadFrictionColumn", "On-road");
+        public static string OffRoad => StringResources.Get("Tires.OffRoadFrictionColumn", "Off-road");
+        public static string Mud => StringResources.Get("Tires.MudFrictionColumn", "Mud");
+        public static string RepairParts => StringResources.Get("Trailers.RepairPartsLabel", "Repair parts");
+        public static string SpareWheels => StringResources.Get("Trailers.SpareWheelsLabel", "Spare wheels");
+        public static string LengthMultiplier => StringResources.Get("Slider.LengthMultiplier", "Length multiplier");
+        public static string StrengthMultiplier => StringResources.Get("Slider.StrengthMultiplier", "Strength multiplier");
     }
 
     public static class Main
@@ -52,43 +87,55 @@ public static class UiText
         public static string RestoreFullBaselineSuccessTitle => StringResources.Get("Main.RestoreFullBaselineSuccessTitle", "Pak restored");
 
         public static string LoadSuccessStatus(int entryCount) =>
-            $"Loaded successfully: {entryCount:N0} entries.";
+            StringResources.Format("Main.LoadSuccessStatus", "Loaded successfully: {0:N0} entries.", entryCount);
 
-        public static string ErrorStatus(string message) => $"Error: {message}";
+        public static string ErrorStatus(string message) =>
+            StringResources.Format("Main.ErrorStatus", "Error: {0}", message);
 
         public static string AutoLoadedStatus(string editionDisplayName) =>
-            $"Loaded saved {editionDisplayName} workspace.";
+            StringResources.Format("Main.AutoLoadedStatus", "Loaded saved {0} workspace.", editionDisplayName);
 
         public static string BaselineSetStatus(string editionDisplayName) =>
-            $"Baseline set for {editionDisplayName}.";
+            StringResources.Format("Main.BaselineSetStatus", "Baseline set for {0}.", editionDisplayName);
 
         public static string LocationChangedStatus(string editionDisplayName) =>
-            $"Switched to {editionDisplayName}.";
+            StringResources.Format("Main.LocationChangedStatus", "Switched to {0}.", editionDisplayName);
 
         public static string BaselineCreatedMessage(
             string editionDisplayName,
             string workingPakPath,
             string baselinePath) =>
-            $"Baseline created for {editionDisplayName}.{Environment.NewLine}{Environment.NewLine}" +
-            $"Working pak:{Environment.NewLine}{workingPakPath}{Environment.NewLine}{Environment.NewLine}" +
-            $"Read-only baseline:{Environment.NewLine}{baselinePath}";
+            StringResources.Format(
+                "Main.BaselineCreatedMessage",
+                "Baseline created for {0}.\n\nWorking pak:\n{1}\n\nRead-only baseline:\n{2}",
+                editionDisplayName,
+                workingPakPath,
+                baselinePath);
 
         public static string LocationChangedMessage(
             string editionDisplayName,
             string workingPakPath,
             string baselinePath,
             bool baselineCreated) =>
-            $"Now editing the {editionDisplayName} edition.{Environment.NewLine}{Environment.NewLine}" +
-            $"Working pak:{Environment.NewLine}{workingPakPath}{Environment.NewLine}{Environment.NewLine}" +
-            (baselineCreated
-                ? $"No previous baseline existed for this edition, so a new read-only baseline was created:{Environment.NewLine}{baselinePath}"
-                : $"Using the existing read-only baseline for this edition:{Environment.NewLine}{baselinePath}");
+            StringResources.Format(
+                baselineCreated ? "Main.LocationChangedMessageCreated" : "Main.LocationChangedMessageExisting",
+                baselineCreated
+                    ? "Now editing the {0} edition.\n\nWorking pak:\n{1}\n\nNo previous baseline existed for this edition, so a new read-only baseline was created:\n{2}"
+                    : "Now editing the {0} edition.\n\nWorking pak:\n{1}\n\nUsing the existing read-only baseline for this edition:\n{2}",
+                editionDisplayName,
+                workingPakPath,
+                baselinePath);
 
         public static string BaselineReadyStatus(string editionDisplayName, string fileName, DateTime lastWriteUtc) =>
-            $"Baseline OK for {editionDisplayName} ({fileName}, {lastWriteUtc.ToLocalTime():yyyy-MM-dd HH:mm}).";
+            StringResources.Format(
+                "Main.BaselineReadyStatus",
+                "Baseline OK for {0} ({1}, {2:yyyy-MM-dd HH:mm}).",
+                editionDisplayName,
+                fileName,
+                lastWriteUtc.ToLocalTime());
 
         public static string WorkingPakStatus(string editionDisplayName, string workingPakPath) =>
-            $"Editing ({editionDisplayName}): {workingPakPath}";
+            StringResources.Format("Main.WorkingPakStatus", "Editing ({0}): {1}", editionDisplayName, workingPakPath);
 
         public static string RestoreFullBaselineMessage => StringResources.Get("Main.RestoreFullBaselineMessage", "The entire initial.pak was restored from the baseline. You can reapply saved changes from Home or Settings.");
 
@@ -99,15 +146,22 @@ public static class UiText
             int xmlEntries,
             int dlcPackages,
             string uncompressedSize,
-            IEnumerable<string> topLevelFolders) =>
-            $"File: {filePath}{Environment.NewLine}" +
-            $"Size: {fileSize}{Environment.NewLine}" +
-            $"Entries: {totalEntries:N0}{Environment.NewLine}" +
-            $"XML files: {xmlEntries:N0}{Environment.NewLine}" +
-            $"DLC packages: {dlcPackages}{Environment.NewLine}" +
-            $"Unpacked: {uncompressedSize}{Environment.NewLine}{Environment.NewLine}" +
-            $"Top level:{Environment.NewLine}" +
-            string.Join(Environment.NewLine, topLevelFolders.Select(folder => $"• {folder}"));
+            IEnumerable<string> topLevelFolders)
+        {
+            var folders = string.Join(
+                Environment.NewLine,
+                topLevelFolders.Select(folder => "• " + folder));
+            return StringResources.Format(
+                "Main.OverviewDetails",
+                "File: {0}\nSize: {1}\nEntries: {2:N0}\nXML files: {3:N0}\nDLC packages: {4}\nUnpacked: {5}\n\nTop level:\n{6}",
+                filePath,
+                fileSize,
+                totalEntries,
+                xmlEntries,
+                dlcPackages,
+                uncompressedSize,
+                folders);
+        }
     }
 
     public static class Parts
@@ -120,6 +174,10 @@ public static class UiText
         public static string ComingSoon => StringResources.Get("Parts.ComingSoon", "Coming soon.");
         public static string LoadPakHint => StringResources.Get("Parts.LoadPakHint", "Load an initial.pak on the Home page first.");
         public static string Loading => StringResources.Get("Parts.Loading", "Loading…");
+        public static string NoTrucksEngineSet => StringResources.Get("Parts.NoTrucksEngineSet", "No trucks reference this engine set.");
+        public static string NoTrucksGearboxSet => StringResources.Get("Parts.NoTrucksGearboxSet", "No trucks reference this gearbox set.");
+        public static string NoTrucksSuspensionSet => StringResources.Get("Parts.NoTrucksSuspensionSet", "No trucks reference this suspension set.");
+        public static string NoTrucksWheelSet => StringResources.Get("Parts.NoTrucksWheelSet", "No trucks reference this wheel set.");
     }
 
     public static class General
@@ -143,11 +201,27 @@ public static class UiText
         public static string SaveSuccessTitle => StringResources.Get("General.SaveSuccessTitle", "Saved successfully");
         public static string SaveErrorTitle => StringResources.Get("General.SaveErrorTitle", "Save error");
         public static string CameraSaved(int files) =>
-            $"Camera collisions updated in {files} model file(s). Reload the game to test.";
+            StringResources.Format("General.CameraSaved", "Camera collisions updated in {0} model file(s). Reload the game to test.", files);
         public static string RockSaved(int files) =>
-            $"Trail rock settings updated in {files} pak file(s). Reload the game to test.";
+            StringResources.Format("General.RockSaved", "Trail rock settings updated in {0} pak file(s). Reload the game to test.", files);
         public static string LoadedStatus(int cameraModels, double rockScale) =>
-            $"Detected {cameraModels} camera-eligible models; reference rock scale {rockScale:0%}.";
+            StringResources.Format(
+                "General.LoadedStatus",
+                "Detected {0} camera-eligible models; reference rock scale {1:0%}.",
+                cameraModels,
+                rockScale);
+
+        public static string RockPhysicsCaption(int index)
+        {
+            var clamped = RockSizePresets.ClampIndex(index);
+            var value = clamped switch
+            {
+                0 => StringResources.Get("General.RockNoCollision", "No collision"),
+                4 => StringResources.Get("General.RockVanillaBaseline", "Vanilla (baseline)"),
+                _ => RockSizePresets.GetLabel(clamped),
+            };
+            return StringResources.Format("General.RockPhysicsCaption", "Rock physics: {0}", value);
+        }
     }
 
     public static class PhotoMode
@@ -240,6 +314,30 @@ public static class UiText
         public static string Heavy => StringResources.Get("Vehicles.Heavy", "Heavy");
         public static string Offroad => StringResources.Get("Vehicles.Offroad", "Offroad");
         public static string Scout => StringResources.Get("Vehicles.Scout", "Scout");
+
+        public static string CategoryDisplay(string? category) =>
+            category?.Trim() switch
+            {
+                "Highway" => Highway,
+                "Heavy Duty" => HeavyDuty,
+                "Heavy" => Heavy,
+                "Offroad" => Offroad,
+                "Scout" => Scout,
+                _ => category ?? "",
+            };
+
+        public static string CountryDisplay(string? countryCode, string? fallback = null)
+        {
+            if (string.IsNullOrWhiteSpace(countryCode))
+            {
+                return fallback ?? "";
+            }
+
+            var code = countryCode.Trim().ToUpperInvariant();
+            var key = "Vehicles.Country." + code;
+            return StringResources.Get(key, fallback ?? countryCode);
+        }
+
         public static string BackToList => StringResources.Get("Vehicles.BackToList", "← Back to list");
         public static string ManufacturerLabel => StringResources.Get("Vehicles.ManufacturerLabel", "Manufacturer");
         public static string BasedOnLabel => StringResources.Get("Vehicles.BasedOnLabel", "Based on");
@@ -267,11 +365,23 @@ public static class UiText
         public static string ApplyStoreUnlocks => StringResources.Get("Vehicles.ApplyStoreUnlocks", "Apply store unlocks");
         public static string LoadPakForGlobalHint => StringResources.Get("Vehicles.LoadPakForGlobalHint", "Load an initial.pak on the Home page to enable global vehicle multipliers.");
         public static string GlobalMultipliersAppliedStatus(int changedTrucks, int updatedFiles) =>
-            $"Applied global vehicle multipliers to {changedTrucks} truck(s) across {updatedFiles} file(s).";
+            StringResources.Format(
+                "Vehicles.GlobalMultipliersAppliedStatus",
+                "Applied global vehicle multipliers to {0} truck(s) across {1} file(s).",
+                changedTrucks,
+                updatedFiles);
         public static string GlobalMultipliersSavedMessage(int changedTrucks, int updatedFiles) =>
-            $"Global vehicle multipliers applied to {changedTrucks} truck(s) ({updatedFiles} file(s) updated).";
+            StringResources.Format(
+                "Vehicles.GlobalMultipliersSavedMessage",
+                "Global vehicle multipliers applied to {0} truck(s) ({1} file(s) updated).",
+                changedTrucks,
+                updatedFiles);
         public static string StoreUnlocksSavedMessage(int changedTrucks, int updatedFiles) =>
-            $"Store unlocks applied to {changedTrucks} truck(s) ({updatedFiles} file(s) updated).";
+            StringResources.Format(
+                "Vehicles.StoreUnlocksSavedMessage",
+                "Store unlocks applied to {0} truck(s) ({1} file(s) updated).",
+                changedTrucks,
+                updatedFiles);
         public static string StoreUnlocksNothingSelected => StringResources.Get("Vehicles.StoreUnlocksNothingSelected", "Select at least one store unlock option before applying.");
         public static string TuningTitle => StringResources.Get("Vehicles.TuningTitle", "Vehicle tuning");
         public static string FuelTankLabel => StringResources.Get("Vehicles.FuelTankLabel", "Fuel tank");
@@ -308,7 +418,11 @@ public static class UiText
         public static string RestoreAllVehiclesConfirmMessage => StringResources.Get("Vehicles.RestoreAllVehiclesConfirmMessage", "This restores every truck XML from your baseline pak (fuel, steer, price, unlocks, drive, and other vehicle edits). Continue?");
         public static string RestoreAllVehiclesSuccessTitle => StringResources.Get("Vehicles.RestoreAllVehiclesSuccessTitle", "Vehicles restored");
         public static string RestoreAllVehiclesSavedMessage(int changedTrucks, int updatedFiles) =>
-            $"Restored {changedTrucks} vehicle(s) from baseline ({updatedFiles} file(s) updated).";
+            StringResources.Format(
+                "Vehicles.RestoreAllVehiclesSavedMessage",
+                "Restored {0} vehicle(s) from baseline ({1} file(s) updated).",
+                changedTrucks,
+                updatedFiles);
         public static string LoadPakHint => StringResources.Get("Vehicles.LoadPakHint", "Load an initial.pak on the Home page first.");
         public static string TruckNotFound => StringResources.Get("Vehicles.TruckNotFound", "This vehicle could not be matched to a truck XML in the loaded pak.");
         public static string InvalidFuel => StringResources.Get("Vehicles.InvalidFuel", "Fuel tank must be a whole number of liters (1–10000).");
@@ -321,9 +435,12 @@ public static class UiText
         public static string SaveErrorTitle => StringResources.Get("Vehicles.SaveErrorTitle", "Save error");
         public static string RestoreSuccessTitle => StringResources.Get("Vehicles.RestoreSuccessTitle", "Vehicle restored");
         public static string NoChangesToSave => StringResources.Get("Vehicles.NoChangesToSave", "No vehicle changes were detected to save.");
-        public static string CountLabel(int count) => $"{count} vehicles";
-        public static string SavedMessage() => "Vehicle tuning saved.";
-        public static string RestoredMessage() => "This vehicle was restored from the baseline.";
+        public static string CountLabel(int count) =>
+            StringResources.Format("Vehicles.CountLabel", "{0} vehicles", count);
+        public static string SavedMessage() =>
+            StringResources.Get("Vehicles.SavedMessage", "Vehicle tuning saved.");
+        public static string RestoredMessage() =>
+            StringResources.Get("Vehicles.RestoredMessage", "This vehicle was restored from the baseline.");
     }
 
     public static class Trailers
@@ -385,16 +502,30 @@ public static class UiText
         public static string NoTunableFields => StringResources.Get("Trailers.NoTunableFields", "This trailer has no fuel, water, repair, wheel, or store-price fields to edit.");
 
         public static string GlobalMultipliersSavedMessage(int changedTrailers, int updatedFiles) =>
-            $"Global trailer multipliers applied to {changedTrailers} trailer(s) ({updatedFiles} file(s) updated).";
+            StringResources.Format(
+                "Trailers.GlobalMultipliersSavedMessage",
+                "Global trailer multipliers applied to {0} trailer(s) ({1} file(s) updated).",
+                changedTrailers,
+                updatedFiles);
 
         public static string StoreUnlocksSavedMessage(int changedTrailers, int updatedFiles) =>
-            $"Made {changedTrailers} mission trailer(s) purchasable ({updatedFiles} file(s) updated).";
+            StringResources.Format(
+                "Trailers.StoreUnlocksSavedMessage",
+                "Made {0} mission trailer(s) purchasable ({1} file(s) updated).",
+                changedTrailers,
+                updatedFiles);
 
         public static string RestoreAllTrailersSavedMessage(int changedTrailers, int updatedFiles) =>
-            $"Restored {changedTrailers} trailer(s) from baseline ({updatedFiles} file(s) updated).";
+            StringResources.Format(
+                "Trailers.RestoreAllTrailersSavedMessage",
+                "Restored {0} trailer(s) from baseline ({1} file(s) updated).",
+                changedTrailers,
+                updatedFiles);
 
-        public static string SavedMessage() => "Trailer tuning saved.";
-        public static string RestoredMessage() => "This trailer was restored from the baseline.";
+        public static string SavedMessage() =>
+            StringResources.Get("Trailers.SavedMessage", "Trailer tuning saved.");
+        public static string RestoredMessage() =>
+            StringResources.Get("Trailers.RestoredMessage", "This trailer was restored from the baseline.");
 
         public static string CountLabel(int count) =>
             StringResources.Format("Trailers.CountLabel", "{0} trailers", count);
@@ -425,18 +556,18 @@ public static class UiText
         public static string InvalidNumber => StringResources.Get("SafeRange.InvalidNumber", "Enter a valid number.");
 
         public static string BaselineLabel(string formattedValue) =>
-            $"Baseline: {formattedValue}";
+            StringResources.Format("SafeRange.BaselineLabel", "Baseline: {0}", formattedValue);
 
         public static string AllowedLabel(string minFormatted, string maxFormatted) =>
-            $"Allowed: {minFormatted}–{maxFormatted}";
+            StringResources.Format("SafeRange.AllowedLabel", "Allowed: {0}–{1}", minFormatted, maxFormatted);
 
         public static string ZoneMessage(SafeRangeZone zone) =>
             zone switch
             {
-                SafeRangeZone.Normal => "Within normal range",
-                SafeRangeZone.Warning => "Outside typical range — check before saving",
-                SafeRangeZone.Extreme => "Extreme value — may cause unexpected behavior",
-                _ => "Outside allowed range",
+                SafeRangeZone.Normal => StringResources.Get("SafeRange.ZoneNormal", "Within normal range"),
+                SafeRangeZone.Warning => StringResources.Get("SafeRange.ZoneWarning", "Outside typical range — check before saving"),
+                SafeRangeZone.Extreme => StringResources.Get("SafeRange.ZoneExtreme", "Extreme value — may cause unexpected behavior"),
+                _ => StringResources.Get("SafeRange.ZoneInvalid", "Outside allowed range"),
             };
     }
 
@@ -450,10 +581,11 @@ public static class UiText
         public static string ThemeDark => StringResources.Get("Settings.ThemeDark", "Dark");
         public static string ThemeLight => StringResources.Get("Settings.ThemeLight", "Light");
         public static string LanguageTitle => StringResources.Get("Settings.LanguageTitle", "Language");
-        public static string LanguageHint => StringResources.Get("Settings.LanguageHint", "Choose the app language. Restart the app to apply a change.");
+        public static string LanguageHint => StringResources.Get("Settings.LanguageHint", "Choose the app language. Restart the app to apply a change. Extra languages can be downloaded from GitHub without waiting for an app release.");
         public static string LanguageLabel => StringResources.Get("Settings.LanguageLabel", "Language");
         public static string LanguageRestartTitle => StringResources.Get("Settings.LanguageRestartTitle", "Restart required");
         public static string LanguageRestartMessage => StringResources.Get("Settings.LanguageRestartMessage", "Restart SnowRunner Tuning Shop to apply the new language.");
+        public static string ManageLanguages => StringResources.Get("Settings.ManageLanguages", "Add or Update languages");
         public static string WorkspaceTitle => StringResources.Get("Settings.WorkspaceTitle", "Workspace");
         public static string WorkspaceHint => StringResources.Get("Settings.WorkspaceHint", "Restore the working pak from the baseline, refresh the baseline after a game update, or reapply your saved tuning profile.");
         public static string AboutTitle => StringResources.Get("Settings.AboutTitle", "About & support");
@@ -467,9 +599,13 @@ public static class UiText
         public static string UpToDate => StringResources.Get("Settings.UpToDate", "You are running the latest version.");
         public static string UpdateCheckFailed => StringResources.Get("Settings.UpdateCheckFailed", "Could not check for updates. Try again later.");
         public static string UpdateAvailableMessage(string latest) =>
-            $"Version {latest} is available (you have {AppInfo.Version}). Download and install it from inside the app.";
+            StringResources.Format(
+                "Settings.UpdateAvailableMessage",
+                "Version {0} is available (you have {1}). Download and install it from inside the app.",
+                latest,
+                AppInfo.Version);
         public static string UpdateAvailableStatus(string latest) =>
-            $"Update available: {latest}.";
+            StringResources.Format("Settings.UpdateAvailableStatus", "Update available: {0}.", latest);
         public static string OpenWebsite => StringResources.Get("Settings.OpenWebsite", "Open website");
         public static string DonatePayPal => StringResources.Get("Settings.DonatePayPal", "Donate with PayPal");
         public static string DonateWith => StringResources.Get("Settings.DonateWith", "Donate with");
@@ -483,13 +619,94 @@ public static class UiText
         public static string DebugCrashVehicleButton => StringResources.Get("Settings.DebugCrashVehicleButton", "Test crash (vehicle page)");
     }
 
+    public static class LocalePack
+    {
+        public static string Title => StringResources.Get("LocalePack.Title", "Add or Update languages");
+        public static string Hint => StringResources.Get("LocalePack.Hint", "Languages shipped with the app stay available offline. Check Add/Update to download a newer or extra language from GitHub, or Remove to drop a downloaded copy (bundled languages revert to the shipped file).");
+        public static string Checking => StringResources.Get("LocalePack.Checking", "Checking GitHub for language files…");
+        public static string Refresh => StringResources.Get("LocalePack.Refresh", "Refresh");
+        public static string Apply => StringResources.Get("LocalePack.Apply", "Apply selected");
+        public static string Close => StringResources.Get("LocalePack.Close", "Close");
+        public static string ColumnAddUpdate => StringResources.Get("LocalePack.ColumnAddUpdate", "Add / Update");
+        public static string ColumnRemove => StringResources.Get("LocalePack.ColumnRemove", "Remove");
+        public static string ColumnLanguage => StringResources.Get("LocalePack.ColumnLanguage", "Language");
+        public static string ColumnStatus => StringResources.Get("LocalePack.ColumnStatus", "Status");
+        public static string ColumnRevision => StringResources.Get("LocalePack.ColumnRevision", "Revision");
+        public static string NothingSelected => StringResources.Get("LocalePack.NothingSelected", "Select at least one language to add, update, or remove.");
+        public static string ApplySuccess => StringResources.Get("LocalePack.ApplySuccess", "Language files updated. You can select a new language in Settings; restart the app to apply it.");
+
+        public static string CheckFailed(string? detail) =>
+            StringResources.Format(
+                "LocalePack.CheckFailed",
+                "Could not check GitHub ({0}). Shipped languages are listed below.",
+                string.IsNullOrWhiteSpace(detail) ? "unknown error" : detail);
+
+        public static string Ready(IReadOnlyList<LocalePackSnapshot> packs)
+        {
+            var add = packs.Count(pack => pack.CanAdd);
+            var update = packs.Count(pack => pack.CanUpdate);
+            return StringResources.Format(
+                "LocalePack.Ready",
+                "GitHub catalog loaded. {0} new, {1} update(s) available.",
+                add,
+                update);
+        }
+
+        public static string Status(LocalePackSnapshot pack)
+        {
+            if (!pack.CompatibleWithApp)
+            {
+                return StringResources.Format(
+                    "LocalePack.StatusNeedsApp",
+                    "Needs app {0}+",
+                    pack.MinAppVersion ?? "?");
+            }
+
+            if (pack.CanAdd)
+            {
+                return StringResources.Get("LocalePack.StatusAvailable", "Available to add");
+            }
+
+            if (pack.CanUpdate)
+            {
+                return StringResources.Get("LocalePack.StatusUpdate", "Update available");
+            }
+
+            if (pack.HasOverlay)
+            {
+                return StringResources.Get("LocalePack.StatusDownloaded", "Downloaded overlay");
+            }
+
+            if (pack.IsBundled)
+            {
+                return StringResources.Get("LocalePack.StatusBundled", "Shipped with the app");
+            }
+
+            return pack.HasLocalFile
+                ? StringResources.Get("LocalePack.StatusInstalled", "Installed")
+                : StringResources.Get("LocalePack.StatusMissing", "Not installed");
+        }
+
+        public static string Revision(LocalePackSnapshot pack)
+        {
+            if (pack.RemoteRevision is int remote)
+            {
+                return StringResources.Format("LocalePack.RevisionBoth", "{0} → {1}", pack.LocalRevision, remote);
+            }
+
+            return pack.LocalRevision > 0
+                ? pack.LocalRevision.ToString()
+                : "—";
+        }
+    }
+
     public static class UpdateDownload
     {
         public static string Title => StringResources.Get("UpdateDownload.Title", "Download update");
         public static string DownloadingTitle => StringResources.Get("UpdateDownload.DownloadingTitle", "Downloading update…");
         public static string DownloadingDetail => StringResources.Get("UpdateDownload.DownloadingDetail", "Downloading the installer. Please wait.");
         public static string DownloadingDetailVersion(string version) =>
-            $"Downloading version {version}. Please wait.";
+            StringResources.Format("UpdateDownload.DownloadingDetailVersion", "Downloading version {0}. Please wait.", version);
         public static string Cancelling => StringResources.Get("UpdateDownload.Cancelling", "Cancelling download…");
         public static string CompleteTitle => StringResources.Get("UpdateDownload.CompleteTitle", "Download complete");
         public static string CompleteDetail => StringResources.Get("UpdateDownload.CompleteDetail", "The installer is ready. Choose Update and restart to close this app and run the setup.");
@@ -499,10 +716,10 @@ public static class UiText
         public static string Close => StringResources.Get("UpdateDownload.Close", "Close");
 
         public static string ProgressLabel(double percent, string received, string total) =>
-            $"{percent:0}% — {received} / {total}";
+            StringResources.Format("UpdateDownload.ProgressLabel", "{0:0}% — {1} / {2}", percent, received, total);
 
         public static string ProgressIndeterminate(string received) =>
-            $"{received} downloaded…";
+            StringResources.Format("UpdateDownload.ProgressIndeterminate", "{0} downloaded…", received);
     }
 
     public static class Workspace
@@ -541,35 +758,35 @@ public static class UiText
         public static string InconsistentMarkerMessage => StringResources.Get("Workspace.InconsistentMarkerMessage", "The working pak matches the baseline but still contains a Tuning Shop marker. Restore the full baseline to clean it, or reapply saved changes if a profile exists.");
 
         public static string ProfileStatus(int entryCount) =>
-            $"Saved profile: {entryCount} file(s).";
+            StringResources.Format("Workspace.ProfileStatus", "Saved profile: {0} file(s).", entryCount);
 
         public static string StatusLine(WorkspaceHealthKind kind, int profileEntryCount) =>
             kind switch
             {
                 WorkspaceHealthKind.GameUpdateDetected =>
-                    "Game update detected. Refresh the baseline, then reapply saved changes.",
+                    StringResources.Get("Workspace.StatusGameUpdate", "Game update detected. Refresh the baseline, then reapply saved changes."),
                 WorkspaceHealthKind.UnknownExternalChange =>
-                    "Working pak differs from the baseline (no Tuning Shop marker).",
+                    StringResources.Get("Workspace.StatusUnknownChange", "Working pak differs from the baseline (no Tuning Shop marker)."),
                 WorkspaceHealthKind.ReadyToReapply =>
-                    $"Saved profile ready to reapply ({profileEntryCount} file(s)).",
+                    StringResources.Format("Workspace.StatusReadyToReapply", "Saved profile ready to reapply ({0} file(s)).", profileEntryCount),
                 WorkspaceHealthKind.HealthyTuned =>
-                    $"Workspace healthy — tuned ({profileEntryCount} saved file(s)).",
+                    StringResources.Format("Workspace.StatusHealthyTuned", "Workspace healthy — tuned ({0} saved file(s)).", profileEntryCount),
                 WorkspaceHealthKind.HealthyVanilla =>
-                    "Workspace healthy — working pak matches the baseline.",
+                    StringResources.Get("Workspace.StatusHealthyVanilla", "Workspace healthy — working pak matches the baseline."),
                 WorkspaceHealthKind.InconsistentMarker =>
-                    "Pak matches the baseline but still has a Tuning Shop marker.",
-                _ => "Workspace is not ready.",
+                    StringResources.Get("Workspace.StatusInconsistentMarker", "Pak matches the baseline but still has a Tuning Shop marker."),
+                _ => StringResources.Get("Workspace.StatusNotReady", "Workspace is not ready."),
             };
 
         public static string ReapplyReport(TuningProfileReapplyResult result)
         {
             var lines = new List<string>
             {
-                $"Applied {result.AppliedCount} file(s).",
+                StringResources.Format("Workspace.ReapplyReportApplied", "Applied {0} file(s).", result.AppliedCount),
             };
 
-            AppendPathList(lines, "Skipped (no longer in the pak)", result.MissingEntryPaths);
-            AppendPathList(lines, "Failed", result.FailedEntryPaths);
+            AppendPathList(lines, StringResources.Get("Workspace.ReapplyReportSkipped", "Skipped (no longer in the pak)"), result.MissingEntryPaths);
+            AppendPathList(lines, StringResources.Get("Workspace.ReapplyReportFailed", "Failed"), result.FailedEntryPaths);
             return string.Join(Environment.NewLine, lines);
         }
 
@@ -636,7 +853,7 @@ public static class UiText
 
             if (paths.Count > limit)
             {
-                lines.Add($"  … and {paths.Count - limit} more.");
+                lines.Add(StringResources.Format("Workspace.ReapplyReportMore", "  … and {0} more.", paths.Count - limit));
             }
         }
     }
@@ -668,31 +885,48 @@ public static class UiText
         public static string LoadErrorTitle => StringResources.Get("Engine.LoadErrorTitle", "Load error");
         public static string RestoreEnginesSuccessTitle => StringResources.Get("Engine.RestoreEnginesSuccessTitle", "Engines restored");
 
-        public static string LoadedCount(int count) => $"{count} engines loaded from pak.";
+        public static string LoadedCount(int count) =>
+            StringResources.Format("Engine.LoadedCount", "{0} engines loaded from pak.", count);
 
-        public static string LoadedStatus(int count) => $"{count} engines loaded.";
+        public static string LoadedStatus(int count) =>
+            StringResources.Format("Engine.LoadedStatus", "{0} engines loaded.", count);
 
-        public static string LoadErrorStatus(string message) => $"Engine load error: {message}";
+        public static string LoadErrorStatus(string message) =>
+            StringResources.Format("Engine.LoadErrorStatus", "Engine load error: {0}", message);
 
         public static string MultipliersAppliedStatus(int changedEngines, int updatedFiles) =>
-            $"Multipliers applied. Updated engines: {changedEngines}, files: {updatedFiles}.";
+            StringResources.Format(
+                "Engine.MultipliersAppliedStatus",
+                "Multipliers applied. Updated engines: {0}, files: {1}.",
+                changedEngines,
+                updatedFiles);
 
         public static string MultipliersSavedMessage(int changedEngines, int updatedFiles) =>
-            $"Engine settings saved.{Environment.NewLine}{Environment.NewLine}" +
-            $"Updated engines: {changedEngines}{Environment.NewLine}" +
-            $"Updated files: {updatedFiles}";
+            StringResources.Format(
+                "Engine.MultipliersSavedMessage",
+                "Engine settings saved.\n\nUpdated engines: {0}\nUpdated files: {1}",
+                changedEngines,
+                updatedFiles);
 
         public static string IndividualSavedStatus(int changedEngines, int updatedFiles) =>
-            $"Individual changes saved. Engines: {changedEngines}, files: {updatedFiles}.";
+            StringResources.Format(
+                "Engine.IndividualSavedStatus",
+                "Individual changes saved. Engines: {0}, files: {1}.",
+                changedEngines,
+                updatedFiles);
 
         public static string IndividualSavedMessage(int changedEngines) =>
-            $"Individual engine changes saved.{Environment.NewLine}{Environment.NewLine}" +
-            $"Updated engines: {changedEngines}";
+            StringResources.Format(
+                "Engine.IndividualSavedMessage",
+                "Individual engine changes saved.\n\nUpdated engines: {0}",
+                changedEngines);
 
         public static string RestoreEnginesMessage(int changedEngines, int updatedFiles) =>
-            $"Engine values were restored from the baseline.{Environment.NewLine}{Environment.NewLine}" +
-            $"Updated engines: {changedEngines}{Environment.NewLine}" +
-            $"Updated files: {updatedFiles}";
+            StringResources.Format(
+                "Engine.RestoreEnginesMessage",
+                "Engine values were restored from the baseline.\n\nUpdated engines: {0}\nUpdated files: {1}",
+                changedEngines,
+                updatedFiles);
     }
 
     public static class Gearbox
@@ -720,21 +954,28 @@ public static class UiText
         public static string LoadErrorTitle => StringResources.Get("Gearbox.LoadErrorTitle", "Load error");
         public static string RestoreGearboxesSuccessTitle => StringResources.Get("Gearbox.RestoreGearboxesSuccessTitle", "Gearboxes restored");
 
-        public static string LoadedCount(int count) => $"{count} gearboxes loaded from pak.";
+        public static string LoadedCount(int count) =>
+            StringResources.Format("Gearbox.LoadedCount", "{0} gearboxes loaded from pak.", count);
 
         public static string MultipliersSavedMessage(int changedGearboxes, int updatedFiles) =>
-            $"Gearbox settings saved.{Environment.NewLine}{Environment.NewLine}" +
-            $"Updated gearboxes: {changedGearboxes}{Environment.NewLine}" +
-            $"Updated files: {updatedFiles}";
+            StringResources.Format(
+                "Gearbox.MultipliersSavedMessage",
+                "Gearbox settings saved.\n\nUpdated gearboxes: {0}\nUpdated files: {1}",
+                changedGearboxes,
+                updatedFiles);
 
         public static string IndividualSavedMessage(int changedGearboxes) =>
-            $"Individual gearbox changes saved.{Environment.NewLine}{Environment.NewLine}" +
-            $"Updated gearboxes: {changedGearboxes}";
+            StringResources.Format(
+                "Gearbox.IndividualSavedMessage",
+                "Individual gearbox changes saved.\n\nUpdated gearboxes: {0}",
+                changedGearboxes);
 
         public static string RestoreGearboxesMessage(int changedGearboxes, int updatedFiles) =>
-            $"Gearbox values were restored from the baseline.{Environment.NewLine}{Environment.NewLine}" +
-            $"Updated gearboxes: {changedGearboxes}{Environment.NewLine}" +
-            $"Updated files: {updatedFiles}";
+            StringResources.Format(
+                "Gearbox.RestoreGearboxesMessage",
+                "Gearbox values were restored from the baseline.\n\nUpdated gearboxes: {0}\nUpdated files: {1}",
+                changedGearboxes,
+                updatedFiles);
     }
 
     public static class Suspension
@@ -769,18 +1010,24 @@ public static class UiText
         public static string RestoreSuspensionsSuccessTitle => StringResources.Get("Suspension.RestoreSuspensionsSuccessTitle", "Suspensions restored");
 
         public static string MultipliersSavedMessage(int changedSuspensions, int updatedFiles) =>
-            $"Suspension settings saved.{Environment.NewLine}{Environment.NewLine}" +
-            $"Updated suspensions: {changedSuspensions}{Environment.NewLine}" +
-            $"Updated files: {updatedFiles}";
+            StringResources.Format(
+                "Suspension.MultipliersSavedMessage",
+                "Suspension settings saved.\n\nUpdated suspensions: {0}\nUpdated files: {1}",
+                changedSuspensions,
+                updatedFiles);
 
         public static string IndividualSavedMessage(int changedSuspensions) =>
-            $"Individual suspension changes saved.{Environment.NewLine}{Environment.NewLine}" +
-            $"Updated suspensions: {changedSuspensions}";
+            StringResources.Format(
+                "Suspension.IndividualSavedMessage",
+                "Individual suspension changes saved.\n\nUpdated suspensions: {0}",
+                changedSuspensions);
 
         public static string RestoreSuspensionsMessage(int changedSuspensions, int updatedFiles) =>
-            $"Suspension values were restored from the baseline.{Environment.NewLine}{Environment.NewLine}" +
-            $"Updated suspensions: {changedSuspensions}{Environment.NewLine}" +
-            $"Updated files: {updatedFiles}";
+            StringResources.Format(
+                "Suspension.RestoreSuspensionsMessage",
+                "Suspension values were restored from the baseline.\n\nUpdated suspensions: {0}\nUpdated files: {1}",
+                changedSuspensions,
+                updatedFiles);
     }
 
     public static class Tires
@@ -810,18 +1057,24 @@ public static class UiText
         public static string RestoreTiresSuccessTitle => StringResources.Get("Tires.RestoreTiresSuccessTitle", "Tires restored");
 
         public static string MultipliersSavedMessage(int changedTires, int updatedFiles) =>
-            $"Tire settings saved.{Environment.NewLine}{Environment.NewLine}" +
-            $"Updated tires: {changedTires}{Environment.NewLine}" +
-            $"Updated files: {updatedFiles}";
+            StringResources.Format(
+                "Tires.MultipliersSavedMessage",
+                "Tire settings saved.\n\nUpdated tires: {0}\nUpdated files: {1}",
+                changedTires,
+                updatedFiles);
 
         public static string IndividualSavedMessage(int changedTires) =>
-            $"Individual tire changes saved.{Environment.NewLine}{Environment.NewLine}" +
-            $"Updated tires: {changedTires}";
+            StringResources.Format(
+                "Tires.IndividualSavedMessage",
+                "Individual tire changes saved.\n\nUpdated tires: {0}",
+                changedTires);
 
         public static string RestoreTiresMessage(int changedTires, int updatedFiles) =>
-            $"Tire values were restored from the baseline.{Environment.NewLine}{Environment.NewLine}" +
-            $"Updated tires: {changedTires}{Environment.NewLine}" +
-            $"Updated files: {updatedFiles}";
+            StringResources.Format(
+                "Tires.RestoreTiresMessage",
+                "Tire values were restored from the baseline.\n\nUpdated tires: {0}\nUpdated files: {1}",
+                changedTires,
+                updatedFiles);
     }
 
     public static class Winch
@@ -848,33 +1101,50 @@ public static class UiText
         public static string LoadErrorTitle => StringResources.Get("Winch.LoadErrorTitle", "Load error");
         public static string RestoreWinchesSuccessTitle => StringResources.Get("Winch.RestoreWinchesSuccessTitle", "Winches restored");
 
-        public static string LoadedCount(int count) => $"{count} winches loaded from pak.";
+        public static string LoadedCount(int count) =>
+            StringResources.Format("Winch.LoadedCount", "{0} winches loaded from pak.", count);
 
-        public static string LoadedStatus(int count) => $"{count} winches loaded.";
+        public static string LoadedStatus(int count) =>
+            StringResources.Format("Winch.LoadedStatus", "{0} winches loaded.", count);
 
-        public static string LoadErrorStatus(string message) => $"Winch load error: {message}";
+        public static string LoadErrorStatus(string message) =>
+            StringResources.Format("Winch.LoadErrorStatus", "Winch load error: {0}", message);
 
         public static string MultipliersAppliedStatus(int changedWinches, int updatedFiles) =>
-            $"Multipliers applied. Updated winches: {changedWinches}, files: {updatedFiles}.";
+            StringResources.Format(
+                "Winch.MultipliersAppliedStatus",
+                "Multipliers applied. Updated winches: {0}, files: {1}.",
+                changedWinches,
+                updatedFiles);
 
         public static string MultipliersSavedMessage(int changedWinches, int updatedFiles) =>
-            $"Winch settings saved.{Environment.NewLine}{Environment.NewLine}" +
-            $"Updated winches: {changedWinches}{Environment.NewLine}" +
-            $"Updated files: {updatedFiles}";
+            StringResources.Format(
+                "Winch.MultipliersSavedMessage",
+                "Winch settings saved.\n\nUpdated winches: {0}\nUpdated files: {1}",
+                changedWinches,
+                updatedFiles);
 
         public static string IndividualSavedStatus(int changedWinches, int updatedFiles) =>
-            $"Individual changes saved. Winches: {changedWinches}, files: {updatedFiles}.";
+            StringResources.Format(
+                "Winch.IndividualSavedStatus",
+                "Individual changes saved. Winches: {0}, files: {1}.",
+                changedWinches,
+                updatedFiles);
 
         public static string IndividualSavedMessage(int changedWinches) =>
             changedWinches <= 0
-                ? "No winch changes were detected to save."
-                : $"Individual winch changes saved.{Environment.NewLine}{Environment.NewLine}" +
-                  $"Updated winches: {changedWinches}";
+                ? StringResources.Get("Winch.NoChangesToSave", "No winch changes were detected to save.")
+                : StringResources.Format(
+                    "Winch.IndividualSavedMessage",
+                    "Individual winch changes saved.\n\nUpdated winches: {0}",
+                    changedWinches);
 
         public static string RestoreWinchesMessage(int changedWinches, int updatedFiles) =>
-            $"Winch values were restored from the baseline.{Environment.NewLine}{Environment.NewLine}" +
-            $"Updated winches: {changedWinches}{Environment.NewLine}" +
-            $"Updated files: {updatedFiles}";
+            StringResources.Format(
+                "Winch.RestoreWinchesMessage",
+                "Winch values were restored from the baseline.\n\nUpdated winches: {0}\nUpdated files: {1}",
+                changedWinches,
+                updatedFiles);
     }
 
     public static class CrashReport
@@ -904,9 +1174,9 @@ public static class UiText
         }
 
         public static string LogSaved(string path) =>
-            $"Saved locally:{Environment.NewLine}{path}";
+            StringResources.Format("CrashReport.LogSaved", "Saved locally:\n{0}", path);
 
         public static string ViewExistingIssue(int number) =>
-            $"View existing issue #{number}";
+            StringResources.Format("CrashReport.ViewExistingIssue", "View existing issue #{0}", number);
     }
 }

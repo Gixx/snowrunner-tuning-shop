@@ -119,17 +119,17 @@ public partial class TrailersView : UserControl
 
     private void UpdateGlobalMultiplierLabels()
     {
-        FuelMultiplierLabel.Text = TuningMultiplierPresets.FormatSliderCaption(
-            "Fuel tank",
+        FuelMultiplierLabel.Text = UiText.Slider.Caption(
+            UiText.Slider.FuelTank,
             GetMultiplierIndex(FuelMultiplierSlider));
-        RepairsMultiplierLabel.Text = TuningMultiplierPresets.FormatSliderCaption(
-            "Repair parts",
+        RepairsMultiplierLabel.Text = UiText.Slider.Caption(
+            UiText.Slider.RepairParts,
             GetMultiplierIndex(RepairsMultiplierSlider));
-        WheelsMultiplierLabel.Text = TuningMultiplierPresets.FormatSliderCaption(
-            "Spare wheels",
+        WheelsMultiplierLabel.Text = UiText.Slider.Caption(
+            UiText.Slider.SpareWheels,
             GetMultiplierIndex(WheelsMultiplierSlider));
-        PriceMultiplierLabel.Text = TuningMultiplierPresets.FormatSliderCaption(
-            "Store price",
+        PriceMultiplierLabel.Text = UiText.Slider.Caption(
+            UiText.Slider.StorePrice,
             GetMultiplierIndex(PriceMultiplierSlider));
     }
 

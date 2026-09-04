@@ -245,7 +245,7 @@ public partial class TireTuningView : UserControl
                 row.UsedBy = PartXmlHelpers.FormatUsedBy(vehicleNames);
                 row.UsedByTooltip = PartXmlHelpers.FormatUsedByTooltip(
                     vehicleNames,
-                    "No trucks reference this wheel set.");
+                    UiText.Parts.NoTrucksWheelSet);
                 return row;
             })
             .OrderBy(row => row.Category, StringComparer.OrdinalIgnoreCase)
@@ -304,14 +304,14 @@ public partial class TireTuningView : UserControl
             return;
         }
 
-        OnRoadFrictionMultiplierLabel.Text = TuningMultiplierPresets.FormatSliderCaption(
-            "On-road",
+        OnRoadFrictionMultiplierLabel.Text = UiText.Slider.Caption(
+            UiText.Slider.OnRoad,
             GetMultiplierIndex(OnRoadFrictionMultiplierSlider));
-        OffRoadFrictionMultiplierLabel.Text = TuningMultiplierPresets.FormatSliderCaption(
-            "Off-road",
+        OffRoadFrictionMultiplierLabel.Text = UiText.Slider.Caption(
+            UiText.Slider.OffRoad,
             GetMultiplierIndex(OffRoadFrictionMultiplierSlider));
-        MudFrictionMultiplierLabel.Text = TuningMultiplierPresets.FormatSliderCaption(
-            "Mud",
+        MudFrictionMultiplierLabel.Text = UiText.Slider.Caption(
+            UiText.Slider.Mud,
             GetMultiplierIndex(MudFrictionMultiplierSlider));
     }
 

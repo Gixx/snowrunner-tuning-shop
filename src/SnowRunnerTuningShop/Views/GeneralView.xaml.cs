@@ -196,6 +196,6 @@ public partial class GeneralView : UserControl
     private void RefreshRockSizeLabel()
     {
         var index = RockSizePresets.ClampIndex((int)Math.Round(RockSizeSlider.Value));
-        RockSizeLabel.Text = RockSizePresets.FormatSliderCaption(index);
+        RockSizeLabel.Text = UiText.General.RockPhysicsCaption(index);
     }
 }

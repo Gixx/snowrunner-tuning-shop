@@ -255,14 +255,14 @@ public partial class GearboxTuningView : UserControl
             return;
         }
 
-        FuelMultiplierLabel.Text = TuningMultiplierPresets.FormatSliderCaption(
-            "Fuel consumption",
+        FuelMultiplierLabel.Text = UiText.Slider.Caption(
+            UiText.Slider.FuelConsumption,
             GetMultiplierIndex(FuelMultiplierSlider));
-        IdleMultiplierLabel.Text = TuningMultiplierPresets.FormatSliderCaption(
-            "Idle fuel modifier",
+        IdleMultiplierLabel.Text = UiText.Slider.Caption(
+            UiText.Slider.IdleFuelModifier,
             GetMultiplierIndex(IdleMultiplierSlider));
-        AwdMultiplierLabel.Text = TuningMultiplierPresets.FormatSliderCaption(
-            "AWD fuel penalty",
+        AwdMultiplierLabel.Text = UiText.Slider.Caption(
+            UiText.Slider.AwdFuelPenalty,
             GetMultiplierIndex(AwdMultiplierSlider));
     }
 

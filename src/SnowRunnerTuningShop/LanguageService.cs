@@ -38,16 +38,24 @@ internal static class LanguageService
             WorkspaceConfigStore.SetUiCulture(normalized);
         }
 
-        var culture = LanguageCatalog.ToCultureInfo(normalized);
-        CultureInfo.DefaultThreadCurrentCulture = culture;
-        CultureInfo.DefaultThreadCurrentUICulture = culture;
-        Thread.CurrentThread.CurrentCulture = culture;
-        Thread.CurrentThread.CurrentUICulture = culture;
-
         var option = LanguageCatalog.Get(normalized);
         AppLanguage.Current = option.GameLanguage;
+        var uiCultureInfo = LanguageCatalog.ToCultureInfo(normalized);
+        CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
+        Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+        CultureInfo.DefaultThreadCurrentUICulture = uiCultureInfo;
+        Thread.CurrentThread.CurrentUICulture = uiCultureInfo;
         StringResources.SetCulture(normalized);
+        RefreshRuntimeStrings();
         return true;
+    }
+
+    public static void RefreshRuntimeStrings()
+    {
+        PartUsageMessages.NoTrucksEngineSet = UiText.Parts.NoTrucksEngineSet;
+        PartUsageMessages.NoTrucksGearboxSet = UiText.Parts.NoTrucksGearboxSet;
+        PartUsageMessages.NoTrucksSuspensionSet = UiText.Parts.NoTrucksSuspensionSet;
+        PartUsageMessages.NoTrucksWheelSet = UiText.Parts.NoTrucksWheelSet;
     }
 
     private static void TryConsumeInstallLanguage()

@@ -72,6 +72,10 @@
                             <ColumnDefinition Width="180"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
                         <TextBlock Text="{x:Static loc:UiText+Settings.LanguageLabel}"
                                    VerticalAlignment="Center"
                                    Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
@@ -81,6 +85,13 @@
                                   HorizontalAlignment="Left"
                                   Padding="8,6"
                                   SelectionChanged="LanguageCombo_SelectionChanged"/>
+                        <Button Grid.Row="1"
+                                Grid.Column="1"
+                                Content="{x:Static loc:UiText+Settings.ManageLanguages}"
+                                HorizontalAlignment="Left"
+                                Padding="14,8"
+                                Margin="0,8,0,0"
+                                Click="ManageLanguagesButton_Click"/>
                     </Grid>
                 </StackPanel>
             </Border>

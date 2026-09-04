@@ -62,7 +62,7 @@ Also:
 ### UI
 - Collapsible hamburger sidebar (optional pin)
 - Dark/light Fluent-style theme follows Windows
-- **Languages:** English, Deutsch, Français, Español, Português, Português (Brasil), Polski, Русский, Українська — chosen in the installer or **Settings** (restart to apply)
+- **Languages:** English, Deutsch, Français, Español, Português, Português (Brasil), Polski, Русский, Українська, 简体中文, 繁體中文 — chosen in the installer or **Settings** (restart to apply). Extra languages (currently Magyar, Italiano, Suomi) are not bundled; add them from GitHub via **Settings → Add or Update languages**.
 - **Crash reports:** unexpected errors show a dialog with copy report / open GitHub issue (deduplicated by fingerprint)
 
 ---

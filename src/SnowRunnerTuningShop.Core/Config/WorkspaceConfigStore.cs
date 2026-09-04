@@ -14,7 +14,7 @@ public sealed class WorkspaceConfig
     /// <summary>App theme: System, Dark, or Light.</summary>
     public string ThemeMode { get; set; } = ThemeModes.System;
 
-    /// <summary>UI culture code (en, de, fr, es, pt, pt-BR, pl, ru, uk).</summary>
+    /// <summary>UI culture code (en, de, fr, es, pt, pt-BR, pl, ru, uk, zh-CN, zh-TW). Debug builds may use debug.</summary>
     public string UiCulture { get; set; } = "en";
 
     /// <summary>Latest GitHub release the user chose not to be notified about.</summary>
@@ -90,7 +90,10 @@ public static class WorkspaceConfigStore
         var path = GetConfigPath();
         if (!File.Exists(path))
         {
-            return new WorkspaceConfig();
+            return new WorkspaceConfig
+            {
+                UiCulture = LanguageCatalog.DetectUiCultureFromSystem(),
+            };
         }
 
         try

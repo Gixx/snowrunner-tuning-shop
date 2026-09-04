@@ -58,15 +58,7 @@ public partial class SettingsView : UserControl
 
         if (LanguageCombo.Items.Count == 0)
         {
-            LanguageCombo.DisplayMemberPath = nameof(LabeledLanguage.Label);
-            LanguageCombo.SelectedValuePath = nameof(LabeledLanguage.Value);
-            LanguageCombo.ItemsSource = LanguageCatalog.Supported
-                .Select(option => new LabeledLanguage(option.DisplayName, option.UiCulture))
-                .ToArray();
-
-            _suppressLanguageHandler = true;
-            LanguageCombo.SelectedValue = LanguageService.CurrentUiCulture;
-            _suppressLanguageHandler = false;
+            BindLanguageCombo();
         }
 
         RefreshWorkspaceButtons();
@@ -102,6 +94,31 @@ public partial class SettingsView : UserControl
             UiText.Settings.LanguageRestartTitle,
             MessageBoxButton.OK,
             MessageBoxImage.Information);
+    }
+
+    private void BindLanguageCombo()
+    {
+        LanguageCombo.DisplayMemberPath = nameof(LabeledLanguage.Label);
+        LanguageCombo.SelectedValuePath = nameof(LabeledLanguage.Value);
+        _suppressLanguageHandler = true;
+        LanguageCombo.ItemsSource = LanguageCatalog.Supported
+            .Select(option => new LabeledLanguage(option.DisplayName, option.UiCulture))
+            .ToArray();
+        LanguageCombo.SelectedValue = LanguageService.CurrentUiCulture;
+        _suppressLanguageHandler = false;
+    }
+
+    private void ManageLanguagesButton_Click(object sender, RoutedEventArgs e)
+    {
+        var window = new LocaleManagerWindow
+        {
+            Owner = Window.GetWindow(this),
+        };
+        window.ShowDialog();
+        LanguageCatalog.Reload();
+        StringResources.Reload();
+        LanguageService.RefreshRuntimeStrings();
+        BindLanguageCombo();
     }
 
     private void RefreshWorkspaceButtons()

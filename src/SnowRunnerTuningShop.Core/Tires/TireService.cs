@@ -8,6 +8,7 @@ using SnowRunnerTuningShop.Core.Pak;
 using SnowRunnerTuningShop.Core.Strings;
 using SnowRunnerTuningShop.Core.Tuning;
 using SnowRunnerTuningShop.Core.Xml;
+using SnowRunnerTuningShop.Core.Localization;
 
 namespace SnowRunnerTuningShop.Core.Tires;
 
@@ -241,7 +242,7 @@ public static class TireService
                 UsedBy = PartXmlHelpers.FormatUsedBy(usedByNames),
                 UsedByTooltip = PartXmlHelpers.FormatUsedByTooltip(
                     usedByNames,
-                    "No trucks reference this wheel set."),
+                    PartUsageMessages.NoTrucksWheelSet),
                 UsedByVehicles = usedByNames,
                 Category = InferCategory(entryPath),
                 Price = PartXmlHelpers.ExtractPrice(block),

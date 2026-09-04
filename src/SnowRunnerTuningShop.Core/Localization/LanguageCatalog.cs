@@ -12,21 +12,38 @@ public sealed record LanguageOption(
 public static class LanguageCatalog
 {
     public const string DefaultUiCulture = "en";
+    public const string DebugUiCulture = "debug";
+    public const string DebugDisplayName = "DEBUG (keys)";
 
-    private static readonly LanguageOption[] All =
-    [
-        new("en", "English", "english", "english"),
-        new("de", "Deutsch", "german", "german"),
-        new("fr", "Français", "french", "french"),
-        new("es", "Español", "spanish", "spanish"),
-        new("pt", "Português", "portuguese", "portuguese"),
-        new("pt-BR", "Português (Brasil)", "brazilian", "brazilianportuguese"),
-        new("pl", "Polski", "polish", "polish"),
-        new("ru", "Русский", "russian", "russian"),
-        new("uk", "Українська", "ukrainian", "ukrainian"),
-    ];
+    public static bool IncludeDebugLanguage
+    {
+        get
+        {
+#if DEBUG
+            return true;
+#else
+            return false;
+#endif
+        }
+    }
 
-    public static IReadOnlyList<LanguageOption> Supported => All;
+    public static IReadOnlyList<LanguageOption> Supported
+    {
+        get
+        {
+            var installed = LocalePackStore.GetInstalledOptions();
+            if (!IncludeDebugLanguage || Has(installed, DebugUiCulture))
+            {
+                return installed;
+            }
+
+            return installed
+                .Append(new LanguageOption(DebugUiCulture, DebugDisplayName, "english", ""))
+                .ToArray();
+        }
+    }
+
+    public static void Reload() => LocalePackStore.Reload();
 
     public static string NormalizeUiCulture(string? value)
     {
@@ -36,7 +53,13 @@ public static class LanguageCatalog
         }
 
         var text = value.Trim().Replace('_', '-');
-        foreach (var option in All)
+        if (string.Equals(text, DebugUiCulture, StringComparison.OrdinalIgnoreCase))
+        {
+            return IncludeDebugLanguage ? DebugUiCulture : DefaultUiCulture;
+        }
+
+        var installed = Supported;
+        foreach (var option in installed)
         {
             if (string.Equals(option.UiCulture, text, StringComparison.OrdinalIgnoreCase))
             {
@@ -44,22 +67,37 @@ public static class LanguageCatalog
             }
         }
 
-        if (text.StartsWith("pt-", StringComparison.OrdinalIgnoreCase))
+        if (IsTraditionalChinese(text) && Has(installed, "zh-TW"))
+        {
+            return "zh-TW";
+        }
+
+        if (IsChinese(text) && Has(installed, "zh-CN"))
+        {
+            return "zh-CN";
+        }
+
+        if (text.StartsWith("pt-", StringComparison.OrdinalIgnoreCase) && Has(installed, "pt-BR"))
         {
             return "pt-BR";
         }
 
         var two = text.Length >= 2 ? text[..2].ToLowerInvariant() : text.ToLowerInvariant();
-        return All.FirstOrDefault(option =>
-                string.Equals(option.UiCulture, two, StringComparison.OrdinalIgnoreCase))
-            ?.UiCulture
-            ?? DefaultUiCulture;
+        var twoMatch = installed.FirstOrDefault(option =>
+            string.Equals(option.UiCulture, two, StringComparison.OrdinalIgnoreCase));
+        return twoMatch?.UiCulture ?? DefaultUiCulture;
     }
 
-    public static LanguageOption Get(string? uiCulture) =>
-        All.FirstOrDefault(option =>
-            string.Equals(option.UiCulture, NormalizeUiCulture(uiCulture), StringComparison.OrdinalIgnoreCase))
-        ?? All[0];
+    public static LanguageOption Get(string? uiCulture)
+    {
+        var installed = Supported;
+        var normalized = NormalizeUiCulture(uiCulture);
+        return installed.FirstOrDefault(option =>
+                   string.Equals(option.UiCulture, normalized, StringComparison.OrdinalIgnoreCase))
+               ?? installed.FirstOrDefault(option =>
+                   string.Equals(option.UiCulture, DefaultUiCulture, StringComparison.OrdinalIgnoreCase))
+               ?? new LanguageOption(DefaultUiCulture, "English", "english", "english");
+    }
 
     public static string UiCultureFromInnoLanguage(string? innoLanguage)
     {
@@ -68,7 +106,7 @@ public static class LanguageCatalog
             return DefaultUiCulture;
         }
 
-        var match = All.FirstOrDefault(option =>
+        var match = Supported.FirstOrDefault(option =>
             string.Equals(option.InnoLanguage, innoLanguage, StringComparison.OrdinalIgnoreCase));
         return match?.UiCulture ?? DefaultUiCulture;
     }
@@ -76,17 +114,18 @@ public static class LanguageCatalog
     public static string DetectUiCultureFromSystem()
     {
         var ui = CultureInfo.CurrentUICulture;
-        if (string.Equals(ui.Name, "pt-BR", StringComparison.OrdinalIgnoreCase))
-        {
-            return "pt-BR";
-        }
-
-        return NormalizeUiCulture(ui.TwoLetterISOLanguageName);
+        var name = string.IsNullOrWhiteSpace(ui.Name) ? ui.TwoLetterISOLanguageName : ui.Name;
+        return NormalizeUiCulture(name);
     }
 
     public static CultureInfo ToCultureInfo(string uiCulture)
     {
         var normalized = NormalizeUiCulture(uiCulture);
+        if (string.Equals(normalized, DebugUiCulture, StringComparison.OrdinalIgnoreCase))
+        {
+            return CultureInfo.InvariantCulture;
+        }
+
         try
         {
             return CultureInfo.GetCultureInfo(normalized);
@@ -95,5 +134,24 @@ public static class LanguageCatalog
         {
             return CultureInfo.GetCultureInfo(DefaultUiCulture);
         }
+    }
+
+    private static bool Has(IReadOnlyList<LanguageOption> installed, string uiCulture) =>
+        installed.Any(option =>
+            string.Equals(option.UiCulture, uiCulture, StringComparison.OrdinalIgnoreCase));
+
+    private static bool IsTraditionalChinese(string text)
+    {
+        var n = text.ToLowerInvariant();
+        return n.StartsWith("zh-hant", StringComparison.Ordinal)
+            || n.StartsWith("zh-tw", StringComparison.Ordinal)
+            || n.StartsWith("zh-hk", StringComparison.Ordinal)
+            || n.StartsWith("zh-mo", StringComparison.Ordinal);
+    }
+
+    private static bool IsChinese(string text)
+    {
+        var n = text.ToLowerInvariant();
+        return n == "zh" || n.StartsWith("zh-", StringComparison.Ordinal);
     }
 }

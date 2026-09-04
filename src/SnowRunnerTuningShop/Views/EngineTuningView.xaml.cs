@@ -276,17 +276,17 @@ public partial class EngineTuningView : UserControl
             return;
         }
 
-        TorqueMultiplierLabel.Text = TuningMultiplierPresets.FormatSliderCaption(
-            "Torque",
+        TorqueMultiplierLabel.Text = UiText.Slider.Caption(
+            UiText.Slider.Torque,
             GetMultiplierIndex(TorqueMultiplierSlider));
-        FuelMultiplierLabel.Text = TuningMultiplierPresets.FormatSliderCaption(
-            "Fuel consumption",
+        FuelMultiplierLabel.Text = UiText.Slider.Caption(
+            UiText.Slider.FuelConsumption,
             GetMultiplierIndex(FuelMultiplierSlider));
-        DamageMultiplierLabel.Text = TuningMultiplierPresets.FormatSliderCaption(
-            "Damage capacity",
+        DamageMultiplierLabel.Text = UiText.Slider.Caption(
+            UiText.Slider.DamageCapacity,
             GetMultiplierIndex(DamageMultiplierSlider));
-        ResponsivenessMultiplierLabel.Text = TuningMultiplierPresets.FormatSliderCaption(
-            "Responsiveness",
+        ResponsivenessMultiplierLabel.Text = UiText.Slider.Caption(
+            UiText.Slider.Responsiveness,
             GetMultiplierIndex(ResponsivenessMultiplierSlider));
     }
 
