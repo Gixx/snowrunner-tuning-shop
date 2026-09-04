@@ -16,7 +16,7 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 ## [1.3.2] — 2026-09-04
 
 ### Added
-- **Simplified and Traditional Chinese UI:** Settings and the installer gain 简体中文 (`zh-CN`) and 繁體中文 (`zh-TW`). Game pak strings follow `chinese_simplified` / `chinese_traditional`. First launch without a saved config uses the Windows UI language when it matches a supported locale.
+- **Simplified and Traditional Chinese UI:** Settings and the installer gain 简体中文 (`zh-CN`) and 繁體中文 (`zh-TW`). Game pak strings follow `chinese_simplified` / `chinese_traditional`. First launch without a saved config uses the Windows UI language when it matches a supported locale. The installer ships the Chinese Inno Setup language files (they are not part of the Chocolatey Inno Setup package).
 - **Add or Update languages:** Settings can fetch `assets/localization/catalog.json` from GitHub and download extra or newer locale files into AppData. Chinese and the other current languages stay bundled for offline use; only downloaded overlays can be removed.
 - **UI key catalog:** `assets/localization/keys.json` lists every UI string key. English must contain all of them; other languages fall back to English for missing keys. Debug builds add a **DEBUG (keys)** language that renders keys instead of translations so leftover hardcoded text is visible.
 - **Extra downloadable languages:** Magyar (`hu`), Italiano (`it`), and Suomi (`fi`) are in the GitHub locale catalog so **Settings → Add or Update languages** can fetch them. They are not copied into the app output or installer.
