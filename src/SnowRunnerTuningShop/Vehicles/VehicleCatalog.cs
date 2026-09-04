@@ -6,6 +6,7 @@ namespace SnowRunnerTuningShop.Vehicles;
 
 public sealed record VehicleCatalogEntry(
     string Id,
+    string PakId,
     string DisplayName,
     string Category,
     string ImageFile,
@@ -41,6 +42,7 @@ public static class VehicleCatalog
                 var imagePath = Path.Combine(assetsDir, row.ImageFile);
                 return new VehicleCatalogEntry(
                     row.Id,
+                    string.IsNullOrWhiteSpace(row.PakId) ? row.Id : row.PakId.Trim(),
                     row.DisplayName,
                     row.Category,
                     row.ImageFile,
@@ -77,6 +79,7 @@ public static class VehicleCatalog
     private sealed class CatalogRow
     {
         public string Id { get; set; } = "";
+        public string PakId { get; set; } = "";
         public string DisplayName { get; set; } = "";
         public string Category { get; set; } = "";
         public string ImageFile { get; set; } = "";

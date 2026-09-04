@@ -63,6 +63,21 @@ public static class StringResources
         return fallback ?? key;
     }
 
+    /// <summary>Always English, including in debug-keys mode. Used for crash reports.</summary>
+    public static string GetEnglish(string key, string? fallback = null)
+    {
+        lock (Gate)
+        {
+            EnsureLoaded();
+            if (_base.TryGetValue(key, out var baseValue) && !string.IsNullOrEmpty(baseValue))
+            {
+                return baseValue;
+            }
+        }
+
+        return fallback ?? key;
+    }
+
     public static string Format(string key, string fallback, params object?[] args)
     {
         if (IsDebugKeysCulture(_culture))
@@ -74,6 +89,19 @@ public static class StringResources
         try
         {
             return string.Format(CultureInfo.CurrentUICulture, template, args);
+        }
+        catch (FormatException)
+        {
+            return string.Format(CultureInfo.InvariantCulture, fallback, args);
+        }
+    }
+
+    public static string FormatEnglish(string key, string fallback, params object?[] args)
+    {
+        var template = GetEnglish(key, fallback);
+        try
+        {
+            return string.Format(CultureInfo.InvariantCulture, template, args);
         }
         catch (FormatException)
         {

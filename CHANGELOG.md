@@ -13,6 +13,14 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ---
 
+## [1.3.3] — 2026-09-04
+
+### Fixed
+- **Vehicle editor could not find trucks whose wiki catalog id differs from the XML file name** (for example ANK MK38 CIVILIAN → `ank_mk38`). Catalog cards now store `pakId` (the pak XML file id). Matching uses only that file id, never localized display names, so the UI language cannot hide a truck. Parts pages already key off XML ids; trailers use the same file-id matcher.
+- **Crash report dialog is always English**, including GitHub issue text, so reports stay readable regardless of the UI language.
+
+---
+
 ## [1.3.2] — 2026-09-04
 
 ### Added
@@ -251,7 +259,8 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ---
 
-[Unreleased]: https://github.com/Gixx/snowrunner-tuning-shop/compare/v1.3.2...HEAD
+[Unreleased]: https://github.com/Gixx/snowrunner-tuning-shop/compare/v1.3.3...HEAD
+[1.3.3]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.3.3
 [1.3.2]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.3.2
 [1.3.1]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.3.1
 [1.3.0]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.3.0

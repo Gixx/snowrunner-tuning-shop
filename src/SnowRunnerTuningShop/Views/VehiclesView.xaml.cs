@@ -371,6 +371,7 @@ public partial class VehiclesView : UserControl
 
             _all.Add(new VehicleCard(
                 entry.Id,
+                entry.PakId,
                 entry.DisplayName,
                 entry.Category,
                 VehicleCatalog.TryLoadImage(entry.ImagePath),
@@ -463,7 +464,7 @@ public partial class VehiclesView : UserControl
 
     private void ShowDetail(VehicleCard card)
     {
-        CrashReportContext.SetVehicle(card.Id, card.DisplayName);
+        CrashReportContext.SetVehicle(card.PakId, card.DisplayName);
         _currentCard = card;
         DetailTitleText.Text = card.DisplayName;
         DetailImage.Source = card.Image;
@@ -546,7 +547,7 @@ public partial class VehiclesView : UserControl
             return;
         }
 
-        var truck = TruckTuningService.FindByCatalog(_trucks, card.DisplayName, card.Id);
+        var truck = TruckTuningService.FindByCatalog(_trucks, card.Id, card.PakId);
         if (truck is null)
         {
             ShowTuningHint(UiText.Vehicles.TruckNotFound);
@@ -1042,6 +1043,7 @@ public partial class VehiclesView : UserControl
     {
         public VehicleCard(
             string id,
+            string pakId,
             string displayName,
             string category,
             BitmapImage? image,
@@ -1049,6 +1051,7 @@ public partial class VehiclesView : UserControl
             BitmapImage? flag)
         {
             Id = id;
+            PakId = pakId;
             DisplayName = displayName;
             Category = category;
             Image = image;
@@ -1058,6 +1061,7 @@ public partial class VehiclesView : UserControl
         }
 
         public string Id { get; }
+        public string PakId { get; }
         public string DisplayName { get; }
         public string Category { get; }
         public BitmapImage? Image { get; }

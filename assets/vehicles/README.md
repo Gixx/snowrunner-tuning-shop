@@ -8,7 +8,7 @@ Downloaded as PNG for local app UI. Game artwork remains © Saber Interactive / 
 
 | File | Purpose |
 |------|---------|
-| `catalog.json` | Vehicle list for the app (`id`, `displayName`, `category`, `imageFile`) |
+| `catalog.json` | Vehicle list for the app (`id` wiki slug, `pakId` XML file name in `initial.pak`, `displayName`, `category`, `imageFile`) |
 | `manifest.json` | Download provenance (wiki image URLs) |
 | `metadata.json` | Per-vehicle facts: manufacturer, Based on, production years, country |
 | `manufacturers/` | Manufacturer logos from the wiki (UI shows them on a dark plate for light theme) |

@@ -87,91 +87,13 @@ public static class TruckTuningService
     }
 
     /// <summary>
-    /// Resolves a catalog card to a pak truck using stable ids, never localized display names.
-    /// Catalog English names are matched to XML file names (Azov 64131 → azov_64131).
+    /// Resolves a catalog card to a pak truck by XML file id (<c>pakId</c> / catalog id), never by UI language.
     /// </summary>
     public static TruckTuningDefinition? FindByCatalog(
         IReadOnlyList<TruckTuningDefinition> trucks,
-        string catalogDisplayName,
-        string? catalogId = null)
-    {
-        if (trucks.Count == 0)
-        {
-            return null;
-        }
-
-        var idKey = NormalizeKey(catalogId);
-        var nameKey = NormalizeKey(catalogDisplayName);
-
-        if (idKey.Length > 0)
-        {
-            var exactId = PickUnique(trucks.Where(truck => NormalizeKey(truck.TruckId) == idKey));
-            if (exactId is not null)
-            {
-                return exactId;
-            }
-        }
-
-        if (nameKey.Length > 0)
-        {
-            var exactNameAsId = PickUnique(trucks.Where(truck => NormalizeKey(truck.TruckId) == nameKey));
-            if (exactNameAsId is not null)
-            {
-                return exactNameAsId;
-            }
-        }
-
-        if (idKey.Length >= 3)
-        {
-            var suffix = trucks
-                .Where(truck =>
-                {
-                    var truckKey = NormalizeKey(truck.TruckId);
-                    return truckKey.Length > idKey.Length
-                        && truckKey.EndsWith(idKey, StringComparison.Ordinal);
-                })
-                .ToArray();
-            if (nameKey.Length > 0)
-            {
-                var namedSuffix = PickUnique(suffix.Where(truck =>
-                {
-                    var truckKey = NormalizeKey(truck.TruckId);
-                    return truckKey == nameKey
-                        || truckKey.EndsWith(nameKey, StringComparison.Ordinal);
-                }));
-                if (namedSuffix is not null)
-                {
-                    return namedSuffix;
-                }
-            }
-
-            var uniqueSuffix = PickUnique(suffix);
-            if (uniqueSuffix is not null)
-            {
-                return uniqueSuffix;
-            }
-        }
-
-        return null;
-    }
-
-    private static TruckTuningDefinition? PickUnique(IEnumerable<TruckTuningDefinition> matches)
-    {
-        var list = matches as IList<TruckTuningDefinition> ?? matches.ToArray();
-        if (list.Count == 0)
-        {
-            return null;
-        }
-
-        if (list.Count == 1)
-        {
-            return list[0];
-        }
-
-        return list.FirstOrDefault(truck =>
-                   !truck.EntryPath.Contains("/_dlc/", StringComparison.OrdinalIgnoreCase))
-               ?? list[0];
-    }
+        string catalogId,
+        string? pakId = null) =>
+        PakFileId.Find(trucks, truck => truck.TruckId, truck => truck.EntryPath, pakId, catalogId);
 
     public static TruckTuningSaveResult ApplyGlobalMultipliers(
         string pakPath,
@@ -1046,47 +968,6 @@ public static class TruckTuningService
         var replacement = $"<TruckData{attrs}>";
         return string.Concat(text.AsSpan(0, match.Index), replacement, text.AsSpan(match.Index + match.Length));
     }
-
-    private static string NormalizeKey(string? value)
-    {
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            return "";
-        }
-
-        var builder = new StringBuilder(value.Length);
-        foreach (var ch in value)
-        {
-            var folded = FoldHomoglyph(ch);
-            if (char.IsLetterOrDigit(folded))
-            {
-                builder.Append(char.ToLowerInvariant(folded));
-            }
-        }
-
-        return builder.ToString();
-    }
-
-    /// <summary>
-    /// Game English strings sometimes use Cyrillic lookalikes (С/Е/М) in model names.
-    /// </summary>
-    private static char FoldHomoglyph(char ch) => ch switch
-    {
-        'А' or 'а' => 'A',
-        'В' => 'B',
-        'С' or 'с' => 'C',
-        'Е' or 'е' or 'Ё' or 'ё' => 'E',
-        'Н' => 'H',
-        'К' or 'к' => 'K',
-        'М' or 'м' => 'M',
-        'О' or 'о' => 'O',
-        'Р' or 'р' => 'P',
-        'Т' => 'T',
-        'Х' or 'х' => 'X',
-        'У' or 'у' => 'Y',
-        'І' or 'і' => 'I',
-        _ => ch,
-    };
 
     private static string ApplyDriveLayout(string text, TruckDriveLayout layout) =>
         TorqueTagRegex.Replace(text, match =>

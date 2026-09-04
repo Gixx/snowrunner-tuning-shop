@@ -120,29 +120,8 @@ public static class TrailerTuningService
 
     public static TrailerTuningDefinition? FindByCatalog(
         IReadOnlyList<TrailerTuningDefinition> trailers,
-        string catalogId)
-    {
-        if (trailers.Count == 0 || string.IsNullOrWhiteSpace(catalogId))
-        {
-            return null;
-        }
-
-        var idKey = NormalizeKey(catalogId);
-        var matches = trailers.Where(trailer => NormalizeKey(trailer.TrailerId) == idKey).ToArray();
-        if (matches.Length == 0)
-        {
-            return null;
-        }
-
-        if (matches.Length == 1)
-        {
-            return matches[0];
-        }
-
-        return matches.FirstOrDefault(trailer =>
-                   !trailer.EntryPath.Contains("/_dlc/", StringComparison.OrdinalIgnoreCase))
-               ?? matches[0];
-    }
+        string catalogId) =>
+        PakFileId.Find(trailers, trailer => trailer.TrailerId, trailer => trailer.EntryPath, catalogId);
 
     public static TrailerTuningSaveResult ApplyGlobalMultipliers(
         string pakPath,
@@ -850,25 +829,6 @@ public static class TrailerTuningService
         int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsed)
             ? parsed
             : fallback;
-
-    private static string NormalizeKey(string? value)
-    {
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            return "";
-        }
-
-        var builder = new StringBuilder(value.Length);
-        foreach (var ch in value)
-        {
-            if (char.IsLetterOrDigit(ch))
-            {
-                builder.Append(char.ToLowerInvariant(ch));
-            }
-        }
-
-        return builder.ToString();
-    }
 
     private static string ReadEntryText(ZipArchiveEntry entry)
     {

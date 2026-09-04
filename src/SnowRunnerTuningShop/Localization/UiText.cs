@@ -1149,15 +1149,15 @@ public static class UiText
 
     public static class CrashReport
     {
-        public static string Title => StringResources.Get("CrashReport.Title", "Unexpected error");
-        public static string Heading => StringResources.Get("CrashReport.Heading", "Something went wrong");
-        public static string CopyReport => StringResources.Get("CrashReport.CopyReport", "Copy report");
-        public static string OpenGitHubIssue => StringResources.Get("CrashReport.OpenGitHubIssue", "Open GitHub issue");
-        public static string EmailReport => StringResources.Get("CrashReport.EmailReport", "Email report");
-        public static string Continue => StringResources.Get("CrashReport.Continue", "Continue");
-        public static string CloseApp => StringResources.Get("CrashReport.CloseApp", "Close app");
-        public static string Copied => StringResources.Get("CrashReport.Copied", "Crash report copied to the clipboard.");
-        public static string PreparingGitHub => StringResources.Get("CrashReport.PreparingGitHub", "Checking GitHub…");
+        public static string Title => StringResources.GetEnglish("CrashReport.Title", "Unexpected error");
+        public static string Heading => StringResources.GetEnglish("CrashReport.Heading", "Something went wrong");
+        public static string CopyReport => StringResources.GetEnglish("CrashReport.CopyReport", "Copy report");
+        public static string OpenGitHubIssue => StringResources.GetEnglish("CrashReport.OpenGitHubIssue", "Open GitHub issue");
+        public static string EmailReport => StringResources.GetEnglish("CrashReport.EmailReport", "Email report");
+        public static string Continue => StringResources.GetEnglish("CrashReport.Continue", "Continue");
+        public static string CloseApp => StringResources.GetEnglish("CrashReport.CloseApp", "Close app");
+        public static string Copied => StringResources.GetEnglish("CrashReport.Copied", "Crash report copied to the clipboard.");
+        public static string PreparingGitHub => StringResources.GetEnglish("CrashReport.PreparingGitHub", "Checking GitHub…");
 
         public static string Summary(string exceptionType, string message)
         {
@@ -1174,9 +1174,9 @@ public static class UiText
         }
 
         public static string LogSaved(string path) =>
-            StringResources.Format("CrashReport.LogSaved", "Saved locally:\n{0}", path);
+            StringResources.FormatEnglish("CrashReport.LogSaved", "Saved locally:\n{0}", path);
 
         public static string ViewExistingIssue(int number) =>
-            StringResources.Format("CrashReport.ViewExistingIssue", "View existing issue #{0}", number);
+            StringResources.FormatEnglish("CrashReport.ViewExistingIssue", "View existing issue #{0}", number);
     }
 }
