@@ -499,7 +499,20 @@ public partial class VehiclesView : UserControl
 
         ListPanel.Visibility = Visibility.Collapsed;
         DetailPanel.Visibility = Visibility.Visible;
+        Focus();
+        Keyboard.Focus(this);
         await LoadTuningAsync(card);
+    }
+
+    private void View_PreviewKeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key != Key.Escape || DetailPanel.Visibility != Visibility.Visible)
+        {
+            return;
+        }
+
+        NavigateBackToList();
+        e.Handled = true;
     }
 
     private void BindDetailMetadata(VehicleMetaInfo? meta, string role)
@@ -1062,7 +1075,9 @@ public partial class VehiclesView : UserControl
         _suppressUnlockRankSync = false;
     }
 
-    private void BackButton_Click(object sender, RoutedEventArgs e)
+    private void BackButton_Click(object sender, RoutedEventArgs e) => NavigateBackToList();
+
+    private void NavigateBackToList()
     {
         _loadVersion++;
         _loadCts?.Cancel();

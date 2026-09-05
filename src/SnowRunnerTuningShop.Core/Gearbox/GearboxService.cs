@@ -14,8 +14,9 @@ namespace SnowRunnerTuningShop.Core.Gearbox;
 
 public static class GearboxService
 {
+    // Attrs must not accept '<' or the match can swallow the next tag (issue #6).
     private static readonly Regex GearboxOpenTagRegex = new(
-        @"<Gearbox\b(?<attrs>[^>/]*?)(?<self>/?)>",
+        @"<Gearbox\b(?<attrs>[^<>/]*?)(?<self>/?)>",
         RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
     private static readonly Regex AttributeRegex = new(
@@ -23,7 +24,7 @@ public static class GearboxService
         RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
     private static readonly Regex GearboxSocketRegex = new(
-        @"<GearboxSocket\b(?<attrs>[^>]*)/?>",
+        @"<GearboxSocket\b(?<attrs>[^<>]*)/?>",
         RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
     private static readonly Regex VehicleUiNameRegex = new(
@@ -322,6 +323,17 @@ public static class GearboxService
         vehicleNames.Count == 0
             ? PartUsageMessages.NoTrucksGearboxSet
             : string.Join(", ", vehicleNames);
+
+    internal static string ApplyMultipliersToTextForTests(
+        string baselineText,
+        double fuelConsumptionMultiplier,
+        double idleFuelModifierMultiplier,
+        double awdConsumptionMultiplier) =>
+        ApplyMultipliersToText(
+            baselineText,
+            fuelConsumptionMultiplier,
+            idleFuelModifierMultiplier,
+            awdConsumptionMultiplier);
 
     private static string ApplyMultipliersToText(
         string baselineText,

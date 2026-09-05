@@ -50,6 +50,33 @@ jobs:
       - name: Restore
         run: dotnet restore SnowRunnerTuningShop.slnx
 
+      - name: Inject Mailtrap API token
+        shell: pwsh
+        env:
+          MAILTRAP_API_TOKEN: ${{ secrets.MAILTRAP_API_TOKEN }}
+        run: |
+          if ([string]::IsNullOrWhiteSpace($env:MAILTRAP_API_TOKEN)) {
+            throw "Repository secret MAILTRAP_API_TOKEN is missing. Add it under Settings → Secrets and variables → Actions."
+          }
+          if ($env:MAILTRAP_API_TOKEN.StartsWith("PASTE_")) {
+            throw "MAILTRAP_API_TOKEN still looks like a placeholder."
+          }
+          $path = "src/SnowRunnerTuningShop.Core/Diagnostics/BugReportSecrets.Local.cs"
+          # Escape for a C# verbatim-ish string literal (token should be alphanumeric; still escape quotes/backslashes).
+          $token = $env:MAILTRAP_API_TOKEN.Replace('\', '\\').Replace('"', '\"')
+          $content = @"
+          namespace SnowRunnerTuningShop.Core.Diagnostics;
+
+          public static partial class BugReportSecrets
+          {
+              public const string MailtrapApiToken = "$token";
+          }
+          "@
+          # Trim accidental leading spaces from each line of the here-string.
+          $content = ($content -split "`n" | ForEach-Object { $_.TrimStart() }) -join "`n"
+          Set-Content -Path $path -Value $content -Encoding utf8
+          Write-Host "Wrote $path for release build."
+
       - name: Test
         run: dotnet test tests/SnowRunnerTuningShop.Tests/SnowRunnerTuningShop.Tests.csproj -c Release --verbosity normal
 

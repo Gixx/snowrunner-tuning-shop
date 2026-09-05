@@ -14,12 +14,13 @@ namespace SnowRunnerTuningShop.Core.Suspension;
 
 public static class SuspensionService
 {
+    // Attrs must not accept '<' or the match can swallow the next tag (issue #6).
     private static readonly Regex SuspensionSetOpenTagRegex = new(
-        @"<SuspensionSet\b(?<attrs>[^>/]*?)(?<self>/?)>",
+        @"<SuspensionSet\b(?<attrs>[^<>/]*?)(?<self>/?)>",
         RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
     private static readonly Regex SuspensionOpenTagRegex = new(
-        @"<Suspension\b(?<attrs>[^>/]*?)(?<self>/?)>",
+        @"<Suspension\b(?<attrs>[^<>/]*?)(?<self>/?)>",
         RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
     private static readonly Regex AttributeRegex = new(
@@ -27,7 +28,7 @@ public static class SuspensionService
         RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
     private static readonly Regex SuspensionSocketRegex = new(
-        @"<SuspensionSocket\b(?<attrs>[^>]*)/?>",
+        @"<SuspensionSocket\b(?<attrs>[^<>]*)/?>",
         RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
     private static readonly Regex VehicleUiNameRegex = new(
@@ -357,6 +358,19 @@ public static class SuspensionService
         vehicleNames.Count == 0
             ? PartUsageMessages.NoTrucksSuspensionSet
             : string.Join(", ", vehicleNames);
+
+    internal static string ApplyMultipliersToTextForTests(
+        string baselineText,
+        double heightMultiplier,
+        double strengthMultiplier,
+        double dampingMultiplier,
+        double damageCapacityMultiplier) =>
+        ApplyMultipliersToText(
+            baselineText,
+            heightMultiplier,
+            strengthMultiplier,
+            dampingMultiplier,
+            damageCapacityMultiplier);
 
     private static string ApplyMultipliersToText(
         string baselineText,

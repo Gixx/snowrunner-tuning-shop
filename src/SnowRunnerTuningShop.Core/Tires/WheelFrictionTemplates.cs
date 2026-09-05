@@ -13,7 +13,7 @@ namespace SnowRunnerTuningShop.Core.Tires;
 public static class WheelFrictionTemplates
 {
     private static readonly Regex FrictionTemplateRegex = new(
-        @"<(?<name>ScoutOffroad|ScoutMudtires|ScoutHighway|ScoutChains|ScoutAllterrain|Offroad|Mudtires|Highway|HeavyMudtires|Chains|Allterrain)\b(?<attrs>[^>]*)/?>",
+        @"<(?<name>ScoutOffroad|ScoutMudtires|ScoutHighway|ScoutChains|ScoutAllterrain|Offroad|Mudtires|Highway|HeavyMudtires|Chains|Allterrain)\b(?<attrs>[^<>]*)/?>",
         RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
     private static readonly Regex AttributeRegex = new(
@@ -46,7 +46,7 @@ public static class WheelFrictionTemplates
         // Prefer the dedicated <WheelFriction> ... </WheelFriction> section when present.
         var sectionMatch = Regex.Match(
             text,
-            @"(?is)<WheelFriction\b[^>]*>(?<body>.*?)</WheelFriction>");
+            @"(?is)<WheelFriction\b[^<>]*>(?<body>.*?)</WheelFriction>");
         var searchText = sectionMatch.Success ? sectionMatch.Groups["body"].Value : text;
 
         var result = new Dictionary<string, FrictionValues>(StringComparer.OrdinalIgnoreCase);

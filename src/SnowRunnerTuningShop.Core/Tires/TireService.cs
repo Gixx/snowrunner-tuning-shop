@@ -15,15 +15,16 @@ namespace SnowRunnerTuningShop.Core.Tires;
 public static class TireService
 {
     // Attr values may contain '/' (e.g. Mesh="wheels/..."), so do not use [^>/].
+    // Attrs must not accept '<' or a truncated TruckTire can swallow following content (issue #6).
     private static readonly Regex TruckTireOpenTagRegex = new(
-        @"<TruckTire\b(?<attrs>[^>]*)>",
+        @"<TruckTire\b(?<attrs>[^<>]*)>",
         RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
-    // Quoted values may contain '/' (e.g. Mesh="wheels/..."). Using [^>]* swallows the
-    // self-closing slash, so a rewrite of `<WheelFriction _template="X" />` becomes
-    // `<WheelFriction _template="X" / IsIgnoreIce="true">` and the garage/truck store breaks.
+    // WheelFriction is always a self-closing empty element. Require "/>" so a truncated
+    // tag cannot backtrack into the following <GameData> (issue #6 / ankatra mash).
+    // Do not use a "[^"]*" alternative here — with backtracking it can still span '<'.
     private static readonly Regex WheelFrictionTagRegex = new(
-        @"<WheelFriction\b(?<attrs>(?:[^>/]|""[^""]*"")*)(?<self>/?)>",
+        @"<WheelFriction\b(?<attrs>[^<>]*?)\s*/>",
         RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
     private static readonly Regex AttributeRegex = new(
@@ -31,7 +32,7 @@ public static class TireService
         RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
     private static readonly Regex CompatibleWheelsRegex = new(
-        @"<CompatibleWheels\b(?<attrs>[^>]*)/?>",
+        @"<CompatibleWheels\b(?<attrs>[^<>]*)/?>",
         RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
     private static readonly Regex VehicleUiNameRegex = new(
@@ -357,6 +358,21 @@ public static class TireService
         return setId;
     }
 
+    /// <summary>Test hook for WheelFriction rewrite safety (issue #6 / ankatra mash).</summary>
+    internal static string ApplyMultipliersToTextForTests(
+        string baselineText,
+        double onRoadMultiplier,
+        double offRoadMultiplier,
+        double mudMultiplier,
+        bool? ignoreIceForAll = null) =>
+        ApplyMultipliersToText(
+            baselineText,
+            new Dictionary<string, WheelFrictionTemplates.FrictionValues>(StringComparer.OrdinalIgnoreCase),
+            onRoadMultiplier,
+            offRoadMultiplier,
+            mudMultiplier,
+            ignoreIceForAll);
+
     private static string ApplyMultipliersToText(
         string baselineText,
         IReadOnlyDictionary<string, WheelFrictionTemplates.FrictionValues> templates,
@@ -428,7 +444,6 @@ public static class TireService
         return WheelFrictionTagRegex.Replace(block, match =>
         {
             var attrs = match.Groups["attrs"].Value;
-            var self = match.Groups["self"].Value;
             var parsed = ParseAttributes(attrs);
             parsed.TryGetValue("_template", out var templateName);
             var resolved = WheelFrictionTemplates.Resolve(templates, templateName, parsed);
@@ -460,7 +475,8 @@ public static class TireService
                 ApplyIgnoreIceAttribute(ref updatedAttrs, ignoreIce);
             }
 
-            return $"<WheelFriction{updatedAttrs}{self}>";
+            // WheelFriction is always an empty element in SnowRunner XML.
+            return $"<WheelFriction{updatedAttrs.TrimEnd()} />";
         }, 1);
     }
 
@@ -536,7 +552,6 @@ public static class TireService
         updatedBlock = WheelFrictionTagRegex.Replace(updatedBlock, match =>
         {
             var attrs = match.Groups["attrs"].Value;
-            var self = match.Groups["self"].Value;
             var updatedAttrs = attrs;
             var localChanged = false;
 
@@ -561,7 +576,8 @@ public static class TireService
             }
 
             changed = true;
-            return $"<WheelFriction{updatedAttrs}{self}>";
+            // WheelFriction is always an empty element in SnowRunner XML.
+            return $"<WheelFriction{updatedAttrs.TrimEnd()} />";
         }, 1);
 
         return changed;

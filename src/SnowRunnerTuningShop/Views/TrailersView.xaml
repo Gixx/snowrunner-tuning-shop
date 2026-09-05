@@ -1,7 +1,9 @@
 <UserControl x:Class="SnowRunnerTuningShop.Views.TrailersView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:loc="clr-namespace:SnowRunnerTuningShop.Localization">
+             xmlns:loc="clr-namespace:SnowRunnerTuningShop.Localization"
+             Focusable="True"
+             PreviewKeyDown="View_PreviewKeyDown">
     <UserControl.Resources>
         <Style x:Key="FilterChipRadioStyle" TargetType="RadioButton">
             <Setter Property="MinWidth" Value="0"/>

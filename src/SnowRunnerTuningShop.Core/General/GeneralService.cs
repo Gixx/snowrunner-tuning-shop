@@ -12,7 +12,7 @@ public static class GeneralService
     private const string ModelsSegment = "classes/models/";
 
     private static readonly Regex PrimaryModelTagRegex = new(
-        @"<(?<tag>[A-Za-z_][\w:.-]*)\b(?<attrs>[^>]*)>",
+        @"<(?<tag>[A-Za-z_][\w:.-]*)\b(?<attrs>[^<>]*)>",
         RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
     private static readonly Regex ClipCameraAttributeRegex = new(

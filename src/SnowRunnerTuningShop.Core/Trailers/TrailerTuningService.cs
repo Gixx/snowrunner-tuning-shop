@@ -12,11 +12,11 @@ namespace SnowRunnerTuningShop.Core.Trailers;
 public static class TrailerTuningService
 {
     private static readonly Regex TruckDataOpenRegex = new(
-        @"<TruckData\b(?<attrs>[^>]*)>",
+        @"<TruckData\b(?<attrs>[^<>]*)>",
         RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
     private static readonly Regex GameDataOpenRegex = new(
-        @"<GameData\b(?<attrs>[^>]*)>",
+        @"<GameData\b(?<attrs>[^<>]*)>",
         RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
     private static readonly Regex AttributeRegex = new(
@@ -24,7 +24,7 @@ public static class TrailerTuningService
         RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
     private static readonly Regex ParentFileRegex = new(
-        @"<_parent\b[^>]*\bFile\s*=\s*""(?<file>[^""]+)""",
+        @"<_parent\b[^<>]*\bFile\s*=\s*""(?<file>[^""]+)""",
         RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
     public static IReadOnlyList<TrailerTuningDefinition> LoadTrailers(string pakPath, string language = "english")

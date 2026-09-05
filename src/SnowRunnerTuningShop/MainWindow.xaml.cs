@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using SnowRunnerTuningShop.Core.Config;
 using SnowRunnerTuningShop.Core.Diagnostics;
+using SnowRunnerTuningShop.Views;
 
 namespace SnowRunnerTuningShop;
 
@@ -104,6 +105,18 @@ public partial class MainWindow : Window
 
         _navOpen = false;
         ApplyNavLayout();
+    }
+
+    private void ReportBugButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (!_sidebarPinned)
+        {
+            _navOpen = false;
+            ApplyNavLayout();
+        }
+
+        var dialog = new BugReportWindow { Owner = this };
+        dialog.ShowDialog();
     }
 
     private void PinMenuCheckBox_Changed(object sender, RoutedEventArgs e)

@@ -15,11 +15,11 @@ public static class TruckTuningService
     public const double GlobalFrontSteerMaximumDegrees = 60;
 
     private static readonly Regex TruckDataOpenRegex = new(
-        @"<TruckData\b(?<attrs>[^>]*)>",
+        @"<TruckData\b(?<attrs>[^<>]*)>",
         RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
     private static readonly Regex GameDataOpenRegex = new(
-        @"<GameData\b(?<attrs>[^>]*)>",
+        @"<GameData\b(?<attrs>[^<>]*)>",
         RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
     private static readonly Regex VehicleUiNameRegex = new(
@@ -31,11 +31,11 @@ public static class TruckTuningService
         RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
     private static readonly Regex TorqueTagRegex = new(
-        @"<(?<tag>FrontWheel|RearWheel|FirstAxle|SecondAxle|ThirdAxle|FourthAxle|FrontAxle|RearAxle|MiddleAxle|MiddleWheel|Front|Rear)\b(?<attrs>[^>]*\bTorque\s*=\s*""[^""]*""[^>]*)(?<self>/?)>",
+        @"<(?<tag>FrontWheel|RearWheel|FirstAxle|SecondAxle|ThirdAxle|FourthAxle|FrontAxle|RearAxle|MiddleAxle|MiddleWheel|Front|Rear)\b(?<attrs>[^<>]*\bTorque\s*=\s*""[^""]*""[^<>]*)(?<self>/?)>",
         RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
     private static readonly Regex AddonSocketsBlockRegex = new(
-        @"<AddonSockets\b(?<attrs>[^>]*)>(?<body>.*?)</AddonSockets>",
+        @"<AddonSockets\b(?<attrs>[^<>]*)>(?<body>.*?)</AddonSockets>",
         RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Singleline);
 
     private static readonly Regex DiffLockInstalledRegex = new(

@@ -101,9 +101,12 @@
                 </StackPanel>
 
                 <StackPanel DockPanel.Dock="Bottom" Margin="4,16,4,4">
+                    <Button Content="{x:Static loc:UiText+Nav.ReportBug}"
+                            Style="{StaticResource NavReportBugButtonStyle}"
+                            Click="ReportBugButton_Click"/>
                     <CheckBox x:Name="PinMenuCheckBox"
                               Content="{x:Static loc:UiText+Nav.PinMenu}"
-                              Margin="0,0,0,10"
+                              Margin="0,8,0,10"
                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"
                               Checked="PinMenuCheckBox_Changed"
                               Unchecked="PinMenuCheckBox_Changed"/>

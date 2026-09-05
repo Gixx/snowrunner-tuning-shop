@@ -17,9 +17,50 @@ public static class UiText
         public static string Trailers => StringResources.Get("Nav.Trailers", "Trailers");
         public static string PhotoMode => StringResources.Get("Nav.PhotoMode", "Photo Mode");
         public static string Settings => StringResources.Get("Nav.Settings", "Settings");
+        public static string ReportBug => StringResources.Get("Nav.ReportBug", "Report a bug");
         public static string OpenMenu => StringResources.Get("Nav.OpenMenu", "Menu");
         public static string PinMenu => StringResources.Get("Nav.PinMenu", "Keep menu open");
         public static string VersionLabel => StringResources.Format("Nav.VersionLabel", "Version {0}", AppInfo.Version);
+    }
+
+    public static class BugReport
+    {
+        public static string Title => StringResources.Get("BugReport.Title", "Report a bug");
+        public static string Heading => StringResources.Get("BugReport.Heading", "Describe the problem");
+        public static string DescriptionLabel => StringResources.Get(
+            "BugReport.DescriptionLabel",
+            "What went wrong? (max 600 characters)");
+        public static string IncludeProfile => StringResources.Get(
+            "BugReport.IncludeProfile",
+            "I agree to attach the tuning profile JSON to this bug report");
+        public static string ProfilePrivacyNote => StringResources.Get(
+            "BugReport.ProfilePrivacyNote",
+            "This file does not contain personal data. It only stores your tuning changes and greatly helps diagnose bugs.");
+        public static string Send => StringResources.Get("BugReport.Send", "Send");
+        public static string Sending => StringResources.Get("BugReport.Sending", "Sending…");
+        public static string SendSucceeded => StringResources.Get(
+            "BugReport.SendSucceeded",
+            "Bug report sent. Thank you!");
+        public static string NotConfigured => StringResources.Get(
+            "BugReport.NotConfigured",
+            "Bug report email is not configured in this build.");
+        public static string SubmitHint => StringResources.Get(
+            "BugReport.SubmitHint",
+            "Send delivers the report by email. If you agree, the tuning profile JSON is attached automatically.");
+        public static string Cancel => StringResources.Get("BugReport.Cancel", "Cancel");
+        public static string EmptyDescription => StringResources.Get(
+            "BugReport.EmptyDescription",
+            "Please describe the problem before sending.");
+        public static string NoProfileTooltip => StringResources.Get(
+            "BugReport.NoProfileTooltip",
+            "No tuning profile file was found for the active game edition.");
+        public static string CharCount(int current, int max) =>
+            StringResources.Format("BugReport.CharCount", "{0} / {1}", current, max);
+        public static string SendFailed(string detail) =>
+            StringResources.Format(
+                "BugReport.SendFailed",
+                "Could not send the bug report.\n{0}",
+                detail);
     }
 
     public static class Slider

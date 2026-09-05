@@ -2,13 +2,18 @@ namespace SnowRunnerTuningShop.Core;
 
 public static class AppInfo
 {
-    public const string Version = "1.3.3";
+    public const string Version = "1.3.4";
 
     public const string GitHubOwner = "Gixx";
     public const string GitHubRepo = "snowrunner-tuning-shop";
 
     /// <summary>Optional crash-report destination. Leave empty to hide the email button.</summary>
     public const string CrashReportEmail = "";
+
+    /// <summary>
+    /// Destination for in-app bug reports (.eml draft). Kept in source only — not shown in the UI.
+    /// </summary>
+    public const string BugReportEmail = "old.claude.macleod@gmail.com";
 
     public static string IssueTrackerUrl =>
         $"https://github.com/{GitHubOwner}/{GitHubRepo}/issues";

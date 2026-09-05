@@ -29,3 +29,6 @@ assets/trailers/_meta_build/blender-kit/
 tools/trailer-shots/backups/
 tools/trailer-shots/platform-pins.json
 tools/
+
+# Mailtrap API token for in-app bug reports (never commit)
+src/SnowRunnerTuningShop.Core/Diagnostics/BugReportSecrets.Local.cs

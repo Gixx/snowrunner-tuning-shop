@@ -11,7 +11,12 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ## [Unreleased]
 
+---
+
+## [1.3.4] — 2026-09-05
+
 ### Added
+- **Report a bug (sidebar):** highlighted nav action opens a short form (600-character description, optional zipped tuning-profile JSON). Send delivers via Mailtrap from `tuningshop-bugs@gaborivan.de`. API token: local `BugReportSecrets.Local.cs` (gitignored) and release CI secret `MAILTRAP_API_TOKEN`.
 - **Block pak writes while SnowRunner is running:** Apply / Save / Restore (and related working-pak writes) are disabled when a SnowRunner process is detected, with a header banner until the game is closed. Writes are also refused in Core so a locked `initial.pak` is harder to corrupt.
 - **Refresh baseline tooltips:** Home and Settings explain why the button is disabled (Tuning Shop marker still present, pak already matches baseline, or workspace not ready), including on the disabled control.
 - **Automated Core tests:** `tests/SnowRunnerTuningShop.Tests` covers locale key catalog vs `en.json`, `PakFileId` matching, and trailer store-availability hitch rules. CI runs `dotnet test` on Windows.
@@ -24,10 +29,14 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 - **Zip entry name casing:** replace/add/copy resolve archive names case-insensitively while writing the pak’s canonical casing.
 - **Workspace config:** load/save are locked; corrupt `config.json` is backed up and the user is warned once on startup instead of silently resetting.
 - **Vehicles / Trailers detail load:** truck/trailer XML lists load off the UI thread with a loading overlay (Parts-style), so large paks no longer freeze the window on open.
+- **Tire WheelFriction rewrite (#6):** truncated multiline `WheelFriction` tags can no longer swallow the following `<GameData>` (friction attrs mashed onto GameData), which breaks the truck store/garage. Rewrites always emit a self-closing tag.
+- **XML tag regex hardening (#6):** Engine / Gearbox / Suspension / Winch / Truck / Trailer / General open-tag patterns reject `<` inside attrs so a truncated tag cannot rewrite through the next element.
 
 ### Changed
-- **Release workflow:** runs `dotnet test` and fails if `AppInfo.Version` does not match the `v*` tag before publishing the installer.
+- **Release workflow:** runs `dotnet test` and fails if `AppInfo.Version` does not match the `v*` tag before publishing the installer; injects `MAILTRAP_API_TOKEN` for bug-report builds.
+- **Vehicles / Trailers Esc:** on a vehicle or trailer detail page, Escape returns to the catalog list (same as Back).
 - **Trailer hitch logic** extracted to `TrailerHitchXml`; Parts write clicks share `PakWriteUi.TryBeginWrite`; `PartXmlHelpers` gains shared entry read helpers.
+
 ---
 
 ## [1.3.3] — 2026-09-04
@@ -276,7 +285,8 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ---
 
-[Unreleased]: https://github.com/Gixx/snowrunner-tuning-shop/compare/v1.3.3...HEAD
+[Unreleased]: https://github.com/Gixx/snowrunner-tuning-shop/compare/v1.3.4...HEAD
+[1.3.4]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.3.4
 [1.3.3]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.3.3
 [1.3.2]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.3.2
 [1.3.1]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.3.1

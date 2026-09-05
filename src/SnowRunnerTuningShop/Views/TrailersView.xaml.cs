@@ -437,7 +437,20 @@ public partial class TrailersView : UserControl
 
         ListPanel.Visibility = Visibility.Collapsed;
         DetailPanel.Visibility = Visibility.Visible;
+        Focus();
+        Keyboard.Focus(this);
         await LoadTuningAsync(card);
+    }
+
+    private void View_PreviewKeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key != Key.Escape || DetailPanel.Visibility != Visibility.Visible)
+        {
+            return;
+        }
+
+        NavigateBackToList();
+        e.Handled = true;
     }
 
     private async Task LoadTuningAsync(TrailerCard card)
@@ -845,7 +858,9 @@ public partial class TrailersView : UserControl
         _suppressUnlockRankSync = false;
     }
 
-    private void BackButton_Click(object sender, RoutedEventArgs e)
+    private void BackButton_Click(object sender, RoutedEventArgs e) => NavigateBackToList();
+
+    private void NavigateBackToList()
     {
         _loadVersion++;
         _loadCts?.Cancel();

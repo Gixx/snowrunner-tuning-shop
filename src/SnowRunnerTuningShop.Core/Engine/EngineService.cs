@@ -27,8 +27,10 @@ public static class EngineService
         "USTruckMilitaryNavistarEngine",
     ];
 
+    // Attrs must not accept '<' or the match can swallow the next tag (issue #6).
+    // '/' is reserved for an optional self-close before '>'.
     private static readonly Regex EngineOpenTagRegex = new(
-        @"<Engine\b(?<attrs>[^>/]*?)(?<self>/?)>",
+        @"<Engine\b(?<attrs>[^<>/]*?)(?<self>/?)>",
         RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
     private static readonly Regex AttributeRegex = new(
@@ -36,11 +38,11 @@ public static class EngineService
         RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
     private static readonly Regex ScalableOpenTagRegex = new(
-        @"<(?<tag>Engine|USTruckOldEngine|USTruckOldHeavyEngine|RUTruckOldEngine|RUTruckOldHeavyEngine|USTruckMilitaryNavistarEngine)\b(?<attrs>[^>/]*?)(?<self>/?)>",
+        @"<(?<tag>Engine|USTruckOldEngine|USTruckOldHeavyEngine|RUTruckOldEngine|RUTruckOldHeavyEngine|USTruckMilitaryNavistarEngine)\b(?<attrs>[^<>/]*?)(?<self>/?)>",
         RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
     private static readonly Regex EngineSocketRegex = new(
-        @"<EngineSocket\b(?<attrs>[^>]*)/?>",
+        @"<EngineSocket\b(?<attrs>[^<>]*)/?>",
         RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
     private static readonly Regex VehicleUiNameRegex = new(
@@ -328,6 +330,19 @@ public static class EngineService
 
         return truckId;
     }
+
+    internal static string ApplyMultipliersToTextForTests(
+        string baselineText,
+        double torqueMultiplier,
+        double fuelConsumptionMultiplier,
+        double damageCapacityMultiplier,
+        double engineResponsivenessMultiplier) =>
+        ApplyMultipliersToText(
+            baselineText,
+            torqueMultiplier,
+            fuelConsumptionMultiplier,
+            damageCapacityMultiplier,
+            engineResponsivenessMultiplier);
 
     private static string ApplyMultipliersToText(
         string baselineText,

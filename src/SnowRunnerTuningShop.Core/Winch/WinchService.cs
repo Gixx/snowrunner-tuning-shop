@@ -15,7 +15,7 @@ namespace SnowRunnerTuningShop.Core.Winch;
 public static class WinchService
 {
     private static readonly Regex WinchBlockRegex = new(
-        @"<Winch\b(?<attrs>[^>]*?)>",
+        @"<Winch\b(?<attrs>[^<>]*?)>",
         RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
     private static readonly Regex AttributeRegex = new(

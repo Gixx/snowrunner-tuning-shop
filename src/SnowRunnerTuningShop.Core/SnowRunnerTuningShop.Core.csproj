@@ -6,6 +6,14 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <PropertyGroup Condition="Exists('Diagnostics/BugReportSecrets.Local.cs')">
+    <DefineConstants>$(DefineConstants);BUGREPORT_SECRETS_LOCAL</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="Diagnostics\BugReportSecrets.Local.cs.example" />
+  </ItemGroup>
+
   <ItemGroup>
     <InternalsVisibleTo Include="PhotoModeLoadTest" />
     <InternalsVisibleTo Include="SnowRunnerTuningShop.Tests" />

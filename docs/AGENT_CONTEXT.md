@@ -57,6 +57,8 @@ Shared session: `AppSession`. Shell: `MainWindow.*`.
 | Photo Mode | `Views/PhotoModeView.*`, `Core/PhotoMode/*` | Defaults in `initial.cache_block`; Time from sslbundle is **read-only** (Apply must not write sslbundle) |
 | Settings | `Views/SettingsView.*` | Theme, UI language, locale downloads, links, updates |
 
+Sidebar also has **Report a bug** (`Views/BugReportWindow.*`, `Core/Diagnostics/BugReportService.cs` + `MailtrapEmailClient.cs`) — sends via Mailtrap API. From: `BugReportSecrets.FromEmail`; To: `AppInfo.BugReportEmail`; token in gitignored `BugReportSecrets.Local.cs`. Release workflow injects `secrets.MAILTRAP_API_TOKEN` before publish.
+
 ---
 
 ## Workspace / pak model
