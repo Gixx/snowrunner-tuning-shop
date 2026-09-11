@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using SnowRunnerTuningShop.Core.Backup;
 using SnowRunnerTuningShop.Core.Models;
 using SnowRunnerTuningShop.Core.Tuning;
 using SnowRunnerTuningShop.Core.Winch;
@@ -57,20 +56,17 @@ public partial class WinchTuningView : UserControl
     {
         PakPath = null;
         _winches.Clear();
-        ApplyMultipliersButton.IsEnabled = false;
-        SaveIndividualButton.IsEnabled = false;
-        RestoreWinchesButton.IsEnabled = false;
+        PartsTuningUiHelpers.ClearWriteButtons(ApplyMultipliersButton, SaveIndividualButton, RestoreWinchesButton);
     }
 
-    public void RefreshRestoreButton()
-    {
-        var hasPak = !string.IsNullOrWhiteSpace(PakPath);
-        ApplyMultipliersButton.IsEnabled = hasPak && _pakWritesAllowed;
-        SaveIndividualButton.IsEnabled = hasPak && _pakWritesAllowed;
-        RestoreWinchesButton.IsEnabled = hasPak
-            && _pakWritesAllowed
-            && PakBaselineService.HasBaseline(PakPath!);
-    }
+    public void RefreshRestoreButton() =>
+        PartsTuningUiHelpers.SetPartWriteButtonStates(
+            _session,
+            PakPath,
+            _pakWritesAllowed,
+            ApplyMultipliersButton,
+            SaveIndividualButton,
+            RestoreWinchesButton);
 
     private void ReloadButton_Click(object sender, RoutedEventArgs e)
     {
@@ -157,9 +153,7 @@ public partial class WinchTuningView : UserControl
 
         try
         {
-            // Flush checkbox / cell edits before reading the view-models.
-            WinchesGrid.CommitEdit(DataGridEditingUnit.Cell, exitEditingMode: true);
-            WinchesGrid.CommitEdit(DataGridEditingUnit.Row, exitEditingMode: true);
+            PartsTuningUiHelpers.CommitGridEdits(WinchesGrid);
 
             var winches = _winches
                 .Select(row => row.ToDefinition())

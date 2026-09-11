@@ -36,10 +36,7 @@ public static class WinchService
                 continue;
             }
 
-            using var stream = entry.Open();
-            using var reader = new StreamReader(stream, Encoding.UTF8, detectEncodingFromByteOrderMarks: true);
-            var content = reader.ReadToEnd();
-            winches.AddRange(ParseWinchesFromText(entryPath, content, strings));
+            winches.AddRange(ParseWinchesFromText(entryPath, PartXmlHelpers.ReadEntryUtf8(entry), strings));
         }
 
         return winches
@@ -54,46 +51,22 @@ public static class WinchService
         double strengthMultiplier,
         bool forceAutonomousAll = false)
     {
-        ValidateMultiplier(lengthMultiplier, nameof(lengthMultiplier));
-        ValidateMultiplier(strengthMultiplier, nameof(strengthMultiplier));
+        PartPakPipeline.ValidateMultiplier(lengthMultiplier, nameof(lengthMultiplier));
+        PartPakPipeline.ValidateMultiplier(strengthMultiplier, nameof(strengthMultiplier));
 
-        var baselinePath = PakBaselineService.RequireBaseline(pakPath);
+        var result = PartPakPipeline.BuildBaselineReplacements(
+            pakPath,
+            IsWinchEntry,
+            (_, baselineText, _) => ApplyMultipliersToText(
+                baselineText,
+                lengthMultiplier,
+                strengthMultiplier,
+                forceAutonomousAll,
+                out _),
+            (_, currentText, updatedText) => CountWinchAttributeDifferences(currentText, updatedText));
 
-        Dictionary<string, byte[]> replacements;
-        var changedWinches = 0;
-
-        using (var backupArchive = ZipFile.OpenRead(baselinePath))
-        using (var currentArchive = ZipFile.OpenRead(pakPath))
-        {
-            replacements = new Dictionary<string, byte[]>(StringComparer.Ordinal);
-
-            foreach (var entry in currentArchive.Entries)
-            {
-                var entryPath = entry.FullName.Replace('\\', '/');
-                if (!IsWinchEntry(entryPath))
-                {
-                    continue;
-                }
-
-                var backupText = PakVanillaText.Read(backupArchive, entry, ReadEntryText);
-                var updatedText = ApplyMultipliersToText(
-                    backupText,
-                    lengthMultiplier,
-                    strengthMultiplier,
-                    forceAutonomousAll,
-                    out _);
-
-                var currentText = ReadEntryText(entry);
-                if (!string.Equals(currentText, updatedText, StringComparison.Ordinal))
-                {
-                    replacements[entryPath] = Encoding.UTF8.GetBytes(updatedText);
-                    changedWinches += CountWinchAttributeDifferences(currentText, updatedText);
-                }
-            }
-        }
-
-        var updatedFiles = InitialPakWriter.ReplaceEntries(pakPath, replacements);
-        return new WinchSaveResult(updatedFiles, changedWinches);
+        var updatedFiles = PartPakPipeline.CommitReplacements(pakPath, result.Replacements);
+        return new WinchSaveResult(updatedFiles, result.ChangedItems);
     }
 
     public static WinchSaveResult RestoreWinchesFromBaseline(string pakPath) =>
@@ -122,7 +95,7 @@ public static class WinchService
                     continue;
                 }
 
-                var text = ReadEntryText(entry);
+                var text = PartXmlHelpers.ReadEntryUtf8(entry);
                 var updates = new Dictionary<string, WinchAttributeValues>(StringComparer.OrdinalIgnoreCase);
 
                 foreach (var winch in group)
@@ -512,12 +485,6 @@ public static class WinchService
         return result;
     }
 
-    private static string ReadEntryText(ZipArchiveEntry entry)
-    {
-        using var stream = entry.Open();
-        using var reader = new StreamReader(stream, Encoding.UTF8, detectEncodingFromByteOrderMarks: true);
-        return reader.ReadToEnd();
-    }
 
     private static string InferCategory(string entryPath, string winchName)
     {
@@ -573,13 +540,6 @@ public static class WinchService
         return text;
     }
 
-    private static void ValidateMultiplier(double value, string parameterName)
-    {
-        if (!double.IsFinite(value) || value <= 0)
-        {
-            throw new ArgumentOutOfRangeException(parameterName, "Multiplier must be a positive number.");
-        }
-    }
 }
 
 public sealed record WinchSaveResult(int UpdatedFiles, int ChangedWinches);

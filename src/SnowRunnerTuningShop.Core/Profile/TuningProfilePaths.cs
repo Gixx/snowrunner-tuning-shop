@@ -59,6 +59,11 @@ public static class TuningProfilePaths
             return true;
         }
 
+        if (normalized.Contains("/classes/trucks/addons/", StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
         foreach (var category in PakPaths.TuningCategories)
         {
             if (!normalized.Contains($"/classes/{category}/", StringComparison.OrdinalIgnoreCase))

@@ -51,7 +51,7 @@ Shared session: `AppSession`. Shell: `MainWindow.*`.
 |------|-------------|------|
 | Home | `Views/HomeView.*` | Baseline, install location, restore, refresh after game update, reapply profile, workspace health, updates |
 | General | `Views/GeneralView.*`, `Core/General/GeneralService.cs` | Camera clip; trail rock scale (mod assets in `assets/general/no-stones`) |
-| Parts | `Views/PartsView.*` + Winch/Engine/Gearbox/Suspension/Tire tabs | Global multipliers + per-row edits; Used-by; restore category |
+| Parts | `Views/PartsView.*` + Winch/Engine/Gearbox/Suspension/Tire/Crane tabs | Global multipliers + per-row edits; Used-by; restore category |
 | Vehicles | `Views/VehiclesView.*`, `Core/Trucks/TruckTuningService.cs` | Catalog + per-truck edit + global vehicle multipliers / unlocks |
 | Trailers | `Views/TrailersView.*`, `Core/Trailers/TrailerTuningService.cs` | Catalog + capacities/price/quest; global multipliers |
 | Photo Mode | `Views/PhotoModeView.*`, `Core/PhotoMode/*` | Defaults in `initial.cache_block`; Time from sslbundle is **read-only** (Apply must not write sslbundle) |
@@ -94,10 +94,12 @@ Steam pak example (dev machine may vary):
 - Trailers `assets/trailers/catalog.json`: `id` is already the file id; `TrailerTuningService.FindByCatalog` → `PakFileId`.
 - Helper docs/tools: `assets/vehicles/README.md`, `assets/vehicles/_meta_build/map_catalog_pak.py`, `dump-pak-trucks.ps1`.
 
-### Parts (engines, winches, gearboxes, suspensions, tires)
+### Parts (engines, winches, gearboxes, suspensions, tires, cranes)
 
 - Stable key = XML **`Name`** (and set file id where relevant). Display = game strings only.
-- Services under `Core/{Engine,Winch,Gearbox,Suspension,Tires}/`.
+- Services under `Core/{Engine,Winch,Gearbox,Suspension,Tires,Crane}/`; shared pak apply via `PartPakPipeline`.
+- Cranes are truck addons (`/classes/trucks/addons/`) with `AddonType` `Crane` / `LogCrane`; identity = file stem. Tunables: arm `Motor Force` + `ControlledIK` movement coeffs.
+- Truck/trailer XML helpers: `TruckDiffLockXml`, `VehicleGameDataXml`, `TrailerHitchXml`.
 - Parse/format numbers with **`CultureInfo.InvariantCulture`**.
 
 ### Localization priority

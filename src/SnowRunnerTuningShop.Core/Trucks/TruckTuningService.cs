@@ -6,6 +6,7 @@ using SnowRunnerTuningShop.Core.Backup;
 using SnowRunnerTuningShop.Core.Models;
 using SnowRunnerTuningShop.Core.Pak;
 using SnowRunnerTuningShop.Core.Strings;
+using SnowRunnerTuningShop.Core.Xml;
 
 namespace SnowRunnerTuningShop.Core.Trucks;
 
@@ -26,20 +27,8 @@ public static class TruckTuningService
         @"UiName\s*=\s*""(?<value>UI_VEHICLE_[^""]+)""",
         RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
-    private static readonly Regex AttributeRegex = new(
-        @"(?<name>[A-Za-z_][A-Za-z0-9_]*)\s*=\s*""(?<value>[^""]*)""",
-        RegexOptions.Compiled | RegexOptions.CultureInvariant);
-
     private static readonly Regex TorqueTagRegex = new(
         @"<(?<tag>FrontWheel|RearWheel|FirstAxle|SecondAxle|ThirdAxle|FourthAxle|FrontAxle|RearAxle|MiddleAxle|MiddleWheel|Front|Rear)\b(?<attrs>[^<>]*\bTorque\s*=\s*""[^""]*""[^<>]*)(?<self>/?)>",
-        RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
-
-    private static readonly Regex AddonSocketsBlockRegex = new(
-        @"<AddonSockets\b(?<attrs>[^<>]*)>(?<body>.*?)</AddonSockets>",
-        RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Singleline);
-
-    private static readonly Regex DiffLockInstalledRegex = new(
-        @"DiffLockInstalled\s*=\s*""(?<value>[^""]*)""",
         RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
     private static readonly Regex SteeringAngleAttributeRegex = new(
@@ -69,7 +58,7 @@ public static class TruckTuningService
                     continue;
                 }
 
-                var text = ReadEntryText(entry);
+                var text = PartXmlHelpers.ReadEntryUtf8(entry);
                 if (TryParseTruck(archive, baselineArchive, entryPath, text, strings, out var truck))
                 {
                     trucks.Add(truck);
@@ -104,9 +93,9 @@ public static class TruckTuningService
         bool alwaysOnDiffLock = false,
         bool alwaysOnAwd = false)
     {
-        ValidateMultiplier(fuelMultiplier, nameof(fuelMultiplier));
-        ValidateMultiplier(responsivenessMultiplier, nameof(responsivenessMultiplier));
-        ValidateMultiplier(priceMultiplier, nameof(priceMultiplier));
+        PartPakPipeline.ValidateMultiplier(fuelMultiplier, nameof(fuelMultiplier));
+        PartPakPipeline.ValidateMultiplier(responsivenessMultiplier, nameof(responsivenessMultiplier));
+        PartPakPipeline.ValidateMultiplier(priceMultiplier, nameof(priceMultiplier));
         if (!Enum.IsDefined(frontSteerMode))
         {
             throw new ArgumentOutOfRangeException(nameof(frontSteerMode), "Unsupported front steer preset.");
@@ -225,10 +214,10 @@ public static class TruckTuningService
                     continue;
                 }
 
-                var baselineText = PakVanillaText.Read(baselineArchive, entry, ReadEntryText);
+                var baselineText = PakVanillaText.Read(baselineArchive, entry, PartXmlHelpers.ReadEntryUtf8);
                 var updatedText = transformBaselineText(currentArchive, entryPath, baselineText);
 
-                var currentText = ReadEntryText(entry);
+                var currentText = PartXmlHelpers.ReadEntryUtf8(entry);
                 if (!string.Equals(currentText, updatedText, StringComparison.Ordinal))
                 {
                     replacements[entryPath] = Encoding.UTF8.GetBytes(updatedText);
@@ -262,7 +251,7 @@ public static class TruckTuningService
                     continue;
                 }
 
-                var currentText = ReadEntryText(entry);
+                var currentText = PartXmlHelpers.ReadEntryUtf8(entry);
                 if (!GameDataOpenRegex.IsMatch(currentText))
                 {
                     continue;
@@ -293,7 +282,7 @@ public static class TruckTuningService
             var entry = PakEntryLocator.FindEntry(archive, truck.EntryPath)
                 ?? throw new FileNotFoundException("Truck XML was not found in the pak.", truck.EntryPath);
 
-            var text = ReadEntryText(entry);
+            var text = PartXmlHelpers.ReadEntryUtf8(entry);
             replacements = new Dictionary<string, byte[]>(StringComparer.Ordinal);
             var updated = ApplyTuning(archive, text, truck);
             var truckKey = entry.FullName.Replace('\\', '/');
@@ -363,7 +352,7 @@ public static class TruckTuningService
             return false;
         }
 
-        var attrs = ParseAttributes(truckData.Groups["attrs"].Value);
+        var attrs = VehicleGameDataXml.ParseAttributes(truckData.Groups["attrs"].Value);
         attrs.TryGetValue("FuelCapacity", out var fuelRaw);
         attrs.TryGetValue("DiffLockType", out var diffRaw);
         attrs.TryGetValue("Responsiveness", out var responsivenessRaw);
@@ -376,8 +365,8 @@ public static class TruckTuningService
             ? ParseSteerAngles(baselineText)
             : ParseSteerAngles(text);
         var hasNativeDiffLockOptions = baselineText is not null
-            ? HasNativeDiffLockInfrastructure(baselineArchive!, baselineText, truckId)
-            : HasNativeDiffLockInfrastructure(archive, text, truckId);
+            ? TruckDiffLockXml.HasNativeDiffLockInfrastructure(baselineArchive!, baselineText, truckId)
+            : TruckDiffLockXml.HasNativeDiffLockInfrastructure(archive, text, truckId);
 
         truck = new TruckTuningDefinition
         {
@@ -389,17 +378,17 @@ public static class TruckTuningService
             BaselineFuelCapacity = ReadBaselineInt(baselineText, text, "FuelCapacity"),
             Price = ExtractGameDataPrice(text),
             BaselinePrice = baselineText is not null ? ExtractGameDataPrice(baselineText) : ExtractGameDataPrice(text),
-            StoreCountries = ExtractGameDataAttribute(text, "Country"),
+            StoreCountries = VehicleGameDataXml.ExtractGameDataAttribute(text, "Country"),
             BaselineStoreCountries = baselineText is not null
-                ? ExtractGameDataAttribute(baselineText, "Country")
-                : ExtractGameDataAttribute(text, "Country"),
+                ? VehicleGameDataXml.ExtractGameDataAttribute(baselineText, "Country")
+                : VehicleGameDataXml.ExtractGameDataAttribute(text, "Country"),
             UnlockByRank = ExtractGameDataUnlockByRank(text),
             BaselineUnlockByRank = baselineText is not null
                 ? ExtractGameDataUnlockByRank(baselineText)
                 : ExtractGameDataUnlockByRank(text),
             DiffLockTypeRaw = diffRaw ?? "",
             HasNativeDiffLockOptions = hasNativeDiffLockOptions,
-            DiffLock = ResolveDiffLockMode(archive, text, diffRaw, hasNativeDiffLockOptions),
+            DiffLock = TruckDiffLockXml.ResolveDiffLockMode(archive, text, diffRaw, hasNativeDiffLockOptions),
             DriveLayout = InferDriveLayout(text),
             Responsiveness = ParseDouble(responsivenessRaw, 0.4),
             BaselineResponsiveness = ReadBaselineDouble(baselineText, text, "Responsiveness", 0.4),
@@ -423,7 +412,7 @@ public static class TruckTuningService
         updated = ApplyGameDataCountry(updated, truck.StoreCountries);
         updated = ApplyGameDataUnlockByRank(updated, truck.UnlockByRank);
         updated = ApplySteering(updated, truck);
-        updated = ApplyDiffLock(archive, updated, truck);
+        updated = TruckDiffLockXml.ApplyDiffLock(archive, updated, truck);
         updated = ApplyDriveLayout(updated, truck.DriveLayout);
         return updated;
     }
@@ -445,7 +434,7 @@ public static class TruckTuningService
             return ApplyGlobalDriveFlags(archive, truckId, baselineText, alwaysOnDiffLock, alwaysOnAwd);
         }
 
-        var attrs = ParseAttributes(truckData.Groups["attrs"].Value);
+        var attrs = VehicleGameDataXml.ParseAttributes(truckData.Groups["attrs"].Value);
         var updated = baselineText;
 
         if (attrs.TryGetValue("FuelCapacity", out var fuelRaw))
@@ -465,7 +454,7 @@ public static class TruckTuningService
             attrs.TryGetValue("Responsiveness", out var responsivenessRaw) ? responsivenessRaw : null,
             0.4);
         var scaledResponsiveness = Math.Clamp(baselineResponsiveness * responsivenessMultiplier, 0, 1);
-        updated = SetTruckDataAttribute(
+        updated = VehicleGameDataXml.SetTruckDataAttribute(
             updated,
             "Responsiveness",
             FormatNumeric(scaledResponsiveness, preferInteger: false));
@@ -504,7 +493,7 @@ public static class TruckTuningService
         var updated = truckXml;
         if (alwaysOnDiffLock)
         {
-            updated = ApplyAlwaysOnDiffLock(archive, updated, truckId);
+            updated = TruckDiffLockXml.ApplyAlwaysOnDiffLock(archive, updated, truckId);
         }
 
         if (alwaysOnAwd)
@@ -515,135 +504,38 @@ public static class TruckTuningService
         return updated;
     }
 
-    private static string ApplyAlwaysOnDiffLock(ZipArchive archive, string truckXml, string truckId)
-    {
-        if (!HasNativeDiffLockInfrastructure(archive, truckXml, truckId))
-        {
-            return SetTruckDataAttribute(truckXml, "DiffLockType", "Always");
-        }
-
-        ResolveDiffLockAddonNames(archive, truckId, truckXml, out _, out var defaultAddon);
-        truckXml = SetTruckDataAttribute(truckXml, "DiffLockType", "Always");
-        return SetDiffLockDefaultAddon(truckXml, defaultAddon);
-    }
-
-    private static void ValidateMultiplier(double value, string parameterName)
-    {
-        if (!double.IsFinite(value) || value <= 0)
-        {
-            throw new ArgumentOutOfRangeException(parameterName, "Multiplier must be a positive number.");
-        }
-    }
-
-    private static TruckDiffLockMode ResolveDiffLockMode(
-        ZipArchive archive,
-        string truckXml,
-        string? diffRaw,
-        bool hasNativeDiffLockOptions)
-    {
-        if (!string.IsNullOrWhiteSpace(diffRaw)
-            && diffRaw.Equals("Always", StringComparison.OrdinalIgnoreCase))
-        {
-            return TruckDiffLockMode.AlwaysOn;
-        }
-
-        if (!hasNativeDiffLockOptions)
-        {
-            return TruckDiffLockMode.None;
-        }
-
-        if (TryGetDiffLockDefaultAddonName(truckXml, out var addonName)
-            && TryReadAddonText(archive, addonName, out var addonText))
-        {
-            var installed = DiffLockInstalledRegex.Match(addonText);
-            if (installed.Success)
-            {
-                return installed.Groups["value"].Value.Equals("true", StringComparison.OrdinalIgnoreCase)
-                    ? TruckDiffLockMode.Switchable
-                    : TruckDiffLockMode.Upgradeable;
-            }
-        }
-
-        return ParseDiffLockMode(diffRaw);
-    }
-
-    private static string ApplyFuelCapacity(string text, int fuelCapacity)
-    {
-        var match = TruckDataOpenRegex.Match(text);
-        if (!match.Success)
-        {
-            return text;
-        }
-
-        var attrs = match.Groups["attrs"].Value;
-        if (!SetOrReplaceAttribute(ref attrs, "FuelCapacity", fuelCapacity.ToString(CultureInfo.InvariantCulture)))
-        {
-            return text;
-        }
-
-        var replacement = $"<TruckData{attrs}>";
-        return string.Concat(text.AsSpan(0, match.Index), replacement, text.AsSpan(match.Index + match.Length));
-    }
+    private static string ApplyFuelCapacity(string text, int fuelCapacity) =>
+        VehicleGameDataXml.SetTruckDataAttribute(text, "FuelCapacity", fuelCapacity.ToString(CultureInfo.InvariantCulture));
 
     private static string ApplyGameDataPrice(string text, int price)
     {
-        return SetGameDataAttribute(text, "Price", price.ToString(CultureInfo.InvariantCulture));
+        return VehicleGameDataXml.SetGameDataAttribute(text, "Price", price.ToString(CultureInfo.InvariantCulture));
     }
 
     private static string ApplyGameDataCountry(string text, string countries) =>
-        SetGameDataAttribute(text, "Country", countries);
+        VehicleGameDataXml.SetGameDataAttribute(text, "Country", countries);
 
     private static string ApplyGameDataUnlockByRank(string text, int unlockByRank)
     {
         var clamped = Math.Clamp(unlockByRank, 0, 30);
-        return SetGameDataAttribute(text, "UnlockByRank", clamped.ToString(CultureInfo.InvariantCulture));
-    }
-
-    private static string SetGameDataAttribute(string text, string attributeName, string value)
-    {
-        var match = GameDataOpenRegex.Match(text);
-        if (!match.Success)
-        {
-            return text;
-        }
-
-        var attrs = match.Groups["attrs"].Value;
-        if (!SetOrReplaceAttribute(ref attrs, attributeName, value))
-        {
-            return text;
-        }
-
-        var replacement = $"<GameData{attrs}>";
-        return string.Concat(text.AsSpan(0, match.Index), replacement, text.AsSpan(match.Index + match.Length));
+        return VehicleGameDataXml.SetGameDataAttribute(text, "UnlockByRank", clamped.ToString(CultureInfo.InvariantCulture));
     }
 
     private static int ExtractGameDataPrice(string text) =>
-        ParseInt(ExtractGameDataAttribute(text, "Price"), 0);
+        ParseInt(VehicleGameDataXml.ExtractGameDataAttribute(text, "Price"), 0);
 
     private static int ExtractGameDataUnlockByRank(string text) =>
-        Math.Clamp(ParseInt(ExtractGameDataAttribute(text, "UnlockByRank"), 1), 0, 30);
-
-    private static string ExtractGameDataAttribute(string text, string attributeName)
-    {
-        var match = GameDataOpenRegex.Match(text);
-        if (!match.Success)
-        {
-            return "";
-        }
-
-        var attrs = ParseAttributes(match.Groups["attrs"].Value);
-        return attrs.TryGetValue(attributeName, out var raw) ? raw : "";
-    }
+        Math.Clamp(ParseInt(VehicleGameDataXml.ExtractGameDataAttribute(text, "UnlockByRank"), 1), 0, 30);
 
     private static int ReadBaselineInt(string? baselineText, string currentText, string attributeName)
     {
         if (baselineText is not null
-            && TryGetTruckDataAttribute(baselineText, attributeName, out var baselineRaw))
+            && VehicleGameDataXml.TryGetTruckDataAttribute(baselineText, attributeName, out var baselineRaw))
         {
             return ParseInt(baselineRaw, 0);
         }
 
-        if (TryGetTruckDataAttribute(currentText, attributeName, out var currentRaw))
+        if (VehicleGameDataXml.TryGetTruckDataAttribute(currentText, attributeName, out var currentRaw))
         {
             return ParseInt(currentRaw, 0);
         }
@@ -658,12 +550,12 @@ public static class TruckTuningService
         double fallback)
     {
         if (baselineText is not null
-            && TryGetTruckDataAttribute(baselineText, attributeName, out var baselineRaw))
+            && VehicleGameDataXml.TryGetTruckDataAttribute(baselineText, attributeName, out var baselineRaw))
         {
             return ParseDouble(baselineRaw, fallback);
         }
 
-        if (TryGetTruckDataAttribute(currentText, attributeName, out var currentRaw))
+        if (VehicleGameDataXml.TryGetTruckDataAttribute(currentText, attributeName, out var currentRaw))
         {
             return ParseDouble(currentRaw, fallback);
         }
@@ -671,28 +563,9 @@ public static class TruckTuningService
         return fallback;
     }
 
-    private static bool TryGetTruckDataAttribute(string text, string attributeName, out string value)
-    {
-        value = "";
-        var match = TruckDataOpenRegex.Match(text);
-        if (!match.Success)
-        {
-            return false;
-        }
-
-        var attrs = ParseAttributes(match.Groups["attrs"].Value);
-        if (!attrs.TryGetValue(attributeName, out var raw))
-        {
-            return false;
-        }
-
-        value = raw;
-        return true;
-    }
-
     private static string ApplySteering(string text, TruckTuningDefinition truck)
     {
-        var updated = SetTruckDataAttribute(text, "Responsiveness", FormatNumeric(truck.Responsiveness, preferInteger: false));
+        var updated = VehicleGameDataXml.SetTruckDataAttribute(text, "Responsiveness", FormatNumeric(truck.Responsiveness, preferInteger: false));
         if (truck.HasFrontSteer && truck.FrontSteerAngle is { } frontAngle)
         {
             updated = ApplyFrontSteerAngle(updated, frontAngle);
@@ -760,64 +633,6 @@ public static class TruckTuningService
             negative.Length > 0);
     }
 
-    private static string ApplyDiffLock(
-        ZipArchive archive,
-        string truckXml,
-        TruckTuningDefinition truck)
-    {
-        if (!truck.HasNativeDiffLockOptions)
-        {
-            var simpleType = truck.DiffLock switch
-            {
-                TruckDiffLockMode.AlwaysOn => "Always",
-                _ => "None",
-            };
-            return SetTruckDataAttribute(truckXml, "DiffLockType", simpleType);
-        }
-
-        ResolveDiffLockAddonNames(
-            archive,
-            truck.TruckId,
-            truckXml,
-            out var installedAddon,
-            out var defaultAddon);
-
-        var diffType = truck.DiffLock switch
-        {
-            TruckDiffLockMode.AlwaysOn => "Always",
-            TruckDiffLockMode.None => "None",
-            TruckDiffLockMode.Upgradeable => "Uninstalled",
-            TruckDiffLockMode.Switchable when IsInstalledStyle(truck.DiffLockTypeRaw) => truck.DiffLockTypeRaw,
-            _ => "Installed",
-        };
-        truckXml = SetTruckDataAttribute(truckXml, "DiffLockType", diffType);
-
-        var defaultAddonName = truck.DiffLock switch
-        {
-            TruckDiffLockMode.Switchable => installedAddon,
-            TruckDiffLockMode.Upgradeable => defaultAddon,
-            TruckDiffLockMode.AlwaysOn => defaultAddon,
-            TruckDiffLockMode.None => defaultAddon,
-            _ => defaultAddon,
-        };
-
-        return SetDiffLockDefaultAddon(truckXml, defaultAddonName);
-    }
-
-    private static bool HasNativeDiffLockInfrastructure(ZipArchive archive, string truckXml, string truckId)
-    {
-        foreach (Match match in AddonSocketsBlockRegex.Matches(truckXml))
-        {
-            if (IsDiffLockSocketBlock(match.Groups["attrs"].Value, match.Groups["body"].Value))
-            {
-                return true;
-            }
-        }
-
-        return FindAddonEntry(archive, truckId + "_diff_lock") is not null
-            || FindAddonEntry(archive, truckId + "_diff_lock_default") is not null;
-    }
-
     private static string? TryReadTruckText(ZipArchive? archive, string entryPath)
     {
         if (archive is null)
@@ -826,147 +641,7 @@ public static class TruckTuningService
         }
 
         var entry = PakEntryLocator.FindEntry(archive, entryPath);
-        return entry is null ? null : ReadEntryText(entry);
-    }
-
-    private static void ResolveDiffLockAddonNames(
-        ZipArchive archive,
-        string truckId,
-        string truckXml,
-        out string installedAddonName,
-        out string defaultAddonName)
-    {
-        installedAddonName = truckId + "_diff_lock";
-        defaultAddonName = truckId + "_diff_lock_default";
-
-        if (TryGetDiffLockDefaultAddonName(truckXml, out var currentDefault))
-        {
-            if (currentDefault.EndsWith("_default", StringComparison.OrdinalIgnoreCase))
-            {
-                defaultAddonName = currentDefault;
-                installedAddonName = currentDefault[..^"_default".Length];
-            }
-            else
-            {
-                installedAddonName = currentDefault;
-                defaultAddonName = currentDefault + "_default";
-            }
-        }
-
-        if (TryReadAddonText(archive, installedAddonName, out _))
-        {
-            return;
-        }
-
-        if (TryReadAddonText(archive, defaultAddonName, out _))
-        {
-            if (!defaultAddonName.EndsWith("_default", StringComparison.OrdinalIgnoreCase))
-            {
-                return;
-            }
-
-            installedAddonName = defaultAddonName[..^"_default".Length];
-        }
-    }
-
-    private static string SetDiffLockDefaultAddon(string truckXml, string defaultAddonName)
-    {
-        foreach (Match match in AddonSocketsBlockRegex.Matches(truckXml))
-        {
-            var attrs = match.Groups["attrs"].Value;
-            var body = match.Groups["body"].Value;
-            if (!IsDiffLockSocketBlock(attrs, body))
-            {
-                continue;
-            }
-
-            var updatedAttrs = attrs;
-            if (!SetOrReplaceAttribute(ref updatedAttrs, "DefaultAddon", defaultAddonName))
-            {
-                return truckXml;
-            }
-
-            var replacement = $"<AddonSockets{updatedAttrs}>{body}</AddonSockets>";
-            return string.Concat(
-                truckXml.AsSpan(0, match.Index),
-                replacement,
-                truckXml.AsSpan(match.Index + match.Length));
-        }
-
-        return truckXml;
-    }
-
-    private static bool IsDiffLockSocketBlock(string attrs, string body) =>
-        attrs.Contains("diff_lock", StringComparison.OrdinalIgnoreCase)
-        || body.Contains("DiffLock", StringComparison.OrdinalIgnoreCase)
-        || body.Contains("diff_lock", StringComparison.OrdinalIgnoreCase);
-
-    private static bool TryGetDiffLockDefaultAddonName(string truckXml, out string addonName)
-    {
-        foreach (Match match in AddonSocketsBlockRegex.Matches(truckXml))
-        {
-            var attrs = match.Groups["attrs"].Value;
-            var body = match.Groups["body"].Value;
-            if (!IsDiffLockSocketBlock(attrs, body))
-            {
-                continue;
-            }
-
-            addonName = GetAttribute(attrs, "DefaultAddon");
-            if (!string.IsNullOrWhiteSpace(addonName))
-            {
-                return true;
-            }
-        }
-
-        addonName = "";
-        return false;
-    }
-
-    private static bool TryReadAddonText(ZipArchive archive, string addonName, out string text)
-    {
-        var entry = FindAddonEntry(archive, addonName);
-        if (entry is null)
-        {
-            text = "";
-            return false;
-        }
-
-        text = ReadEntryText(entry);
-        return true;
-    }
-
-    private static ZipArchiveEntry? FindAddonEntry(ZipArchive archive, string addonName)
-    {
-        var suffix = "/" + addonName + ".xml";
-        foreach (var entry in archive.Entries)
-        {
-            var path = entry.FullName.Replace('\\', '/');
-            if (path.EndsWith(suffix, StringComparison.OrdinalIgnoreCase))
-            {
-                return entry;
-            }
-        }
-
-        return null;
-    }
-
-    private static string SetTruckDataAttribute(string text, string attributeName, string value)
-    {
-        var match = TruckDataOpenRegex.Match(text);
-        if (!match.Success)
-        {
-            return text;
-        }
-
-        var attrs = match.Groups["attrs"].Value;
-        if (!SetOrReplaceAttribute(ref attrs, attributeName, value))
-        {
-            return text;
-        }
-
-        var replacement = $"<TruckData{attrs}>";
-        return string.Concat(text.AsSpan(0, match.Index), replacement, text.AsSpan(match.Index + match.Length));
+        return entry is null ? null : PartXmlHelpers.ReadEntryUtf8(entry);
     }
 
     private static string ApplyDriveLayout(string text, TruckDriveLayout layout) =>
@@ -987,7 +662,7 @@ public static class TruckTuningService
                 return match.Value;
             }
 
-            SetOrReplaceAttribute(ref attrs, "Torque", next);
+            VehicleGameDataXml.SetOrReplaceAttribute(ref attrs, "Torque", next);
             return $"<{tag}{attrs}{match.Groups["self"].Value}>";
         });
 
@@ -1115,20 +790,6 @@ public static class TruckTuningService
         return true;
     }
 
-    private static TruckDiffLockMode ParseDiffLockMode(string? raw) =>
-        (raw ?? "").Trim() switch
-        {
-            var value when value.Equals("Always", StringComparison.OrdinalIgnoreCase) => TruckDiffLockMode.AlwaysOn,
-            var value when value.Equals("None", StringComparison.OrdinalIgnoreCase) => TruckDiffLockMode.None,
-            var value when value.Equals("Uninstalled", StringComparison.OrdinalIgnoreCase) => TruckDiffLockMode.Upgradeable,
-            _ => TruckDiffLockMode.Switchable,
-        };
-
-    private static bool IsInstalledStyle(string raw) =>
-        raw.Equals("Installed", StringComparison.OrdinalIgnoreCase)
-        || raw.Equals("Switchable", StringComparison.OrdinalIgnoreCase)
-        || raw.Equals("Connected", StringComparison.OrdinalIgnoreCase);
-
     private static bool IsTruckEntry(string entryPath)
     {
         if (!entryPath.EndsWith(".xml", StringComparison.OrdinalIgnoreCase))
@@ -1149,43 +810,10 @@ public static class TruckTuningService
             && !relative.Contains('\\');
     }
 
-    private static bool SetOrReplaceAttribute(ref string attrs, string attributeName, string value)
-    {
-        var pattern = $@"(?<prefix>\b{Regex.Escape(attributeName)}\s*=\s*"")(?<value>[^""]*)(?<suffix>"")";
-        var regex = new Regex(pattern, RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
-        var match = regex.Match(attrs);
-        if (match.Success)
-        {
-            if (string.Equals(match.Groups["value"].Value, value, StringComparison.Ordinal))
-            {
-                return false;
-            }
-
-            attrs = regex.Replace(attrs, $"{match.Groups["prefix"].Value}{value}{match.Groups["suffix"].Value}", 1);
-            return true;
-        }
-
-        attrs = string.IsNullOrWhiteSpace(attrs)
-            ? $" {attributeName}=\"{value}\""
-            : $"{attrs.TrimEnd()} {attributeName}=\"{value}\"";
-        return true;
-    }
-
     private static string GetAttribute(string attrs, string attributeName)
     {
-        var parsed = ParseAttributes(attrs);
+        var parsed = VehicleGameDataXml.ParseAttributes(attrs);
         return parsed.TryGetValue(attributeName, out var value) ? value : "";
-    }
-
-    private static Dictionary<string, string> ParseAttributes(string attrs)
-    {
-        var result = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-        foreach (Match match in AttributeRegex.Matches(attrs))
-        {
-            result[match.Groups["name"].Value] = match.Groups["value"].Value;
-        }
-
-        return result;
     }
 
     private static int ParseInt(string? value, int fallback) =>
@@ -1206,13 +834,6 @@ public static class TruckTuningService
         }
 
         return value.ToString("0.######", CultureInfo.InvariantCulture);
-    }
-
-    private static string ReadEntryText(ZipArchiveEntry entry)
-    {
-        using var stream = entry.Open();
-        using var reader = new StreamReader(stream, Encoding.UTF8, detectEncodingFromByteOrderMarks: true);
-        return reader.ReadToEnd();
     }
 
     private static byte[] ReadEntryBytes(ZipArchiveEntry entry)

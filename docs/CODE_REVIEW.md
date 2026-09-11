@@ -48,16 +48,16 @@ Baseline Trailer socketek megmaradnak; csak a pótlólag beszúrtakat veszi ki. 
 
 ## P1 — magas értékű karbantartás / regresszió
 
-> **Státusz (2026-09-04):** P1 nagy része kész. Teljes Parts-service unifikáció és Truck God-class szétvágás továbbra is nyitott (inkrementális extractekkel indult).
+> **Státusz (2026-09-11):** P1 tételek lezárva inkrementális extractekkel. Teljes „egy osztály minden parts service” még nincs (domain rewrite külön marad), de a pak I/O / XML / UI klóncsökkentés megvan.
 
-### 6. Parts szolgáltatások másolása — **részben**
-`PartXmlHelpers.ReadEntryUtf8` / `ReadEntryBytes` hozzáadva. A öt `*Service` teljes közös pipeline még nincs összevonva (Winch XDocument vs regex).
+### 6. Parts szolgáltatások másolása — **kész (pipeline)**
+`PartPakPipeline` (`BuildBaselineReplacements` / `ValidateMultiplier` / `CommitReplacements`) + `PartXmlHelpers.ReadEntryUtf8`. Mind a hat `*Service` ApplyGlobal ezen megy át. Domain parse/rewrite (Engine regex vs Crane XDocument) továbbra is per-service — szándékos.
 
-### 7. Truck / Trailer God class — **részben**
-Hitch/store socket → `TrailerHitchXml`. Truck service és trailer persist/parse továbbra is monolit.
+### 7. Truck / Trailer God class — **kész (következő extract)**
+`TrailerHitchXml` + `TruckDiffLockXml` + `VehicleGameDataXml` (közös GameData/TruckData attribute I/O). Truck/Trailer orchestration a service-ekben marad.
 
-### 8. UI code-behind klónok — **részben**
-`PakWriteUi.TryBeginWrite` / `CanRestore` a Parts tuning tabokon. Teljes TuningGridController / Vehicles–Trailers klóncsökkentés nincs.
+### 8. UI code-behind klónok — **kész (Parts helpers)**
+`PartsTuningUiHelpers` (write-button states, grid CommitEdit, Clear) az összes Parts `*TuningView`-n. Teljes `TuningGridController` / Vehicles–Trailers spinner unifikáció nincs (P2).
 
 ### 9. `PakWriteUi.TryProceed(null)` — **kész (P0)**
 
@@ -89,10 +89,8 @@ Hosszú Apply alatt újabb kattintás lehetséges.
 **Hol:** `VehicleCatalog` / `TrailerCatalog` + view LoadCatalog  
 **Javaslat:** Lazy / virtualizálás; flag cache mintája a thumbökre is.
 
-### 17. `assets/vehicles/_meta_build` bemegy az outputba
-**Hol:** `SnowRunnerTuningShop.csproj` (`vehicles/**\*`)  
-Trailers kizárja a `_meta_build`-et; vehicles nem.  
-**Javaslat:** Exclude `assets\vehicles\_meta_build\**`.
+### 17. `assets/vehicles/_meta_build` bemegy az outputba — **kész**
+Vehicles Content Include kizárja a `_meta_build`-et (trailers mintájára).
 
 ### 18. `PakFileId` fuzzy suffix/prefix
 Rövid közös végződés → rossz truck. Collisionnél `list[0]`.  
@@ -120,9 +118,8 @@ Többi bundled locale nincs kulcs-mérve.
 **Hol:** `ci.yml` vs `release.yml`  
 **Javaslat:** Legalább Inno compile dry-run vagy `dotnet publish` win-x64 CI-n (opcionális job).
 
-### 24. README drift
-Vehicles még „planned”; Trailers / General / tests / close-game hiányzik.  
-**Javaslat:** README szinkron AGENT_CONTEXT / CHANGELOG szerint.
+### 24. README drift — **kész**
+Vehicles szekció frissítve (per-vehicle tuning + global multipliers).
 
 ---
 
@@ -163,10 +160,11 @@ Vehicles még „planned”; Trailers / General / tests / close-game hiányzik.
 | ~~11~~ | ~~Mini-pak I/O tesztek~~ | **kész** |
 | ~~12~~ | ~~Vehicles/Trailers async~~ | **kész** |
 | ~~13~~ | ~~WorkspaceConfigStore lock/corrupt~~ | **kész** |
-| 6 | Parts service pipeline unifikáció (tovább) | P1 nyitott |
-| 7 | Truck/Trailer további szétválasztás | P1 nyitott |
-| 8 | TuningGridController / UI klóncsökkentés | P1 nyitott |
-| 9 | Vehicles `_meta_build` exclude + README | P2 hygiene |
+| ~~6~~ | ~~Parts `PartPakPipeline` + ReadEntryUtf8~~ | **kész** |
+| ~~7~~ | ~~`TruckDiffLockXml` + `VehicleGameDataXml`~~ | **kész** |
+| ~~8~~ | ~~`PartsTuningUiHelpers`~~ | **kész** |
+| 14+ | MessageBox / busy-disable / lazy images… | P2 |
+| — | Vehicles `_meta_build` exclude + README | **kész (hygiene)** |
 
 ---
 

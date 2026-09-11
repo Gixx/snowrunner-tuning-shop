@@ -11,6 +11,17 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ## [Unreleased]
 
+### Added
+- **Parts → Cranes tab:** global arm-force and movement-speed multipliers plus per-crane edits for average arm `Motor Force` and `ControlledIK` speed coeffs (`Crane` / `LogCrane` truck addons).
+
+### Changed
+- **P1 maintenance:** shared `PartPakPipeline` for parts global applies; `TruckDiffLockXml` + `VehicleGameDataXml` extracts; `PartsTuningUiHelpers` on all Parts tabs; vehicles `_meta_build` excluded from output; README Vehicles section updated.
+
+### Fixed
+- **Cranes load/apply:** addon XML with sibling `<_templates>` + `<TruckAddon>` roots now parses (synthetic wrap); Arm force no longer shows 0 and Apply no longer fails with a false “corrupted XML” error.
+- **Cranes list:** show pak file stem (`File` column) so per-truck copies that share the same localized name are distinguishable.
+- **Cranes multipliers:** arm-force slider up to 10x; movement-speed slider capped at 3x.
+
 ---
 
 ## [1.3.4] — 2026-09-05

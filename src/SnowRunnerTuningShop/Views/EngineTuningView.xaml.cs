@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using SnowRunnerTuningShop.Core.Backup;
 using SnowRunnerTuningShop.Core.Engine;
 using SnowRunnerTuningShop.Core.Models;
 using SnowRunnerTuningShop.Core.Tuning;
@@ -57,20 +56,17 @@ public partial class EngineTuningView : UserControl
     {
         PakPath = null;
         _engines.Clear();
-        ApplyMultipliersButton.IsEnabled = false;
-        SaveIndividualButton.IsEnabled = false;
-        RestoreEnginesButton.IsEnabled = false;
+        PartsTuningUiHelpers.ClearWriteButtons(ApplyMultipliersButton, SaveIndividualButton, RestoreEnginesButton);
     }
 
-    public void RefreshRestoreButton()
-    {
-        var hasPak = !string.IsNullOrWhiteSpace(PakPath);
-        ApplyMultipliersButton.IsEnabled = hasPak && _pakWritesAllowed;
-        SaveIndividualButton.IsEnabled = hasPak && _pakWritesAllowed;
-        RestoreEnginesButton.IsEnabled = hasPak
-            && _pakWritesAllowed
-            && PakBaselineService.HasBaseline(PakPath!);
-    }
+    public void RefreshRestoreButton() =>
+        PartsTuningUiHelpers.SetPartWriteButtonStates(
+            _session,
+            PakPath,
+            _pakWritesAllowed,
+            ApplyMultipliersButton,
+            SaveIndividualButton,
+            RestoreEnginesButton);
 
     private void ReloadButton_Click(object sender, RoutedEventArgs e)
     {
@@ -157,8 +153,7 @@ public partial class EngineTuningView : UserControl
 
         try
         {
-            EnginesGrid.CommitEdit(DataGridEditingUnit.Cell, exitEditingMode: true);
-            EnginesGrid.CommitEdit(DataGridEditingUnit.Row, exitEditingMode: true);
+            PartsTuningUiHelpers.CommitGridEdits(EnginesGrid);
 
             var engines = _engines
                 .Select(row => row.ToDefinition())

@@ -64,7 +64,7 @@ public static class EngineService
                 continue;
             }
 
-            engines.AddRange(ParseEnginesFromText(entryPath, ReadEntryText(entry), strings, setUsage));
+            engines.AddRange(ParseEnginesFromText(entryPath, PartXmlHelpers.ReadEntryUtf8(entry), strings, setUsage));
         }
 
         return engines
@@ -81,48 +81,24 @@ public static class EngineService
         double damageCapacityMultiplier,
         double engineResponsivenessMultiplier)
     {
-        ValidateMultiplier(torqueMultiplier, nameof(torqueMultiplier));
-        ValidateMultiplier(fuelConsumptionMultiplier, nameof(fuelConsumptionMultiplier));
-        ValidateMultiplier(damageCapacityMultiplier, nameof(damageCapacityMultiplier));
-        ValidateMultiplier(engineResponsivenessMultiplier, nameof(engineResponsivenessMultiplier));
+        PartPakPipeline.ValidateMultiplier(torqueMultiplier, nameof(torqueMultiplier));
+        PartPakPipeline.ValidateMultiplier(fuelConsumptionMultiplier, nameof(fuelConsumptionMultiplier));
+        PartPakPipeline.ValidateMultiplier(damageCapacityMultiplier, nameof(damageCapacityMultiplier));
+        PartPakPipeline.ValidateMultiplier(engineResponsivenessMultiplier, nameof(engineResponsivenessMultiplier));
 
-        var baselinePath = PakBaselineService.RequireBaseline(pakPath);
+        var result = PartPakPipeline.BuildBaselineReplacements(
+            pakPath,
+            IsEngineEntry,
+            (_, baselineText, _) => ApplyMultipliersToText(
+                baselineText,
+                torqueMultiplier,
+                fuelConsumptionMultiplier,
+                damageCapacityMultiplier,
+                engineResponsivenessMultiplier),
+            (_, currentText, updatedText) => CountNamedEngineDifferences(currentText, updatedText));
 
-        Dictionary<string, byte[]> replacements;
-        var changedEngines = 0;
-
-        using (var baselineArchive = ZipFile.OpenRead(baselinePath))
-        using (var currentArchive = ZipFile.OpenRead(pakPath))
-        {
-            replacements = new Dictionary<string, byte[]>(StringComparer.Ordinal);
-
-            foreach (var entry in currentArchive.Entries)
-            {
-                var entryPath = entry.FullName.Replace('\\', '/');
-                if (!IsEngineEntry(entryPath))
-                {
-                    continue;
-                }
-
-                var baselineText = PakVanillaText.Read(baselineArchive, entry, ReadEntryText);
-                var updatedText = ApplyMultipliersToText(
-                    baselineText,
-                    torqueMultiplier,
-                    fuelConsumptionMultiplier,
-                    damageCapacityMultiplier,
-                    engineResponsivenessMultiplier);
-
-                var currentText = ReadEntryText(entry);
-                if (!string.Equals(currentText, updatedText, StringComparison.Ordinal))
-                {
-                    replacements[entryPath] = Encoding.UTF8.GetBytes(updatedText);
-                    changedEngines += CountNamedEngineDifferences(currentText, updatedText);
-                }
-            }
-        }
-
-        var updatedFiles = InitialPakWriter.ReplaceEntries(pakPath, replacements);
-        return new EngineSaveResult(updatedFiles, changedEngines);
+        var updatedFiles = PartPakPipeline.CommitReplacements(pakPath, result.Replacements);
+        return new EngineSaveResult(updatedFiles, result.ChangedItems);
     }
 
     public static EngineSaveResult RestoreEnginesFromBaseline(string pakPath) =>
@@ -151,7 +127,7 @@ public static class EngineService
                     continue;
                 }
 
-                var text = ReadEntryText(entry);
+                var text = PartXmlHelpers.ReadEntryUtf8(entry);
                 var updates = group.ToDictionary(
                     engine => engine.Name,
                     engine => new EngineAttributeValues(
@@ -274,7 +250,7 @@ public static class EngineService
             }
 
             var truckId = Path.GetFileNameWithoutExtension(entryPath);
-            var text = ReadEntryText(entry);
+            var text = PartXmlHelpers.ReadEntryUtf8(entry);
             truckDisplayNames[truckId] = ResolveTruckDisplayName(truckId, text, strings);
 
             foreach (Match socketMatch in EngineSocketRegex.Matches(text))
@@ -605,12 +581,6 @@ public static class EngineService
         return result;
     }
 
-    private static string ReadEntryText(ZipArchiveEntry entry)
-    {
-        using var stream = entry.Open();
-        using var reader = new StreamReader(stream, Encoding.UTF8, detectEncodingFromByteOrderMarks: true);
-        return reader.ReadToEnd();
-    }
 
     private static string InferCategory(string entryPath) =>
         entryPath.Contains("/_dlc/", StringComparison.OrdinalIgnoreCase) ? "DLC" : "Base";
@@ -630,13 +600,6 @@ public static class EngineService
         return value.ToString("0.######", CultureInfo.InvariantCulture);
     }
 
-    private static void ValidateMultiplier(double value, string parameterName)
-    {
-        if (!double.IsFinite(value) || value <= 0)
-        {
-            throw new ArgumentOutOfRangeException(parameterName, "Multiplier must be a positive number.");
-        }
-    }
 
     private readonly record struct EngineAttributeValues(
         double Torque,

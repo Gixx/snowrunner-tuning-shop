@@ -50,7 +50,7 @@ public static class SuspensionService
                 continue;
             }
 
-            suspensions.AddRange(ParseSuspensionsFromText(entryPath, ReadEntryText(entry), strings, setUsage));
+            suspensions.AddRange(ParseSuspensionsFromText(entryPath, PartXmlHelpers.ReadEntryUtf8(entry), strings, setUsage));
         }
 
         return suspensions
@@ -67,48 +67,24 @@ public static class SuspensionService
         double dampingMultiplier,
         double damageCapacityMultiplier)
     {
-        ValidateMultiplier(heightMultiplier, nameof(heightMultiplier));
-        ValidateMultiplier(strengthMultiplier, nameof(strengthMultiplier));
-        ValidateMultiplier(dampingMultiplier, nameof(dampingMultiplier));
-        ValidateMultiplier(damageCapacityMultiplier, nameof(damageCapacityMultiplier));
+        PartPakPipeline.ValidateMultiplier(heightMultiplier, nameof(heightMultiplier));
+        PartPakPipeline.ValidateMultiplier(strengthMultiplier, nameof(strengthMultiplier));
+        PartPakPipeline.ValidateMultiplier(dampingMultiplier, nameof(dampingMultiplier));
+        PartPakPipeline.ValidateMultiplier(damageCapacityMultiplier, nameof(damageCapacityMultiplier));
 
-        var baselinePath = PakBaselineService.RequireBaseline(pakPath);
+        var result = PartPakPipeline.BuildBaselineReplacements(
+            pakPath,
+            IsSuspensionEntry,
+            (_, baselineText, _) => ApplyMultipliersToText(
+                baselineText,
+                heightMultiplier,
+                strengthMultiplier,
+                dampingMultiplier,
+                damageCapacityMultiplier),
+            (_, currentText, updatedText) => CountNamedDifferences(currentText, updatedText));
 
-        Dictionary<string, byte[]> replacements;
-        var changedSuspensions = 0;
-
-        using (var baselineArchive = ZipFile.OpenRead(baselinePath))
-        using (var currentArchive = ZipFile.OpenRead(pakPath))
-        {
-            replacements = new Dictionary<string, byte[]>(StringComparer.Ordinal);
-
-            foreach (var entry in currentArchive.Entries)
-            {
-                var entryPath = entry.FullName.Replace('\\', '/');
-                if (!IsSuspensionEntry(entryPath))
-                {
-                    continue;
-                }
-
-                var baselineText = PakVanillaText.Read(baselineArchive, entry, ReadEntryText);
-                var updatedText = ApplyMultipliersToText(
-                    baselineText,
-                    heightMultiplier,
-                    strengthMultiplier,
-                    dampingMultiplier,
-                    damageCapacityMultiplier);
-
-                var currentText = ReadEntryText(entry);
-                if (!string.Equals(currentText, updatedText, StringComparison.Ordinal))
-                {
-                    replacements[entryPath] = Encoding.UTF8.GetBytes(updatedText);
-                    changedSuspensions += CountNamedDifferences(currentText, updatedText);
-                }
-            }
-        }
-
-        var updatedFiles = InitialPakWriter.ReplaceEntries(pakPath, replacements);
-        return new SuspensionSaveResult(updatedFiles, changedSuspensions);
+        var updatedFiles = PartPakPipeline.CommitReplacements(pakPath, result.Replacements);
+        return new SuspensionSaveResult(updatedFiles, result.ChangedItems);
     }
 
     public static SuspensionSaveResult RestoreSuspensionsFromBaseline(string pakPath) =>
@@ -139,7 +115,7 @@ public static class SuspensionService
                     continue;
                 }
 
-                var text = ReadEntryText(entry);
+                var text = PartXmlHelpers.ReadEntryUtf8(entry);
                 var updates = group.ToDictionary(
                     item => item.Name,
                     item => new SuspensionAttributeValues(
@@ -282,7 +258,7 @@ public static class SuspensionService
             }
 
             var truckId = Path.GetFileNameWithoutExtension(entryPath);
-            var text = ReadEntryText(entry);
+            var text = PartXmlHelpers.ReadEntryUtf8(entry);
             truckDisplayNames[truckId] = ResolveTruckDisplayName(truckId, text, strings);
 
             foreach (Match socketMatch in SuspensionSocketRegex.Matches(text))
@@ -755,12 +731,6 @@ public static class SuspensionService
     private static string InferCategory(string entryPath) =>
         entryPath.Contains("/_dlc/", StringComparison.OrdinalIgnoreCase) ? "DLC" : "Base";
 
-    private static string ReadEntryText(ZipArchiveEntry entry)
-    {
-        using var stream = entry.Open();
-        using var reader = new StreamReader(stream, Encoding.UTF8, detectEncodingFromByteOrderMarks: true);
-        return reader.ReadToEnd();
-    }
 
     private static double ParseDouble(string? value, double fallback) =>
         double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var parsed)
@@ -777,13 +747,6 @@ public static class SuspensionService
         return value.ToString("0.######", CultureInfo.InvariantCulture);
     }
 
-    private static void ValidateMultiplier(double value, string parameterName)
-    {
-        if (!double.IsFinite(value) || value <= 0)
-        {
-            throw new ArgumentOutOfRangeException(parameterName, "Multiplier must be a positive number.");
-        }
-    }
 
     private readonly record struct SuspensionAttributeValues(
         double DamageCapacity,

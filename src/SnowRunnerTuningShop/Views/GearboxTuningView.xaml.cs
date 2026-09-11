@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using SnowRunnerTuningShop.Core.Backup;
 using SnowRunnerTuningShop.Core.Gearbox;
 using SnowRunnerTuningShop.Core.Models;
 using SnowRunnerTuningShop.Core.Tuning;
@@ -55,20 +54,17 @@ public partial class GearboxTuningView : UserControl
     {
         PakPath = null;
         _gearboxes.Clear();
-        ApplyMultipliersButton.IsEnabled = false;
-        SaveIndividualButton.IsEnabled = false;
-        RestoreGearboxesButton.IsEnabled = false;
+        PartsTuningUiHelpers.ClearWriteButtons(ApplyMultipliersButton, SaveIndividualButton, RestoreGearboxesButton);
     }
 
-    public void RefreshRestoreButton()
-    {
-        var hasPak = !string.IsNullOrWhiteSpace(PakPath);
-        ApplyMultipliersButton.IsEnabled = hasPak && _pakWritesAllowed;
-        SaveIndividualButton.IsEnabled = hasPak && _pakWritesAllowed;
-        RestoreGearboxesButton.IsEnabled = hasPak
-            && _pakWritesAllowed
-            && PakBaselineService.HasBaseline(PakPath!);
-    }
+    public void RefreshRestoreButton() =>
+        PartsTuningUiHelpers.SetPartWriteButtonStates(
+            _session,
+            PakPath,
+            _pakWritesAllowed,
+            ApplyMultipliersButton,
+            SaveIndividualButton,
+            RestoreGearboxesButton);
 
     private void ReloadButton_Click(object sender, RoutedEventArgs e)
     {
@@ -144,8 +140,7 @@ public partial class GearboxTuningView : UserControl
 
         try
         {
-            GearboxesGrid.CommitEdit(DataGridEditingUnit.Cell, exitEditingMode: true);
-            GearboxesGrid.CommitEdit(DataGridEditingUnit.Row, exitEditingMode: true);
+            PartsTuningUiHelpers.CommitGridEdits(GearboxesGrid);
 
             var gearboxes = _gearboxes
                 .Select(row => row.ToDefinition())

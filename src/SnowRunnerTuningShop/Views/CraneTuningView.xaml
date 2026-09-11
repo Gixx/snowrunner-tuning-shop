@@ -1,0 +1,151 @@
+<UserControl x:Class="SnowRunnerTuningShop.Views.CraneTuningView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:loc="clr-namespace:SnowRunnerTuningShop.Localization"
+             mc:Ignorable="d"
+             d:DesignHeight="560"
+             d:DesignWidth="980">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Expander Grid.Row="0"
+                  Style="{StaticResource CollapsibleCardExpanderStyle}"
+                  Header="{x:Static loc:UiText+Crane.GlobalMultipliersTitle}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Margin="0,0,12,0">
+                    <TextBlock x:Name="ArmForceMultiplierLabel"
+                               Text="{x:Static loc:UiText+Crane.ArmForceMultiplierDefault}"
+                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                    <Slider x:Name="ArmForceMultiplierSlider"
+                            Minimum="0"
+                            Maximum="11"
+                            Value="4"
+                            TickFrequency="1"
+                            IsSnapToTickEnabled="True"
+                            ValueChanged="ArmForceMultiplierSlider_ValueChanged"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Margin="12,0,12,0">
+                    <TextBlock x:Name="MovementSpeedMultiplierLabel"
+                               Text="{x:Static loc:UiText+Crane.MovementSpeedMultiplierDefault}"
+                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                    <Slider x:Name="MovementSpeedMultiplierSlider"
+                            Minimum="0"
+                            Maximum="6"
+                            Value="4"
+                            TickFrequency="1"
+                            IsSnapToTickEnabled="True"
+                            ValueChanged="MovementSpeedMultiplierSlider_ValueChanged"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                    <Button x:Name="ApplyMultipliersButton"
+                            Content="{x:Static loc:UiText+Crane.Apply}"
+                            Padding="14,8"
+                            Click="ApplyMultipliersButton_Click"/>
+                </StackPanel>
+            </Grid>
+        </Expander>
+
+        <Border Grid.Row="1"
+                Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="12"
+                Margin="0,0,0,12">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="280" MinWidth="180"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button x:Name="SaveIndividualButton"
+                            Content="{x:Static loc:UiText+Crane.SaveIndividualChanges}"
+                            Padding="14,8"
+                            Margin="0,0,8,0"
+                            Click="SaveIndividualButton_Click"/>
+                    <Button x:Name="RestoreCranesButton"
+                            Content="{x:Static loc:UiText+Crane.RestoreCranesToBaseline}"
+                            Padding="14,8"
+                            Margin="0,0,8,0"
+                            Click="RestoreCranesButton_Click"/>
+                    <Button Content="{x:Static loc:UiText+Crane.RefreshList}"
+                            Padding="14,8"
+                            Click="ReloadButton_Click"/>
+                </StackPanel>
+
+                <Grid Grid.Column="1" Margin="16,0,0,0" VerticalAlignment="Center">
+                    <TextBox x:Name="FilterTextBox"
+                             Padding="10,7"
+                             VerticalContentAlignment="Center"
+                             TextChanged="FilterTextBox_TextChanged"/>
+                    <TextBlock x:Name="FilterPlaceholder"
+                               Text="{x:Static loc:UiText+Crane.FilterPlaceholder}"
+                               Margin="14,0,0,0"
+                               VerticalAlignment="Center"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                               IsHitTestVisible="False"/>
+                </Grid>
+            </Grid>
+        </Border>
+
+        <DataGrid x:Name="CranesGrid"
+                  Grid.Row="2"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="False"
+                  CanUserDeleteRows="False"
+                  IsReadOnly="False"
+                  HeadersVisibility="Column"
+                  GridLinesVisibility="Horizontal">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="{x:Static loc:UiText+Crane.CategoryColumn}" Binding="{Binding Category}" Width="100" IsReadOnly="True"
+                                    ElementStyle="{StaticResource TuningGridTextElementStyle}"/>
+                <DataGridTextColumn Header="{x:Static loc:UiText+Crane.NameColumn}" Binding="{Binding DisplayName}" Width="180" IsReadOnly="True"
+                                    ElementStyle="{StaticResource TuningGridTextElementStyle}"/>
+                <DataGridTextColumn Header="{x:Static loc:UiText+Crane.FileColumn}" Binding="{Binding Name}" Width="160" IsReadOnly="True"
+                                    ElementStyle="{StaticResource TuningGridTextElementStyle}"/>
+                <DataGridTextColumn Header="{x:Static loc:UiText+Crane.PriceColumn}" Binding="{Binding Price}" Width="70" IsReadOnly="True"
+                                    ElementStyle="{StaticResource TuningGridTextElementStyle}"/>
+                <DataGridTextColumn Header="{x:Static loc:UiText+Crane.ArmForceColumn}"
+                                    Binding="{Binding AverageArmForce, Converter={StaticResource InvariantDoubleConverter}, UpdateSourceTrigger=LostFocus}"
+                                    Width="100"
+                                    ElementStyle="{StaticResource TuningGridTextElementStyle}"
+                                    EditingElementStyle="{StaticResource TuningGridTextEditingStyle}"/>
+                <DataGridTextColumn Header="{x:Static loc:UiText+Crane.SpeedOYColumn}"
+                                    Binding="{Binding SpeedOY, Converter={StaticResource InvariantDoubleConverter}, UpdateSourceTrigger=LostFocus}"
+                                    Width="80"
+                                    ElementStyle="{StaticResource TuningGridTextElementStyle}"
+                                    EditingElementStyle="{StaticResource TuningGridTextEditingStyle}"/>
+                <DataGridTextColumn Header="{x:Static loc:UiText+Crane.SpeedOYWithLoadColumn}"
+                                    Binding="{Binding SpeedOYWithLoad, Converter={StaticResource InvariantDoubleConverter}, UpdateSourceTrigger=LostFocus}"
+                                    Width="90"
+                                    ElementStyle="{StaticResource TuningGridTextElementStyle}"
+                                    EditingElementStyle="{StaticResource TuningGridTextEditingStyle}"/>
+                <DataGridTextColumn Header="{x:Static loc:UiText+Crane.SpeedXZColumn}"
+                                    Binding="{Binding SpeedXZ, Converter={StaticResource InvariantDoubleConverter}, UpdateSourceTrigger=LostFocus}"
+                                    Width="80"
+                                    ElementStyle="{StaticResource TuningGridTextElementStyle}"
+                                    EditingElementStyle="{StaticResource TuningGridTextEditingStyle}"/>
+                <DataGridTextColumn Header="{x:Static loc:UiText+Crane.SpeedXZWithLoadColumn}"
+                                    Binding="{Binding SpeedXZWithLoad, Converter={StaticResource InvariantDoubleConverter}, UpdateSourceTrigger=LostFocus}"
+                                    Width="90"
+                                    ElementStyle="{StaticResource TuningGridTextElementStyle}"
+                                    EditingElementStyle="{StaticResource TuningGridTextEditingStyle}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>

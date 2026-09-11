@@ -46,7 +46,7 @@ public static class GearboxService
                 continue;
             }
 
-            gearboxes.AddRange(ParseGearboxesFromText(entryPath, ReadEntryText(entry), strings, setUsage));
+            gearboxes.AddRange(ParseGearboxesFromText(entryPath, PartXmlHelpers.ReadEntryUtf8(entry), strings, setUsage));
         }
 
         return gearboxes
@@ -62,46 +62,22 @@ public static class GearboxService
         double idleFuelModifierMultiplier,
         double awdConsumptionMultiplier)
     {
-        ValidateMultiplier(fuelConsumptionMultiplier, nameof(fuelConsumptionMultiplier));
-        ValidateMultiplier(idleFuelModifierMultiplier, nameof(idleFuelModifierMultiplier));
-        ValidateMultiplier(awdConsumptionMultiplier, nameof(awdConsumptionMultiplier));
+        PartPakPipeline.ValidateMultiplier(fuelConsumptionMultiplier, nameof(fuelConsumptionMultiplier));
+        PartPakPipeline.ValidateMultiplier(idleFuelModifierMultiplier, nameof(idleFuelModifierMultiplier));
+        PartPakPipeline.ValidateMultiplier(awdConsumptionMultiplier, nameof(awdConsumptionMultiplier));
 
-        var baselinePath = PakBaselineService.RequireBaseline(pakPath);
+        var result = PartPakPipeline.BuildBaselineReplacements(
+            pakPath,
+            IsGearboxEntry,
+            (_, baselineText, _) => ApplyMultipliersToText(
+                baselineText,
+                fuelConsumptionMultiplier,
+                idleFuelModifierMultiplier,
+                awdConsumptionMultiplier),
+            (_, currentText, updatedText) => CountNamedDifferences(currentText, updatedText));
 
-        Dictionary<string, byte[]> replacements;
-        var changedGearboxes = 0;
-
-        using (var baselineArchive = ZipFile.OpenRead(baselinePath))
-        using (var currentArchive = ZipFile.OpenRead(pakPath))
-        {
-            replacements = new Dictionary<string, byte[]>(StringComparer.Ordinal);
-
-            foreach (var entry in currentArchive.Entries)
-            {
-                var entryPath = entry.FullName.Replace('\\', '/');
-                if (!IsGearboxEntry(entryPath))
-                {
-                    continue;
-                }
-
-                var baselineText = PakVanillaText.Read(baselineArchive, entry, ReadEntryText);
-                var updatedText = ApplyMultipliersToText(
-                    baselineText,
-                    fuelConsumptionMultiplier,
-                    idleFuelModifierMultiplier,
-                    awdConsumptionMultiplier);
-
-                var currentText = ReadEntryText(entry);
-                if (!string.Equals(currentText, updatedText, StringComparison.Ordinal))
-                {
-                    replacements[entryPath] = Encoding.UTF8.GetBytes(updatedText);
-                    changedGearboxes += CountNamedDifferences(currentText, updatedText);
-                }
-            }
-        }
-
-        var updatedFiles = InitialPakWriter.ReplaceEntries(pakPath, replacements);
-        return new GearboxSaveResult(updatedFiles, changedGearboxes);
+        var updatedFiles = PartPakPipeline.CommitReplacements(pakPath, result.Replacements);
+        return new GearboxSaveResult(updatedFiles, result.ChangedItems);
     }
 
     public static GearboxSaveResult RestoreGearboxesFromBaseline(string pakPath) =>
@@ -130,7 +106,7 @@ public static class GearboxService
                     continue;
                 }
 
-                var text = ReadEntryText(entry);
+                var text = PartXmlHelpers.ReadEntryUtf8(entry);
                 var updates = group.ToDictionary(
                     gearbox => gearbox.Name,
                     gearbox => new GearboxAttributeValues(
@@ -247,7 +223,7 @@ public static class GearboxService
             }
 
             var truckId = Path.GetFileNameWithoutExtension(entryPath);
-            var text = ReadEntryText(entry);
+            var text = PartXmlHelpers.ReadEntryUtf8(entry);
             truckDisplayNames[truckId] = ResolveTruckDisplayName(truckId, text, strings);
 
             foreach (Match socketMatch in GearboxSocketRegex.Matches(text))
@@ -577,12 +553,6 @@ public static class GearboxService
         return result;
     }
 
-    private static string ReadEntryText(ZipArchiveEntry entry)
-    {
-        using var stream = entry.Open();
-        using var reader = new StreamReader(stream, Encoding.UTF8, detectEncodingFromByteOrderMarks: true);
-        return reader.ReadToEnd();
-    }
 
     private static string InferCategory(string entryPath) =>
         entryPath.Contains("/_dlc/", StringComparison.OrdinalIgnoreCase) ? "DLC" : "Base";
@@ -602,13 +572,6 @@ public static class GearboxService
         return value.ToString("0.######", CultureInfo.InvariantCulture);
     }
 
-    private static void ValidateMultiplier(double value, string parameterName)
-    {
-        if (!double.IsFinite(value) || value <= 0)
-        {
-            throw new ArgumentOutOfRangeException(parameterName, "Multiplier must be a positive number.");
-        }
-    }
 
     private readonly record struct GearboxAttributeValues(
         double FuelConsumption,

@@ -68,6 +68,9 @@ public static class UiText
         public static string Caption(string prefix, int index) =>
             StringResources.Format("Slider.Caption", "{0}: {1}", prefix, ValueLabel(index));
 
+        public static string Caption(string prefix, string valueLabel) =>
+            StringResources.Format("Slider.Caption", "{0}: {1}", prefix, valueLabel);
+
         public static string ValueLabel(int index)
         {
             index = TuningMultiplierPresets.ClampIndex(index);
@@ -94,6 +97,8 @@ public static class UiText
         public static string SpareWheels => StringResources.Get("Trailers.SpareWheelsLabel", "Spare wheels");
         public static string LengthMultiplier => StringResources.Get("Slider.LengthMultiplier", "Length multiplier");
         public static string StrengthMultiplier => StringResources.Get("Slider.StrengthMultiplier", "Strength multiplier");
+        public static string ArmForceMultiplier => StringResources.Get("Slider.ArmForceMultiplier", "Arm force multiplier");
+        public static string MovementSpeedMultiplier => StringResources.Get("Slider.MovementSpeedMultiplier", "Movement speed multiplier");
     }
 
     public static class Main
@@ -223,6 +228,7 @@ public static class UiText
         public static string Gearbox => StringResources.Get("Parts.Gearbox", "Gearbox");
         public static string Suspension => StringResources.Get("Parts.Suspension", "Suspension");
         public static string Tires => StringResources.Get("Parts.Tires", "Tires");
+        public static string Cranes => StringResources.Get("Parts.Cranes", "Cranes");
         public static string ComingSoon => StringResources.Get("Parts.ComingSoon", "Coming soon.");
         public static string LoadPakHint => StringResources.Get("Parts.LoadPakHint", "Load an initial.pak on the Home page first.");
         public static string Loading => StringResources.Get("Parts.Loading", "Loading…");
@@ -915,6 +921,7 @@ public static class UiText
                 TuningProfileEntryCategories.Suspensions => StringResources.Get("Workspace.ReapplyCategory.Suspensions", "suspensions"),
                 TuningProfileEntryCategories.Winches => StringResources.Get("Workspace.ReapplyCategory.Winches", "winches"),
                 TuningProfileEntryCategories.Tires => StringResources.Get("Workspace.ReapplyCategory.Tires", "tires"),
+                TuningProfileEntryCategories.Cranes => StringResources.Get("Workspace.ReapplyCategory.Cranes", "cranes"),
                 TuningProfileEntryCategories.Vehicles => StringResources.Get("Workspace.ReapplyCategory.Vehicles", "vehicles"),
                 TuningProfileEntryCategories.Trailers => StringResources.Get("Workspace.ReapplyCategory.Trailers", "trailers"),
                 TuningProfileEntryCategories.Rocks => StringResources.Get("Workspace.ReapplyCategory.Rocks", "rocks"),
@@ -1231,6 +1238,61 @@ public static class UiText
                 "Winch.RestoreWinchesMessage",
                 "Winch values were restored from the baseline.\n\nUpdated winches: {0}\nUpdated files: {1}",
                 changedWinches,
+                updatedFiles);
+    }
+
+    public static class Crane
+    {
+        public static string GlobalMultipliersTitle => StringResources.Get("Crane.GlobalMultipliersTitle", "Global multipliers (relative to the baseline values)");
+        public static string ArmForceMultiplierDefault => StringResources.Get("Crane.ArmForceMultiplierDefault", "Arm force multiplier: 1 (baseline)");
+        public static string MovementSpeedMultiplierDefault => StringResources.Get("Crane.MovementSpeedMultiplierDefault", "Movement speed multiplier: 1 (baseline)");
+        public static string Apply => StringResources.Get("Crane.Apply", "Apply");
+        public static string SaveIndividualChanges => StringResources.Get("Crane.SaveIndividualChanges", "Save individual changes");
+        public static string RestoreCranesToBaseline => StringResources.Get("Crane.RestoreCranesToBaseline", "Restore cranes to baseline");
+        public static string RefreshList => StringResources.Get("Crane.RefreshList", "Refresh list");
+        public static string FilterPlaceholder => StringResources.Get("Crane.FilterPlaceholder", "Filter category, name…");
+        public static string CategoryColumn => StringResources.Get("Crane.CategoryColumn", "Category");
+        public static string NameColumn => StringResources.Get("Crane.NameColumn", "Name");
+        public static string FileColumn => StringResources.Get("Crane.FileColumn", "File");
+        public static string PriceColumn => StringResources.Get("Crane.PriceColumn", "Price");
+        public static string ArmForceColumn => StringResources.Get("Crane.ArmForceColumn", "Arm force");
+        public static string SpeedOYColumn => StringResources.Get("Crane.SpeedOYColumn", "Speed OY");
+        public static string SpeedOYWithLoadColumn => StringResources.Get("Crane.SpeedOYWithLoadColumn", "Load OY");
+        public static string SpeedXZColumn => StringResources.Get("Crane.SpeedXZColumn", "Speed XZ");
+        public static string SpeedXZWithLoadColumn => StringResources.Get("Crane.SpeedXZWithLoadColumn", "Load XZ");
+        public static string LoadPakFirst => StringResources.Get("Crane.LoadPakFirst", "Load an initial.pak file first.");
+        public static string SaveSuccessTitle => StringResources.Get("Crane.SaveSuccessTitle", "Saved successfully");
+        public static string SaveErrorTitle => StringResources.Get("Crane.SaveErrorTitle", "Save error");
+        public static string LoadErrorTitle => StringResources.Get("Crane.LoadErrorTitle", "Load error");
+        public static string RestoreCranesSuccessTitle => StringResources.Get("Crane.RestoreCranesSuccessTitle", "Cranes restored");
+
+        public static string MultipliersAppliedStatus(int changedCranes, int updatedFiles) =>
+            StringResources.Format(
+                "Crane.MultipliersAppliedStatus",
+                "Multipliers applied. Updated cranes: {0}, files: {1}.",
+                changedCranes,
+                updatedFiles);
+
+        public static string MultipliersSavedMessage(int changedCranes, int updatedFiles) =>
+            StringResources.Format(
+                "Crane.MultipliersSavedMessage",
+                "Crane settings saved.\n\nUpdated cranes: {0}\nUpdated files: {1}",
+                changedCranes,
+                updatedFiles);
+
+        public static string IndividualSavedMessage(int changedCranes) =>
+            changedCranes <= 0
+                ? StringResources.Get("Crane.NoChangesToSave", "No crane changes were detected to save.")
+                : StringResources.Format(
+                    "Crane.IndividualSavedMessage",
+                    "Individual crane changes saved.\n\nUpdated cranes: {0}",
+                    changedCranes);
+
+        public static string RestoreCranesMessage(int changedCranes, int updatedFiles) =>
+            StringResources.Format(
+                "Crane.RestoreCranesMessage",
+                "Crane values were restored from the baseline.\n\nUpdated cranes: {0}\nUpdated files: {1}",
+                changedCranes,
                 updatedFiles);
     }
 

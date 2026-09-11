@@ -55,7 +55,7 @@ public static class TireService
                 continue;
             }
 
-            tires.AddRange(ParseTiresFromText(entryPath, ReadEntryText(entry), strings, setUsage, templates));
+            tires.AddRange(ParseTiresFromText(entryPath, PartXmlHelpers.ReadEntryUtf8(entry), strings, setUsage, templates));
         }
 
         return tires
@@ -72,49 +72,27 @@ public static class TireService
         double mudMultiplier,
         bool? ignoreIceForAll = null)
     {
-        ValidateMultiplier(onRoadMultiplier, nameof(onRoadMultiplier));
-        ValidateMultiplier(offRoadMultiplier, nameof(offRoadMultiplier));
-        ValidateMultiplier(mudMultiplier, nameof(mudMultiplier));
+        PartPakPipeline.ValidateMultiplier(onRoadMultiplier, nameof(onRoadMultiplier));
+        PartPakPipeline.ValidateMultiplier(offRoadMultiplier, nameof(offRoadMultiplier));
+        PartPakPipeline.ValidateMultiplier(mudMultiplier, nameof(mudMultiplier));
 
         var baselinePath = PakBaselineService.RequireBaseline(pakPath);
         var templates = WheelFrictionTemplates.LoadFromPak(baselinePath);
 
-        Dictionary<string, byte[]> replacements;
-        var changedTires = 0;
+        var result = PartPakPipeline.BuildBaselineReplacements(
+            pakPath,
+            IsWheelEntry,
+            (_, baselineText, _) => ApplyMultipliersToText(
+                baselineText,
+                templates,
+                onRoadMultiplier,
+                offRoadMultiplier,
+                mudMultiplier,
+                ignoreIceForAll),
+            (_, currentText, updatedText) => CountNamedDifferences(currentText, updatedText, templates));
 
-        using (var baselineArchive = ZipFile.OpenRead(baselinePath))
-        using (var currentArchive = ZipFile.OpenRead(pakPath))
-        {
-            replacements = new Dictionary<string, byte[]>(StringComparer.Ordinal);
-
-            foreach (var entry in currentArchive.Entries)
-            {
-                var entryPath = entry.FullName.Replace('\\', '/');
-                if (!IsWheelEntry(entryPath))
-                {
-                    continue;
-                }
-
-                var baselineText = PakVanillaText.Read(baselineArchive, entry, ReadEntryText);
-                var updatedText = ApplyMultipliersToText(
-                    baselineText,
-                    templates,
-                    onRoadMultiplier,
-                    offRoadMultiplier,
-                    mudMultiplier,
-                    ignoreIceForAll);
-
-                var currentText = ReadEntryText(entry);
-                if (!string.Equals(currentText, updatedText, StringComparison.Ordinal))
-                {
-                    replacements[entryPath] = Encoding.UTF8.GetBytes(updatedText);
-                    changedTires += CountNamedDifferences(currentText, updatedText, templates);
-                }
-            }
-        }
-
-        var updatedFiles = InitialPakWriter.ReplaceEntries(pakPath, replacements);
-        return new TireSaveResult(updatedFiles, changedTires);
+        var updatedFiles = PartPakPipeline.CommitReplacements(pakPath, result.Replacements);
+        return new TireSaveResult(updatedFiles, result.ChangedItems);
     }
 
     public static TireSaveResult RestoreTiresFromBaseline(string pakPath) =>
@@ -143,7 +121,7 @@ public static class TireService
                     continue;
                 }
 
-                var text = ReadEntryText(entry);
+                var text = PartXmlHelpers.ReadEntryUtf8(entry);
                 var updates = group.ToDictionary(
                     item => item.Name,
                     item => new TireFrictionValues(
@@ -286,7 +264,7 @@ public static class TireService
             }
 
             var truckId = Path.GetFileNameWithoutExtension(entryPath);
-            var text = ReadEntryText(entry);
+            var text = PartXmlHelpers.ReadEntryUtf8(entry);
             truckDisplayNames[truckId] = ResolveTruckDisplayName(truckId, text, strings);
 
             foreach (Match socketMatch in CompatibleWheelsRegex.Matches(text))
@@ -681,12 +659,6 @@ public static class TireService
     private static string InferCategory(string entryPath) =>
         entryPath.Contains("/_dlc/", StringComparison.OrdinalIgnoreCase) ? "DLC" : "Base";
 
-    private static string ReadEntryText(ZipArchiveEntry entry)
-    {
-        using var stream = entry.Open();
-        using var reader = new StreamReader(stream, Encoding.UTF8, detectEncodingFromByteOrderMarks: true);
-        return reader.ReadToEnd();
-    }
 
     private static string FormatNumeric(double value)
     {
@@ -698,13 +670,6 @@ public static class TireService
         return value.ToString("0.######", CultureInfo.InvariantCulture);
     }
 
-    private static void ValidateMultiplier(double value, string parameterName)
-    {
-        if (!double.IsFinite(value) || value <= 0)
-        {
-            throw new ArgumentOutOfRangeException(parameterName, "Multiplier must be a positive number.");
-        }
-    }
 
     private readonly record struct TireFrictionValues(
         double OnRoadFriction,

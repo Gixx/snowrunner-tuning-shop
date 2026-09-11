@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="..\..\assets\vehicles\**\*">
+    <Content Include="..\..\assets\vehicles\**\*" Exclude="..\..\assets\vehicles\_meta_build\**\*">
       <Link>assets\vehicles\%(RecursiveDir)%(Filename)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

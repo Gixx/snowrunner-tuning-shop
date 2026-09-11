@@ -4,7 +4,6 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using SnowRunnerTuningShop.Core.Backup;
 using SnowRunnerTuningShop.Core.Models;
 using SnowRunnerTuningShop.Core.Suspension;
 using SnowRunnerTuningShop.Core.Tuning;
@@ -56,20 +55,17 @@ public partial class SuspensionTuningView : UserControl
     {
         PakPath = null;
         _suspensions.Clear();
-        ApplyMultipliersButton.IsEnabled = false;
-        SaveIndividualButton.IsEnabled = false;
-        RestoreSuspensionsButton.IsEnabled = false;
+        PartsTuningUiHelpers.ClearWriteButtons(ApplyMultipliersButton, SaveIndividualButton, RestoreSuspensionsButton);
     }
 
-    public void RefreshRestoreButton()
-    {
-        var hasPak = !string.IsNullOrWhiteSpace(PakPath);
-        ApplyMultipliersButton.IsEnabled = hasPak && _pakWritesAllowed;
-        SaveIndividualButton.IsEnabled = hasPak && _pakWritesAllowed;
-        RestoreSuspensionsButton.IsEnabled = hasPak
-            && _pakWritesAllowed
-            && PakBaselineService.HasBaseline(PakPath!);
-    }
+    public void RefreshRestoreButton() =>
+        PartsTuningUiHelpers.SetPartWriteButtonStates(
+            _session,
+            PakPath,
+            _pakWritesAllowed,
+            ApplyMultipliersButton,
+            SaveIndividualButton,
+            RestoreSuspensionsButton);
 
     private void ReloadButton_Click(object sender, RoutedEventArgs e)
     {
@@ -146,8 +142,7 @@ public partial class SuspensionTuningView : UserControl
 
         try
         {
-            SuspensionsGrid.CommitEdit(DataGridEditingUnit.Cell, exitEditingMode: true);
-            SuspensionsGrid.CommitEdit(DataGridEditingUnit.Row, exitEditingMode: true);
+            PartsTuningUiHelpers.CommitGridEdits(SuspensionsGrid);
 
             var suspensions = _suspensions
                 .Select(row => row.ToDefinition())

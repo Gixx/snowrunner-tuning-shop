@@ -29,6 +29,7 @@ public partial class PartsView : UserControl
         GearboxTuningView.AttachSession(session);
         SuspensionTuningView.AttachSession(session);
         TireTuningView.AttachSession(session);
+        CraneTuningView.AttachSession(session);
         _session.PakChanged += (_, _) => _ = ReloadPartsAsync();
         _session.BaselineChanged += (_, _) => RefreshWriteGates();
         _session.GameRunningChanged += (_, _) => RefreshWriteGates();
@@ -44,11 +45,13 @@ public partial class PartsView : UserControl
         GearboxTuningView.SetPakWritesAllowed(allowed);
         SuspensionTuningView.SetPakWritesAllowed(allowed);
         TireTuningView.SetPakWritesAllowed(allowed);
+        CraneTuningView.SetPakWritesAllowed(allowed);
         WinchTuningView.RefreshRestoreButton();
         EngineTuningView.RefreshRestoreButton();
         GearboxTuningView.RefreshRestoreButton();
         SuspensionTuningView.RefreshRestoreButton();
         TireTuningView.RefreshRestoreButton();
+        CraneTuningView.RefreshRestoreButton();
     }
 
     private async void PartsTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -77,6 +80,7 @@ public partial class PartsView : UserControl
             GearboxTuningView.Clear();
             SuspensionTuningView.Clear();
             TireTuningView.Clear();
+            CraneTuningView.Clear();
             SetLoading(false);
         }
     }
@@ -128,6 +132,9 @@ public partial class PartsView : UserControl
                 case "tires":
                     await TireTuningView.LoadFromPakAsync(pakPath, cancellationToken);
                     break;
+                case "cranes":
+                    await CraneTuningView.LoadFromPakAsync(pakPath, cancellationToken);
+                    break;
             }
 
             if (cancellationToken.IsCancellationRequested || version != _loadVersion)
@@ -176,6 +183,11 @@ public partial class PartsView : UserControl
         if (ReferenceEquals(PartsTabControl.SelectedItem, TiresTab))
         {
             return "tires";
+        }
+
+        if (ReferenceEquals(PartsTabControl.SelectedItem, CranesTab))
+        {
+            return "cranes";
         }
 
         return null;

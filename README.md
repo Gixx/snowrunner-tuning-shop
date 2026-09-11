@@ -57,7 +57,8 @@ Also:
 
 ### Vehicles
 - Catalog browser with images and categories (highway, scout, etc.)
-- Per-vehicle deep tuning is planned
+- Per-vehicle tuning: fuel tank, store price, responsiveness, diff lock, drive layout, steer angles, and related truck XML fields
+- Global multipliers, store unlocks, and restore for all vehicles
 
 ### UI
 - Collapsible hamburger sidebar (optional pin)

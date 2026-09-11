@@ -58,6 +58,16 @@
                     <views:TireTuningView x:Name="TireTuningView"/>
                 </Border>
             </TabItem>
+            <TabItem x:Name="CranesTab" Header="{x:Static loc:UiText+Parts.Cranes}">
+                <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                        BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="12"
+                        Margin="0,12,0,0">
+                    <views:CraneTuningView x:Name="CraneTuningView"/>
+                </Border>
+            </TabItem>
         </TabControl>
 
         <Border x:Name="LoadingOverlay"

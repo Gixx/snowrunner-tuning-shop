@@ -6,6 +6,7 @@ using SnowRunnerTuningShop.Core.Backup;
 using SnowRunnerTuningShop.Core.Models;
 using SnowRunnerTuningShop.Core.Pak;
 using SnowRunnerTuningShop.Core.Strings;
+using SnowRunnerTuningShop.Core.Xml;
 
 namespace SnowRunnerTuningShop.Core.Trailers;
 
@@ -18,10 +19,6 @@ public static class TrailerTuningService
     private static readonly Regex GameDataOpenRegex = new(
         @"<GameData\b(?<attrs>[^<>]*)>",
         RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
-
-    private static readonly Regex AttributeRegex = new(
-        @"(?<name>[A-Za-z_][A-Za-z0-9_]*)\s*=\s*""(?<value>[^""]*)""",
-        RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
     private static readonly Regex ParentFileRegex = new(
         @"<_parent\b[^<>]*\bFile\s*=\s*""(?<file>[^""]+)""",
@@ -50,7 +47,7 @@ public static class TrailerTuningService
                     continue;
                 }
 
-                var text = ReadEntryText(entry);
+                var text = PartXmlHelpers.ReadEntryUtf8(entry);
                 files.Add((entryPath, text));
                 workingById.TryAdd(Path.GetFileNameWithoutExtension(entryPath), text);
             }
@@ -67,7 +64,7 @@ public static class TrailerTuningService
                         continue;
                     }
 
-                    baselineById.TryAdd(Path.GetFileNameWithoutExtension(entryPath), ReadEntryText(entry));
+                    baselineById.TryAdd(Path.GetFileNameWithoutExtension(entryPath), PartXmlHelpers.ReadEntryUtf8(entry));
                 }
             }
 
@@ -102,10 +99,10 @@ public static class TrailerTuningService
         double wheelsMultiplier,
         double priceMultiplier)
     {
-        ValidateMultiplier(fuelMultiplier, nameof(fuelMultiplier));
-        ValidateMultiplier(repairsMultiplier, nameof(repairsMultiplier));
-        ValidateMultiplier(wheelsMultiplier, nameof(wheelsMultiplier));
-        ValidateMultiplier(priceMultiplier, nameof(priceMultiplier));
+        PartPakPipeline.ValidateMultiplier(fuelMultiplier, nameof(fuelMultiplier));
+        PartPakPipeline.ValidateMultiplier(repairsMultiplier, nameof(repairsMultiplier));
+        PartPakPipeline.ValidateMultiplier(wheelsMultiplier, nameof(wheelsMultiplier));
+        PartPakPipeline.ValidateMultiplier(priceMultiplier, nameof(priceMultiplier));
 
         return MutateTrailersFromBaseline(
             pakPath,
@@ -134,7 +131,7 @@ public static class TrailerTuningService
                     continue;
                 }
 
-                var text = ReadEntryText(entry);
+                var text = PartXmlHelpers.ReadEntryUtf8(entry);
                 if (!GameDataOpenRegex.IsMatch(text))
                 {
                     continue;
@@ -151,7 +148,7 @@ public static class TrailerTuningService
                 var updated = text;
                 if (ResolveIsQuest(text, byId))
                 {
-                    updated = SetGameDataAttribute(updated, "IsQuest", "false");
+                    updated = VehicleGameDataXml.SetGameDataAttribute(updated, "IsQuest", "false");
                 }
 
                 updated = TrailerHitchXml.EnsureStoreHitch(updated);
@@ -226,7 +223,7 @@ public static class TrailerTuningService
             var entry = PakEntryLocator.FindEntry(archive, trailer.EntryPath)
                 ?? throw new FileNotFoundException("Trailer XML was not found in the pak.", trailer.EntryPath);
 
-            var text = ReadEntryText(entry);
+            var text = PartXmlHelpers.ReadEntryUtf8(entry);
             replacements = new Dictionary<string, byte[]>(StringComparer.Ordinal);
             var baselineText = TryReadBaselineEntryText(pakPath, trailer.EntryPath);
             var updated = ApplyTuning(text, trailer, baselineText);
@@ -315,7 +312,7 @@ public static class TrailerTuningService
 
         var trailerId = Path.GetFileNameWithoutExtension(entryPath);
         var attrs = truckData.Success
-            ? ParseAttributes(truckData.Groups["attrs"].Value)
+            ? VehicleGameDataXml.ParseAttributes(truckData.Groups["attrs"].Value)
             : new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         var hasFuel = TryParsePresentInt(attrs, "FuelCapacity", out var fuel);
         var hasRepairs = TryParsePresentInt(attrs, "RepairsCapacity", out var repairs);
@@ -334,10 +331,10 @@ public static class TrailerTuningService
             TrailerId = trailerId,
             DisplayName = GameStringsReader.Resolve(strings, uiKey, trailerId),
             HasGameData = hasGameData,
-            Price = ExtractGameDataInt(text, "Price", 0),
-            BaselinePrice = ExtractGameDataInt(baselineText ?? text, "Price", 0),
-            UnlockByRank = Math.Clamp(ExtractGameDataInt(text, "UnlockByRank", 1), 0, 30),
-            BaselineUnlockByRank = Math.Clamp(ExtractGameDataInt(baselineText ?? text, "UnlockByRank", 1), 0, 30),
+            Price = VehicleGameDataXml.ExtractGameDataInt(text, "Price", 0),
+            BaselinePrice = VehicleGameDataXml.ExtractGameDataInt(baselineText ?? text, "Price", 0),
+            UnlockByRank = Math.Clamp(VehicleGameDataXml.ExtractGameDataInt(text, "UnlockByRank", 1), 0, 30),
+            BaselineUnlockByRank = Math.Clamp(VehicleGameDataXml.ExtractGameDataInt(baselineText ?? text, "UnlockByRank", 1), 0, 30),
             IsQuest = isQuest,
             BaselineIsQuest = baselineIsQuest,
             HasStoreCompatibleHitch = hasStoreHitch,
@@ -363,40 +360,40 @@ public static class TrailerTuningService
         var updated = text;
         if (trailer.HasFuel)
         {
-            updated = ApplyExistingTruckDataInt(updated, "FuelCapacity", trailer.FuelCapacity);
+            updated = VehicleGameDataXml.ApplyExistingTruckDataInt(updated, "FuelCapacity", trailer.FuelCapacity);
         }
 
         if (trailer.HasRepairs)
         {
-            updated = ApplyExistingTruckDataInt(updated, "RepairsCapacity", trailer.RepairsCapacity);
+            updated = VehicleGameDataXml.ApplyExistingTruckDataInt(updated, "RepairsCapacity", trailer.RepairsCapacity);
         }
 
         if (trailer.HasWheels)
         {
-            updated = ApplyExistingTruckDataInt(updated, "WheelRepairsCapacity", trailer.WheelRepairsCapacity);
+            updated = VehicleGameDataXml.ApplyExistingTruckDataInt(updated, "WheelRepairsCapacity", trailer.WheelRepairsCapacity);
         }
 
         if (trailer.HasWater)
         {
-            updated = ApplyExistingTruckDataInt(updated, "WaterCapacity", trailer.WaterCapacity);
+            updated = VehicleGameDataXml.ApplyExistingTruckDataInt(updated, "WaterCapacity", trailer.WaterCapacity);
         }
 
         if (trailer.HasGameData)
         {
-            updated = SetGameDataAttribute(updated, "Price", trailer.Price.ToString(CultureInfo.InvariantCulture));
-            updated = SetGameDataAttribute(
+            updated = VehicleGameDataXml.SetGameDataAttribute(updated, "Price", trailer.Price.ToString(CultureInfo.InvariantCulture));
+            updated = VehicleGameDataXml.SetGameDataAttribute(
                 updated,
                 "UnlockByRank",
                 Math.Clamp(trailer.UnlockByRank, 0, 30).ToString(CultureInfo.InvariantCulture));
 
             if (trailer.MakeAvailableInStore)
             {
-                updated = SetGameDataAttribute(updated, "IsQuest", "false");
+                updated = VehicleGameDataXml.SetGameDataAttribute(updated, "IsQuest", "false");
                 updated = TrailerHitchXml.EnsureStoreHitch(updated);
             }
             else if (trailer.IsQuest)
             {
-                updated = SetGameDataAttribute(updated, "IsQuest", "true");
+                updated = VehicleGameDataXml.SetGameDataAttribute(updated, "IsQuest", "true");
                 updated = TrailerHitchXml.RemoveSupplementalStoreHitch(
                     updated,
                     baselineText,
@@ -404,11 +401,11 @@ public static class TrailerTuningService
             }
             else if (trailer.BaselineIsQuest)
             {
-                updated = SetGameDataAttribute(updated, "IsQuest", "false");
+                updated = VehicleGameDataXml.SetGameDataAttribute(updated, "IsQuest", "false");
             }
             else
             {
-                updated = RemoveGameDataAttribute(updated, "IsQuest");
+                updated = VehicleGameDataXml.RemoveGameDataAttribute(updated, "IsQuest");
                 updated = TrailerHitchXml.RemoveSupplementalStoreHitch(
                     updated,
                     baselineText,
@@ -432,30 +429,30 @@ public static class TrailerTuningService
             return baselineText;
         }
 
-        var attrs = ParseAttributes(match.Groups["attrs"].Value);
+        var attrs = VehicleGameDataXml.ParseAttributes(match.Groups["attrs"].Value);
         var updated = baselineText;
 
         if (TryParsePresentInt(attrs, "FuelCapacity", out var fuel) && fuel > 0)
         {
-            updated = ApplyExistingTruckDataInt(updated, "FuelCapacity", Scale(fuel, fuelMultiplier, 1, 10_000));
+            updated = VehicleGameDataXml.ApplyExistingTruckDataInt(updated, "FuelCapacity", Scale(fuel, fuelMultiplier, 1, 10_000));
         }
 
         if (TryParsePresentInt(attrs, "RepairsCapacity", out var repairs) && repairs > 0)
         {
-            updated = ApplyExistingTruckDataInt(updated, "RepairsCapacity", Scale(repairs, repairsMultiplier, 0, 10_000));
+            updated = VehicleGameDataXml.ApplyExistingTruckDataInt(updated, "RepairsCapacity", Scale(repairs, repairsMultiplier, 0, 10_000));
         }
 
         if (TryParsePresentInt(attrs, "WheelRepairsCapacity", out var wheels) && wheels > 0)
         {
-            updated = ApplyExistingTruckDataInt(updated, "WheelRepairsCapacity", Scale(wheels, wheelsMultiplier, 0, 99));
+            updated = VehicleGameDataXml.ApplyExistingTruckDataInt(updated, "WheelRepairsCapacity", Scale(wheels, wheelsMultiplier, 0, 99));
         }
 
         if (GameDataOpenRegex.IsMatch(updated))
         {
-            var baselinePrice = ExtractGameDataInt(baselineText, "Price", 0);
+            var baselinePrice = VehicleGameDataXml.ExtractGameDataInt(baselineText, "Price", 0);
             if (baselinePrice > 0)
             {
-                updated = SetGameDataAttribute(
+                updated = VehicleGameDataXml.SetGameDataAttribute(
                     updated,
                     "Price",
                     Scale(baselinePrice, priceMultiplier, 0, 9_999_999).ToString(CultureInfo.InvariantCulture));
@@ -487,9 +484,9 @@ public static class TrailerTuningService
                     continue;
                 }
 
-                var baselineText = PakVanillaText.Read(baselineArchive, entry, ReadEntryText);
+                var baselineText = PakVanillaText.Read(baselineArchive, entry, PartXmlHelpers.ReadEntryUtf8);
                 var updatedText = transformBaselineText(baselineText);
-                var currentText = ReadEntryText(entry);
+                var currentText = PartXmlHelpers.ReadEntryUtf8(entry);
                 if (!string.Equals(currentText, updatedText, StringComparison.Ordinal))
                 {
                     replacements[entryPath] = Encoding.UTF8.GetBytes(updatedText);
@@ -507,124 +504,19 @@ public static class TrailerTuningService
     private static int Scale(int baseline, double multiplier, int min, int max) =>
         (int)Math.Clamp(Math.Round(baseline * multiplier, MidpointRounding.AwayFromZero), min, max);
 
-    private static void ValidateMultiplier(double value, string parameterName)
-    {
-        if (!double.IsFinite(value) || value <= 0)
-        {
-            throw new ArgumentOutOfRangeException(parameterName, "Multiplier must be a positive number.");
-        }
-    }
-
-    private static string ApplyExistingTruckDataInt(string text, string attributeName, int value)
-    {
-        if (!TryGetTruckDataAttribute(text, attributeName, out _))
-        {
-            return text;
-        }
-
-        return SetTruckDataAttribute(text, attributeName, value.ToString(CultureInfo.InvariantCulture));
-    }
-
-    private static string SetTruckDataAttribute(string text, string attributeName, string value)
-    {
-        var match = TruckDataOpenRegex.Match(text);
-        if (!match.Success)
-        {
-            return text;
-        }
-
-        var attrs = match.Groups["attrs"].Value;
-        if (!SetOrReplaceAttribute(ref attrs, attributeName, value))
-        {
-            return text;
-        }
-
-        var replacement = $"<TruckData{attrs}>";
-        return string.Concat(text.AsSpan(0, match.Index), replacement, text.AsSpan(match.Index + match.Length));
-    }
-
-    private static string SetGameDataAttribute(string text, string attributeName, string value)
-    {
-        var match = GameDataOpenRegex.Match(text);
-        if (!match.Success)
-        {
-            return text;
-        }
-
-        var attrs = match.Groups["attrs"].Value;
-        if (!SetOrReplaceAttribute(ref attrs, attributeName, value))
-        {
-            return text;
-        }
-
-        var replacement = $"<GameData{attrs}>";
-        return string.Concat(text.AsSpan(0, match.Index), replacement, text.AsSpan(match.Index + match.Length));
-    }
-
-    private static string RemoveGameDataAttribute(string text, string attributeName)
-    {
-        var match = GameDataOpenRegex.Match(text);
-        if (!match.Success)
-        {
-            return text;
-        }
-
-        var attrs = match.Groups["attrs"].Value;
-        var pattern = $@"\s*\b{Regex.Escape(attributeName)}\s*=\s*""[^""]*""";
-        var updatedAttrs = Regex.Replace(attrs, pattern, "", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
-        if (string.Equals(attrs, updatedAttrs, StringComparison.Ordinal))
-        {
-            return text;
-        }
-
-        var replacement = $"<GameData{updatedAttrs}>";
-        return string.Concat(text.AsSpan(0, match.Index), replacement, text.AsSpan(match.Index + match.Length));
-    }
-
-    private static bool TryGetTruckDataAttribute(string text, string attributeName, out string value)
-    {
-        value = "";
-        var match = TruckDataOpenRegex.Match(text);
-        if (!match.Success)
-        {
-            return false;
-        }
-
-        var attrs = ParseAttributes(match.Groups["attrs"].Value);
-        if (!attrs.TryGetValue(attributeName, out var raw))
-        {
-            return false;
-        }
-
-        value = raw;
-        return true;
-    }
-
     private static int ReadBaselineInt(string? baselineText, string currentText, string attributeName, int fallback)
     {
-        if (baselineText is not null && TryGetTruckDataAttribute(baselineText, attributeName, out var baselineRaw))
+        if (baselineText is not null && VehicleGameDataXml.TryGetTruckDataAttribute(baselineText, attributeName, out var baselineRaw))
         {
             return ParseInt(baselineRaw, fallback);
         }
 
-        if (TryGetTruckDataAttribute(currentText, attributeName, out var currentRaw))
+        if (VehicleGameDataXml.TryGetTruckDataAttribute(currentText, attributeName, out var currentRaw))
         {
             return ParseInt(currentRaw, fallback);
         }
 
         return fallback;
-    }
-
-    private static int ExtractGameDataInt(string text, string attributeName, int fallback)
-    {
-        var match = GameDataOpenRegex.Match(text);
-        if (!match.Success)
-        {
-            return fallback;
-        }
-
-        var attrs = ParseAttributes(match.Groups["attrs"].Value);
-        return attrs.TryGetValue(attributeName, out var raw) ? ParseInt(raw, fallback) : fallback;
     }
 
     private static bool? TryExtractGameDataBool(string text, string attributeName)
@@ -635,7 +527,7 @@ public static class TrailerTuningService
             return null;
         }
 
-        var attrs = ParseAttributes(match.Groups["attrs"].Value);
+        var attrs = VehicleGameDataXml.ParseAttributes(match.Groups["attrs"].Value);
         if (!attrs.TryGetValue(attributeName, out var raw))
         {
             return null;
@@ -707,7 +599,7 @@ public static class TrailerTuningService
         }
 
         var entry = PakEntryLocator.FindEntry(archive, entryPath);
-        return entry is null ? null : ReadEntryText(entry);
+        return entry is null ? null : PartXmlHelpers.ReadEntryUtf8(entry);
     }
 
     private static bool TryParsePresentInt(Dictionary<string, string> attrs, string name, out int value)
@@ -722,50 +614,10 @@ public static class TrailerTuningService
         return true;
     }
 
-    private static bool SetOrReplaceAttribute(ref string attrs, string attributeName, string value)
-    {
-        var pattern = $@"(?<prefix>\b{Regex.Escape(attributeName)}\s*=\s*"")(?<value>[^""]*)(?<suffix>"")";
-        var regex = new Regex(pattern, RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
-        var match = regex.Match(attrs);
-        if (match.Success)
-        {
-            if (string.Equals(match.Groups["value"].Value, value, StringComparison.Ordinal))
-            {
-                return false;
-            }
-
-            attrs = regex.Replace(attrs, $"{match.Groups["prefix"].Value}{value}{match.Groups["suffix"].Value}", 1);
-            return true;
-        }
-
-        attrs = string.IsNullOrWhiteSpace(attrs)
-            ? $" {attributeName}=\"{value}\""
-            : $"{attrs.TrimEnd()} {attributeName}=\"{value}\"";
-        return true;
-    }
-
-    private static Dictionary<string, string> ParseAttributes(string attrs)
-    {
-        var result = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-        foreach (Match match in AttributeRegex.Matches(attrs))
-        {
-            result[match.Groups["name"].Value] = match.Groups["value"].Value;
-        }
-
-        return result;
-    }
-
     private static int ParseInt(string? value, int fallback) =>
         int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsed)
             ? parsed
             : fallback;
-
-    private static string ReadEntryText(ZipArchiveEntry entry)
-    {
-        using var stream = entry.Open();
-        using var reader = new StreamReader(stream, Encoding.UTF8, detectEncodingFromByteOrderMarks: true);
-        return reader.ReadToEnd();
-    }
 
     private static byte[] ReadEntryBytes(ZipArchiveEntry entry)
     {
