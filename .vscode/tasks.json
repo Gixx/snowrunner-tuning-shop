@@ -2,12 +2,28 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "build",
+      "label": "build-wpf",
       "command": "dotnet",
       "type": "process",
       "args": [
         "build",
         "${workspaceFolder}/src/SnowRunnerTuningShop/SnowRunnerTuningShop.csproj",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary;ForceNoAlign"
+      ],
+      "group": "build",
+      "presentation": {
+        "reveal": "silent"
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "build-desktop",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "build",
+        "${workspaceFolder}/src/SnowRunnerTuningShop.Desktop/SnowRunnerTuningShop.Desktop.csproj",
         "/property:GenerateFullPaths=true",
         "/consoleloggerparameters:NoSummary;ForceNoAlign"
       ],
@@ -21,18 +37,14 @@
       "problemMatcher": "$msCompile"
     },
     {
-      "label": "run",
+      "label": "run-desktop",
       "command": "dotnet",
       "type": "process",
       "args": [
         "run",
         "--project",
-        "${workspaceFolder}/src/SnowRunnerTuningShop/SnowRunnerTuningShop.csproj"
+        "${workspaceFolder}/src/SnowRunnerTuningShop.Desktop/SnowRunnerTuningShop.Desktop.csproj"
       ],
-      "group": {
-        "kind": "test",
-        "isDefault": true
-      },
       "problemMatcher": "$msCompile"
     }
   ]
