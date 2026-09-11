@@ -4,7 +4,12 @@
              xmlns:views="clr-namespace:SnowRunnerTuningShop.Views"
              xmlns:loc="clr-namespace:SnowRunnerTuningShop.Localization">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
         <TabControl x:Name="PartsTabControl"
+                    Grid.Row="0"
                     BorderThickness="0"
                     Background="Transparent"
                     SelectionChanged="PartsTabControl_SelectionChanged">
@@ -70,7 +75,15 @@
             </TabItem>
         </TabControl>
 
+        <TextBlock x:Name="StatusText"
+                   Grid.Row="1"
+                   Margin="0,8,0,0"
+                   TextWrapping="Wrap"
+                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+
         <Border x:Name="LoadingOverlay"
+                Grid.Row="0"
+                Grid.RowSpan="2"
                 Background="#99000000"
                 Visibility="Collapsed"
                 CornerRadius="8"

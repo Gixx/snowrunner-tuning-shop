@@ -82,28 +82,23 @@ public partial class WinchTuningView : UserControl
             return;
         }
 
-        try
+        using (PakWriteUi.BeginBusyWrite(ApplyMultipliersButton, SaveIndividualButton, RestoreWinchesButton))
         {
-            var result = WinchService.RestoreWinchesFromBaseline(PakPath);
-            ResetMultiplierSlidersToBaseline();
-            AutonomousAllCheckBox.IsChecked = false;
-            ReloadWinches();
-            ReportStatus(UiText.Winch.MultipliersAppliedStatus(
-                result.ChangedWinches,
-                result.UpdatedFiles));
-
-            MessageBox.Show(
-                UiText.Winch.RestoreWinchesMessage(
+            try
+            {
+                var result = WinchService.RestoreWinchesFromBaseline(PakPath);
+                ResetMultiplierSlidersToBaseline();
+                AutonomousAllCheckBox.IsChecked = false;
+                ReloadWinches();
+                ReportStatus(UiText.Winch.MultipliersAppliedStatus(
                     result.ChangedWinches,
-                    result.UpdatedFiles),
-                UiText.Winch.RestoreWinchesSuccessTitle,
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
-        }
-        catch (Exception ex)
-        {
-            ReportStatus(UiText.Main.ErrorStatus(ex.Message));
-            MessageBox.Show(ex.Message, UiText.Winch.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+                    result.UpdatedFiles));
+            }
+            catch (Exception ex)
+            {
+                ReportStatus(UiText.Main.ErrorStatus(ex.Message));
+                MessageBox.Show(ex.Message, UiText.Winch.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 
@@ -115,62 +110,56 @@ public partial class WinchTuningView : UserControl
             return;
         }
 
-        try
+        using (PakWriteUi.BeginBusyWrite(ApplyMultipliersButton, SaveIndividualButton, RestoreWinchesButton))
         {
-            var result = WinchService.ApplyGlobalMultipliers(
-                PakPath,
-                GetLengthMultiplier(),
-                GetStrengthMultiplier(),
-                AutonomousAllCheckBox.IsChecked == true);
+            try
+            {
+                var result = WinchService.ApplyGlobalMultipliers(
+                    PakPath,
+                    GetLengthMultiplier(),
+                    GetStrengthMultiplier(),
+                    AutonomousAllCheckBox.IsChecked == true);
 
-            ReloadWinches();
-            ReportStatus(UiText.Winch.MultipliersAppliedStatus(
-                result.ChangedWinches,
-                result.UpdatedFiles));
-
-            MessageBox.Show(
-                UiText.Winch.MultipliersSavedMessage(
+                ReloadWinches();
+                ReportStatus(UiText.Winch.MultipliersAppliedStatus(
                     result.ChangedWinches,
-                    result.UpdatedFiles),
-                UiText.Winch.SaveSuccessTitle,
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
-        }
-        catch (Exception ex)
-        {
-            ReportStatus(UiText.Main.ErrorStatus(ex.Message));
-            MessageBox.Show(ex.Message, UiText.Winch.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+                    result.UpdatedFiles));
+            }
+            catch (Exception ex)
+            {
+                ReportStatus(UiText.Main.ErrorStatus(ex.Message));
+                MessageBox.Show(ex.Message, UiText.Winch.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 
     private void SaveIndividualButton_Click(object sender, RoutedEventArgs e)
     {
         if (!PakWriteUi.TryBeginWrite(_session, PakPath, _pakWritesAllowed, requireBaseline: false,
-                () => MessageBox.Show(UiText.Winch.LoadPakFirst, UiText.Winch.LoadErrorTitle, MessageBoxButton.OK, MessageBoxImage.Information)))
+                () => ReportStatus(UiText.Winch.LoadPakFirst)))
         {
             return;
         }
 
-        try
+        using (PakWriteUi.BeginBusyWrite(ApplyMultipliersButton, SaveIndividualButton, RestoreWinchesButton))
         {
-            PartsTuningUiHelpers.CommitGridEdits(WinchesGrid);
+            try
+            {
+                PartsTuningUiHelpers.CommitGridEdits(WinchesGrid);
 
-            var winches = _winches
-                .Select(row => row.ToDefinition())
-                .ToArray();
+                var winches = _winches
+                    .Select(row => row.ToDefinition())
+                    .ToArray();
 
-            var result = WinchService.SaveWinchChanges(PakPath, winches);
-            ReloadWinches();
-
-            MessageBox.Show(
-                UiText.Winch.IndividualSavedMessage(result.ChangedWinches),
-                UiText.Winch.SaveSuccessTitle,
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show(ex.Message, UiText.Winch.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+                var result = WinchService.SaveWinchChanges(PakPath, winches);
+                ReloadWinches();
+                ReportStatus(UiText.Winch.IndividualSavedStatus(result.ChangedWinches, result.UpdatedFiles));
+            }
+            catch (Exception ex)
+            {
+                ReportStatus(UiText.Main.ErrorStatus(ex.Message));
+                MessageBox.Show(ex.Message, UiText.Winch.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 

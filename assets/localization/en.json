@@ -173,6 +173,8 @@
   "Main.CategoryColumn": "Category",
   "Main.ChangeLocation": "Change location...",
   "Main.ChangeLocationDialogTitle": "Select initial.pak for another store/location",
+  "Main.ChangeLocationMarkedPakConfirm": "This initial.pak already contains Tuning Shop changes (profile marker found), and no baseline exists for this edition yet.\n\nUsing it as the new read-only baseline will treat a tuned pak as vanilla. Prefer an unmodified original from the game install.\n\nContinue anyway?",
+  "Main.ChangeLocationMarkedPakTitle": "Create baseline from a tuned pak?",
   "Main.ConfigCorruptMessage": "Your Tuning Shop settings file was damaged and has been reset. A backup was saved as config.json.corrupt.bak in the app data folder.",
   "Main.ConfigCorruptTitle": "Settings reset",
   "Main.ErrorStatus": "Error: {0}",

@@ -26,3 +26,11 @@ jobs:
 
       - name: Test
         run: dotnet test tests/SnowRunnerTuningShop.Tests/SnowRunnerTuningShop.Tests.csproj -c Release --no-build --verbosity normal
+
+      - name: Publish smoke (win-x64 self-contained)
+        run: >
+          dotnet publish src/SnowRunnerTuningShop/SnowRunnerTuningShop.csproj
+          -c Release
+          -r win-x64
+          --self-contained true
+          -o publish/smoke

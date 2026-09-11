@@ -26,6 +26,8 @@ public partial class GearboxTuningView : UserControl
         ResetMultiplierSlidersToBaseline();
     }
 
+    public event EventHandler<string>? StatusChanged;
+
     public string? PakPath { get; private set; }
 
     public void AttachSession(AppSession session) => _session = session;
@@ -75,88 +77,88 @@ public partial class GearboxTuningView : UserControl
     private void RestoreGearboxesButton_Click(object sender, RoutedEventArgs e)
     {
         if (!PakWriteUi.TryBeginWrite(_session, PakPath, _pakWritesAllowed, requireBaseline: true,
-                () => MessageBox.Show(UiText.Gearbox.LoadPakFirst, UiText.Gearbox.LoadErrorTitle, MessageBoxButton.OK, MessageBoxImage.Information)))
+                () => ReportStatus(UiText.Gearbox.LoadPakFirst)))
         {
             return;
         }
 
-        try
+        using (PakWriteUi.BeginBusyWrite(ApplyMultipliersButton, SaveIndividualButton, RestoreGearboxesButton))
         {
-            var result = GearboxService.RestoreGearboxesFromBaseline(PakPath);
-            ResetMultiplierSlidersToBaseline();
-            ReloadGearboxes();
-            MessageBox.Show(
-                UiText.Gearbox.RestoreGearboxesMessage(
+            try
+            {
+                var result = GearboxService.RestoreGearboxesFromBaseline(PakPath);
+                ResetMultiplierSlidersToBaseline();
+                ReloadGearboxes();
+                ReportStatus(UiText.Gearbox.MultipliersAppliedStatus(
                     result.ChangedGearboxes,
-                    result.UpdatedFiles),
-                UiText.Gearbox.RestoreGearboxesSuccessTitle,
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show(ex.Message, UiText.Gearbox.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+                    result.UpdatedFiles));
+            }
+            catch (Exception ex)
+            {
+                ReportStatus(UiText.Main.ErrorStatus(ex.Message));
+                MessageBox.Show(ex.Message, UiText.Gearbox.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 
     private void ApplyMultipliersButton_Click(object sender, RoutedEventArgs e)
     {
         if (!PakWriteUi.TryBeginWrite(_session, PakPath, _pakWritesAllowed, requireBaseline: true,
-                () => MessageBox.Show(UiText.Gearbox.LoadPakFirst, UiText.Gearbox.LoadErrorTitle, MessageBoxButton.OK, MessageBoxImage.Information)))
+                () => ReportStatus(UiText.Gearbox.LoadPakFirst)))
         {
             return;
         }
 
-        try
+        using (PakWriteUi.BeginBusyWrite(ApplyMultipliersButton, SaveIndividualButton, RestoreGearboxesButton))
         {
-            var result = GearboxService.ApplyGlobalMultipliers(
-                PakPath,
-                GetMultiplier(FuelMultiplierSlider),
-                GetMultiplier(IdleMultiplierSlider),
-                GetMultiplier(AwdMultiplierSlider));
+            try
+            {
+                var result = GearboxService.ApplyGlobalMultipliers(
+                    PakPath,
+                    GetMultiplier(FuelMultiplierSlider),
+                    GetMultiplier(IdleMultiplierSlider),
+                    GetMultiplier(AwdMultiplierSlider));
 
-            ReloadGearboxes();
-            MessageBox.Show(
-                UiText.Gearbox.MultipliersSavedMessage(
+                ReloadGearboxes();
+                ReportStatus(UiText.Gearbox.MultipliersAppliedStatus(
                     result.ChangedGearboxes,
-                    result.UpdatedFiles),
-                UiText.Gearbox.SaveSuccessTitle,
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show(ex.Message, UiText.Gearbox.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+                    result.UpdatedFiles));
+            }
+            catch (Exception ex)
+            {
+                ReportStatus(UiText.Main.ErrorStatus(ex.Message));
+                MessageBox.Show(ex.Message, UiText.Gearbox.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 
     private void SaveIndividualButton_Click(object sender, RoutedEventArgs e)
     {
         if (!PakWriteUi.TryBeginWrite(_session, PakPath, _pakWritesAllowed, requireBaseline: false,
-                () => MessageBox.Show(UiText.Gearbox.LoadPakFirst, UiText.Gearbox.LoadErrorTitle, MessageBoxButton.OK, MessageBoxImage.Information)))
+                () => ReportStatus(UiText.Gearbox.LoadPakFirst)))
         {
             return;
         }
 
-        try
+        using (PakWriteUi.BeginBusyWrite(ApplyMultipliersButton, SaveIndividualButton, RestoreGearboxesButton))
         {
-            PartsTuningUiHelpers.CommitGridEdits(GearboxesGrid);
+            try
+            {
+                PartsTuningUiHelpers.CommitGridEdits(GearboxesGrid);
 
-            var gearboxes = _gearboxes
-                .Select(row => row.ToDefinition())
-                .ToArray();
+                var gearboxes = _gearboxes
+                    .Select(row => row.ToDefinition())
+                    .ToArray();
 
-            var result = GearboxService.SaveGearboxChanges(PakPath, gearboxes);
-            ReloadGearboxes();
-            MessageBox.Show(
-                UiText.Gearbox.IndividualSavedMessage(result.ChangedGearboxes),
-                UiText.Gearbox.SaveSuccessTitle,
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show(ex.Message, UiText.Gearbox.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+                var result = GearboxService.SaveGearboxChanges(PakPath, gearboxes);
+                ReloadGearboxes();
+                ReportStatus(UiText.Gearbox.IndividualSavedStatus(result.ChangedGearboxes, result.UpdatedFiles));
+            }
+            catch (Exception ex)
+            {
+                ReportStatus(UiText.Main.ErrorStatus(ex.Message));
+                MessageBox.Show(ex.Message, UiText.Gearbox.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 
@@ -267,6 +269,9 @@ public partial class GearboxTuningView : UserControl
 
     private static double GetMultiplier(Slider slider) =>
         TuningMultiplierPresets.GetValue(GetMultiplierIndex(slider));
+
+    private void ReportStatus(string message) =>
+        StatusChanged?.Invoke(this, message);
 
     public sealed class GearboxRowViewModel : INotifyPropertyChanged
     {

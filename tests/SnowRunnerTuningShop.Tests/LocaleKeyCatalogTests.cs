@@ -10,6 +10,12 @@ public sealed class LocaleKeyCatalogTests
         PropertyNameCaseInsensitive = true,
     };
 
+    private static readonly HashSet<string> ExcludedLocaleFiles = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "keys.json",
+        "catalog.json",
+    };
+
     public LocaleKeyCatalogTests()
     {
         LocaleKeyCatalog.Reload();
@@ -32,13 +38,38 @@ public sealed class LocaleKeyCatalogTests
             "en.json is missing catalog key(s): " + string.Join(", ", missing.Take(20)));
     }
 
+    public static TheoryData<string> ShippedLocaleFiles()
+    {
+        var data = new TheoryData<string>();
+        foreach (var path in Directory.EnumerateFiles(GetLocalizationDirectory(), "*.json"))
+        {
+            var name = Path.GetFileName(path);
+            if (ExcludedLocaleFiles.Contains(name))
+            {
+                continue;
+            }
+
+            data.Add(name);
+        }
+
+        return data;
+    }
+
     [Theory]
-    [InlineData("de.json")]
-    [InlineData("zh-CN.json")]
+    [MemberData(nameof(ShippedLocaleFiles))]
     public void Bundled_locale_files_parse_and_are_measured(string fileName)
     {
         var locale = LoadLocale(fileName);
         Assert.NotEmpty(locale);
+
+        if (fileName.Equals("en.json", StringComparison.OrdinalIgnoreCase))
+        {
+            var missing = LocaleKeyCatalog.MissingFromEnglish(locale);
+            Assert.True(
+                missing.Count == 0,
+                "en.json is missing catalog key(s): " + string.Join(", ", missing.Take(20)));
+            return;
+        }
 
         // Other languages may omit keys (English fallback). Ensure the catalog can measure them.
         _ = LocaleKeyCatalog.MissingFrom(locale);
@@ -46,12 +77,19 @@ public sealed class LocaleKeyCatalogTests
 
     private static IReadOnlyDictionary<string, string> LoadLocale(string fileName)
     {
-        var path = Path.Combine(AppContext.BaseDirectory, "assets", "localization", fileName);
+        var path = Path.Combine(GetLocalizationDirectory(), fileName);
         Assert.True(File.Exists(path), $"Missing test asset: {path}");
 
         var json = File.ReadAllText(path);
         var data = JsonSerializer.Deserialize<Dictionary<string, string>>(json, JsonOptions);
         Assert.NotNull(data);
         return data;
+    }
+
+    private static string GetLocalizationDirectory()
+    {
+        var path = Path.Combine(AppContext.BaseDirectory, "assets", "localization");
+        Assert.True(Directory.Exists(path), $"Missing localization directory: {path}");
+        return path;
     }
 }

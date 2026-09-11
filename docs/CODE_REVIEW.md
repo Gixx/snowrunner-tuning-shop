@@ -77,46 +77,37 @@ Lock; atomikus save; corrupt → `.corrupt.bak` + `ConsumeCorruptConfigWarning` 
 
 ## P2 — közepes (UX, memória, éles élek)
 
-### 14. MessageBox túlterhelés
-Siker + hiba gyakran status **és** modal. Parts `StatusChanged` részben dead.  
-**Javaslat:** Siker → status/banner; modal csak confirm + valódi error.
+> **Státusz (2026-09-11):** P2 nyitott tételek (14–16, 18–23) lezárva. 17 és 24 korábban kész.
 
-### 15. Írás közben nincs busy-disable
-Hosszú Apply alatt újabb kattintás lehetséges.  
-**Javaslat:** Cursor + gombok disable a művelet végéig.
+### 14. MessageBox túlterhelés — **kész**
+Siker → status/banner (`PartsView.StatusText` + `StatusChanged`; Vehicles/Trailers/General/PhotoMode status mezők). Modal: confirm + error.
 
-### 16. Eager BitmapImage a katalógusokban
-**Hol:** `VehicleCatalog` / `TrailerCatalog` + view LoadCatalog  
-**Javaslat:** Lazy / virtualizálás; flag cache mintája a thumbökre is.
+### 15. Írás közben nincs busy-disable — **kész**
+`PakWriteUi.BeginBusyWrite`: Wait cursor + write gombok disable Apply/Save/Restore handlereken.
+
+### 16. Eager BitmapImage a katalógusokban — **kész**
+Vehicles/Trailers `LoadCatalog` csak path; thumb decode lazy + path cache (flag cache mintája). Detail kép selection-re marad.
 
 ### 17. `assets/vehicles/_meta_build` bemegy az outputba — **kész**
 Vehicles Content Include kizárja a `_meta_build`-et (trailers mintájára).
 
-### 18. `PakFileId` fuzzy suffix/prefix
-Rövid közös végződés → rossz truck. Collisionnél `list[0]`.  
-**Javaslat:** Catalogban kötelező egyedi `pakId`; fuzzy csak fallback + log; tesztek ambiguus id-kre.
+### 18. `PakFileId` fuzzy suffix/prefix — **kész**
+Ambiguus fuzzy → `null`; exact + DLC tie-break változatlan. Tesztek: `PakFileIdTests`.
 
-### 19. Change location / első baseline tuned pakból
-**Hol:** `PakBaselineService.ChangeLocation`  
-Tuned fájl = „vanilla” baseline az editionnek.  
-**Javaslat:** Erős UI figyelmeztetés + opcionális fingerprint/marker check.
+### 19. Change location / első baseline tuned pakból — **kész**
+`HomeView.ActivateFromBrowse`: marker + hiányzó edition baseline → Yes/No figyelmeztetés mielőtt `ChangeLocation` létrehozza a baseline-t.
 
-### 20. Crash report tartalmazza a teljes pak pathot
-**Hol:** `CrashReportBuilder`  
-Privacy / support.  
-**Javaslat:** Path truncálás vagy „…/SnowRunner/…/initial.pak” normalizálás a megosztott szövegben.
+### 20. Crash report tartalmazza a teljes pak pathot — **kész**
+`CrashReportBuilder.SanitizePathForReport` (utolsó 3 szegmens); BugReport ugyanezt használja.
 
-### 21. Photo Mode / General reload minden `GameRunningChanged`-re
-Folyamat indul → slider állapot elveszhet.  
-**Javaslat:** Csak a write gombok frissítése, ne teljes ReloadFromPak.
+### 21. Photo Mode / General reload minden `GameRunningChanged`-re — **kész**
+Csak `RefreshWriteGates` (gomb `IsEnabled`); teljes reload `PakChanged` / `BaselineChanged`-en.
 
-### 22. Locale tesztek csak en + de + zh-CN
-Többi bundled locale nincs kulcs-mérve.  
-**Javaslat:** Theory az összes shipped `*.json`-ra (hiány OK fallbackkal; parse kötelező).
+### 22. Locale tesztek csak en + de + zh-CN — **kész**
+`LocaleKeyCatalogTests`: `[MemberData]` az összes shipped `assets/localization/*.json`-ra (`keys.json` / `catalog.json` kihagyva).
 
-### 23. CI nem buildeli az installert / nem publish smoke
-**Hol:** `ci.yml` vs `release.yml`  
-**Javaslat:** Legalább Inno compile dry-run vagy `dotnet publish` win-x64 CI-n (opcionális job).
+### 23. CI nem buildeli az installert / nem publish smoke — **kész**
+`ci.yml`: `dotnet publish` win-x64 self-contained → `publish/smoke` a tesztek után.
 
 ### 24. README drift — **kész**
 Vehicles szekció frissítve (per-vehicle tuning + global multipliers).
@@ -163,7 +154,7 @@ Vehicles szekció frissítve (per-vehicle tuning + global multipliers).
 | ~~6~~ | ~~Parts `PartPakPipeline` + ReadEntryUtf8~~ | **kész** |
 | ~~7~~ | ~~`TruckDiffLockXml` + `VehicleGameDataXml`~~ | **kész** |
 | ~~8~~ | ~~`PartsTuningUiHelpers`~~ | **kész** |
-| 14+ | MessageBox / busy-disable / lazy images… | P2 |
+| ~~14–16, 18–23~~ | ~~MessageBox / busy / lazy / PakFileId / ChangeLocation / crash path / GameRunning / locale tests / CI publish~~ | **kész** |
 | — | Vehicles `_meta_build` exclude + README | **kész (hygiene)** |
 
 ---

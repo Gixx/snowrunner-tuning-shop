@@ -142,7 +142,7 @@ public static class CrashReportBuilder
 
             if (!string.IsNullOrWhiteSpace(session.PakPath))
             {
-                builder.AppendLine($"Pak path: {session.PakPath}");
+                builder.AppendLine($"Pak path: {SanitizePathForReport(session.PakPath)}");
             }
         }
 
@@ -169,5 +169,35 @@ public static class CrashReportBuilder
         }
 
         return builder.ToString();
+    }
+
+    /// <summary>
+    /// Keeps only the last few path segments so shared crash/bug reports do not leak full install paths.
+    /// </summary>
+    public static string SanitizePathForReport(string? path, int keepSegments = 3)
+    {
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            return "";
+        }
+
+        var normalized = path.Replace('\\', '/').Trim();
+        while (normalized.Contains("//", StringComparison.Ordinal))
+        {
+            normalized = normalized.Replace("//", "/", StringComparison.Ordinal);
+        }
+
+        var segments = normalized.Split('/', StringSplitOptions.RemoveEmptyEntries);
+        if (segments.Length == 0)
+        {
+            return "";
+        }
+
+        if (segments.Length <= keepSegments)
+        {
+            return string.Join('/', segments);
+        }
+
+        return "…/" + string.Join('/', segments.Skip(segments.Length - keepSegments));
     }
 }

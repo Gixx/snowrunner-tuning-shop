@@ -27,6 +27,8 @@ public partial class TireTuningView : UserControl
         ResetMultiplierSlidersToBaseline();
     }
 
+    public event EventHandler<string>? StatusChanged;
+
     public string? PakPath { get; private set; }
 
     public void AttachSession(AppSession session) => _session = session;
@@ -76,91 +78,91 @@ public partial class TireTuningView : UserControl
     private void RestoreTiresButton_Click(object sender, RoutedEventArgs e)
     {
         if (!PakWriteUi.TryBeginWrite(_session, PakPath, _pakWritesAllowed, requireBaseline: true,
-                () => MessageBox.Show(UiText.Tires.LoadPakFirst, UiText.Tires.LoadErrorTitle, MessageBoxButton.OK, MessageBoxImage.Information)))
+                () => ReportStatus(UiText.Tires.LoadPakFirst)))
         {
             return;
         }
 
-        try
+        using (PakWriteUi.BeginBusyWrite(ApplyMultipliersButton, SaveIndividualButton, RestoreTiresButton))
         {
-            var result = TireService.RestoreTiresFromBaseline(PakPath);
-            ResetMultiplierSlidersToBaseline();
-            GlobalIgnoreIceCheckBox.IsChecked = false;
-            ReloadTires();
-            MessageBox.Show(
-                UiText.Tires.RestoreTiresMessage(
+            try
+            {
+                var result = TireService.RestoreTiresFromBaseline(PakPath);
+                ResetMultiplierSlidersToBaseline();
+                GlobalIgnoreIceCheckBox.IsChecked = false;
+                ReloadTires();
+                ReportStatus(UiText.Tires.MultipliersAppliedStatus(
                     result.ChangedTires,
-                    result.UpdatedFiles),
-                UiText.Tires.RestoreTiresSuccessTitle,
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show(ex.Message, UiText.Tires.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+                    result.UpdatedFiles));
+            }
+            catch (Exception ex)
+            {
+                ReportStatus(UiText.Main.ErrorStatus(ex.Message));
+                MessageBox.Show(ex.Message, UiText.Tires.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 
     private void ApplyMultipliersButton_Click(object sender, RoutedEventArgs e)
     {
         if (!PakWriteUi.TryBeginWrite(_session, PakPath, _pakWritesAllowed, requireBaseline: true,
-                () => MessageBox.Show(UiText.Tires.LoadPakFirst, UiText.Tires.LoadErrorTitle, MessageBoxButton.OK, MessageBoxImage.Information)))
+                () => ReportStatus(UiText.Tires.LoadPakFirst)))
         {
             return;
         }
 
-        try
+        using (PakWriteUi.BeginBusyWrite(ApplyMultipliersButton, SaveIndividualButton, RestoreTiresButton))
         {
-            var result = TireService.ApplyGlobalMultipliers(
-                PakPath,
-                GetMultiplier(OnRoadFrictionMultiplierSlider),
-                GetMultiplier(OffRoadFrictionMultiplierSlider),
-                GetMultiplier(MudFrictionMultiplierSlider),
-                GlobalIgnoreIceCheckBox.IsChecked == true ? true : null);
+            try
+            {
+                var result = TireService.ApplyGlobalMultipliers(
+                    PakPath,
+                    GetMultiplier(OnRoadFrictionMultiplierSlider),
+                    GetMultiplier(OffRoadFrictionMultiplierSlider),
+                    GetMultiplier(MudFrictionMultiplierSlider),
+                    GlobalIgnoreIceCheckBox.IsChecked == true ? true : null);
 
-            ReloadTires();
-            GlobalIgnoreIceCheckBox.IsChecked = false;
-            MessageBox.Show(
-                UiText.Tires.MultipliersSavedMessage(
+                ReloadTires();
+                GlobalIgnoreIceCheckBox.IsChecked = false;
+                ReportStatus(UiText.Tires.MultipliersAppliedStatus(
                     result.ChangedTires,
-                    result.UpdatedFiles),
-                UiText.Tires.SaveSuccessTitle,
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show(ex.Message, UiText.Tires.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+                    result.UpdatedFiles));
+            }
+            catch (Exception ex)
+            {
+                ReportStatus(UiText.Main.ErrorStatus(ex.Message));
+                MessageBox.Show(ex.Message, UiText.Tires.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 
     private void SaveIndividualButton_Click(object sender, RoutedEventArgs e)
     {
         if (!PakWriteUi.TryBeginWrite(_session, PakPath, _pakWritesAllowed, requireBaseline: false,
-                () => MessageBox.Show(UiText.Tires.LoadPakFirst, UiText.Tires.LoadErrorTitle, MessageBoxButton.OK, MessageBoxImage.Information)))
+                () => ReportStatus(UiText.Tires.LoadPakFirst)))
         {
             return;
         }
 
-        try
+        using (PakWriteUi.BeginBusyWrite(ApplyMultipliersButton, SaveIndividualButton, RestoreTiresButton))
         {
-            PartsTuningUiHelpers.CommitGridEdits(TiresGrid);
+            try
+            {
+                PartsTuningUiHelpers.CommitGridEdits(TiresGrid);
 
-            var tires = _tires
-                .SelectMany(row => row.ToDefinitions())
-                .ToArray();
+                var tires = _tires
+                    .SelectMany(row => row.ToDefinitions())
+                    .ToArray();
 
-            var result = TireService.SaveTireChanges(PakPath, tires);
-            ReloadTires();
-            MessageBox.Show(
-                UiText.Tires.IndividualSavedMessage(result.ChangedTires),
-                UiText.Tires.SaveSuccessTitle,
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show(ex.Message, UiText.Tires.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+                var result = TireService.SaveTireChanges(PakPath, tires);
+                ReloadTires();
+                ReportStatus(UiText.Tires.IndividualSavedStatus(result.ChangedTires, result.UpdatedFiles));
+            }
+            catch (Exception ex)
+            {
+                ReportStatus(UiText.Main.ErrorStatus(ex.Message));
+                MessageBox.Show(ex.Message, UiText.Tires.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 
@@ -316,6 +318,9 @@ public partial class TireTuningView : UserControl
 
     private static double GetMultiplier(Slider slider) =>
         TuningMultiplierPresets.GetValue(GetMultiplierIndex(slider));
+
+    private void ReportStatus(string message) =>
+        StatusChanged?.Invoke(this, message);
 
     public sealed class TireRowViewModel : INotifyPropertyChanged
     {

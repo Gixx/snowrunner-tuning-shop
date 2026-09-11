@@ -61,6 +61,39 @@ public sealed class PakFileIdTests
         Assert.NotNull(found);
         Assert.DoesNotContain("/_dlc/", found.Path, StringComparison.OrdinalIgnoreCase);
     }
+
+    [Fact]
+    public void Ambiguous_suffix_match_returns_null()
+    {
+        var items = new[]
+        {
+            new Item("azov_64131", "[media]/classes/trucks/azov_64131.xml"),
+            new Item("ford_64131", "[media]/classes/trucks/ford_64131.xml"),
+        };
+
+        var found = PakFileId.Find(items, item => item.Id, "64131");
+
+        Assert.Null(found);
+    }
+
+    [Fact]
+    public void Ambiguous_prefix_match_returns_null()
+    {
+        var items = new[]
+        {
+            new Item("truck", "[media]/classes/trucks/truck.xml"),
+            new Item("truck", "[media]/_dlc/x/classes/trucks/truck.xml"),
+        };
+
+        // Candidate longer than both file ids → prefix fuzzy; two equal-length prefixes → null
+        var found = PakFileId.Find(
+            items,
+            item => item.Id,
+            item => item.Path,
+            "truckextra");
+
+        Assert.Null(found);
+    }
 }
 
 public sealed class TrailerStoreAvailabilityTests

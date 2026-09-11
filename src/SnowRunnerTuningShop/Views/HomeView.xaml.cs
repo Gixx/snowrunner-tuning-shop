@@ -101,6 +101,25 @@ public partial class HomeView : UserControl
 
         try
         {
+            if (changeLocation)
+            {
+                var fullPath = Path.GetFullPath(dialog.FileName);
+                var edition = GameEditionDetector.Detect(fullPath);
+                if (!PakBaselineService.HasBaselineForEdition(edition.Id)
+                    && TuningProfileMarker.HasMarker(fullPath))
+                {
+                    var confirm = MessageBox.Show(
+                        UiText.Main.ChangeLocationMarkedPakConfirm,
+                        UiText.Main.ChangeLocationMarkedPakTitle,
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Warning);
+                    if (confirm != MessageBoxResult.Yes)
+                    {
+                        return;
+                    }
+                }
+            }
+
             var result = changeLocation
                 ? PakBaselineService.ChangeLocation(dialog.FileName)
                 : PakBaselineService.SetBaselineFromOriginal(dialog.FileName);

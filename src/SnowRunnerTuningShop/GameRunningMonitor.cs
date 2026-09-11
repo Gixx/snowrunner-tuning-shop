@@ -1,5 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Threading;
 using SnowRunnerTuningShop.Core.Game;
 
@@ -117,5 +119,33 @@ internal static class PakWriteUi
         }
 
         return true;
+    }
+
+    public static IDisposable BeginBusyWrite(params Button[] buttons)
+    {
+        var previousCursor = Mouse.OverrideCursor;
+        Mouse.OverrideCursor = Cursors.Wait;
+
+        var states = new (Button Button, bool WasEnabled)[buttons.Length];
+        for (var i = 0; i < buttons.Length; i++)
+        {
+            var button = buttons[i];
+            states[i] = (button, button.IsEnabled);
+            button.IsEnabled = false;
+        }
+
+        return new BusyWriteScope(previousCursor, states);
+    }
+
+    private sealed class BusyWriteScope(Cursor? previousCursor, (Button Button, bool WasEnabled)[] buttons) : IDisposable
+    {
+        public void Dispose()
+        {
+            Mouse.OverrideCursor = previousCursor;
+            foreach (var (button, wasEnabled) in buttons)
+            {
+                button.IsEnabled = wasEnabled;
+            }
+        }
     }
 }

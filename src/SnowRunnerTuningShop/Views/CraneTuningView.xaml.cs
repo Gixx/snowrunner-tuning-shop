@@ -75,27 +75,22 @@ public partial class CraneTuningView : UserControl
             return;
         }
 
-        try
+        using (PakWriteUi.BeginBusyWrite(ApplyMultipliersButton, SaveIndividualButton, RestoreCranesButton))
         {
-            var result = CraneService.RestoreCranesFromBaseline(PakPath);
-            ResetMultiplierSlidersToBaseline();
-            ReloadCranes();
-            ReportStatus(UiText.Crane.MultipliersAppliedStatus(
-                result.ChangedCranes,
-                result.UpdatedFiles));
-
-            MessageBox.Show(
-                UiText.Crane.RestoreCranesMessage(
+            try
+            {
+                var result = CraneService.RestoreCranesFromBaseline(PakPath);
+                ResetMultiplierSlidersToBaseline();
+                ReloadCranes();
+                ReportStatus(UiText.Crane.MultipliersAppliedStatus(
                     result.ChangedCranes,
-                    result.UpdatedFiles),
-                UiText.Crane.RestoreCranesSuccessTitle,
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
-        }
-        catch (Exception ex)
-        {
-            ReportStatus(UiText.Main.ErrorStatus(ex.Message));
-            MessageBox.Show(ex.Message, UiText.Crane.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+                    result.UpdatedFiles));
+            }
+            catch (Exception ex)
+            {
+                ReportStatus(UiText.Main.ErrorStatus(ex.Message));
+                MessageBox.Show(ex.Message, UiText.Crane.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 
@@ -107,61 +102,55 @@ public partial class CraneTuningView : UserControl
             return;
         }
 
-        try
+        using (PakWriteUi.BeginBusyWrite(ApplyMultipliersButton, SaveIndividualButton, RestoreCranesButton))
         {
-            var result = CraneService.ApplyGlobalMultipliers(
-                PakPath,
-                GetArmForceMultiplier(),
-                GetMovementSpeedMultiplier());
+            try
+            {
+                var result = CraneService.ApplyGlobalMultipliers(
+                    PakPath,
+                    GetArmForceMultiplier(),
+                    GetMovementSpeedMultiplier());
 
-            ReloadCranes();
-            ReportStatus(UiText.Crane.MultipliersAppliedStatus(
-                result.ChangedCranes,
-                result.UpdatedFiles));
-
-            MessageBox.Show(
-                UiText.Crane.MultipliersSavedMessage(
+                ReloadCranes();
+                ReportStatus(UiText.Crane.MultipliersAppliedStatus(
                     result.ChangedCranes,
-                    result.UpdatedFiles),
-                UiText.Crane.SaveSuccessTitle,
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
-        }
-        catch (Exception ex)
-        {
-            ReportStatus(UiText.Main.ErrorStatus(ex.Message));
-            MessageBox.Show(ex.Message, UiText.Crane.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+                    result.UpdatedFiles));
+            }
+            catch (Exception ex)
+            {
+                ReportStatus(UiText.Main.ErrorStatus(ex.Message));
+                MessageBox.Show(ex.Message, UiText.Crane.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 
     private void SaveIndividualButton_Click(object sender, RoutedEventArgs e)
     {
         if (!PakWriteUi.TryBeginWrite(_session, PakPath, _pakWritesAllowed, requireBaseline: false,
-                () => MessageBox.Show(UiText.Crane.LoadPakFirst, UiText.Crane.LoadErrorTitle, MessageBoxButton.OK, MessageBoxImage.Information)))
+                () => ReportStatus(UiText.Crane.LoadPakFirst)))
         {
             return;
         }
 
-        try
+        using (PakWriteUi.BeginBusyWrite(ApplyMultipliersButton, SaveIndividualButton, RestoreCranesButton))
         {
-            PartsTuningUiHelpers.CommitGridEdits(CranesGrid);
+            try
+            {
+                PartsTuningUiHelpers.CommitGridEdits(CranesGrid);
 
-            var cranes = _cranes
-                .Select(row => row.ToDefinition())
-                .ToArray();
+                var cranes = _cranes
+                    .Select(row => row.ToDefinition())
+                    .ToArray();
 
-            var result = CraneService.SaveCraneChanges(PakPath, cranes);
-            ReloadCranes();
-
-            MessageBox.Show(
-                UiText.Crane.IndividualSavedMessage(result.ChangedCranes),
-                UiText.Crane.SaveSuccessTitle,
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show(ex.Message, UiText.Crane.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+                var result = CraneService.SaveCraneChanges(PakPath, cranes);
+                ReloadCranes();
+                ReportStatus(UiText.Crane.IndividualSavedMessage(result.ChangedCranes));
+            }
+            catch (Exception ex)
+            {
+                ReportStatus(UiText.Main.ErrorStatus(ex.Message));
+                MessageBox.Show(ex.Message, UiText.Crane.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 

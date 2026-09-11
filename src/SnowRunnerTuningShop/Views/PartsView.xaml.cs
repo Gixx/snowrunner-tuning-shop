@@ -30,6 +30,12 @@ public partial class PartsView : UserControl
         SuspensionTuningView.AttachSession(session);
         TireTuningView.AttachSession(session);
         CraneTuningView.AttachSession(session);
+        WinchTuningView.StatusChanged += (_, message) => StatusText.Text = message;
+        EngineTuningView.StatusChanged += (_, message) => StatusText.Text = message;
+        GearboxTuningView.StatusChanged += (_, message) => StatusText.Text = message;
+        SuspensionTuningView.StatusChanged += (_, message) => StatusText.Text = message;
+        TireTuningView.StatusChanged += (_, message) => StatusText.Text = message;
+        CraneTuningView.StatusChanged += (_, message) => StatusText.Text = message;
         _session.PakChanged += (_, _) => _ = ReloadPartsAsync();
         _session.BaselineChanged += (_, _) => RefreshWriteGates();
         _session.GameRunningChanged += (_, _) => RefreshWriteGates();

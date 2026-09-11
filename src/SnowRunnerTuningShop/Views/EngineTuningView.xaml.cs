@@ -82,27 +82,22 @@ public partial class EngineTuningView : UserControl
             return;
         }
 
-        try
+        using (PakWriteUi.BeginBusyWrite(ApplyMultipliersButton, SaveIndividualButton, RestoreEnginesButton))
         {
-            var result = EngineService.RestoreEnginesFromBaseline(PakPath);
-            ResetMultiplierSlidersToBaseline();
-            ReloadEngines();
-            ReportStatus(UiText.Engine.MultipliersAppliedStatus(
-                result.ChangedEngines,
-                result.UpdatedFiles));
-
-            MessageBox.Show(
-                UiText.Engine.RestoreEnginesMessage(
+            try
+            {
+                var result = EngineService.RestoreEnginesFromBaseline(PakPath);
+                ResetMultiplierSlidersToBaseline();
+                ReloadEngines();
+                ReportStatus(UiText.Engine.MultipliersAppliedStatus(
                     result.ChangedEngines,
-                    result.UpdatedFiles),
-                UiText.Engine.RestoreEnginesSuccessTitle,
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
-        }
-        catch (Exception ex)
-        {
-            ReportStatus(UiText.Main.ErrorStatus(ex.Message));
-            MessageBox.Show(ex.Message, UiText.Engine.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+                    result.UpdatedFiles));
+            }
+            catch (Exception ex)
+            {
+                ReportStatus(UiText.Main.ErrorStatus(ex.Message));
+                MessageBox.Show(ex.Message, UiText.Engine.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 
@@ -114,32 +109,27 @@ public partial class EngineTuningView : UserControl
             return;
         }
 
-        try
+        using (PakWriteUi.BeginBusyWrite(ApplyMultipliersButton, SaveIndividualButton, RestoreEnginesButton))
         {
-            var result = EngineService.ApplyGlobalMultipliers(
-                PakPath,
-                GetMultiplier(TorqueMultiplierSlider),
-                GetMultiplier(FuelMultiplierSlider),
-                GetMultiplier(DamageMultiplierSlider),
-                GetMultiplier(ResponsivenessMultiplierSlider));
+            try
+            {
+                var result = EngineService.ApplyGlobalMultipliers(
+                    PakPath,
+                    GetMultiplier(TorqueMultiplierSlider),
+                    GetMultiplier(FuelMultiplierSlider),
+                    GetMultiplier(DamageMultiplierSlider),
+                    GetMultiplier(ResponsivenessMultiplierSlider));
 
-            ReloadEngines();
-            ReportStatus(UiText.Engine.MultipliersAppliedStatus(
-                result.ChangedEngines,
-                result.UpdatedFiles));
-
-            MessageBox.Show(
-                UiText.Engine.MultipliersSavedMessage(
+                ReloadEngines();
+                ReportStatus(UiText.Engine.MultipliersAppliedStatus(
                     result.ChangedEngines,
-                    result.UpdatedFiles),
-                UiText.Engine.SaveSuccessTitle,
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
-        }
-        catch (Exception ex)
-        {
-            ReportStatus(UiText.Main.ErrorStatus(ex.Message));
-            MessageBox.Show(ex.Message, UiText.Engine.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+                    result.UpdatedFiles));
+            }
+            catch (Exception ex)
+            {
+                ReportStatus(UiText.Main.ErrorStatus(ex.Message));
+                MessageBox.Show(ex.Message, UiText.Engine.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 
@@ -151,29 +141,25 @@ public partial class EngineTuningView : UserControl
             return;
         }
 
-        try
+        using (PakWriteUi.BeginBusyWrite(ApplyMultipliersButton, SaveIndividualButton, RestoreEnginesButton))
         {
-            PartsTuningUiHelpers.CommitGridEdits(EnginesGrid);
+            try
+            {
+                PartsTuningUiHelpers.CommitGridEdits(EnginesGrid);
 
-            var engines = _engines
-                .Select(row => row.ToDefinition())
-                .ToArray();
+                var engines = _engines
+                    .Select(row => row.ToDefinition())
+                    .ToArray();
 
-            var result = EngineService.SaveEngineChanges(PakPath, engines);
-            ReloadEngines();
-
-            ReportStatus(UiText.Engine.IndividualSavedStatus(result.ChangedEngines, result.UpdatedFiles));
-
-            MessageBox.Show(
-                UiText.Engine.IndividualSavedMessage(result.ChangedEngines),
-                UiText.Engine.SaveSuccessTitle,
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
-        }
-        catch (Exception ex)
-        {
-            ReportStatus(UiText.Main.ErrorStatus(ex.Message));
-            MessageBox.Show(ex.Message, UiText.Engine.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+                var result = EngineService.SaveEngineChanges(PakPath, engines);
+                ReloadEngines();
+                ReportStatus(UiText.Engine.IndividualSavedStatus(result.ChangedEngines, result.UpdatedFiles));
+            }
+            catch (Exception ex)
+            {
+                ReportStatus(UiText.Main.ErrorStatus(ex.Message));
+                MessageBox.Show(ex.Message, UiText.Engine.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 

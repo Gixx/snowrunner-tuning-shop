@@ -173,6 +173,8 @@
   "Main.CategoryColumn": "Kategória",
   "Main.ChangeLocation": "Hely módosítása...",
   "Main.ChangeLocationDialogTitle": "initial.pak kiválasztása másik bolthoz/helyhez",
+  "Main.ChangeLocationMarkedPakConfirm": "Ez az initial.pak már tartalmaz Tuning Shop módosításokat (profiljelölő van benne), és ehhez a kiadáshoz még nincs alapvonal.\n\nHa ezt használod új írásvédett alapvonalként, egy hangolt pakot kezelsz vanilla fájlként. Inkább a játék telepítéséből származó módosítatlan eredetit válaszd.\n\nFolytatod mégis?",
+  "Main.ChangeLocationMarkedPakTitle": "Alapvonal hangolt pakból?",
   "Main.ErrorStatus": "Hiba: {0}",
   "Main.FilesColumn": "Fájlok",
   "Main.ItemsColumn": "Elemek",

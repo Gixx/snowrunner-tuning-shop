@@ -92,7 +92,7 @@ public static class BugReportService
 
             if (!string.IsNullOrWhiteSpace(session.PakPath))
             {
-                builder.AppendLine($"Pak path: {session.PakPath}");
+                builder.AppendLine($"Pak path: {CrashReportBuilder.SanitizePathForReport(session.PakPath)}");
             }
         }
 

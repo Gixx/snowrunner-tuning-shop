@@ -138,6 +138,12 @@ public static class UiText
         public static string ChangeLocationDialogTitle => StringResources.Get("Main.ChangeLocationDialogTitle", "Select initial.pak for another store/location");
         public static string BaselineUpdatedTitle => StringResources.Get("Main.BaselineUpdatedTitle", "Baseline set");
         public static string LocationChangedTitle => StringResources.Get("Main.LocationChangedTitle", "Location changed");
+        public static string ChangeLocationMarkedPakTitle => StringResources.Get(
+            "Main.ChangeLocationMarkedPakTitle",
+            "Create baseline from a tuned pak?");
+        public static string ChangeLocationMarkedPakConfirm => StringResources.Get(
+            "Main.ChangeLocationMarkedPakConfirm",
+            "This initial.pak already contains Tuning Shop changes (profile marker found), and no baseline exists for this edition yet.\n\nUsing it as the new read-only baseline will treat a tuned pak as vanilla. Prefer an unmodified original from the game install.\n\nContinue anyway?");
         public static string BaselineErrorTitle => StringResources.Get("Main.BaselineErrorTitle", "Baseline error");
         public static string RestoreFullBaselineConfirmTitle => StringResources.Get("Main.RestoreFullBaselineConfirmTitle", "Restore full baseline?");
         public static string RestoreFullBaselineConfirmMessage => StringResources.Get("Main.RestoreFullBaselineConfirmMessage", "This replaces the entire working initial.pak with the read-only baseline copy. All tuning changes in the pak will be lost. This cannot be undone from inside the tuner.\n\nYour saved tuning profile is kept so you can reapply the changes afterwards.");
@@ -1051,10 +1057,24 @@ public static class UiText
         public static string LoadedCount(int count) =>
             StringResources.Format("Gearbox.LoadedCount", "{0} gearboxes loaded from pak.", count);
 
+        public static string MultipliersAppliedStatus(int changedGearboxes, int updatedFiles) =>
+            StringResources.Format(
+                "Gearbox.MultipliersAppliedStatus",
+                "Multipliers applied. Updated gearboxes: {0}, files: {1}.",
+                changedGearboxes,
+                updatedFiles);
+
         public static string MultipliersSavedMessage(int changedGearboxes, int updatedFiles) =>
             StringResources.Format(
                 "Gearbox.MultipliersSavedMessage",
                 "Gearbox settings saved.\n\nUpdated gearboxes: {0}\nUpdated files: {1}",
+                changedGearboxes,
+                updatedFiles);
+
+        public static string IndividualSavedStatus(int changedGearboxes, int updatedFiles) =>
+            StringResources.Format(
+                "Gearbox.IndividualSavedStatus",
+                "Individual changes saved. Gearboxes: {0}, files: {1}.",
                 changedGearboxes,
                 updatedFiles);
 
@@ -1103,10 +1123,24 @@ public static class UiText
         public static string LoadErrorTitle => StringResources.Get("Suspension.LoadErrorTitle", "Load error");
         public static string RestoreSuspensionsSuccessTitle => StringResources.Get("Suspension.RestoreSuspensionsSuccessTitle", "Suspensions restored");
 
+        public static string MultipliersAppliedStatus(int changedSuspensions, int updatedFiles) =>
+            StringResources.Format(
+                "Suspension.MultipliersAppliedStatus",
+                "Multipliers applied. Updated suspensions: {0}, files: {1}.",
+                changedSuspensions,
+                updatedFiles);
+
         public static string MultipliersSavedMessage(int changedSuspensions, int updatedFiles) =>
             StringResources.Format(
                 "Suspension.MultipliersSavedMessage",
                 "Suspension settings saved.\n\nUpdated suspensions: {0}\nUpdated files: {1}",
+                changedSuspensions,
+                updatedFiles);
+
+        public static string IndividualSavedStatus(int changedSuspensions, int updatedFiles) =>
+            StringResources.Format(
+                "Suspension.IndividualSavedStatus",
+                "Individual changes saved. Suspensions: {0}, files: {1}.",
                 changedSuspensions,
                 updatedFiles);
 
@@ -1150,10 +1184,24 @@ public static class UiText
         public static string LoadErrorTitle => StringResources.Get("Tires.LoadErrorTitle", "Load error");
         public static string RestoreTiresSuccessTitle => StringResources.Get("Tires.RestoreTiresSuccessTitle", "Tires restored");
 
+        public static string MultipliersAppliedStatus(int changedTires, int updatedFiles) =>
+            StringResources.Format(
+                "Tires.MultipliersAppliedStatus",
+                "Multipliers applied. Updated tires: {0}, files: {1}.",
+                changedTires,
+                updatedFiles);
+
         public static string MultipliersSavedMessage(int changedTires, int updatedFiles) =>
             StringResources.Format(
                 "Tires.MultipliersSavedMessage",
                 "Tire settings saved.\n\nUpdated tires: {0}\nUpdated files: {1}",
+                changedTires,
+                updatedFiles);
+
+        public static string IndividualSavedStatus(int changedTires, int updatedFiles) =>
+            StringResources.Format(
+                "Tires.IndividualSavedStatus",
+                "Individual changes saved. Tires: {0}, files: {1}.",
                 changedTires,
                 updatedFiles);
 

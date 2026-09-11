@@ -212,32 +212,37 @@ public partial class VehiclesView : UserControl
             return;
         }
 
-        try
+        using (PakWriteUi.BeginBusyWrite(
+                   ApplyGlobalMultipliersButton,
+                   ApplyStoreUnlocksButton,
+                   RestoreAllVehiclesButton))
         {
-            var result = TruckTuningService.ApplyGlobalMultipliers(
-                _session.PakPath,
-                GetMultiplier(FuelMultiplierSlider),
-                GetFrontSteerGlobalMode(FrontSteerGlobalSlider),
-                GetMultiplier(ResponsivenessMultiplierSlider),
-                GetMultiplier(PriceMultiplierSlider),
-                AlwaysOnDiffLockCheckBox.IsChecked == true,
-                AlwaysOnAwdCheckBox.IsChecked == true);
-
-            _trucksPakPath = null;
-            if (_currentCard is not null && DetailPanel.Visibility == Visibility.Visible)
+            try
             {
-                _ = LoadTuningAsync(_currentCard);
-            }
+                var result = TruckTuningService.ApplyGlobalMultipliers(
+                    _session.PakPath,
+                    GetMultiplier(FuelMultiplierSlider),
+                    GetFrontSteerGlobalMode(FrontSteerGlobalSlider),
+                    GetMultiplier(ResponsivenessMultiplierSlider),
+                    GetMultiplier(PriceMultiplierSlider),
+                    AlwaysOnDiffLockCheckBox.IsChecked == true,
+                    AlwaysOnAwdCheckBox.IsChecked == true);
 
-            MessageBox.Show(
-                UiText.Vehicles.GlobalMultipliersSavedMessage(result.ChangedTrucks, result.UpdatedFiles),
-                UiText.Vehicles.SaveSuccessTitle,
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show(ex.Message, UiText.Vehicles.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+                _trucksPakPath = null;
+                if (_currentCard is not null && DetailPanel.Visibility == Visibility.Visible)
+                {
+                    _ = LoadTuningAsync(_currentCard);
+                }
+
+                TuningStatusText.Text = UiText.Vehicles.GlobalMultipliersAppliedStatus(
+                    result.ChangedTrucks,
+                    result.UpdatedFiles);
+            }
+            catch (Exception ex)
+            {
+                TuningStatusText.Text = UiText.Main.ErrorStatus(ex.Message);
+                MessageBox.Show(ex.Message, UiText.Vehicles.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 
@@ -280,28 +285,33 @@ public partial class VehiclesView : UserControl
             return;
         }
 
-        try
+        using (PakWriteUi.BeginBusyWrite(
+                   ApplyGlobalMultipliersButton,
+                   ApplyStoreUnlocksButton,
+                   RestoreAllVehiclesButton))
         {
-            var result = TruckTuningService.ApplyGlobalStoreUnlocks(
-                _session.PakPath,
-                releaseRegionLock,
-                unlockAll);
-
-            _trucksPakPath = null;
-            if (_currentCard is not null && DetailPanel.Visibility == Visibility.Visible)
+            try
             {
-                _ = LoadTuningAsync(_currentCard);
-            }
+                var result = TruckTuningService.ApplyGlobalStoreUnlocks(
+                    _session.PakPath,
+                    releaseRegionLock,
+                    unlockAll);
 
-            MessageBox.Show(
-                UiText.Vehicles.StoreUnlocksSavedMessage(result.ChangedTrucks, result.UpdatedFiles),
-                UiText.Vehicles.SaveSuccessTitle,
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show(ex.Message, UiText.Vehicles.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+                _trucksPakPath = null;
+                if (_currentCard is not null && DetailPanel.Visibility == Visibility.Visible)
+                {
+                    _ = LoadTuningAsync(_currentCard);
+                }
+
+                TuningStatusText.Text = UiText.Vehicles.StoreUnlocksSavedMessage(
+                    result.ChangedTrucks,
+                    result.UpdatedFiles);
+            }
+            catch (Exception ex)
+            {
+                TuningStatusText.Text = UiText.Main.ErrorStatus(ex.Message);
+                MessageBox.Show(ex.Message, UiText.Vehicles.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 
@@ -343,24 +353,29 @@ public partial class VehiclesView : UserControl
             return;
         }
 
-        try
+        using (PakWriteUi.BeginBusyWrite(
+                   ApplyGlobalMultipliersButton,
+                   ApplyStoreUnlocksButton,
+                   RestoreAllVehiclesButton))
         {
-            var result = TruckTuningService.RestoreAllVehiclesFromBaseline(_session.PakPath);
-            _trucksPakPath = null;
-            ResetGlobalMultiplierSlidersToBaseline();
-            ReleaseRegionLockCheckBox.IsChecked = false;
-            UnlockAllVehiclesCheckBox.IsChecked = false;
-            UpdateGlobalMultiplierLabels();
+            try
+            {
+                var result = TruckTuningService.RestoreAllVehiclesFromBaseline(_session.PakPath);
+                _trucksPakPath = null;
+                ResetGlobalMultiplierSlidersToBaseline();
+                ReleaseRegionLockCheckBox.IsChecked = false;
+                UnlockAllVehiclesCheckBox.IsChecked = false;
+                UpdateGlobalMultiplierLabels();
 
-            MessageBox.Show(
-                UiText.Vehicles.RestoreAllVehiclesSavedMessage(result.ChangedTrucks, result.UpdatedFiles),
-                UiText.Vehicles.RestoreAllVehiclesSuccessTitle,
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show(ex.Message, UiText.Vehicles.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+                TuningStatusText.Text = UiText.Vehicles.RestoreAllVehiclesSavedMessage(
+                    result.ChangedTrucks,
+                    result.UpdatedFiles);
+            }
+            catch (Exception ex)
+            {
+                TuningStatusText.Text = UiText.Main.ErrorStatus(ex.Message);
+                MessageBox.Show(ex.Message, UiText.Vehicles.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 
@@ -399,7 +414,7 @@ public partial class VehiclesView : UserControl
                 entry.PakId,
                 entry.DisplayName,
                 entry.Category,
-                VehicleCatalog.TryLoadImage(entry.ImagePath),
+                entry.ImagePath,
                 oval,
                 flag));
         }
@@ -811,28 +826,22 @@ public partial class VehiclesView : UserControl
         _currentTruck.FrontSteerAngle = frontSteer;
         _currentTruck.RearSteerAngle = rearSteer;
 
-        try
+        using (PakWriteUi.BeginBusyWrite(SaveTuningButton, RestoreVehicleButton))
         {
-            var result = TruckTuningService.SaveTruckChanges(_session.PakPath, _currentTruck);
-            _trucksPakPath = null;
-            await LoadTuningAsync(_currentCard);
-            TuningStatusText.Text = result.UpdatedFiles <= 0
-                ? UiText.Vehicles.NoChangesToSave
-                : UiText.Vehicles.SavedMessage();
-
-            if (result.UpdatedFiles > 0)
+            try
             {
-                MessageBox.Show(
-                    UiText.Vehicles.SavedMessage(),
-                    UiText.Vehicles.SaveSuccessTitle,
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information);
+                var result = TruckTuningService.SaveTruckChanges(_session.PakPath, _currentTruck);
+                _trucksPakPath = null;
+                await LoadTuningAsync(_currentCard);
+                TuningStatusText.Text = result.UpdatedFiles <= 0
+                    ? UiText.Vehicles.NoChangesToSave
+                    : UiText.Vehicles.SavedMessage();
             }
-        }
-        catch (Exception ex)
-        {
-            TuningStatusText.Text = UiText.Main.ErrorStatus(ex.Message);
-            MessageBox.Show(ex.Message, UiText.Vehicles.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+            catch (Exception ex)
+            {
+                TuningStatusText.Text = UiText.Main.ErrorStatus(ex.Message);
+                MessageBox.Show(ex.Message, UiText.Vehicles.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 
@@ -859,28 +868,22 @@ public partial class VehiclesView : UserControl
             return;
         }
 
-        try
+        using (PakWriteUi.BeginBusyWrite(SaveTuningButton, RestoreVehicleButton))
         {
-            var result = TruckTuningService.RestoreTruckFromBaseline(_session.PakPath, _currentTruck.EntryPath);
-            _trucksPakPath = null;
-            await LoadTuningAsync(_currentCard);
-            TuningStatusText.Text = result.UpdatedFiles <= 0
-                ? UiText.Vehicles.NoChangesToSave
-                : UiText.Vehicles.RestoredMessage();
-
-            if (result.UpdatedFiles > 0)
+            try
             {
-                MessageBox.Show(
-                    UiText.Vehicles.RestoredMessage(),
-                    UiText.Vehicles.RestoreSuccessTitle,
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information);
+                var result = TruckTuningService.RestoreTruckFromBaseline(_session.PakPath, _currentTruck.EntryPath);
+                _trucksPakPath = null;
+                await LoadTuningAsync(_currentCard);
+                TuningStatusText.Text = result.UpdatedFiles <= 0
+                    ? UiText.Vehicles.NoChangesToSave
+                    : UiText.Vehicles.RestoredMessage();
             }
-        }
-        catch (Exception ex)
-        {
-            TuningStatusText.Text = UiText.Main.ErrorStatus(ex.Message);
-            MessageBox.Show(ex.Message, UiText.Vehicles.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+            catch (Exception ex)
+            {
+                TuningStatusText.Text = UiText.Main.ErrorStatus(ex.Message);
+                MessageBox.Show(ex.Message, UiText.Vehicles.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 
@@ -1179,12 +1182,19 @@ public partial class VehiclesView : UserControl
 
     private sealed class VehicleCard
     {
+        private static readonly Dictionary<string, BitmapImage?> ThumbCache =
+            new(StringComparer.OrdinalIgnoreCase);
+
+        private BitmapImage? _image;
+        private bool _imageResolved;
+        private readonly string _imagePath;
+
         public VehicleCard(
             string id,
             string pakId,
             string displayName,
             string category,
-            BitmapImage? image,
+            string imagePath,
             string ovalCode,
             BitmapImage? flag)
         {
@@ -1192,7 +1202,7 @@ public partial class VehiclesView : UserControl
             PakId = pakId;
             DisplayName = displayName;
             Category = category;
-            Image = image;
+            _imagePath = imagePath ?? "";
             OvalCode = ovalCode;
             Flag = flag;
             HeaderBrush = VehicleCategoryColors.ForCategory(category);
@@ -1202,7 +1212,30 @@ public partial class VehiclesView : UserControl
         public string PakId { get; }
         public string DisplayName { get; }
         public string Category { get; }
-        public BitmapImage? Image { get; }
+        public BitmapImage? Image
+        {
+            get
+            {
+                if (_imageResolved)
+                {
+                    return _image;
+                }
+
+                _imageResolved = true;
+                if (string.IsNullOrWhiteSpace(_imagePath))
+                {
+                    return null;
+                }
+
+                if (!ThumbCache.TryGetValue(_imagePath, out _image))
+                {
+                    _image = VehicleCatalog.TryLoadImage(_imagePath);
+                    ThumbCache[_imagePath] = _image;
+                }
+
+                return _image;
+            }
+        }
         public string OvalCode { get; }
         public BitmapImage? Flag { get; }
         public Brush HeaderBrush { get; }

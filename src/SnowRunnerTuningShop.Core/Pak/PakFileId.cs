@@ -64,7 +64,7 @@ public static class PakFileId
             return default;
         }
 
-        var exact = PickUnique(items.Where(item => Normalize(fileIdSelector(item)) == key), entryPathSelector);
+        var exact = PickUnique(items.Where(item => Normalize(fileIdSelector(item)) == key), entryPathSelector, allowAmbiguousResolution: true);
         if (exact is not null)
         {
             return exact;
@@ -79,7 +79,7 @@ public static class PakFileId
                     return fileKey.Length > key.Length && fileKey.EndsWith(key, StringComparison.Ordinal);
                 })
                 .ToArray();
-            var uniqueSuffix = PickUnique(suffix, entryPathSelector);
+            var uniqueSuffix = PickUnique(suffix, entryPathSelector, allowAmbiguousResolution: false);
             if (uniqueSuffix is not null)
             {
                 return uniqueSuffix;
@@ -95,13 +95,13 @@ public static class PakFileId
         {
             var bestLen = prefixes[0].FileKey.Length;
             var best = prefixes.Where(pair => pair.FileKey.Length == bestLen).Select(pair => pair.Item);
-            return PickUnique(best, entryPathSelector);
+            return PickUnique(best, entryPathSelector, allowAmbiguousResolution: false);
         }
 
         return default;
     }
 
-    private static T? PickUnique<T>(IEnumerable<T> matches, Func<T, string>? entryPathSelector)
+    private static T? PickUnique<T>(IEnumerable<T> matches, Func<T, string>? entryPathSelector, bool allowAmbiguousResolution)
     {
         var list = matches as IList<T> ?? matches.ToArray();
         if (list.Count == 0)
@@ -112,6 +112,11 @@ public static class PakFileId
         if (list.Count == 1)
         {
             return list[0];
+        }
+
+        if (!allowAmbiguousResolution)
+        {
+            return default;
         }
 
         if (entryPathSelector is null)

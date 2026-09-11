@@ -25,7 +25,7 @@ public partial class GeneralView : UserControl
         _session = session;
         _session.PakChanged += (_, _) => ReloadFromPak();
         _session.BaselineChanged += (_, _) => ReloadFromPak();
-        _session.GameRunningChanged += (_, _) => ReloadFromPak();
+        _session.GameRunningChanged += (_, _) => RefreshWriteGates();
         ReloadFromPak();
     }
 
@@ -56,12 +56,6 @@ public partial class GeneralView : UserControl
         }
 
         HintText.Visibility = Visibility.Collapsed;
-        var canWrite = PakWriteUi.CanWrite(_session);
-        var hasBaseline = PakBaselineService.HasBaseline(_session.PakPath);
-        ApplyCameraButton.IsEnabled = canWrite;
-        ApplyRockSizeButton.IsEnabled = canWrite;
-        RestoreCameraButton.IsEnabled = hasBaseline && canWrite;
-        RestoreRockSizeButton.IsEnabled = hasBaseline && canWrite;
 
         try
         {
@@ -82,6 +76,27 @@ public partial class GeneralView : UserControl
         {
             StatusText.Text = UiText.Main.ErrorStatus(ex.Message);
         }
+
+        RefreshWriteGates();
+    }
+
+    private void RefreshWriteGates()
+    {
+        if (_session is null || string.IsNullOrWhiteSpace(_session.PakPath))
+        {
+            ApplyCameraButton.IsEnabled = false;
+            ApplyRockSizeButton.IsEnabled = false;
+            RestoreCameraButton.IsEnabled = false;
+            RestoreRockSizeButton.IsEnabled = false;
+            return;
+        }
+
+        var canWrite = PakWriteUi.CanWrite(_session);
+        var hasBaseline = PakBaselineService.HasBaseline(_session.PakPath);
+        ApplyCameraButton.IsEnabled = canWrite;
+        ApplyRockSizeButton.IsEnabled = canWrite;
+        RestoreCameraButton.IsEnabled = hasBaseline && canWrite;
+        RestoreRockSizeButton.IsEnabled = hasBaseline && canWrite;
     }
 
     private void ApplyCameraButton_Click(object sender, RoutedEventArgs e) =>
@@ -117,26 +132,21 @@ public partial class GeneralView : UserControl
             ?? (CameraModeCombo.SelectedValue as CameraCollisionMode?)
             ?? CameraCollisionMode.CollisionsOff;
 
-        try
+        using (PakWriteUi.BeginBusyWrite(ApplyCameraButton, RestoreCameraButton))
         {
-            var result = GeneralService.ApplyCameraCollisions(_session.PakPath, selectedMode);
-            ReloadFromPak();
-            StatusText.Text = result.UpdatedFiles <= 0
-                ? UiText.General.NoChangesToSave
-                : UiText.General.CameraSaved(result.UpdatedFiles);
-            if (result.UpdatedFiles > 0)
+            try
             {
-                MessageBox.Show(
-                    UiText.General.CameraSaved(result.UpdatedFiles),
-                    UiText.General.SaveSuccessTitle,
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information);
+                var result = GeneralService.ApplyCameraCollisions(_session.PakPath, selectedMode);
+                ReloadFromPak();
+                StatusText.Text = result.UpdatedFiles <= 0
+                    ? UiText.General.NoChangesToSave
+                    : UiText.General.CameraSaved(result.UpdatedFiles);
             }
-        }
-        catch (Exception ex)
-        {
-            StatusText.Text = UiText.Main.ErrorStatus(ex.Message);
-            MessageBox.Show(ex.Message, UiText.General.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+            catch (Exception ex)
+            {
+                StatusText.Text = UiText.Main.ErrorStatus(ex.Message);
+                MessageBox.Show(ex.Message, UiText.General.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 
@@ -176,26 +186,21 @@ public partial class GeneralView : UserControl
             return;
         }
 
-        try
+        using (PakWriteUi.BeginBusyWrite(ApplyRockSizeButton, RestoreRockSizeButton))
         {
-            var result = GeneralService.ApplyRockSize(_session.PakPath, scale, assetsDir);
-            ReloadFromPak();
-            StatusText.Text = result.UpdatedFiles <= 0
-                ? UiText.General.NoChangesToSave
-                : UiText.General.RockSaved(result.UpdatedFiles);
-            if (result.UpdatedFiles > 0)
+            try
             {
-                MessageBox.Show(
-                    UiText.General.RockSaved(result.UpdatedFiles),
-                    UiText.General.SaveSuccessTitle,
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information);
+                var result = GeneralService.ApplyRockSize(_session.PakPath, scale, assetsDir);
+                ReloadFromPak();
+                StatusText.Text = result.UpdatedFiles <= 0
+                    ? UiText.General.NoChangesToSave
+                    : UiText.General.RockSaved(result.UpdatedFiles);
             }
-        }
-        catch (Exception ex)
-        {
-            StatusText.Text = UiText.Main.ErrorStatus(ex.Message);
-            MessageBox.Show(ex.Message, UiText.General.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+            catch (Exception ex)
+            {
+                StatusText.Text = UiText.Main.ErrorStatus(ex.Message);
+                MessageBox.Show(ex.Message, UiText.General.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 

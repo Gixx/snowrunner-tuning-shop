@@ -176,30 +176,35 @@ public partial class TrailersView : UserControl
             return;
         }
 
-        try
+        using (PakWriteUi.BeginBusyWrite(
+                   ApplyGlobalMultipliersButton,
+                   MakeMissionTrailersPurchasableButton,
+                   RestoreAllTrailersButton))
         {
-            var result = TrailerTuningService.ApplyGlobalMultipliers(
-                _session.PakPath,
-                GetMultiplier(FuelMultiplierSlider),
-                GetMultiplier(RepairsMultiplierSlider),
-                GetMultiplier(WheelsMultiplierSlider),
-                GetMultiplier(PriceMultiplierSlider));
-
-            _trailersPakPath = null;
-            if (_currentCard is not null && DetailPanel.Visibility == Visibility.Visible)
+            try
             {
-                _ = LoadTuningAsync(_currentCard);
-            }
+                var result = TrailerTuningService.ApplyGlobalMultipliers(
+                    _session.PakPath,
+                    GetMultiplier(FuelMultiplierSlider),
+                    GetMultiplier(RepairsMultiplierSlider),
+                    GetMultiplier(WheelsMultiplierSlider),
+                    GetMultiplier(PriceMultiplierSlider));
 
-            MessageBox.Show(
-                UiText.Trailers.GlobalMultipliersSavedMessage(result.ChangedTrailers, result.UpdatedFiles),
-                UiText.Trailers.SaveSuccessTitle,
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show(ex.Message, UiText.Trailers.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+                _trailersPakPath = null;
+                if (_currentCard is not null && DetailPanel.Visibility == Visibility.Visible)
+                {
+                    _ = LoadTuningAsync(_currentCard);
+                }
+
+                TuningStatusText.Text = UiText.Trailers.GlobalMultipliersSavedMessage(
+                    result.ChangedTrailers,
+                    result.UpdatedFiles);
+            }
+            catch (Exception ex)
+            {
+                TuningStatusText.Text = UiText.Main.ErrorStatus(ex.Message);
+                MessageBox.Show(ex.Message, UiText.Trailers.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 
@@ -230,24 +235,29 @@ public partial class TrailersView : UserControl
             return;
         }
 
-        try
+        using (PakWriteUi.BeginBusyWrite(
+                   ApplyGlobalMultipliersButton,
+                   MakeMissionTrailersPurchasableButton,
+                   RestoreAllTrailersButton))
         {
-            var result = TrailerTuningService.MakeQuestTrailersPurchasable(_session.PakPath);
-            _trailersPakPath = null;
-            if (_currentCard is not null && DetailPanel.Visibility == Visibility.Visible)
+            try
             {
-                _ = LoadTuningAsync(_currentCard);
-            }
+                var result = TrailerTuningService.MakeQuestTrailersPurchasable(_session.PakPath);
+                _trailersPakPath = null;
+                if (_currentCard is not null && DetailPanel.Visibility == Visibility.Visible)
+                {
+                    _ = LoadTuningAsync(_currentCard);
+                }
 
-            MessageBox.Show(
-                UiText.Trailers.StoreUnlocksSavedMessage(result.ChangedTrailers, result.UpdatedFiles),
-                UiText.Trailers.SaveSuccessTitle,
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show(ex.Message, UiText.Trailers.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+                TuningStatusText.Text = UiText.Trailers.StoreUnlocksSavedMessage(
+                    result.ChangedTrailers,
+                    result.UpdatedFiles);
+            }
+            catch (Exception ex)
+            {
+                TuningStatusText.Text = UiText.Main.ErrorStatus(ex.Message);
+                MessageBox.Show(ex.Message, UiText.Trailers.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 
@@ -289,26 +299,31 @@ public partial class TrailersView : UserControl
             return;
         }
 
-        try
+        using (PakWriteUi.BeginBusyWrite(
+                   ApplyGlobalMultipliersButton,
+                   MakeMissionTrailersPurchasableButton,
+                   RestoreAllTrailersButton))
         {
-            var result = TrailerTuningService.RestoreAllTrailersFromBaseline(_session.PakPath);
-            _trailersPakPath = null;
-            ResetGlobalMultiplierSlidersToBaseline();
-            UpdateGlobalMultiplierLabels();
-            if (_currentCard is not null && DetailPanel.Visibility == Visibility.Visible)
+            try
             {
-                _ = LoadTuningAsync(_currentCard);
-            }
+                var result = TrailerTuningService.RestoreAllTrailersFromBaseline(_session.PakPath);
+                _trailersPakPath = null;
+                ResetGlobalMultiplierSlidersToBaseline();
+                UpdateGlobalMultiplierLabels();
+                if (_currentCard is not null && DetailPanel.Visibility == Visibility.Visible)
+                {
+                    _ = LoadTuningAsync(_currentCard);
+                }
 
-            MessageBox.Show(
-                UiText.Trailers.RestoreAllTrailersSavedMessage(result.ChangedTrailers, result.UpdatedFiles),
-                UiText.Trailers.RestoreAllTrailersSuccessTitle,
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show(ex.Message, UiText.Trailers.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+                TuningStatusText.Text = UiText.Trailers.RestoreAllTrailersSavedMessage(
+                    result.ChangedTrailers,
+                    result.UpdatedFiles);
+            }
+            catch (Exception ex)
+            {
+                TuningStatusText.Text = UiText.Main.ErrorStatus(ex.Message);
+                MessageBox.Show(ex.Message, UiText.Trailers.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 
@@ -322,20 +337,9 @@ public partial class TrailersView : UserControl
             return;
         }
 
-        var imageCache = new Dictionary<string, BitmapImage?>(StringComparer.OrdinalIgnoreCase);
         foreach (var entry in entries)
         {
-            BitmapImage? image = null;
-            if (!string.IsNullOrWhiteSpace(entry.ImagePath))
-            {
-                if (!imageCache.TryGetValue(entry.ImagePath, out image))
-                {
-                    image = TrailerCatalog.TryLoadImage(entry.ImagePath);
-                    imageCache[entry.ImagePath] = image;
-                }
-            }
-
-            _all.Add(new TrailerCard(entry, image));
+            _all.Add(new TrailerCard(entry));
         }
 
         ApplyFilter();
@@ -687,28 +691,22 @@ public partial class TrailersView : UserControl
                 && (_currentTrailer.HasStoreCompatibleHitch || _currentTrailer.BaselineIsQuest);
         }
 
-        try
+        using (PakWriteUi.BeginBusyWrite(SaveTuningButton, RestoreTrailerButton))
         {
-            var result = TrailerTuningService.SaveTrailerChanges(_session.PakPath, _currentTrailer);
-            _trailersPakPath = null;
-            await LoadTuningAsync(_currentCard);
-            TuningStatusText.Text = result.UpdatedFiles <= 0
-                ? UiText.Trailers.NoChangesToSave
-                : UiText.Trailers.SavedMessage();
-
-            if (result.UpdatedFiles > 0)
+            try
             {
-                MessageBox.Show(
-                    UiText.Trailers.SavedMessage(),
-                    UiText.Trailers.SaveSuccessTitle,
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information);
+                var result = TrailerTuningService.SaveTrailerChanges(_session.PakPath, _currentTrailer);
+                _trailersPakPath = null;
+                await LoadTuningAsync(_currentCard);
+                TuningStatusText.Text = result.UpdatedFiles <= 0
+                    ? UiText.Trailers.NoChangesToSave
+                    : UiText.Trailers.SavedMessage();
             }
-        }
-        catch (Exception ex)
-        {
-            TuningStatusText.Text = UiText.Main.ErrorStatus(ex.Message);
-            MessageBox.Show(ex.Message, UiText.Trailers.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+            catch (Exception ex)
+            {
+                TuningStatusText.Text = UiText.Main.ErrorStatus(ex.Message);
+                MessageBox.Show(ex.Message, UiText.Trailers.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 
@@ -735,28 +733,22 @@ public partial class TrailersView : UserControl
             return;
         }
 
-        try
+        using (PakWriteUi.BeginBusyWrite(SaveTuningButton, RestoreTrailerButton))
         {
-            var result = TrailerTuningService.RestoreTrailerFromBaseline(_session.PakPath, _currentTrailer.EntryPath);
-            _trailersPakPath = null;
-            await LoadTuningAsync(_currentCard);
-            TuningStatusText.Text = result.UpdatedFiles <= 0
-                ? UiText.Trailers.NoChangesToSave
-                : UiText.Trailers.RestoredMessage();
-
-            if (result.UpdatedFiles > 0)
+            try
             {
-                MessageBox.Show(
-                    UiText.Trailers.RestoredMessage(),
-                    UiText.Trailers.RestoreSuccessTitle,
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information);
+                var result = TrailerTuningService.RestoreTrailerFromBaseline(_session.PakPath, _currentTrailer.EntryPath);
+                _trailersPakPath = null;
+                await LoadTuningAsync(_currentCard);
+                TuningStatusText.Text = result.UpdatedFiles <= 0
+                    ? UiText.Trailers.NoChangesToSave
+                    : UiText.Trailers.RestoredMessage();
             }
-        }
-        catch (Exception ex)
-        {
-            TuningStatusText.Text = UiText.Main.ErrorStatus(ex.Message);
-            MessageBox.Show(ex.Message, UiText.Trailers.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+            catch (Exception ex)
+            {
+                TuningStatusText.Text = UiText.Main.ErrorStatus(ex.Message);
+                MessageBox.Show(ex.Message, UiText.Trailers.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 
@@ -932,7 +924,13 @@ public partial class TrailersView : UserControl
 
     private sealed class TrailerCard
     {
-        public TrailerCard(TrailerCatalogEntry entry, BitmapImage? image)
+        private static readonly Dictionary<string, BitmapImage?> ThumbCache =
+            new(StringComparer.OrdinalIgnoreCase);
+
+        private BitmapImage? _image;
+        private bool _imageResolved;
+
+        public TrailerCard(TrailerCatalogEntry entry)
         {
             Id = entry.Id;
             DisplayName = entry.DisplayName;
@@ -940,7 +938,6 @@ public partial class TrailersView : UserControl
             Function = entry.Function;
             IsQuest = entry.IsQuest;
             ImagePath = entry.ImagePath;
-            Image = image;
             HitchLabel = UiText.Trailers.HitchName(entry.Hitch);
             FunctionLabel = UiText.Trailers.FunctionName(entry.Function);
             HeaderBrush = TrailerCategoryColors.ForHitch(entry.Hitch);
@@ -954,7 +951,30 @@ public partial class TrailersView : UserControl
         public string ImagePath { get; }
         public bool IsMission =>
             IsQuest || Function.Equals("mission", StringComparison.OrdinalIgnoreCase);
-        public BitmapImage? Image { get; }
+        public BitmapImage? Image
+        {
+            get
+            {
+                if (_imageResolved)
+                {
+                    return _image;
+                }
+
+                _imageResolved = true;
+                if (string.IsNullOrWhiteSpace(ImagePath))
+                {
+                    return null;
+                }
+
+                if (!ThumbCache.TryGetValue(ImagePath, out _image))
+                {
+                    _image = TrailerCatalog.TryLoadImage(ImagePath);
+                    ThumbCache[ImagePath] = _image;
+                }
+
+                return _image;
+            }
+        }
         public string HitchLabel { get; }
         public string FunctionLabel { get; }
         public Brush HeaderBrush { get; }

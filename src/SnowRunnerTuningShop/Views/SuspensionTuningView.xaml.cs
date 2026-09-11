@@ -27,6 +27,8 @@ public partial class SuspensionTuningView : UserControl
         ResetMultiplierSlidersToBaseline();
     }
 
+    public event EventHandler<string>? StatusChanged;
+
     public string? PakPath { get; private set; }
 
     public void AttachSession(AppSession session) => _session = session;
@@ -76,89 +78,89 @@ public partial class SuspensionTuningView : UserControl
     private void RestoreSuspensionsButton_Click(object sender, RoutedEventArgs e)
     {
         if (!PakWriteUi.TryBeginWrite(_session, PakPath, _pakWritesAllowed, requireBaseline: true,
-                () => MessageBox.Show(UiText.Suspension.LoadPakFirst, UiText.Suspension.LoadErrorTitle, MessageBoxButton.OK, MessageBoxImage.Information)))
+                () => ReportStatus(UiText.Suspension.LoadPakFirst)))
         {
             return;
         }
 
-        try
+        using (PakWriteUi.BeginBusyWrite(ApplyMultipliersButton, SaveIndividualButton, RestoreSuspensionsButton))
         {
-            var result = SuspensionService.RestoreSuspensionsFromBaseline(PakPath);
-            ResetMultiplierSlidersToBaseline();
-            ReloadSuspensions();
-            MessageBox.Show(
-                UiText.Suspension.RestoreSuspensionsMessage(
+            try
+            {
+                var result = SuspensionService.RestoreSuspensionsFromBaseline(PakPath);
+                ResetMultiplierSlidersToBaseline();
+                ReloadSuspensions();
+                ReportStatus(UiText.Suspension.MultipliersAppliedStatus(
                     result.ChangedSuspensions,
-                    result.UpdatedFiles),
-                UiText.Suspension.RestoreSuspensionsSuccessTitle,
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show(ex.Message, UiText.Suspension.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+                    result.UpdatedFiles));
+            }
+            catch (Exception ex)
+            {
+                ReportStatus(UiText.Main.ErrorStatus(ex.Message));
+                MessageBox.Show(ex.Message, UiText.Suspension.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 
     private void ApplyMultipliersButton_Click(object sender, RoutedEventArgs e)
     {
         if (!PakWriteUi.TryBeginWrite(_session, PakPath, _pakWritesAllowed, requireBaseline: true,
-                () => MessageBox.Show(UiText.Suspension.LoadPakFirst, UiText.Suspension.LoadErrorTitle, MessageBoxButton.OK, MessageBoxImage.Information)))
+                () => ReportStatus(UiText.Suspension.LoadPakFirst)))
         {
             return;
         }
 
-        try
+        using (PakWriteUi.BeginBusyWrite(ApplyMultipliersButton, SaveIndividualButton, RestoreSuspensionsButton))
         {
-            var result = SuspensionService.ApplyGlobalMultipliers(
-                PakPath,
-                GetMultiplier(HeightMultiplierSlider),
-                GetMultiplier(StrengthMultiplierSlider),
-                GetMultiplier(DampingMultiplierSlider),
-                GetMultiplier(DamageMultiplierSlider));
+            try
+            {
+                var result = SuspensionService.ApplyGlobalMultipliers(
+                    PakPath,
+                    GetMultiplier(HeightMultiplierSlider),
+                    GetMultiplier(StrengthMultiplierSlider),
+                    GetMultiplier(DampingMultiplierSlider),
+                    GetMultiplier(DamageMultiplierSlider));
 
-            ReloadSuspensions();
-            MessageBox.Show(
-                UiText.Suspension.MultipliersSavedMessage(
+                ReloadSuspensions();
+                ReportStatus(UiText.Suspension.MultipliersAppliedStatus(
                     result.ChangedSuspensions,
-                    result.UpdatedFiles),
-                UiText.Suspension.SaveSuccessTitle,
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show(ex.Message, UiText.Suspension.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+                    result.UpdatedFiles));
+            }
+            catch (Exception ex)
+            {
+                ReportStatus(UiText.Main.ErrorStatus(ex.Message));
+                MessageBox.Show(ex.Message, UiText.Suspension.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 
     private void SaveIndividualButton_Click(object sender, RoutedEventArgs e)
     {
         if (!PakWriteUi.TryBeginWrite(_session, PakPath, _pakWritesAllowed, requireBaseline: false,
-                () => MessageBox.Show(UiText.Suspension.LoadPakFirst, UiText.Suspension.LoadErrorTitle, MessageBoxButton.OK, MessageBoxImage.Information)))
+                () => ReportStatus(UiText.Suspension.LoadPakFirst)))
         {
             return;
         }
 
-        try
+        using (PakWriteUi.BeginBusyWrite(ApplyMultipliersButton, SaveIndividualButton, RestoreSuspensionsButton))
         {
-            PartsTuningUiHelpers.CommitGridEdits(SuspensionsGrid);
+            try
+            {
+                PartsTuningUiHelpers.CommitGridEdits(SuspensionsGrid);
 
-            var suspensions = _suspensions
-                .Select(row => row.ToDefinition())
-                .ToArray();
+                var suspensions = _suspensions
+                    .Select(row => row.ToDefinition())
+                    .ToArray();
 
-            var result = SuspensionService.SaveSuspensionChanges(PakPath, suspensions);
-            ReloadSuspensions();
-            MessageBox.Show(
-                UiText.Suspension.IndividualSavedMessage(result.ChangedSuspensions),
-                UiText.Suspension.SaveSuccessTitle,
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show(ex.Message, UiText.Suspension.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+                var result = SuspensionService.SaveSuspensionChanges(PakPath, suspensions);
+                ReloadSuspensions();
+                ReportStatus(UiText.Suspension.IndividualSavedStatus(result.ChangedSuspensions, result.UpdatedFiles));
+            }
+            catch (Exception ex)
+            {
+                ReportStatus(UiText.Main.ErrorStatus(ex.Message));
+                MessageBox.Show(ex.Message, UiText.Suspension.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 
@@ -276,6 +278,9 @@ public partial class SuspensionTuningView : UserControl
 
     private static double GetMultiplier(Slider slider) =>
         TuningMultiplierPresets.GetValue(GetMultiplierIndex(slider));
+
+    private void ReportStatus(string message) =>
+        StatusChanged?.Invoke(this, message);
 
     public sealed class SuspensionRowViewModel : INotifyPropertyChanged
     {

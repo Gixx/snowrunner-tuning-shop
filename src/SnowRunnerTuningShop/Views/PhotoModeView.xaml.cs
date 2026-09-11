@@ -103,7 +103,7 @@ public partial class PhotoModeView : UserControl
         _session = session;
         _session.PakChanged += (_, _) => ReloadFromPak();
         _session.BaselineChanged += (_, _) => ReloadFromPak();
-        _session.GameRunningChanged += (_, _) => ReloadFromPak();
+        _session.GameRunningChanged += (_, _) => RefreshWriteGates();
         ReloadFromPak();
     }
 
@@ -268,9 +268,6 @@ public partial class PhotoModeView : UserControl
         }
 
         HintText.Visibility = Visibility.Collapsed;
-        RestoreButton.IsEnabled = PakBaselineService.HasBaseline(_session.PakPath)
-            && PakWriteUi.CanWrite(_session);
-        UpdateReapplySavedButton();
 
         try
         {
@@ -287,15 +284,31 @@ public partial class PhotoModeView : UserControl
                     && !constraint.SettingKey.Equals(PhotoModeSettingKeys.Contrast, StringComparison.Ordinal))
                 ? $"{UiText.PhotoMode.LoadedStatus} {UiText.PhotoMode.SliderRangeLimited}"
                 : UiText.PhotoMode.LoadedStatus;
-            ApplyButton.IsEnabled = PakWriteUi.CanWrite(_session);
             _pakLoadedSuccessfully = true;
         }
         catch (Exception ex)
         {
-            ApplyButton.IsEnabled = false;
             _pakLoadedSuccessfully = false;
             StatusText.Text = UiText.Main.ErrorStatus(ex.Message);
         }
+
+        RefreshWriteGates();
+    }
+
+    private void RefreshWriteGates()
+    {
+        if (_session is null || string.IsNullOrWhiteSpace(_session.PakPath) || !_pakLoadedSuccessfully)
+        {
+            ApplyButton.IsEnabled = false;
+            RestoreButton.IsEnabled = false;
+            UpdateReapplySavedButton();
+            return;
+        }
+
+        var canWrite = PakWriteUi.CanWrite(_session);
+        ApplyButton.IsEnabled = canWrite;
+        RestoreButton.IsEnabled = PakBaselineService.HasBaseline(_session.PakPath) && canWrite;
+        UpdateReapplySavedButton();
     }
 
     private void ApplyConstraintsToSliders(IReadOnlyList<PhotoModeSliderConstraint> constraints)
@@ -415,38 +428,30 @@ public partial class PhotoModeView : UserControl
             return;
         }
 
-        try
+        using (PakWriteUi.BeginBusyWrite(ApplyButton, ReapplySavedButton, RestoreButton))
         {
-            var result = restoreBaseline
-                ? PhotoModeService.RestoreBaseline(_session.PakPath)
-                : reapplySaved
-                    ? PhotoModeProfileService.ReapplySaved(_session.PakPath)
-                    : PhotoModeService.ApplySettings(_session.PakPath, ReadSettingsFromUi());
-
-            ReloadFromPak();
-            StatusText.Text = result.UpdatedEntries <= 0
-                ? reapplySaved
-                    ? UiText.PhotoMode.ReappliedSavedNoChanges
-                    : UiText.PhotoMode.NoChangesToSave
-                : reapplySaved
-                    ? UiText.PhotoMode.ReappliedSaved(result.UpdatedEntries)
-                    : UiText.PhotoMode.Saved(result.UpdatedEntries);
-
-            if (result.UpdatedEntries > 0)
+            try
             {
-                MessageBox.Show(
-                    reapplySaved
+                var result = restoreBaseline
+                    ? PhotoModeService.RestoreBaseline(_session.PakPath)
+                    : reapplySaved
+                        ? PhotoModeProfileService.ReapplySaved(_session.PakPath)
+                        : PhotoModeService.ApplySettings(_session.PakPath, ReadSettingsFromUi());
+
+                ReloadFromPak();
+                StatusText.Text = result.UpdatedEntries <= 0
+                    ? reapplySaved
+                        ? UiText.PhotoMode.ReappliedSavedNoChanges
+                        : UiText.PhotoMode.NoChangesToSave
+                    : reapplySaved
                         ? UiText.PhotoMode.ReappliedSaved(result.UpdatedEntries)
-                        : UiText.PhotoMode.Saved(result.UpdatedEntries),
-                    UiText.PhotoMode.SaveSuccessTitle,
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information);
+                        : UiText.PhotoMode.Saved(result.UpdatedEntries);
             }
-        }
-        catch (Exception ex)
-        {
-            StatusText.Text = UiText.Main.ErrorStatus(ex.Message);
-            MessageBox.Show(ex.Message, UiText.PhotoMode.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+            catch (Exception ex)
+            {
+                StatusText.Text = UiText.Main.ErrorStatus(ex.Message);
+                MessageBox.Show(ex.Message, UiText.PhotoMode.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 }
