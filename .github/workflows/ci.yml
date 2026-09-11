@@ -34,3 +34,28 @@ jobs:
           -r win-x64
           --self-contained true
           -o publish/smoke
+
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Restore Desktop
+        run: dotnet restore src/SnowRunnerTuningShop.Desktop/SnowRunnerTuningShop.Desktop.csproj
+
+      - name: Build Desktop
+        run: dotnet build src/SnowRunnerTuningShop.Desktop/SnowRunnerTuningShop.Desktop.csproj -c Release --no-restore
+
+      - name: Publish smoke (linux-x64 self-contained)
+        run: >
+          dotnet publish src/SnowRunnerTuningShop.Desktop/SnowRunnerTuningShop.Desktop.csproj
+          -c Release
+          -r linux-x64
+          --self-contained true
+          -o publish/linux-smoke

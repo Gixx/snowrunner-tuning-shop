@@ -9,7 +9,7 @@ Full map: `docs/AGENT_CONTEXT.md` — read it when unsure; update it when archit
 
 ## Product
 
-WPF / .NET 10 desktop app that tunes SnowRunner `initial.pak`. UI in `src/SnowRunnerTuningShop/`, domain in `src/SnowRunnerTuningShop.Core/`. Version: `AppInfo.Version`. Releases: `CHANGELOG.md` + git tag `v*`.
+WPF / .NET 10 desktop app that tunes SnowRunner `initial.pak`. UI in `src/SnowRunnerTuningShop/` (Windows), Avalonia shell in `src/SnowRunnerTuningShop.Desktop/` (Linux in progress), domain in `src/SnowRunnerTuningShop.Core/`. Version: `AppInfo.Version`. Releases: `CHANGELOG.md` + git tag `v*`.
 
 ## Hard rules
 

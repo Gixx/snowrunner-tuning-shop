@@ -21,18 +21,22 @@ Windows desktop fan tool (MIT) that loads SnowRunner `initial.pak` (ZIP of XML/b
 
 | Item | Detail |
 |------|--------|
-| UI | WPF, `net10.0-windows` — `src/SnowRunnerTuningShop/` |
+| UI (Windows) | WPF, `net10.0-windows` — `src/SnowRunnerTuningShop/` |
+| UI (Linux / cross) | Avalonia, `net10.0` — `src/SnowRunnerTuningShop.Desktop/` (in progress) |
 | Domain | `net10.0` — `src/SnowRunnerTuningShop.Core/` |
 | Solution | `SnowRunnerTuningShop.slnx` |
 | Assets | `assets/vehicles`, `trailers`, `localization`, `general` |
 | Installer | `installer/SnowRunnerTuningShop.iss` (+ Chinese ISL under `installer/languages/`) |
-| CI | `.github/workflows/ci.yml`, `release.yml` (`v*` tags), `pages.yml` |
+| CI | `.github/workflows/ci.yml` (Windows + Linux Desktop publish smoke), `release.yml` (`v*` tags), `pages.yml` |
 | Docs | `CHANGELOG.md` (Keep a Changelog), `README.md` |
 
 **Gitignored (do not treat as product source):** `.plan/`, `docs/plan/`, `artifacts/`, `tools/`, `example.data/`, `*.baseline`.
 
-Build (Release):  
+Build (Release, Windows WPF):  
 `dotnet build src/SnowRunnerTuningShop/SnowRunnerTuningShop.csproj -c Release`
+
+Build (Avalonia Desktop):  
+`dotnet build src/SnowRunnerTuningShop.Desktop/SnowRunnerTuningShop.Desktop.csproj -c Release`
 
 Tests: `tests/SnowRunnerTuningShop.Tests` — `dotnet test tests/SnowRunnerTuningShop.Tests/SnowRunnerTuningShop.Tests.csproj`  
 (locale keys vs `en.json`, `PakFileId`, trailer store hitch rules).
@@ -137,13 +141,16 @@ Do **not** commit unless the user explicitly asks. Do **not** invent features or
 
 ---
 
-## Planned Linux port (not shipped)
+## Planned Linux port (in progress on main)
 
-See `docs/plan/Linux-Avalonia-plan.md` (gitignored work notes).
+Tracked work notes may also live under gitignored `docs/plan/Linux-Avalonia-plan.md`.
 
-- UI: Avalonia shell beside WPF; shared Core
-- Package: **Flatpak** (not AppImage); sandbox must grant Steam/`initial.pak` filesystem access
-- First test VM: Ubuntu 24.04 desktop (not WSL)
+- UI: Avalonia shell (`src/SnowRunnerTuningShop.Desktop/`) beside WPF; shared Core
+- Work on **main** (not a long-lived `linux` branch)
+- Package target: **Flatpak** (not AppImage); sandbox must grant Steam/`initial.pak` filesystem access
+- Smoke VM: CachyOS Hyper-V (plus Ubuntu when available); not WSL
+- Phase 0 done when: empty Avalonia window runs on Windows + Linux with Core reference
+- See `src/SnowRunnerTuningShop.Desktop/README.md` for `dotnet run` / `linux-x64` publish
 
 ---
 
@@ -160,7 +167,8 @@ See `docs/plan/Linux-Avalonia-plan.md` (gitignored work notes).
 | General / Photo | `Core/General/GeneralService.cs`, `Core/PhotoMode/*` |
 | Strings | `Core/Strings/GameStringsReader.cs`; UI `Localization/StringResources.cs`, `UiText.cs`, `LanguageService.cs` |
 | Crash | `Core/Diagnostics/CrashReport*.cs`, `Views/CrashReportWindow.*`, `GlobalExceptionHandler.cs` |
-| Shell | `App.xaml.cs`, `MainWindow.*`, `AppSession.cs`, `AppPaths.cs`, `ThemeService.cs` |
+| Shell (WPF) | `App.xaml.cs`, `MainWindow.*`, `AppSession.cs`, `AppPaths.cs`, `ThemeService.cs` |
+| Shell (Avalonia) | `src/SnowRunnerTuningShop.Desktop/` (`Program.cs`, `MainWindow.axaml*`) |
 
 ---
 

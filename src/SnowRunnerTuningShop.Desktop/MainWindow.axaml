@@ -1,0 +1,23 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="720" d:DesignHeight="400"
+        x:Class="SnowRunnerTuningShop.Desktop.MainWindow"
+        Title="SnowRunner Tuning Shop"
+        Width="720"
+        Height="400">
+  <Panel Margin="32">
+    <StackPanel VerticalAlignment="Center" Spacing="12">
+      <TextBlock FontSize="28"
+                 FontWeight="SemiBold"
+                 Text="SnowRunner Tuning Shop"/>
+      <TextBlock TextWrapping="Wrap"
+                 Opacity="0.85"
+                 Text="Avalonia host is running. Workspace UI is not wired yet — set a baseline from initial.pak in a later build."/>
+      <TextBlock x:Name="VersionText"
+                 Opacity="0.6"
+                 FontSize="12"/>
+    </StackPanel>
+  </Panel>
+</Window>

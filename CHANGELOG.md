@@ -13,6 +13,7 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ### Added
 - **Parts → Cranes tab:** global arm-force and movement-speed multipliers plus per-crane edits for average arm `Motor Force` and `ControlledIK` speed coeffs (`Crane` / `LogCrane` truck addons).
+- **Avalonia Desktop host (Linux path):** `src/SnowRunnerTuningShop.Desktop` empty shell with Core reference; CI builds/publishes `linux-x64` smoke on Ubuntu. WPF remains the Windows product UI.
 
 ### Changed
 - **P1 maintenance:** shared `PartPakPipeline` for parts global applies; `TruckDiffLockXml` + `VehicleGameDataXml` extracts; `PartsTuningUiHelpers` on all Parts tabs; vehicles `_meta_build` excluded from output; README Vehicles section updated.
