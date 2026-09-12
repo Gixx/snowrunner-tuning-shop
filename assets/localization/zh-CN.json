@@ -102,7 +102,7 @@
   "LocalePack.ColumnRemove": "移除",
   "LocalePack.ColumnRevision": "版本",
   "LocalePack.ColumnStatus": "状态",
-  "LocalePack.Hint": "随应用附带的语言可离线使用。勾选“添加/更新”可从 GitHub 下载更新或额外语言；“移除”会删除已下载的副本（附带语言会还原为安装时的文件）。",
+  "LocalePack.Hint": "仅列出应用未附带的可选语言。勾选“添加/更新”可从 GitHub 下载，或“移除”删除已下载的副本。随应用附带的语言仅在设置中选择。",
   "LocalePack.NothingSelected": "请至少选择一种要添加、更新或移除的语言。",
   "LocalePack.Ready": "已加载 GitHub 目录。{0} 种新语言，{1} 项可更新。",
   "LocalePack.Refresh": "刷新",

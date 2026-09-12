@@ -3,7 +3,6 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
 using SnowRunnerTuningShop;
-using SnowRunnerTuningShop.Core;
 using SnowRunnerTuningShop.Core.Config;
 using SnowRunnerTuningShop.Core.Diagnostics;
 using SnowRunnerTuningShop.Core.Game;
@@ -37,14 +36,14 @@ public partial class MainWindow : Window
         VersionText.Text = UiText.Nav.VersionLabel;
         SubtitleText.Text = UiText.Main.Subtitle;
         GameRunningBannerText.Text = UiText.Main.GameRunningBanner;
-        PlaceholderGeneral.Set(UiText.Nav.General);
         PlaceholderParts.Set(UiText.Nav.Parts);
         PlaceholderVehicles.Set(UiText.Nav.Vehicles);
         PlaceholderTrailers.Set(UiText.Nav.Trailers);
         PlaceholderPhotoMode.Set(UiText.Nav.PhotoMode);
-        PlaceholderSettings.Set(UiText.Nav.Settings);
 
         HomeView.AttachSession(_session);
+        GeneralView.AttachSession(_session);
+        SettingsView.AttachSession(_session);
         _gameRunningMonitor = new GameRunningMonitor(_session);
         _session.GameRunningChanged += (_, _) => UpdateGameRunningBanner();
         UpdateGameRunningBanner();
@@ -130,7 +129,8 @@ public partial class MainWindow : Window
             ApplyNavLayout();
         }
 
-        await AppDialogs.OpenUrl(this, AppInfo.IssueTrackerUrl);
+        var dialog = new BugReportWindow();
+        await dialog.ShowDialog(this);
     }
 
     private void PinMenuCheckBox_Changed(object? sender, RoutedEventArgs e)
@@ -171,7 +171,7 @@ public partial class MainWindow : Window
         }
         else if (ReferenceEquals(radio, NavGeneral))
         {
-            ShowPage(PlaceholderGeneral);
+            ShowPage(GeneralView);
         }
         else if (ReferenceEquals(radio, NavParts))
         {
@@ -191,7 +191,7 @@ public partial class MainWindow : Window
         }
         else if (ReferenceEquals(radio, NavSettings))
         {
-            ShowPage(PlaceholderSettings);
+            ShowPage(SettingsView);
         }
 
         if (!_sidebarPinned)
@@ -206,22 +206,22 @@ public partial class MainWindow : Window
         CrashReportContext.SetPage(page switch
         {
             _ when ReferenceEquals(page, HomeView) => UiText.Nav.Home,
-            _ when ReferenceEquals(page, PlaceholderGeneral) => UiText.Nav.General,
+            _ when ReferenceEquals(page, GeneralView) => UiText.Nav.General,
             _ when ReferenceEquals(page, PlaceholderParts) => UiText.Nav.Parts,
             _ when ReferenceEquals(page, PlaceholderVehicles) => UiText.Nav.Vehicles,
             _ when ReferenceEquals(page, PlaceholderTrailers) => UiText.Nav.Trailers,
             _ when ReferenceEquals(page, PlaceholderPhotoMode) => UiText.Nav.PhotoMode,
-            _ when ReferenceEquals(page, PlaceholderSettings) => UiText.Nav.Settings,
+            _ when ReferenceEquals(page, SettingsView) => UiText.Nav.Settings,
             _ => page.GetType().Name,
         });
 
         HomeView.IsVisible = false;
-        PlaceholderGeneral.IsVisible = false;
+        GeneralView.IsVisible = false;
         PlaceholderParts.IsVisible = false;
         PlaceholderVehicles.IsVisible = false;
         PlaceholderTrailers.IsVisible = false;
         PlaceholderPhotoMode.IsVisible = false;
-        PlaceholderSettings.IsVisible = false;
+        SettingsView.IsVisible = false;
         page.IsVisible = true;
     }
 }

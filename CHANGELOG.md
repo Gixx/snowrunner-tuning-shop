@@ -13,9 +13,10 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ### Added
 - **Parts → Cranes tab:** global arm-force and movement-speed multipliers plus per-crane edits for average arm `Motor Force` and `ControlledIK` speed coeffs (`Crane` / `LogCrane` truck addons).
-- **Avalonia Desktop (Linux path):** `src/SnowRunnerTuningShop.Desktop` shell with Home workspace (baseline / change location / restore / refresh / reapply), sidebar nav, game-running write gate, and shared UI strings. Other pages are placeholders. WPF remains the Windows product UI.
+- **Avalonia Desktop (Linux path):** `src/SnowRunnerTuningShop.Desktop` shell with Home workspace (baseline / change location / restore / refresh / reapply), General (camera / trail rocks), Settings (theme / language / locale packs / updates / links / debug crash tests), Mailtrap bug-report dialog, crash-report dialog, sidebar nav, game-running write gate, and shared UI strings. Parts / Vehicles / Trailers / Photo Mode remain placeholders. WPF remains the Windows product UI.
 
 ### Changed
+- **Locale manager:** Add or Update languages lists only optional downloadable packs (e.g. hu/it/fi), not languages shipped with the app.
 - **P1 maintenance:** shared `PartPakPipeline` for parts global applies; `TruckDiffLockXml` + `VehicleGameDataXml` extracts; `PartsTuningUiHelpers` on all Parts tabs; vehicles `_meta_build` excluded from output; README Vehicles section updated.
 - **P2 UX:** Apply/Save success uses status text instead of Information MessageBoxes; write handlers show a wait cursor and disable concurrent write buttons (`PakWriteUi.BeginBusyWrite`).
 - **Catalog thumbs:** Vehicles/Trailers decode thumbnails lazily (path cache) instead of eagerly at catalog load.

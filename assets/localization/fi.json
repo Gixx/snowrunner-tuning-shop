@@ -102,7 +102,7 @@
   "LocalePack.ColumnRemove": "Poista",
   "LocalePack.ColumnRevision": "Versio",
   "LocalePack.ColumnStatus": "Tila",
-  "LocalePack.Hint": "Sovelluksen mukana toimitetut kielet toimivat myös offline. Valitse Lisää/Päivitä ladataksesi uudemman tai lisäkielen GitHubista, tai Poista poistaaksesi ladatun kopion (toimitetut kielet palaavat mukana tulevaan tiedostoon).",
+  "LocalePack.Hint": "Vain valinnaiset kielet, joita ei toimiteta sovelluksen mukana. Valitse Lisää/Päivitä ladataksesi GitHubista, tai Poista poistaaksesi ladatun kopion. Mukana tulevat kielet ovat vain Asetuksissa.",
   "LocalePack.NothingSelected": "Valitse vähintään yksi kieli lisättäväksi, päivitettäväksi tai poistettavaksi.",
   "LocalePack.Ready": "GitHub-luettelo ladattu. {0} uutta, {1} päivitystä saatavilla.",
   "LocalePack.Refresh": "Päivitä",

@@ -102,7 +102,7 @@
   "LocalePack.ColumnRemove": "Remover",
   "LocalePack.ColumnRevision": "Revisão",
   "LocalePack.ColumnStatus": "Estado",
-  "LocalePack.Hint": "Os idiomas incluídos com a aplicação continuam disponíveis offline. Marque Adicionar/Atualizar para descarregar um idioma mais recente ou extra do GitHub, ou Remover para eliminar uma cópia descarregada (os idiomas incluídos voltam ao ficheiro de origem).",
+  "LocalePack.Hint": "Apenas idiomas opcionais que não vêm com a aplicação. Marque Adicionar/Atualizar para descarregar do GitHub, ou Remover para eliminar uma cópia descarregada. Os idiomas incluídos ficam apenas em Definições.",
   "LocalePack.NothingSelected": "Selecione pelo menos um idioma para adicionar, atualizar ou remover.",
   "LocalePack.Ready": "Catálogo do GitHub carregado. {0} novo(s), {1} atualização(ões) disponível(eis).",
   "LocalePack.Refresh": "Atualizar",

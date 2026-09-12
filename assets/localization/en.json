@@ -144,7 +144,7 @@
   "LocalePack.ColumnRemove": "Remove",
   "LocalePack.ColumnRevision": "Revision",
   "LocalePack.ColumnStatus": "Status",
-  "LocalePack.Hint": "Languages shipped with the app stay available offline. Check Add/Update to download a newer or extra language from GitHub, or Remove to drop a downloaded copy (bundled languages revert to the shipped file).",
+  "LocalePack.Hint": "Optional languages that are not shipped with the app. Check Add/Update to download from GitHub, or Remove to delete a downloaded copy. Bundled languages stay in Settings only.",
   "LocalePack.NothingSelected": "Select at least one language to add, update, or remove.",
   "LocalePack.Ready": "GitHub catalog loaded. {0} new, {1} update(s) available.",
   "LocalePack.Refresh": "Refresh",

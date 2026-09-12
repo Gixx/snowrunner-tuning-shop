@@ -1,0 +1,44 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="SnowRunnerTuningShop.Desktop.Views.CrashReportWindow"
+        Width="640"
+        Height="520"
+        MinWidth="520"
+        MinHeight="420"
+        WindowStartupLocation="CenterOwner"
+        CanResize="True"
+        ShowInTaskbar="False">
+  <Grid Margin="20" RowDefinitions="Auto,Auto,*,Auto,Auto">
+    <TextBlock x:Name="HeadingText"
+               FontSize="18"
+               FontWeight="SemiBold"
+               Margin="0,0,0,8"/>
+    <TextBlock x:Name="SummaryText"
+               Grid.Row="1"
+               TextWrapping="Wrap"
+               Opacity="0.8"
+               Margin="0,0,0,12"/>
+    <TextBox x:Name="ReportTextBox"
+             Grid.Row="2"
+             IsReadOnly="True"
+             TextWrapping="Wrap"
+             FontFamily="Consolas, monospace"
+             FontSize="12"
+             Margin="0,0,0,12"/>
+    <TextBlock x:Name="LogPathText"
+               Grid.Row="3"
+               TextWrapping="Wrap"
+               FontSize="11"
+               Opacity="0.8"
+               Margin="0,0,0,16"/>
+    <StackPanel Grid.Row="4"
+                Orientation="Horizontal"
+                HorizontalAlignment="Right"
+                Spacing="8">
+      <Button x:Name="CopyButton" Padding="14,8" Click="CopyButton_Click"/>
+      <Button x:Name="GitHubButton" Padding="14,8" Click="GitHubButton_Click"/>
+      <Button x:Name="EmailButton" Padding="14,8" IsVisible="False" Click="EmailButton_Click"/>
+      <Button x:Name="CloseButton" Padding="14,8" Click="CloseButton_Click"/>
+    </StackPanel>
+  </Grid>
+</Window>

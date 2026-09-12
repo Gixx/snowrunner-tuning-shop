@@ -9,7 +9,7 @@ Cross-platform UI shell for **Linux** (and a Windows sidecar). The Windows produ
 
 ## Run
 
-In Cursor: select **Avalonia Desktop (Linux)** in the Run and Debug dropdown, then press **F5** (build + debug) or use **Avalonia Desktop (run, no debugger)** if the C# debugger is unavailable. `Ctrl+Shift+B` builds the Desktop project.
+In Cursor: the workspace opens `SnowRunnerTuningShop.Linux.slnx` (Core + Desktop + tests, no WPF) so the C# extension does not spam `NETSDK1100` on Linux. Select **Avalonia Desktop (Linux)** in Run and Debug, then press **F5** (build + debug) or use **Avalonia Desktop (run, no debugger)** if the C# debugger is unavailable. `Ctrl+Shift+B` builds the Desktop project.
 
 From the repo root (prefer a native filesystem clone on Linux — avoid building from a Windows SMB share):
 
@@ -34,4 +34,4 @@ Flatpak packaging comes in a later phase (`packaging/flatpak/`).
 
 ## Status
 
-Phase 1: Home workspace (baseline, location, restore, refresh, reapply) plus sidebar navigation. General / Parts / Vehicles / Trailers / Photo Mode / Settings are placeholders. Flatpak packaging is later.
+Phase 1: Home, General, and Settings are wired. Parts / Vehicles / Trailers / Photo Mode are placeholders. Flatpak packaging is later.

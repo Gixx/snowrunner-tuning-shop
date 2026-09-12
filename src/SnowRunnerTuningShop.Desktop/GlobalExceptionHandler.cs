@@ -2,7 +2,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
 using SnowRunnerTuningShop.Core.Diagnostics;
-using SnowRunnerTuningShop.Localization;
+using SnowRunnerTuningShop.Desktop.Views;
 
 namespace SnowRunnerTuningShop.Desktop;
 
@@ -11,6 +11,7 @@ internal static class GlobalExceptionHandler
     private static bool _registered;
     private static string? _lastFingerprint;
     private static DateTimeOffset _lastShownAt;
+    private static bool _showing;
 
     public static void Register()
     {
@@ -36,7 +37,7 @@ internal static class GlobalExceptionHandler
 
     public static void Handle(Exception? exception, bool isTerminating)
     {
-        if (exception is null)
+        if (exception is null || _showing)
         {
             return;
         }
@@ -61,20 +62,26 @@ internal static class GlobalExceptionHandler
         _lastFingerprint = report.Fingerprint;
         _lastShownAt = DateTimeOffset.UtcNow;
 
-        void Show()
+        async void Show()
         {
             if (Avalonia.Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime
                 {
-                    MainWindow: { } window
+                    MainWindow: Window owner
                 })
             {
                 return;
             }
 
-            var body = string.IsNullOrWhiteSpace(logPath)
-                ? report.FullText
-                : $"{report.FullText}\n\nSaved: {logPath}";
-            _ = AppDialogs.ShowError(window, body, UiText.CrashReport.Title);
+            _showing = true;
+            try
+            {
+                var dialog = new CrashReportWindow(report, logPath, isTerminating);
+                await dialog.ShowDialog(owner);
+            }
+            finally
+            {
+                _showing = false;
+            }
         }
 
         if (!Dispatcher.UIThread.CheckAccess())

@@ -688,7 +688,9 @@ public static class UiText
     public static class LocalePack
     {
         public static string Title => StringResources.Get("LocalePack.Title", "Add or Update languages");
-        public static string Hint => StringResources.Get("LocalePack.Hint", "Languages shipped with the app stay available offline. Check Add/Update to download a newer or extra language from GitHub, or Remove to drop a downloaded copy (bundled languages revert to the shipped file).");
+        public static string Hint => StringResources.Get(
+            "LocalePack.Hint",
+            "Optional languages that are not shipped with the app. Check Add/Update to download from GitHub, or Remove to delete a downloaded copy. Bundled languages stay in Settings only.");
         public static string Checking => StringResources.Get("LocalePack.Checking", "Checking GitHub for language files…");
         public static string Refresh => StringResources.Get("LocalePack.Refresh", "Refresh");
         public static string Apply => StringResources.Get("LocalePack.Apply", "Apply selected");

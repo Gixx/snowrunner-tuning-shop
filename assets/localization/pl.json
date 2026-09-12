@@ -102,7 +102,7 @@
   "LocalePack.ColumnRemove": "Usuń",
   "LocalePack.ColumnRevision": "Rewizja",
   "LocalePack.ColumnStatus": "Status",
-  "LocalePack.Hint": "Języki dołączone do aplikacji działają offline. Zaznacz Dodaj/Aktualizuj, aby pobrać nowszy lub dodatkowy język z GitHub, albo Usuń, aby skasować pobraną kopię (języki dołączone wracają do pliku z instalacji).",
+  "LocalePack.Hint": "Tylko opcjonalne języki, których nie ma w aplikacji. Zaznacz Dodaj/Aktualizuj, aby pobrać z GitHub, albo Usuń, aby skasować pobraną kopię. Języki dołączone pozostają tylko w Ustawieniach.",
   "LocalePack.NothingSelected": "Wybierz co najmniej jeden język do dodania, aktualizacji lub usunięcia.",
   "LocalePack.Ready": "Wczytano katalog GitHub. {0} nowych, {1} aktualizacji.",
   "LocalePack.Refresh": "Odśwież",

@@ -51,12 +51,12 @@
 
       <Grid Grid.Row="1" Margin="20">
         <views:HomeView x:Name="HomeView"/>
-        <views:PlaceholderView x:Name="PlaceholderGeneral" IsVisible="False"/>
+        <views:GeneralView x:Name="GeneralView" IsVisible="False"/>
         <views:PlaceholderView x:Name="PlaceholderParts" IsVisible="False"/>
         <views:PlaceholderView x:Name="PlaceholderVehicles" IsVisible="False"/>
         <views:PlaceholderView x:Name="PlaceholderTrailers" IsVisible="False"/>
         <views:PlaceholderView x:Name="PlaceholderPhotoMode" IsVisible="False"/>
-        <views:PlaceholderView x:Name="PlaceholderSettings" IsVisible="False"/>
+        <views:SettingsView x:Name="SettingsView" IsVisible="False"/>
       </Grid>
     </Grid>
 

@@ -24,7 +24,7 @@ Windows desktop fan tool (MIT) that loads SnowRunner `initial.pak` (ZIP of XML/b
 | UI (Windows) | WPF, `net10.0-windows` — `src/SnowRunnerTuningShop/` |
 | UI (Linux / cross) | Avalonia, `net10.0` — `src/SnowRunnerTuningShop.Desktop/` (in progress) |
 | Domain | `net10.0` — `src/SnowRunnerTuningShop.Core/` |
-| Solution | `SnowRunnerTuningShop.slnx` |
+| Solution | `SnowRunnerTuningShop.slnx` (full, incl. WPF); Linux IDE: `SnowRunnerTuningShop.Linux.slnx` via `.vscode/settings.json` `dotnet.defaultSolution` |
 | Assets | `assets/vehicles`, `trailers`, `localization`, `general` |
 | Installer | `installer/SnowRunnerTuningShop.iss` (+ Chinese ISL under `installer/languages/`) |
 | CI | `.github/workflows/ci.yml` (Windows + Linux Desktop publish smoke), `release.yml` (`v*` tags), `pages.yml` |
@@ -150,8 +150,9 @@ Tracked work notes may also live under gitignored `docs/plan/Linux-Avalonia-plan
 - Package target: **Flatpak** (not AppImage); sandbox must grant Steam/`initial.pak` filesystem access
 - Smoke VM: CachyOS Hyper-V (plus Ubuntu when available); not WSL
 - Phase 0 done when: empty Avalonia window runs on Windows + Linux with Core reference
-- Phase 1 (current): Home workspace + sidebar shell on Avalonia; other nav pages are placeholders
+- Phase 1 (current): Home + General + Settings on Avalonia; Parts / Vehicles / Trailers / Photo Mode are placeholders
 - See `src/SnowRunnerTuningShop.Desktop/README.md` for `dotnet run` / F5 / `linux-x64` publish
+- IDE on Linux: open `SnowRunnerTuningShop.Linux.slnx` (set via `.vscode/settings.json`) so Roslyn skips the WPF Windows TFM
 
 ---
 

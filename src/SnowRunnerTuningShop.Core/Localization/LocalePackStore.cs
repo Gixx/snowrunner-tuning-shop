@@ -230,7 +230,8 @@ public static class LocalePackStore
                 IsCompatible(remoteEntry?.MinAppVersion ?? local?.MinAppVersion)));
         }
 
-        return snapshots;
+        // Locale manager lists optional downloads only — bundled languages stay in Settings.
+        return snapshots.Where(pack => !pack.IsBundled).ToArray();
     }
 
     private static void EnsureLoaded()

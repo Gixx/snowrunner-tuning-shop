@@ -24,11 +24,67 @@ internal static class AppDialogs
     {
         try
         {
-            Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+            OpenUrl(url);
         }
         catch (Exception ex)
         {
             await ShowError(owner, ex.Message, UiText.Settings.Title);
+        }
+    }
+
+    public static void OpenUrl(string url)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(url);
+
+        if (OperatingSystem.IsWindows())
+        {
+            Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+            return;
+        }
+
+        if (OperatingSystem.IsMacOS())
+        {
+            Process.Start(new ProcessStartInfo("open", url)
+            {
+                UseShellExecute = false,
+            });
+            return;
+        }
+
+        // Linux: xdg-open often no-ops when launched from Avalonia/Cursor; Firefox works.
+        if (TryStart("firefox", "--new-window", url)
+            || TryStart("firefox", url)
+            || TryStart("xdg-open", url))
+        {
+            return;
+        }
+
+        throw new InvalidOperationException(
+            "Could not open the link. Install Firefox or ensure xdg-open is available.");
+    }
+
+    private static bool TryStart(string fileName, params string[] args)
+    {
+        try
+        {
+            var start = new ProcessStartInfo
+            {
+                FileName = fileName,
+                UseShellExecute = false,
+                RedirectStandardError = true,
+                RedirectStandardOutput = true,
+            };
+            foreach (var arg in args)
+            {
+                start.ArgumentList.Add(arg);
+            }
+
+            using var process = Process.Start(start);
+            return process is not null;
+        }
+        catch (Exception)
+        {
+            return false;
         }
     }
 

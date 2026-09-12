@@ -1,0 +1,64 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="SnowRunnerTuningShop.Desktop.Views.BugReportWindow"
+        Width="560"
+        Height="480"
+        MinWidth="460"
+        MinHeight="400"
+        WindowStartupLocation="CenterOwner"
+        CanResize="True"
+        ShowInTaskbar="False">
+  <Grid Margin="20" RowDefinitions="Auto,Auto,*,Auto,Auto,Auto,Auto">
+    <TextBlock x:Name="HeadingText"
+               FontSize="18"
+               FontWeight="SemiBold"
+               Margin="0,0,0,8"/>
+    <TextBlock x:Name="DescriptionLabelText"
+               Grid.Row="1"
+               TextWrapping="Wrap"
+               Opacity="0.8"
+               Margin="0,0,0,6"/>
+    <Grid Grid.Row="2" Margin="0,0,0,6" RowDefinitions="*,Auto">
+      <TextBox x:Name="DescriptionBox"
+               AcceptsReturn="True"
+               TextWrapping="Wrap"
+               MaxLength="600"
+               FontSize="13"
+               Padding="8"
+               MinHeight="140"
+               TextChanged="DescriptionBox_TextChanged"/>
+      <TextBlock x:Name="CharCountText"
+                 Grid.Row="1"
+                 HorizontalAlignment="Right"
+                 FontSize="11"
+                 Margin="0,4,0,0"
+                 Opacity="0.8"/>
+    </Grid>
+    <CheckBox x:Name="IncludeProfileCheckBox"
+              Grid.Row="3"
+              Margin="0,8,0,6"/>
+    <TextBlock x:Name="ProfilePrivacyNoteText"
+               Grid.Row="4"
+               TextWrapping="Wrap"
+               FontSize="12"
+               Opacity="0.8"
+               Margin="0,0,0,8"/>
+    <TextBlock x:Name="SubmitHintText"
+               Grid.Row="5"
+               TextWrapping="Wrap"
+               FontSize="12"
+               Opacity="0.8"
+               Margin="0,0,0,16"/>
+    <DockPanel Grid.Row="6" LastChildFill="False">
+      <Button x:Name="CancelButton"
+              DockPanel.Dock="Left"
+              Padding="14,8"
+              Click="CancelButton_Click"/>
+      <Button x:Name="SendButton"
+              DockPanel.Dock="Right"
+              Padding="14,8"
+              HorizontalAlignment="Right"
+              Click="SendButton_Click"/>
+    </DockPanel>
+  </Grid>
+</Window>

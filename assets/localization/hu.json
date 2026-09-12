@@ -144,7 +144,7 @@
   "LocalePack.ColumnRemove": "Eltávolítás",
   "LocalePack.ColumnRevision": "Revízió",
   "LocalePack.ColumnStatus": "Állapot",
-  "LocalePack.Hint": "A programmal szállított nyelvek offline is elérhetők. A Hozzáadás/Frissítés egy újabb vagy extra nyelvet tölt le a GitHubról; az Eltávolítás a letöltött másolatot törli (a beépített nyelvek a szállított fájlra állnak vissza).",
+  "LocalePack.Hint": "Csak a programmal nem szállított, külön letölthető nyelvek. A Hozzáadás/Frissítés a GitHubról tölt le; az Eltávolítás a letöltött másolatot törli. A beépített nyelvek a Beállításokban választhatók.",
   "LocalePack.NothingSelected": "Jelölj ki legalább egy nyelvet hozzáadáshoz, frissítéshez vagy eltávolításhoz.",
   "LocalePack.Ready": "GitHub-katalógus betöltve. {0} új, {1} frissítés elérhető.",
   "LocalePack.Refresh": "Frissítés",

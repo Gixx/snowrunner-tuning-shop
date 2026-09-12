@@ -102,7 +102,7 @@
   "LocalePack.ColumnRemove": "Entfernen",
   "LocalePack.ColumnRevision": "Revision",
   "LocalePack.ColumnStatus": "Status",
-  "LocalePack.Hint": "Mit der App mitgelieferte Sprachen bleiben offline verfügbar. Aktivieren Sie Hinzufügen/Aktualisieren, um eine neuere oder zusätzliche Sprache von GitHub herunterzuladen, oder Entfernen, um eine heruntergeladene Kopie zu löschen (mitgelieferte Sprachen kehren zur ausgelieferten Datei zurück).",
+  "LocalePack.Hint": "Nur optionale Sprachen, die nicht mit der App mitgeliefert werden. Aktivieren Sie Hinzufügen/Aktualisieren zum Download von GitHub, oder Entfernen zum Löschen einer heruntergeladenen Kopie. Mitgelieferte Sprachen bleiben nur unter Einstellungen.",
   "LocalePack.NothingSelected": "Wählen Sie mindestens eine Sprache zum Hinzufügen, Aktualisieren oder Entfernen.",
   "LocalePack.Ready": "GitHub-Katalog geladen. {0} neu, {1} Update(s) verfügbar.",
   "LocalePack.Refresh": "Aktualisieren",

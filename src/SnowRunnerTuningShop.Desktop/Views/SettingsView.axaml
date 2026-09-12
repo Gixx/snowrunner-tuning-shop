@@ -1,0 +1,155 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="SnowRunnerTuningShop.Desktop.Views.SettingsView">
+  <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+    <StackPanel Spacing="12" Margin="0,0,8,0">
+      <TextBlock x:Name="TitleText" FontSize="22" FontWeight="SemiBold"/>
+
+      <Border Background="{DynamicResource AppCardBrush}"
+              BorderBrush="{DynamicResource AppCardStrokeBrush}"
+              BorderThickness="1"
+              CornerRadius="8"
+              Padding="16">
+        <StackPanel Spacing="8">
+          <TextBlock x:Name="AppearanceTitleText" FontWeight="SemiBold"/>
+          <TextBlock x:Name="AppearanceHintText" TextWrapping="Wrap" FontSize="11" Opacity="0.8"/>
+          <Grid ColumnDefinitions="180,*">
+            <TextBlock x:Name="ThemeLabelText" VerticalAlignment="Center" Opacity="0.8"/>
+            <ComboBox x:Name="ThemeCombo"
+                      Grid.Column="1"
+                      MaxWidth="320"
+                      HorizontalAlignment="Left"
+                      MinWidth="220"
+                      SelectionChanged="ThemeCombo_SelectionChanged"/>
+          </Grid>
+        </StackPanel>
+      </Border>
+
+      <Border Background="{DynamicResource AppCardBrush}"
+              BorderBrush="{DynamicResource AppCardStrokeBrush}"
+              BorderThickness="1"
+              CornerRadius="8"
+              Padding="16">
+        <StackPanel Spacing="8">
+          <TextBlock x:Name="LanguageTitleText" FontWeight="SemiBold"/>
+          <TextBlock x:Name="LanguageHintText" TextWrapping="Wrap" FontSize="11" Opacity="0.8"/>
+          <Grid ColumnDefinitions="180,*" RowDefinitions="Auto,Auto">
+            <TextBlock x:Name="LanguageLabelText" VerticalAlignment="Center" Opacity="0.8"/>
+            <ComboBox x:Name="LanguageCombo"
+                      Grid.Column="1"
+                      MaxWidth="320"
+                      HorizontalAlignment="Left"
+                      MinWidth="220"
+                      SelectionChanged="LanguageCombo_SelectionChanged"/>
+            <Button x:Name="ManageLanguagesButton"
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    HorizontalAlignment="Left"
+                    Padding="14,8"
+                    Margin="0,8,0,0"
+                    Click="ManageLanguagesButton_Click"/>
+          </Grid>
+        </StackPanel>
+      </Border>
+
+      <Border Background="{DynamicResource AppCardBrush}"
+              BorderBrush="{DynamicResource AppCardStrokeBrush}"
+              BorderThickness="1"
+              CornerRadius="8"
+              Padding="16">
+        <StackPanel Spacing="8">
+          <TextBlock x:Name="WorkspaceTitleText" FontWeight="SemiBold"/>
+          <TextBlock x:Name="WorkspaceHintText" TextWrapping="Wrap" FontSize="11" Opacity="0.8"/>
+          <TextBlock x:Name="WorkspaceStatusTextBlock" TextWrapping="Wrap" FontSize="11" Opacity="0.8"/>
+          <WrapPanel>
+            <Button x:Name="RefreshBaselineButton"
+                    Padding="14,8"
+                    Margin="0,0,8,8"
+                    Click="RefreshBaselineButton_Click"/>
+            <Button x:Name="ReapplyButton"
+                    Padding="14,8"
+                    Margin="0,0,8,8"
+                    Click="ReapplyButton_Click"/>
+            <Button x:Name="RestoreFullBaselineButton"
+                    Classes="danger"
+                    Padding="14,8"
+                    Margin="0,0,8,8"
+                    Click="RestoreFullBaselineButton_Click"/>
+          </WrapPanel>
+        </StackPanel>
+      </Border>
+
+      <Border Background="{DynamicResource AppCardBrush}"
+              BorderBrush="{DynamicResource AppCardStrokeBrush}"
+              BorderThickness="1"
+              CornerRadius="8"
+              Padding="16">
+        <StackPanel Spacing="8">
+          <TextBlock x:Name="AboutTitleText" FontWeight="SemiBold"/>
+          <TextBlock x:Name="AboutHintText" TextWrapping="Wrap" FontSize="11" Opacity="0.8"/>
+          <TextBlock x:Name="InstalledVersionText" TextWrapping="Wrap" FontSize="11" Opacity="0.8"/>
+          <TextBlock x:Name="UpdateStatusTextBlock" TextWrapping="Wrap" FontSize="11" Opacity="0.8"/>
+          <WrapPanel>
+            <Button x:Name="CheckForUpdatesButton"
+                    Padding="14,8"
+                    Margin="0,0,8,8"
+                    Click="CheckForUpdatesButton_Click"/>
+            <Button x:Name="DownloadUpdateButton"
+                    Padding="14,8"
+                    Margin="0,0,8,8"
+                    IsVisible="False"
+                    Click="DownloadUpdateButton_Click"/>
+            <Button x:Name="OpenWebsiteButton"
+                    Padding="14,8"
+                    Margin="0,0,8,8"
+                    Click="OpenWebsiteButton_Click"/>
+            <Button x:Name="DonatePayPalButton"
+                    Padding="14,8"
+                    Margin="0,0,8,8"
+                    Background="#FFC439"
+                    Foreground="#111111"
+                    Click="DonatePayPalButton_Click"/>
+          </WrapPanel>
+        </StackPanel>
+      </Border>
+
+      <Border Background="{DynamicResource AppCardBrush}"
+              BorderBrush="{DynamicResource AppCardStrokeBrush}"
+              BorderThickness="1"
+              CornerRadius="8"
+              Padding="16">
+        <StackPanel Spacing="8">
+          <TextBlock x:Name="FeedbackTitleText" FontWeight="SemiBold"/>
+          <TextBlock x:Name="FeedbackHintText" TextWrapping="Wrap" FontSize="11" Opacity="0.8"/>
+          <Button x:Name="OpenIssueTrackerButton"
+                  HorizontalAlignment="Left"
+                  Padding="14,8"
+                  Click="OpenIssueTrackerButton_Click"/>
+        </StackPanel>
+      </Border>
+
+      <Border x:Name="DebugCrashPanel"
+              Background="{DynamicResource AppCardBrush}"
+              BorderBrush="{DynamicResource AppCardStrokeBrush}"
+              BorderThickness="1"
+              CornerRadius="8"
+              Padding="16"
+              IsVisible="False">
+        <StackPanel Spacing="8">
+          <TextBlock x:Name="DebugCrashTitleText" FontWeight="SemiBold"/>
+          <TextBlock x:Name="DebugCrashHintText" TextWrapping="Wrap" FontSize="11" Opacity="0.8"/>
+          <WrapPanel>
+            <Button x:Name="DebugCrashUiButton"
+                    Padding="14,8"
+                    Margin="0,0,8,8"
+                    Click="DebugCrashUiButton_Click"/>
+            <Button x:Name="DebugCrashVehicleButton"
+                    Padding="14,8"
+                    Margin="0,0,8,8"
+                    Click="DebugCrashVehicleButton_Click"/>
+          </WrapPanel>
+        </StackPanel>
+      </Border>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

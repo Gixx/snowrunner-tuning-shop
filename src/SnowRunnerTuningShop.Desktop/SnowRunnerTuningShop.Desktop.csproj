@@ -20,6 +20,7 @@
     <Compile Include="..\SnowRunnerTuningShop\AppSession.cs" Link="Shared\AppSession.cs" />
     <Compile Include="..\SnowRunnerTuningShop\AppPaths.cs" Link="Shared\AppPaths.cs" />
     <Compile Include="..\SnowRunnerTuningShop\LanguageService.cs" Link="Shared\LanguageService.cs" />
+    <Compile Include="..\SnowRunnerTuningShop\Diagnostics\DebugCrashTools.cs" Link="Shared\DebugCrashTools.cs" />
     <Compile Include="..\SnowRunnerTuningShop\Localization\*.cs" Link="Localization\%(Filename).cs" />
   </ItemGroup>
 
