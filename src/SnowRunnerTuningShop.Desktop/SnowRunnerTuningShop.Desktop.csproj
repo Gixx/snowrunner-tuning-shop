@@ -9,10 +9,37 @@
     <AssemblyName>SnowRunnerTuningShop.Desktop</AssemblyName>
     <Product>SnowRunner Tuning Shop</Product>
     <Description>Cross-platform Avalonia UI (Linux Flatpak target; Windows sidecar next to WPF).</Description>
+    <AvaloniaUseCompiledBindingsByDefault>false</AvaloniaUseCompiledBindingsByDefault>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\SnowRunnerTuningShop.Core\SnowRunnerTuningShop.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\SnowRunnerTuningShop\AppSession.cs" Link="Shared\AppSession.cs" />
+    <Compile Include="..\SnowRunnerTuningShop\AppPaths.cs" Link="Shared\AppPaths.cs" />
+    <Compile Include="..\SnowRunnerTuningShop\LanguageService.cs" Link="Shared\LanguageService.cs" />
+    <Compile Include="..\SnowRunnerTuningShop\Localization\*.cs" Link="Localization\%(Filename).cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\..\assets\vehicles\**\*" Exclude="..\..\assets\vehicles\_meta_build\**\*">
+      <Link>assets\vehicles\%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\assets\trailers\**\*" Exclude="..\..\assets\trailers\_meta_build\**\*">
+      <Link>assets\trailers\%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\assets\general\**\*">
+      <Link>assets\general\%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\assets\localization\*.json" Exclude="..\..\assets\localization\hu.json;..\..\assets\localization\it.json;..\..\assets\localization\fi.json">
+      <Link>assets\localization\%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

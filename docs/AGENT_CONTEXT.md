@@ -150,7 +150,8 @@ Tracked work notes may also live under gitignored `docs/plan/Linux-Avalonia-plan
 - Package target: **Flatpak** (not AppImage); sandbox must grant Steam/`initial.pak` filesystem access
 - Smoke VM: CachyOS Hyper-V (plus Ubuntu when available); not WSL
 - Phase 0 done when: empty Avalonia window runs on Windows + Linux with Core reference
-- See `src/SnowRunnerTuningShop.Desktop/README.md` for `dotnet run` / `linux-x64` publish
+- Phase 1 (current): Home workspace + sidebar shell on Avalonia; other nav pages are placeholders
+- See `src/SnowRunnerTuningShop.Desktop/README.md` for `dotnet run` / F5 / `linux-x64` publish
 
 ---
 
@@ -168,7 +169,7 @@ Tracked work notes may also live under gitignored `docs/plan/Linux-Avalonia-plan
 | Strings | `Core/Strings/GameStringsReader.cs`; UI `Localization/StringResources.cs`, `UiText.cs`, `LanguageService.cs` |
 | Crash | `Core/Diagnostics/CrashReport*.cs`, `Views/CrashReportWindow.*`, `GlobalExceptionHandler.cs` |
 | Shell (WPF) | `App.xaml.cs`, `MainWindow.*`, `AppSession.cs`, `AppPaths.cs`, `ThemeService.cs` |
-| Shell (Avalonia) | `src/SnowRunnerTuningShop.Desktop/` (`Program.cs`, `MainWindow.axaml*`) |
+| Shell (Avalonia) | `src/SnowRunnerTuningShop.Desktop/` (`Program.cs`, `MainWindow.axaml*`, `Views/HomeView.*`) |
 
 ---
 

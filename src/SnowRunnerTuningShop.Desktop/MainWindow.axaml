@@ -1,23 +1,113 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="720" d:DesignHeight="400"
+        xmlns:views="using:SnowRunnerTuningShop.Desktop.Views"
         x:Class="SnowRunnerTuningShop.Desktop.MainWindow"
         Title="SnowRunner Tuning Shop"
-        Width="720"
-        Height="400">
-  <Panel Margin="32">
-    <StackPanel VerticalAlignment="Center" Spacing="12">
-      <TextBlock FontSize="28"
-                 FontWeight="SemiBold"
-                 Text="SnowRunner Tuning Shop"/>
-      <TextBlock TextWrapping="Wrap"
-                 Opacity="0.85"
-                 Text="Avalonia host is running. Workspace UI is not wired yet — set a baseline from initial.pak in a later build."/>
-      <TextBlock x:Name="VersionText"
-                 Opacity="0.6"
-                 FontSize="12"/>
-    </StackPanel>
-  </Panel>
+        Width="1358"
+        Height="815"
+        MinWidth="900"
+        MinHeight="680"
+        TransparencyLevelHint="None">
+  <Grid>
+    <Grid x:Name="MainContent">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="*"/>
+      </Grid.RowDefinitions>
+
+      <Border Grid.Row="0"
+              Padding="12,10"
+              Background="{DynamicResource AppHeaderBrush}"
+              BorderBrush="{DynamicResource AppCardStrokeBrush}"
+              BorderThickness="0,0,0,1">
+        <StackPanel>
+          <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="12">
+            <Button x:Name="MenuButton"
+                    Width="36"
+                    Height="36"
+                    Padding="0"
+                    Click="MenuButton_Click">
+              <TextBlock Text="☰"
+                         FontSize="18"
+                         HorizontalAlignment="Center"
+                         VerticalAlignment="Center"/>
+            </Button>
+            <TextBlock Text="SnowRunner Tuning Shop"
+                       VerticalAlignment="Center"
+                       FontWeight="SemiBold"/>
+          </StackPanel>
+          <Border x:Name="GameRunningBanner"
+                  Margin="0,10,0,0"
+                  Padding="12,8"
+                  CornerRadius="6"
+                  Background="{DynamicResource AppCautionBrush}"
+                  BorderBrush="{DynamicResource AppCautionStrokeBrush}"
+                  BorderThickness="1"
+                  IsVisible="False">
+            <TextBlock x:Name="GameRunningBannerText" TextWrapping="Wrap"/>
+          </Border>
+        </StackPanel>
+      </Border>
+
+      <Grid Grid.Row="1" Margin="20">
+        <views:HomeView x:Name="HomeView"/>
+        <views:PlaceholderView x:Name="PlaceholderGeneral" IsVisible="False"/>
+        <views:PlaceholderView x:Name="PlaceholderParts" IsVisible="False"/>
+        <views:PlaceholderView x:Name="PlaceholderVehicles" IsVisible="False"/>
+        <views:PlaceholderView x:Name="PlaceholderTrailers" IsVisible="False"/>
+        <views:PlaceholderView x:Name="PlaceholderPhotoMode" IsVisible="False"/>
+        <views:PlaceholderView x:Name="PlaceholderSettings" IsVisible="False"/>
+      </Grid>
+    </Grid>
+
+    <Border x:Name="NavScrim"
+            Background="#66000000"
+            IsVisible="False"
+            ZIndex="10"
+            PointerPressed="NavScrim_PointerPressed"/>
+
+    <Border x:Name="NavPane"
+            Width="220"
+            HorizontalAlignment="Left"
+            IsVisible="False"
+            ZIndex="20"
+            Opacity="1"
+            Background="{DynamicResource AppNavPaneBrush}"
+            BorderBrush="{DynamicResource AppCardStrokeBrush}"
+            BorderThickness="0,0,1,0"
+            Padding="12">
+      <DockPanel LastChildFill="True">
+        <StackPanel DockPanel.Dock="Top" Margin="4,4,4,20" Spacing="0">
+          <TextBlock Text="SnowRunner" FontSize="18" FontWeight="SemiBold"/>
+          <TextBlock Text="Tuning Shop" FontSize="18" FontWeight="SemiBold"/>
+          <TextBlock x:Name="SubtitleText"
+                     Margin="0,8,0,0"
+                     TextWrapping="Wrap"
+                     FontSize="12"
+                     Foreground="{DynamicResource AppMutedBrush}"/>
+        </StackPanel>
+
+        <StackPanel DockPanel.Dock="Bottom" Margin="4,16,4,4" Spacing="4">
+          <Button x:Name="ReportBugButton"
+                  Classes="navBug"
+                  Click="ReportBugButton_Click"/>
+          <CheckBox x:Name="PinMenuCheckBox"
+                    IsCheckedChanged="PinMenuCheckBox_Changed"/>
+          <TextBlock x:Name="VersionText"
+                     FontSize="11"
+                     Foreground="{DynamicResource AppMutedBrush}"/>
+        </StackPanel>
+
+        <StackPanel>
+          <RadioButton x:Name="NavHome" GroupName="MainNav" Classes="nav" IsCheckedChanged="Nav_IsCheckedChanged"/>
+          <RadioButton x:Name="NavGeneral" GroupName="MainNav" Classes="nav" IsCheckedChanged="Nav_IsCheckedChanged"/>
+          <RadioButton x:Name="NavParts" GroupName="MainNav" Classes="nav" IsCheckedChanged="Nav_IsCheckedChanged"/>
+          <RadioButton x:Name="NavVehicles" GroupName="MainNav" Classes="nav" IsCheckedChanged="Nav_IsCheckedChanged"/>
+          <RadioButton x:Name="NavTrailers" GroupName="MainNav" Classes="nav" IsCheckedChanged="Nav_IsCheckedChanged"/>
+          <RadioButton x:Name="NavPhotoMode" GroupName="MainNav" Classes="nav" IsCheckedChanged="Nav_IsCheckedChanged"/>
+          <RadioButton x:Name="NavSettings" GroupName="MainNav" Classes="nav" IsCheckedChanged="Nav_IsCheckedChanged"/>
+        </StackPanel>
+      </DockPanel>
+    </Border>
+  </Grid>
 </Window>

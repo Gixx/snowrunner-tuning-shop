@@ -13,7 +13,7 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ### Added
 - **Parts → Cranes tab:** global arm-force and movement-speed multipliers plus per-crane edits for average arm `Motor Force` and `ControlledIK` speed coeffs (`Crane` / `LogCrane` truck addons).
-- **Avalonia Desktop host (Linux path):** `src/SnowRunnerTuningShop.Desktop` empty shell with Core reference; CI builds/publishes `linux-x64` smoke on Ubuntu. WPF remains the Windows product UI.
+- **Avalonia Desktop (Linux path):** `src/SnowRunnerTuningShop.Desktop` shell with Home workspace (baseline / change location / restore / refresh / reapply), sidebar nav, game-running write gate, and shared UI strings. Other pages are placeholders. WPF remains the Windows product UI.
 
 ### Changed
 - **P1 maintenance:** shared `PartPakPipeline` for parts global applies; `TruckDiffLockXml` + `VehicleGameDataXml` extracts; `PartsTuningUiHelpers` on all Parts tabs; vehicles `_meta_build` excluded from output; README Vehicles section updated.
@@ -28,6 +28,7 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 - **Cranes multipliers:** arm-force slider up to 10x; movement-speed slider capped at 3x.
 - **Photo Mode / General:** starting SnowRunner no longer reloads sliders/settings (write gates only).
 - **Crash/bug reports:** pak path is truncated to the last path segments (no full install path).
+- **Linux / Proton:** `SnowRunnerProcessGuard` also matches `SnowRunner.exe` / `SnowRunner_BE.exe` so pak writes stay blocked while the game runs under Wine.
 - **Change location:** warn before creating a new edition baseline from a pak that already has a Tuning Shop marker.
 - **PakFileId:** ambiguous fuzzy suffix/prefix matches return no match instead of picking the first hit.
 

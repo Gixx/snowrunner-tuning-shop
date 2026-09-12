@@ -2,21 +2,29 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "SnowRunner Tuning Shop (WPF)",
-      "type": "coreclr",
-      "request": "launch",
-      "preLaunchTask": "build-wpf",
-      "program": "${workspaceFolder}/src/SnowRunnerTuningShop/bin/Debug/net10.0-windows/SnowRunnerTuningShop.dll",
-      "cwd": "${workspaceFolder}/src/SnowRunnerTuningShop",
-      "stopAtEntry": false
-    },
-    {
-      "name": "SnowRunner Tuning Shop (Avalonia Desktop)",
+      "name": "Avalonia Desktop (Linux)",
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build-desktop",
       "program": "${workspaceFolder}/src/SnowRunnerTuningShop.Desktop/bin/Debug/net10.0/SnowRunnerTuningShop.Desktop.dll",
       "cwd": "${workspaceFolder}/src/SnowRunnerTuningShop.Desktop",
+      "console": "integratedTerminal",
+      "stopAtEntry": false
+    },
+    {
+      "name": "Avalonia Desktop (run, no debugger)",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "dotnet run --project src/SnowRunnerTuningShop.Desktop/SnowRunnerTuningShop.Desktop.csproj -c Debug",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "WPF (Windows only)",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build-wpf",
+      "program": "${workspaceFolder}/src/SnowRunnerTuningShop/bin/Debug/net10.0-windows/SnowRunnerTuningShop.dll",
+      "cwd": "${workspaceFolder}/src/SnowRunnerTuningShop",
       "console": "internalConsole",
       "stopAtEntry": false
     }

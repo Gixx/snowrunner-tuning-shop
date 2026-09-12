@@ -43,6 +43,28 @@ internal static class AppPaths
     public static string? TryFindTrailersAssetsDirectory() =>
         TryFindCatalogAssetsDirectory("trailers");
 
+    /// <summary>
+    /// Typical Steam/Proton <c>initial.pak</c> folder on Linux, if present.
+    /// Used only as a file-picker start location.
+    /// </summary>
+    public static string? TryFindSuggestedPakDirectory()
+    {
+        var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        if (string.IsNullOrWhiteSpace(home))
+        {
+            return null;
+        }
+
+        string[] candidates =
+        [
+            Path.Combine(home, ".local", "share", "Steam", "steamapps", "common", "SnowRunner", "preload", "paks", "client"),
+            Path.Combine(home, ".steam", "steam", "steamapps", "common", "SnowRunner", "preload", "paks", "client"),
+            Path.Combine(home, ".steam", "root", "steamapps", "common", "SnowRunner", "preload", "paks", "client"),
+        ];
+
+        return candidates.FirstOrDefault(Directory.Exists);
+    }
+
     private static string? TryFindCatalogAssetsDirectory(string folderName)
     {
         var root = TryFindRepoRoot();

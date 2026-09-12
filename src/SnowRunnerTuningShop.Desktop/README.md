@@ -9,6 +9,8 @@ Cross-platform UI shell for **Linux** (and a Windows sidecar). The Windows produ
 
 ## Run
 
+In Cursor: select **Avalonia Desktop (Linux)** in the Run and Debug dropdown, then press **F5** (build + debug) or use **Avalonia Desktop (run, no debugger)** if the C# debugger is unavailable. `Ctrl+Shift+B` builds the Desktop project.
+
 From the repo root (prefer a native filesystem clone on Linux — avoid building from a Windows SMB share):
 
 ```bash
@@ -32,4 +34,4 @@ Flatpak packaging comes in a later phase (`packaging/flatpak/`).
 
 ## Status
 
-Phase 0 host only: empty window + Core reference. Home / tuning / Flatpak are not wired yet.
+Phase 1: Home workspace (baseline, location, restore, refresh, reapply) plus sidebar navigation. General / Parts / Vehicles / Trailers / Photo Mode / Settings are placeholders. Flatpak packaging is later.

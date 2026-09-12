@@ -1,0 +1,158 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="SnowRunnerTuningShop.Desktop.Views.HomeView">
+  <Grid RowDefinitions="Auto,*">
+    <StackPanel Grid.Row="0">
+      <Border x:Name="SetupPanel"
+              Background="{DynamicResource AppCautionBrush}"
+              BorderBrush="{DynamicResource AppCautionStrokeBrush}"
+              BorderThickness="1"
+              CornerRadius="8"
+              Padding="16"
+              Margin="0,0,0,16"
+              IsVisible="False">
+        <StackPanel Spacing="8">
+          <TextBlock x:Name="BaselineTitleText" FontWeight="SemiBold" FontSize="16"/>
+          <TextBlock x:Name="BaselineWarningText" TextWrapping="Wrap"/>
+          <Button x:Name="SetBaselineButton"
+                  HorizontalAlignment="Left"
+                  Padding="14,8"
+                  Click="SetBaselineButton_Click"/>
+        </StackPanel>
+      </Border>
+
+      <Border x:Name="UpdateBanner"
+              Background="{DynamicResource AppCardBrush}"
+              BorderBrush="{DynamicResource AppAccentStrokeBrush}"
+              BorderThickness="1"
+              CornerRadius="8"
+              Padding="16"
+              Margin="0,0,0,16"
+              IsVisible="False">
+        <StackPanel Spacing="8">
+          <TextBlock x:Name="UpdateBannerTitle" FontWeight="SemiBold" FontSize="16"/>
+          <TextBlock x:Name="UpdateBannerMessage" TextWrapping="Wrap"/>
+          <WrapPanel>
+            <Button x:Name="DownloadUpdateButton"
+                    Padding="14,8"
+                    Margin="0,0,8,8"
+                    Click="DownloadUpdateButton_Click"/>
+            <Button x:Name="SkipUpdateButton"
+                    Padding="14,8"
+                    Margin="0,0,8,8"
+                    Click="SkipUpdateButton_Click"/>
+          </WrapPanel>
+        </StackPanel>
+      </Border>
+
+      <Border x:Name="HealthBanner"
+              Background="{DynamicResource AppCautionBrush}"
+              BorderBrush="{DynamicResource AppCautionStrokeBrush}"
+              BorderThickness="1"
+              CornerRadius="8"
+              Padding="16"
+              Margin="0,0,0,16"
+              IsVisible="False">
+        <StackPanel Spacing="8">
+          <TextBlock x:Name="HealthBannerTitle" FontWeight="SemiBold" FontSize="16"/>
+          <TextBlock x:Name="HealthBannerMessage" TextWrapping="Wrap"/>
+        </StackPanel>
+      </Border>
+
+      <Border x:Name="ReadyPanel"
+              Background="{DynamicResource AppSuccessBrush}"
+              BorderBrush="{DynamicResource AppSuccessStrokeBrush}"
+              BorderThickness="1"
+              CornerRadius="8"
+              Padding="16"
+              Margin="0,0,0,16"
+              IsVisible="False">
+        <StackPanel Spacing="8">
+          <TextBlock x:Name="BaselineReadyTitleText" FontWeight="SemiBold" FontSize="16"/>
+          <TextBlock x:Name="BaselineReadyTextBlock" TextWrapping="Wrap"/>
+          <TextBlock x:Name="WorkingPakTextBlock" TextWrapping="Wrap" Opacity="0.8"/>
+          <TextBlock x:Name="ProfileStatusTextBlock" TextWrapping="Wrap" Opacity="0.8"/>
+          <WrapPanel>
+            <Button x:Name="ChangeLocationButton"
+                    Padding="14,8"
+                    Margin="0,0,8,8"
+                    Click="ChangeLocationButton_Click"/>
+            <Button x:Name="RefreshBaselineButton"
+                    Padding="14,8"
+                    Margin="0,0,8,8"
+                    Click="RefreshBaselineButton_Click"/>
+            <Button x:Name="ReapplyButton"
+                    Padding="14,8"
+                    Margin="0,0,8,8"
+                    Click="ReapplyButton_Click"/>
+            <Button x:Name="RestoreFullBaselineButton"
+                    Classes="danger"
+                    Padding="14,8"
+                    Margin="0,0,8,8"
+                    Click="RestoreFullBaselineButton_Click"/>
+          </WrapPanel>
+        </StackPanel>
+      </Border>
+    </StackPanel>
+
+    <Grid Grid.Row="1" ColumnDefinitions="2*,3*">
+      <Border Grid.Column="0"
+              Background="{DynamicResource AppCardBrush}"
+              BorderBrush="{DynamicResource AppCardStrokeBrush}"
+              BorderThickness="1"
+              CornerRadius="8"
+              Padding="16"
+              Margin="0,0,8,0">
+        <DockPanel LastChildFill="True">
+          <TextBlock x:Name="OverviewTitleText"
+                     DockPanel.Dock="Top"
+                     FontSize="18"
+                     FontWeight="SemiBold"
+                     Margin="0,0,0,12"/>
+          <TextBlock x:Name="OverviewTextBlock"
+                     TextWrapping="Wrap"
+                     Opacity="0.85"
+                     LineHeight="22"/>
+        </DockPanel>
+      </Border>
+
+      <Border Grid.Column="1"
+              Background="{DynamicResource AppCardBrush}"
+              BorderBrush="{DynamicResource AppCardStrokeBrush}"
+              BorderThickness="1"
+              CornerRadius="8"
+              Padding="16"
+              Margin="8,0,0,0">
+        <DockPanel LastChildFill="True">
+          <TextBlock x:Name="CategoriesTitleText"
+                     DockPanel.Dock="Top"
+                     FontSize="18"
+                     FontWeight="SemiBold"
+                     Margin="0,0,0,12"/>
+          <DockPanel>
+            <Grid DockPanel.Dock="Top" ColumnDefinitions="140,70,70,*" Margin="0,0,0,8">
+              <TextBlock x:Name="CategoryColumnHeader" FontWeight="SemiBold"/>
+              <TextBlock x:Name="ItemsColumnHeader" Grid.Column="1" FontWeight="SemiBold"/>
+              <TextBlock x:Name="FilesColumnHeader" Grid.Column="2" FontWeight="SemiBold"/>
+              <TextBlock x:Name="SampleColumnHeader" Grid.Column="3" FontWeight="SemiBold"/>
+            </Grid>
+            <ScrollViewer>
+              <ItemsControl x:Name="CategoriesList">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <Grid ColumnDefinitions="140,70,70,*" Margin="0,0,0,6">
+                      <TextBlock Text="{Binding Name}"/>
+                      <TextBlock Grid.Column="1" Text="{Binding ItemCount}"/>
+                      <TextBlock Grid.Column="2" Text="{Binding FileCount}"/>
+                      <TextBlock Grid.Column="3" Text="{Binding SampleFile}" TextTrimming="CharacterEllipsis"/>
+                    </Grid>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </ScrollViewer>
+          </DockPanel>
+        </DockPanel>
+      </Border>
+    </Grid>
+  </Grid>
+</UserControl>

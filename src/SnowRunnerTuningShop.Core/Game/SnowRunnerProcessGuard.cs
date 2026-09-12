@@ -11,6 +11,9 @@ public static class SnowRunnerProcessGuard
     [
         "SnowRunner",
         "SnowRunner_BE",
+        // Proton/Wine on Linux keeps the Windows image name.
+        "SnowRunner.exe",
+        "SnowRunner_BE.exe",
     ];
 
     public static bool IsRunning()

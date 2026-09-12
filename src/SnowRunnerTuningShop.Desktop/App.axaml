@@ -2,9 +2,64 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="SnowRunnerTuningShop.Desktop.App"
              RequestedThemeVariant="Default">
-             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
-
-    <Application.Styles>
-        <FluentTheme />
-    </Application.Styles>
+  <Application.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Dark">
+          <SolidColorBrush x:Key="AppCardBrush" Color="#FF2B2B2B"/>
+          <SolidColorBrush x:Key="AppCardStrokeBrush" Color="#FF3F3F3F"/>
+          <SolidColorBrush x:Key="AppHeaderBrush" Color="#FF202020"/>
+          <SolidColorBrush x:Key="AppNavPaneBrush" Color="#FF202020"/>
+          <SolidColorBrush x:Key="AppCautionBrush" Color="#33D29922"/>
+          <SolidColorBrush x:Key="AppCautionStrokeBrush" Color="#D29922"/>
+          <SolidColorBrush x:Key="AppSuccessBrush" Color="#22107C10"/>
+          <SolidColorBrush x:Key="AppSuccessStrokeBrush" Color="#3D9A4A"/>
+          <SolidColorBrush x:Key="AppMutedBrush" Color="#99FFFFFF"/>
+          <SolidColorBrush x:Key="AppAccentStrokeBrush" Color="#60CDFF"/>
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="Light">
+          <SolidColorBrush x:Key="AppCardBrush" Color="#FFFFFFFF"/>
+          <SolidColorBrush x:Key="AppCardStrokeBrush" Color="#FFD0D0D0"/>
+          <SolidColorBrush x:Key="AppHeaderBrush" Color="#FFF3F3F3"/>
+          <SolidColorBrush x:Key="AppNavPaneBrush" Color="#FFF3F3F3"/>
+          <SolidColorBrush x:Key="AppCautionBrush" Color="#33D29922"/>
+          <SolidColorBrush x:Key="AppCautionStrokeBrush" Color="#D29922"/>
+          <SolidColorBrush x:Key="AppSuccessBrush" Color="#22107C10"/>
+          <SolidColorBrush x:Key="AppSuccessStrokeBrush" Color="#107C10"/>
+          <SolidColorBrush x:Key="AppMutedBrush" Color="#99000000"/>
+          <SolidColorBrush x:Key="AppAccentStrokeBrush" Color="#0078D4"/>
+        </ResourceDictionary>
+      </ResourceDictionary.ThemeDictionaries>
+    </ResourceDictionary>
+  </Application.Resources>
+  <Application.Styles>
+    <FluentTheme />
+    <Style Selector="RadioButton.nav">
+      <Setter Property="Padding" Value="12,10"/>
+      <Setter Property="Margin" Value="0,0,0,4"/>
+      <Setter Property="HorizontalAlignment" Value="Stretch"/>
+      <Setter Property="HorizontalContentAlignment" Value="Left"/>
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="CornerRadius" Value="6"/>
+    </Style>
+    <Style Selector="RadioButton.nav:checked">
+      <Setter Property="FontWeight" Value="SemiBold"/>
+    </Style>
+    <Style Selector="Button.navBug">
+      <Setter Property="Padding" Value="12,10"/>
+      <Setter Property="Margin" Value="0,0,0,8"/>
+      <Setter Property="HorizontalAlignment" Value="Stretch"/>
+      <Setter Property="HorizontalContentAlignment" Value="Left"/>
+      <Setter Property="Foreground" Value="#E6C200"/>
+      <Setter Property="FontWeight" Value="SemiBold"/>
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="BorderThickness" Value="0"/>
+    </Style>
+    <Style Selector="Button.danger">
+      <Setter Property="Background" Value="#C42B1C"/>
+      <Setter Property="Foreground" Value="White"/>
+      <Setter Property="BorderBrush" Value="#C42B1C"/>
+    </Style>
+  </Application.Styles>
 </Application>

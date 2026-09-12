@@ -1,0 +1,17 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="SnowRunnerTuningShop.Desktop.Views.PlaceholderView">
+  <Border Background="{DynamicResource AppCardBrush}"
+          BorderBrush="{DynamicResource AppCardStrokeBrush}"
+          BorderThickness="1"
+          CornerRadius="8"
+          Padding="24"
+          HorizontalAlignment="Left"
+          VerticalAlignment="Top"
+          MaxWidth="640">
+    <StackPanel Spacing="8">
+      <TextBlock x:Name="TitleText" FontSize="18" FontWeight="SemiBold"/>
+      <TextBlock x:Name="MessageText" TextWrapping="Wrap" Opacity="0.85"/>
+    </StackPanel>
+  </Border>
+</UserControl>
