@@ -21,7 +21,14 @@
     <Compile Include="..\SnowRunnerTuningShop\AppPaths.cs" Link="Shared\AppPaths.cs" />
     <Compile Include="..\SnowRunnerTuningShop\LanguageService.cs" Link="Shared\LanguageService.cs" />
     <Compile Include="..\SnowRunnerTuningShop\Diagnostics\DebugCrashTools.cs" Link="Shared\DebugCrashTools.cs" />
+    <Compile Include="..\SnowRunnerTuningShop\Vehicles\VehicleBasedOnFormatter.cs" Link="Vehicles\VehicleBasedOnFormatter.cs" />
     <Compile Include="..\SnowRunnerTuningShop\Localization\*.cs" Link="Localization\%(Filename).cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AvaloniaResource Include="..\SnowRunnerTuningShop\Assets\app-icon.png">
+      <Link>Assets\app-icon.png</Link>
+    </AvaloniaResource>
   </ItemGroup>
 
   <ItemGroup>

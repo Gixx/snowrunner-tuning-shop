@@ -30,8 +30,16 @@ dotnet publish src/SnowRunnerTuningShop.Desktop -c Release -r linux-x64 --self-c
 ./artifacts/linux-x64/SnowRunnerTuningShop.Desktop
 ```
 
-Flatpak packaging comes in a later phase (`packaging/flatpak/`).
+## Flatpak
+
+See [`packaging/flatpak/README.md`](../../packaging/flatpak/README.md). Quick build:
+
+```bash
+./packaging/flatpak/build.sh
+flatpak install --user artifacts/SnowRunnerTuningShop-v*-linux-x64.flatpak
+flatpak run io.github.gixx.SnowRunnerTuningShop
+```
 
 ## Status
 
-Phase 1: Home, General, Parts, and Settings are wired. Vehicles / Trailers / Photo Mode are placeholders. Flatpak packaging is later.
+Phase 1: Home, General, Parts, Settings, Vehicles, and Trailers list+detail are wired. Photo Mode is Windows-only (not in the Linux nav). Flatpak packaging lives under `packaging/flatpak/`.

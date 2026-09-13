@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=SnowRunner Tuning Shop
+GenericName=SnowRunner pak tuner
+Comment=Tune SnowRunner initial.pak parts, vehicles, and settings
+Exec=snowrunner-tuning-shop
+Icon=io.github.gixx.SnowRunnerTuningShop
+Terminal=false
+Categories=Game;Utility;
+Keywords=SnowRunner;tuning;pak;mod;
+StartupNotify=true
+StartupWMClass=SnowRunnerTuningShop.Desktop

@@ -3,6 +3,7 @@
         xmlns:views="using:SnowRunnerTuningShop.Desktop.Views"
         x:Class="SnowRunnerTuningShop.Desktop.MainWindow"
         Title="SnowRunner Tuning Shop"
+        Icon="/Assets/app-icon.png"
         Width="1358"
         Height="815"
         MinWidth="900"
@@ -53,9 +54,8 @@
         <views:HomeView x:Name="HomeView"/>
         <views:GeneralView x:Name="GeneralView" IsVisible="False"/>
         <views:PartsView x:Name="PartsView" IsVisible="False"/>
-        <views:PlaceholderView x:Name="PlaceholderVehicles" IsVisible="False"/>
-        <views:PlaceholderView x:Name="PlaceholderTrailers" IsVisible="False"/>
-        <views:PlaceholderView x:Name="PlaceholderPhotoMode" IsVisible="False"/>
+        <views:VehiclesView x:Name="VehiclesView" IsVisible="False"/>
+        <views:TrailersView x:Name="TrailersView" IsVisible="False"/>
         <views:SettingsView x:Name="SettingsView" IsVisible="False"/>
       </Grid>
     </Grid>
@@ -104,7 +104,6 @@
           <RadioButton x:Name="NavParts" GroupName="MainNav" Classes="nav" IsCheckedChanged="Nav_IsCheckedChanged"/>
           <RadioButton x:Name="NavVehicles" GroupName="MainNav" Classes="nav" IsCheckedChanged="Nav_IsCheckedChanged"/>
           <RadioButton x:Name="NavTrailers" GroupName="MainNav" Classes="nav" IsCheckedChanged="Nav_IsCheckedChanged"/>
-          <RadioButton x:Name="NavPhotoMode" GroupName="MainNav" Classes="nav" IsCheckedChanged="Nav_IsCheckedChanged"/>
           <RadioButton x:Name="NavSettings" GroupName="MainNav" Classes="nav" IsCheckedChanged="Nav_IsCheckedChanged"/>
         </StackPanel>
       </DockPanel>

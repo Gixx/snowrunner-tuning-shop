@@ -18,6 +18,7 @@ public partial class App : Application
         LanguageService.ApplySavedLanguage();
         ThemeService.ApplySavedTheme();
         GlobalExceptionHandler.Register();
+        GlobalExceptionHandler.TryHookUiThread();
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {

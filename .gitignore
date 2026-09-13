@@ -30,5 +30,12 @@ tools/trailer-shots/backups/
 tools/trailer-shots/platform-pins.json
 tools/
 
+# Flatpak local build trees
+packaging/flatpak/publish/
+packaging/flatpak/build/
+packaging/flatpak/repo/
+packaging/flatpak/.flatpak-builder/
+packaging/flatpak/*.flatpak
+
 # Mailtrap API token for in-app bug reports (never commit)
 src/SnowRunnerTuningShop.Core/Diagnostics/BugReportSecrets.Local.cs

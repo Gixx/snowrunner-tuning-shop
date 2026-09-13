@@ -11,8 +11,23 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ## [Unreleased]
 
+---
+
+## [1.4.0-beta.1] — 2026-09-13
+
 ### Added
-- **Avalonia Desktop (Linux path):** `src/SnowRunnerTuningShop.Desktop` shell with Home, General, Parts, Settings, bug/crash dialogs; Vehicles / Trailers / Photo Mode remain placeholders. WPF remains the Windows product UI. Not published in the Windows release workflow yet.
+- **Avalonia Trailers page:** catalog grid, hitch/mission filters, search, global multipliers / make mission trailers purchasable, and per-trailer tuning detail (parity with WPF; catalog `id` matching via Core).
+- **Avalonia Vehicles page:** catalog grid, filters/search, global multipliers / store unlocks, and per-truck tuning detail (parity with WPF; `pakId` matching via Core).
+- **Avalonia Desktop (Linux path):** `src/SnowRunnerTuningShop.Desktop` shell with Home, General, Parts, Vehicles, Trailers, Settings, bug/crash dialogs (Photo Mode is Windows-only). WPF remains the Windows product UI. Release tags publish a linux-x64 portable zip and Flatpak (`io.github.gixx.SnowRunnerTuningShop`).
+- **Flatpak packaging:** `packaging/flatpak/` manifest, desktop/AppStream metadata, icons, and `build.sh`; release workflow attaches `.flatpak` beside the portable zip.
+
+### Changed
+- **Avalonia Desktop:** Photo Mode removed from the Linux nav (Windows WPF keeps it). Window/taskbar icon uses the shared `app-icon.png`.
+
+### Fixed
+- **Avalonia Vehicles global apply:** read multiplier/checkbox values on the UI thread before `Task.Run` (accessing sliders from the worker thread threw a cross-thread error).
+- **Flatpak startup on Wayland:** grant `--socket=x11` (Avalonia uses X11/XWayland); `fallback-x11` left `DISPLAY` unset and exited with `XOpenDisplay failed` before any window.
+- **Avalonia early crash reporting:** register handlers in `Program.Main`, always write crash logs, and fall back to stderr / desktop notification when the crash dialog cannot open.
 
 ---
 
@@ -21,7 +36,7 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 ### Added
 - **Parts → Cranes tab:** global arm-force and movement-speed multipliers plus per-crane edits for average arm `Motor Force` and `ControlledIK` speed coeffs (`Crane` / `LogCrane` truck addons).
 - **Update channels:** Settings → Updates with Stable / Beta channel selector. Stable uses GitHub `/releases/latest` (full releases only). Beta picks the highest SemVer among stable and numbered prereleases (`v1.5.0-beta.1`, `v1.5.0-beta.2`, …). Preference stored in `config.json`.
-- **Release workflow:** accepts `vX.Y.Z` and `vX.Y.Z-beta.N` tags; beta tags publish as GitHub prereleases. Still **Windows-only** (WPF win-x64 + Inno); no Linux/Flatpak publish yet.
+- **Release workflow:** accepts `vX.Y.Z` and `vX.Y.Z-beta.N` tags; beta tags publish as GitHub prereleases. Windows (WPF win-x64 + Inno) plus Linux Avalonia portable zip and Flatpak bundle.
 
 ### Changed
 - **Locale manager:** Add or Update languages lists only optional downloadable packs (e.g. hu/it/fi), not languages shipped with the app.
@@ -319,7 +334,8 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ---
 
-[Unreleased]: https://github.com/Gixx/snowrunner-tuning-shop/compare/v1.3.5...HEAD
+[Unreleased]: https://github.com/Gixx/snowrunner-tuning-shop/compare/v1.4.0-beta.1...HEAD
+[1.4.0-beta.1]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.4.0-beta.1
 [1.3.5]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.3.5
 [1.3.4]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.3.4
 [1.3.3]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.3.3

@@ -135,7 +135,7 @@ English must contain every `keys.json` key; others fall back to English. Debug: 
 1. Bump `AppInfo.Version` (stable `X.Y.Z` or beta `X.Y.Z-beta.N`)
 2. Move `[Unreleased]` notes into `## [x.y.z] — YYYY-MM-DD` in `CHANGELOG.md` + footer links
 3. Commit when asked
-4. Tag `vMAJOR.MINOR.PATCH` or `vMAJOR.MINOR.PATCH-beta.N` → `release.yml` builds **Windows** self-contained win-x64 + Inno Setup + GitHub Release (beta tags → GitHub prerelease). Linux/Flatpak is not published from this workflow yet.
+4. Tag `vMAJOR.MINOR.PATCH` or `vMAJOR.MINOR.PATCH-beta.N` → `release.yml` builds **Windows** (win-x64 + Inno) and **Linux** Avalonia Desktop (portable zip + Flatpak `io.github.gixx.SnowRunnerTuningShop`) → GitHub Release (beta tags → prerelease).
 
 Do **not** commit unless the user explicitly asks. Do **not** invent features or expand scope.
 
@@ -147,11 +147,11 @@ Tracked work notes may also live under gitignored `docs/plan/Linux-Avalonia-plan
 
 - UI: Avalonia shell (`src/SnowRunnerTuningShop.Desktop/`) beside WPF; shared Core
 - Work on **main** (not a long-lived `linux` branch)
-- Package target: **Flatpak** (not AppImage); sandbox must grant Steam/`initial.pak` filesystem access
+- Package target: **Flatpak** (`packaging/flatpak/`, app-id `io.github.gixx.SnowRunnerTuningShop`) plus portable zip; sandbox grants `home` so Steam/`initial.pak` under `~` works; grants `--socket=x11` (Avalonia X11/XWayland) plus Wayland
 - Smoke VM: CachyOS Hyper-V (plus Ubuntu when available); not WSL
 - Phase 0 done when: empty Avalonia window runs on Windows + Linux with Core reference
-- Phase 1 (current): Home + General + Parts + Settings on Avalonia; Vehicles / Trailers / Photo Mode are placeholders
-- See `src/SnowRunnerTuningShop.Desktop/README.md` for `dotnet run` / F5 / `linux-x64` publish
+- Phase 1 (current): Home + General + Parts + Settings + Vehicles + Trailers list+detail on Avalonia; Photo Mode is Windows-only (omitted from Linux nav)
+- See `src/SnowRunnerTuningShop.Desktop/README.md` and `packaging/flatpak/README.md` for run / publish / Flatpak
 - IDE on Linux: open `SnowRunnerTuningShop.Linux.slnx` (set via `.vscode/settings.json`) so Roslyn skips the WPF Windows TFM
 
 ---
@@ -171,7 +171,8 @@ Tracked work notes may also live under gitignored `docs/plan/Linux-Avalonia-plan
 | Strings | `Core/Strings/GameStringsReader.cs`; UI `Localization/StringResources.cs`, `UiText.cs`, `LanguageService.cs` |
 | Crash | `Core/Diagnostics/CrashReport*.cs`, `Views/CrashReportWindow.*`, `GlobalExceptionHandler.cs` |
 | Shell (WPF) | `App.xaml.cs`, `MainWindow.*`, `AppSession.cs`, `AppPaths.cs`, `ThemeService.cs` |
-| Shell (Avalonia) | `src/SnowRunnerTuningShop.Desktop/` (`Program.cs`, `MainWindow.axaml*`, `Views/{Home,General,Parts,Settings}View.*`) |
+| Shell (Avalonia) | `src/SnowRunnerTuningShop.Desktop/` (`Program.cs`, `MainWindow.axaml*`, `Views/{Home,General,Parts,Vehicles,Trailers,Settings}View.*`, `Vehicles/*`, `Trailers/*`) |
+| Flatpak | `packaging/flatpak/` (`io.github.gixx.SnowRunnerTuningShop.yml`, `build.sh`) |
 
 ---
 

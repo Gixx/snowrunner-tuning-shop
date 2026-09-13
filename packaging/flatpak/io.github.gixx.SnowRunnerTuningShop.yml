@@ -1,0 +1,51 @@
+# Flatpak manifest for SnowRunner Tuning Shop (Avalonia Desktop).
+# Build: see packaging/flatpak/README.md or ./build.sh
+#
+# The "publish/" directory must contain a self-contained linux-x64
+# `dotnet publish` of SnowRunnerTuningShop.Desktop (created by build.sh / CI).
+
+app-id: io.github.gixx.SnowRunnerTuningShop
+runtime: org.freedesktop.Platform
+runtime-version: "24.08"
+sdk: org.freedesktop.Sdk
+command: snowrunner-tuning-shop
+finish-args:
+  # GUI — Avalonia defaults to X11 (XWayland on Wayland sessions).
+  # fallback-x11 leaves DISPLAY unset when Wayland is present → XOpenDisplay crash.
+  - --share=ipc
+  - --socket=x11
+  - --socket=wayland
+  - --device=dri
+  # Crash/notify fallback when the Avalonia window never comes up
+  - --talk-name=org.freedesktop.Notifications
+  # In-app updates + locale pack downloads
+  - --share=network
+  # Working pak under Steam / Proton / custom home paths; AppData lives in XDG
+  - --filesystem=home
+modules:
+  - name: snowrunner-tuning-shop
+    buildsystem: simple
+    build-commands:
+      - install -d /app/lib/snowrunner-tuning-shop
+      - cp -a publish/. /app/lib/snowrunner-tuning-shop/
+      - chmod +x /app/lib/snowrunner-tuning-shop/SnowRunnerTuningShop.Desktop
+      - install -Dm755 snowrunner-tuning-shop.sh /app/bin/snowrunner-tuning-shop
+      - install -Dm644 io.github.gixx.SnowRunnerTuningShop.desktop /app/share/applications/io.github.gixx.SnowRunnerTuningShop.desktop
+      - install -Dm644 io.github.gixx.SnowRunnerTuningShop.metainfo.xml /app/share/metainfo/io.github.gixx.SnowRunnerTuningShop.metainfo.xml
+      - |
+        for size in 64 128 256 512; do
+          install -Dm644 "icons/hicolor/${size}x${size}/apps/io.github.gixx.SnowRunnerTuningShop.png" \
+            "/app/share/icons/hicolor/${size}x${size}/apps/io.github.gixx.SnowRunnerTuningShop.png"
+        done
+    sources:
+      - type: dir
+        path: .
+        skip:
+          - build
+          - repo
+          - publish
+          - .flatpak-builder
+          - "*.flatpak"
+      - type: dir
+        path: publish
+        dest: publish

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.gixx.SnowRunnerTuningShop</id>
+  <name>SnowRunner Tuning Shop</name>
+  <summary>Tune SnowRunner initial.pak balance values</summary>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT</project_license>
+  <developer_name>Gixx</developer_name>
+  <description>
+    <p>
+      Unofficial fan-made desktop tool that edits SnowRunner's initial.pak:
+      engines, gearboxes, suspensions, tires, winches, cranes, vehicles, and more,
+      with a read-only baseline for restore after game updates.
+    </p>
+    <p>
+      Not affiliated with Saber Interactive or Focus Entertainment.
+      Close SnowRunner (including Proton) before applying changes.
+    </p>
+  </description>
+  <launchable type="desktop-id">io.github.gixx.SnowRunnerTuningShop.desktop</launchable>
+  <url type="homepage">https://gixx.github.io/snowrunner-tuning-shop/</url>
+  <url type="bugtracker">https://github.com/Gixx/snowrunner-tuning-shop/issues</url>
+  <url type="vcs-browser">https://github.com/Gixx/snowrunner-tuning-shop</url>
+  <screenshots>
+    <screenshot type="default">
+      <caption>Home workspace</caption>
+      <image>https://raw.githubusercontent.com/Gixx/snowrunner-tuning-shop/main/website/src/assets/shot-home.png</image>
+    </screenshot>
+  </screenshots>
+  <releases>
+    <release version="1.4.0-beta.1" date="2026-09-13"/>
+  </releases>
+  <content_rating type="oars-1.1"/>
+  <supports>
+    <control>pointing</control>
+    <control>keyboard</control>
+  </supports>
+  <recommends>
+    <control>pointing</control>
+    <control>keyboard</control>
+  </recommends>
+  <categories>
+    <category>Game</category>
+    <category>Utility</category>
+  </categories>
+</component>

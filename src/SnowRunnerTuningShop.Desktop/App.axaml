@@ -62,6 +62,13 @@
       <Setter Property="Foreground" Value="White"/>
       <Setter Property="BorderBrush" Value="#C42B1C"/>
     </Style>
+    <Style Selector="RadioButton.filterChip">
+      <Setter Property="MinWidth" Value="0"/>
+      <Setter Property="Margin" Value="0,0,6,4"/>
+      <Setter Property="Padding" Value="8,5"/>
+      <Setter Property="HorizontalAlignment" Value="Left"/>
+      <Setter Property="Cursor" Value="Hand"/>
+    </Style>
     <!-- Keep accordion chrome full-width; content-sized Expanders jitter when slider labels change. -->
     <Style Selector="Expander">
       <Setter Property="HorizontalAlignment" Value="Stretch"/>

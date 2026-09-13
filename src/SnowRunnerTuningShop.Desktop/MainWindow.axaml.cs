@@ -29,20 +29,17 @@ public partial class MainWindow : Window
         NavParts.Content = UiText.Nav.Parts;
         NavVehicles.Content = UiText.Nav.Vehicles;
         NavTrailers.Content = UiText.Nav.Trailers;
-        NavPhotoMode.Content = UiText.Nav.PhotoMode;
         NavSettings.Content = UiText.Nav.Settings;
         ReportBugButton.Content = UiText.Nav.ReportBug;
         PinMenuCheckBox.Content = UiText.Nav.PinMenu;
         VersionText.Text = UiText.Nav.VersionLabel;
         SubtitleText.Text = UiText.Main.Subtitle;
         GameRunningBannerText.Text = UiText.Main.GameRunningBanner;
-        PlaceholderVehicles.Set(UiText.Nav.Vehicles);
-        PlaceholderTrailers.Set(UiText.Nav.Trailers);
-        PlaceholderPhotoMode.Set(UiText.Nav.PhotoMode);
-
         HomeView.AttachSession(_session);
         GeneralView.AttachSession(_session);
         PartsView.AttachSession(_session);
+        VehiclesView.AttachSession(_session);
+        TrailersView.AttachSession(_session);
         SettingsView.AttachSession(_session);
         _gameRunningMonitor = new GameRunningMonitor(_session);
         _session.GameRunningChanged += (_, _) => UpdateGameRunningBanner();
@@ -179,15 +176,11 @@ public partial class MainWindow : Window
         }
         else if (ReferenceEquals(radio, NavVehicles))
         {
-            ShowPage(PlaceholderVehicles);
+            ShowPage(VehiclesView);
         }
         else if (ReferenceEquals(radio, NavTrailers))
         {
-            ShowPage(PlaceholderTrailers);
-        }
-        else if (ReferenceEquals(radio, NavPhotoMode))
-        {
-            ShowPage(PlaceholderPhotoMode);
+            ShowPage(TrailersView);
         }
         else if (ReferenceEquals(radio, NavSettings))
         {
@@ -208,9 +201,8 @@ public partial class MainWindow : Window
             _ when ReferenceEquals(page, HomeView) => UiText.Nav.Home,
             _ when ReferenceEquals(page, GeneralView) => UiText.Nav.General,
             _ when ReferenceEquals(page, PartsView) => UiText.Nav.Parts,
-            _ when ReferenceEquals(page, PlaceholderVehicles) => UiText.Nav.Vehicles,
-            _ when ReferenceEquals(page, PlaceholderTrailers) => UiText.Nav.Trailers,
-            _ when ReferenceEquals(page, PlaceholderPhotoMode) => UiText.Nav.PhotoMode,
+            _ when ReferenceEquals(page, VehiclesView) => UiText.Nav.Vehicles,
+            _ when ReferenceEquals(page, TrailersView) => UiText.Nav.Trailers,
             _ when ReferenceEquals(page, SettingsView) => UiText.Nav.Settings,
             _ => page.GetType().Name,
         });
@@ -218,9 +210,8 @@ public partial class MainWindow : Window
         HomeView.IsVisible = false;
         GeneralView.IsVisible = false;
         PartsView.IsVisible = false;
-        PlaceholderVehicles.IsVisible = false;
-        PlaceholderTrailers.IsVisible = false;
-        PlaceholderPhotoMode.IsVisible = false;
+        VehiclesView.IsVisible = false;
+        TrailersView.IsVisible = false;
         SettingsView.IsVisible = false;
         page.IsVisible = true;
     }

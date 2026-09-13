@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Download,
   Github,
@@ -24,16 +24,29 @@ import shotTrailers from "@/assets/shot-trailers.png";
 import shotTrailer from "@/assets/shot-trailer.png";
 import shotPhotoMode from "@/assets/shot-photo-mode.png";
 import shotSettings from "@/assets/shot-settings.png";
-import mercedes3850 from "@/assets/mercedes-3850.png";
-import mercedesMamute from "@/assets/mercedes-mamute.png";
-import { SITE_DESCRIPTION, SITE_TITLE, APP_VERSION } from "@/lib/site";
+import shotHomeLinux from "@/assets/shot-home-linux.png";
+import shotGeneralLinux from "@/assets/shot-general-linux.png";
+import shotPartsLinux from "@/assets/shot-parts-linux.png";
+import shotVehiclesLinux from "@/assets/shot-vehicles-linux.png";
+import shotVehicleLinux from "@/assets/shot-vehicle-linux.png";
+import shotTrailersLinux from "@/assets/shot-trailers-linux.png";
+import shotTrailerLinux from "@/assets/shot-trailer-linux.png";
+import shotSettingsLinux from "@/assets/shot-settings-linux.png";
+import {
+  SITE_DESCRIPTION,
+  SITE_TITLE,
+  APP_VERSION_STABLE,
+  APP_VERSION_BETA,
+  RELEASE_LATEST_URL,
+  RELEASES_URL,
+  REPO_URL,
+} from "@/lib/site";
 
-const RELEASE_URL = "https://github.com/Gixx/snowrunner-tuning-shop/releases/latest";
-const REPO_URL = "https://github.com/Gixx/snowrunner-tuning-shop";
+type Platform = "windows" | "linux";
 
 const badges = [
   {
-    href: RELEASE_URL,
+    href: RELEASE_LATEST_URL,
     src: "https://img.shields.io/github/v/release/Gixx/snowrunner-tuning-shop?style=flat-square&label=version&color=38bdf8",
     alt: "Latest release version",
   },
@@ -48,12 +61,12 @@ const badges = [
     alt: "WPF on .NET",
   },
   {
-    href: RELEASE_URL,
+    href: RELEASE_LATEST_URL,
     src: "https://img.shields.io/badge/platform-Windows-0078D4?style=flat-square&logo=windows&logoColor=white",
     alt: "Windows",
   },
   {
-    href: RELEASE_URL,
+    href: RELEASE_LATEST_URL,
     src: "https://img.shields.io/github/downloads/Gixx/snowrunner-tuning-shop/total.svg?style=flat-square&label=downloads&color=e11d48",
     alt: "GitHub release downloads",
   },
@@ -125,7 +138,14 @@ const features = [
   },
 ];
 
-const shots: GalleryShot[] = [
+const stats: [string, string][] = [
+  ["118", "vehicles"],
+  ["125", "engines"],
+  ["214", "suspensions"],
+  ["49", "DLC packs"],
+];
+
+const windowsShots: GalleryShot[] = [
   {
     src: shotTrailer,
     alt: "Trailer tuning panel for the fishing-boat semi with store price, store availability and unlock rank",
@@ -173,10 +193,174 @@ const shots: GalleryShot[] = [
   },
 ];
 
-const HERO_INDEX = shots.findIndex((shot) => shot.src === shotVehicle);
+const linuxShots: GalleryShot[] = [
+  {
+    src: shotTrailerLinux,
+    alt: "Linux Avalonia trailer tuning panel with store price, availability and unlock rank",
+    label: "Trailer tuning",
+  },
+  {
+    src: shotHomeLinux,
+    alt: "Linux Avalonia home screen showing baseline status and pak overview",
+    label: "Home — baseline status",
+  },
+  {
+    src: shotGeneralLinux,
+    alt: "Linux Avalonia general tuning with camera collision mode and trail rock size",
+    label: "General tuning",
+  },
+  {
+    src: shotPartsLinux,
+    alt: "Linux Avalonia engine list with global multipliers",
+    label: "Parts — engines",
+  },
+  {
+    src: shotVehiclesLinux,
+    alt: "Linux Avalonia vehicle catalog grid filtered by class",
+    label: "Vehicles — 118 trucks",
+  },
+  {
+    src: shotTrailersLinux,
+    alt: "Linux Avalonia trailer catalog grid filtered by hitch",
+    label: "Trailers — 67 trailers",
+  },
+  {
+    src: shotVehicleLinux,
+    alt: "Linux Avalonia vehicle tuning panel with fuel, steering and store settings",
+    label: "Vehicle tuning",
+  },
+  {
+    src: shotSettingsLinux,
+    alt: "Linux Avalonia settings page with theme, language and update channel",
+    label: "Settings",
+  },
+];
+
+const windowsHero = shotVehicle;
+const linuxHero = shotVehicleLinux;
+
+function PlatformShowcase({
+  platform,
+  shots,
+  heroSrc,
+  heroAlt,
+  onOpenShot,
+}: {
+  platform: Platform;
+  shots: GalleryShot[];
+  heroSrc: string;
+  heroAlt: string;
+  onOpenShot: (index: number) => void;
+}) {
+  const heroIndex = useMemo(
+    () => Math.max(0, shots.findIndex((shot) => shot.src === heroSrc)),
+    [shots, heroSrc],
+  );
+
+  return (
+    <div key={platform}>
+      <div className="mx-auto max-w-6xl px-6">
+        <Reveal>
+          <button
+            type="button"
+            onClick={() => onOpenShot(heroIndex)}
+            className="block w-full overflow-hidden rounded-md border border-border bg-card/70 p-0 text-left shadow-[0_40px_80px_-30px_rgba(0,0,0,0.9)] backdrop-blur transition-transform hover:scale-[1.01]"
+            aria-label={`View ${platform} vehicle tuning screenshot full size`}
+          >
+            <img
+              src={heroSrc}
+              alt={heroAlt}
+              width={1782}
+              height={1221}
+              className="h-auto w-full cursor-zoom-in"
+            />
+          </button>
+        </Reveal>
+      </div>
+
+      <section className="mt-16 border-y border-border bg-card/40">
+        <div className="mx-auto grid max-w-6xl grid-cols-2 gap-px px-6 md:grid-cols-4">
+          {stats.map(([n, l], i) => (
+            <Reveal key={`${platform}-${l}`} delay={i * 90}>
+              <div className="py-10 text-center">
+                <div className="font-display text-5xl text-primary">{n}</div>
+                <div className="mt-1 text-xs uppercase tracking-[0.24em] text-muted-foreground">{l}</div>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-6 py-24">
+        <Reveal>
+          <h2 className="font-display text-5xl tracking-tight md:text-6xl">WHAT YOU CAN TUNE</h2>
+          <p className="mt-4 max-w-2xl text-muted-foreground">
+            No text editors, no XML diffing, no broken saves. Point it at your install and start turning knobs.
+          </p>
+        </Reveal>
+        <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {features.map((f, i) => (
+            <Reveal key={`${platform}-${f.title}`} delay={(i % 3) * 100}>
+              <article className="group h-full rounded-md border border-border bg-card/60 p-7 transition-colors duration-300 hover:border-primary/60 hover:bg-card">
+                <f.icon className="size-7 text-ice transition-colors group-hover:text-primary" aria-hidden />
+                <h3 className="mt-5 font-display text-2xl tracking-wide">{f.title}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{f.body}</p>
+              </article>
+            </Reveal>
+          ))}
+        </div>
+      </section>
+
+      <section className="relative overflow-hidden border-y border-border bg-secondary/20 py-24">
+        <div className="mx-auto max-w-6xl px-6">
+          <Reveal>
+            <h2 className="font-display text-5xl tracking-tight md:text-6xl">INSIDE THE SHOP</h2>
+            <p className="mt-4 text-muted-foreground">
+              Click a screenshot to open it full size. Arrow keys and Esc work in the viewer.
+            </p>
+          </Reveal>
+          <div className="mt-12 grid gap-8 md:grid-cols-2">
+            {shots.map((s, i) => (
+              <Reveal key={`${platform}-${s.label}`} delay={(i % 2) * 120} className={i === 0 ? "md:col-span-2" : ""}>
+                <figure className="overflow-hidden rounded-md border border-border bg-card shadow-[0_30px_60px_-35px_rgba(0,0,0,0.9)]">
+                  <button
+                    type="button"
+                    onClick={() => onOpenShot(i)}
+                    className="m-0 block w-full cursor-zoom-in border-0 bg-transparent p-0 text-left"
+                    aria-label={`View ${s.label} full size`}
+                  >
+                    <img
+                      src={s.src}
+                      alt={s.alt}
+                      width={1782}
+                      height={1221}
+                      loading="lazy"
+                      className="h-auto w-full transition-transform duration-700 hover:scale-[1.02]"
+                    />
+                  </button>
+                  <figcaption className="border-t border-border px-5 py-3 text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                    {s.label}
+                  </figcaption>
+                </figure>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
 
 function Index() {
+  const [platform, setPlatform] = useState<Platform>("windows");
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+
+  const activeShots = platform === "windows" ? windowsShots : linuxShots;
+  const heroSrc = platform === "windows" ? windowsHero : linuxHero;
+  const heroAlt =
+    platform === "windows"
+      ? "SnowRunner Tuning Shop vehicle tuning panel with fuel tank, front steer, responsiveness, diff lock and drive settings"
+      : "SnowRunner Tuning Shop Linux Avalonia vehicle tuning panel with fuel, steer, responsiveness, diff lock and drive settings";
 
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-background font-sans text-foreground">
@@ -201,10 +385,10 @@ function Index() {
           </a>
         </header>
 
-        <div className="relative z-10 mx-auto max-w-6xl px-6 pb-24 pt-14 md:pb-32 md:pt-20">
+        <div className="relative z-10 mx-auto max-w-6xl px-6 pb-16 pt-14 md:pb-20 md:pt-20">
           <Reveal>
             <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.22em] text-primary">
-              Free · Open source · Windows
+              Free · Open source
             </p>
           </Reveal>
           <Reveal delay={80}>
@@ -224,7 +408,7 @@ function Index() {
           <Reveal delay={240}>
             <div className="mt-10 flex flex-wrap items-center gap-4">
               <a
-                href={RELEASE_URL}
+                href={RELEASE_LATEST_URL}
                 target="_blank"
                 rel="noreferrer"
                 style={{ animation: "pulse-ring 2.8s ease-out infinite" }}
@@ -244,150 +428,66 @@ function Index() {
             </div>
             <BadgeRow className="mt-5" />
           </Reveal>
-
-          <Reveal delay={320}>
-            <button
-              type="button"
-              onClick={() => setLightboxIndex(HERO_INDEX >= 0 ? HERO_INDEX : 0)}
-              className="mt-16 block w-full overflow-hidden rounded-md border border-border bg-card/70 p-0 text-left shadow-[0_40px_80px_-30px_rgba(0,0,0,0.9)] backdrop-blur transition-transform hover:scale-[1.01]"
-              aria-label="View vehicle tuning screenshot full size"
-            >
-              <img
-                src={shotVehicle}
-                alt="SnowRunner Tuning Shop vehicle tuning panel with fuel tank, front steer, responsiveness, diff lock and drive settings"
-                width={1782}
-                height={1221}
-                className="h-auto w-full cursor-zoom-in"
-              />
-            </button>
-          </Reveal>
         </div>
       </section>
 
-      {/* Mercedes Pack 2 */}
+      {/* Platform tabs: main shot, stats, features, gallery */}
       <section className="border-t border-border bg-background">
-        <div className="mx-auto max-w-6xl px-6 py-20">
+        <div className="mx-auto max-w-6xl px-6 pt-10">
           <Reveal>
-            <h2 className="font-display text-5xl tracking-tight md:text-6xl">Mercedes Pack 2 supported</h2>
-            <p className="mt-4 max-w-2xl text-muted-foreground">
-              Dual Pack 2's Mercedes 3850 and Mercedes Mamute are on the Vehicles page — fuel, steering, store
-              price and the rest, same as every other truck.
-            </p>
-          </Reveal>
-          <div className="mt-10 grid max-w-3xl gap-6 sm:grid-cols-2">
-            {[
-              {
-                src: mercedes3850,
-                name: "Mercedes 3850",
-                cls: "Heavy Duty",
-                alt: "Mercedes 3850 Heavy Duty truck from Dual Pack 2",
-              },
-              {
-                src: mercedesMamute,
-                name: "Mercedes Mamute",
-                cls: "Offroad",
-                alt: "Mercedes Mamute Offroad truck from Dual Pack 2",
-              },
-            ].map((truck, i) => (
-              <Reveal key={truck.name} delay={i * 100}>
-                <figure className="overflow-hidden rounded-md border border-border bg-card shadow-[0_24px_50px_-30px_rgba(0,0,0,0.85)]">
-                  <img
-                    src={truck.src}
-                    alt={truck.alt}
-                    width={423}
-                    height={602}
-                    className="h-auto w-full"
-                  />
-                  <figcaption className="border-t border-border px-4 py-3">
-                    <span className="block text-sm font-medium text-foreground">{truck.name}</span>
-                    <span className="mt-0.5 block text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                      {truck.cls}
-                    </span>
-                  </figcaption>
-                </figure>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Stats */}
-      <section className="border-y border-border bg-card/40">
-        <div className="mx-auto grid max-w-6xl grid-cols-2 gap-px px-6 md:grid-cols-4">
-          {[
-            ["118", "vehicles"],
-            ["125", "engines"],
-            ["214", "suspensions"],
-            ["49", "DLC packs"],
-          ].map(([n, l], i) => (
-            <Reveal key={l} delay={i * 90}>
-              <div className="py-10 text-center">
-                <div className="font-display text-5xl text-primary">{n}</div>
-                <div className="mt-1 text-xs uppercase tracking-[0.24em] text-muted-foreground">{l}</div>
-              </div>
-            </Reveal>
-          ))}
-        </div>
-      </section>
-
-      {/* Features */}
-      <section className="mx-auto max-w-6xl px-6 py-24">
-        <Reveal>
-          <h2 className="font-display text-5xl tracking-tight md:text-6xl">WHAT YOU CAN TUNE</h2>
-          <p className="mt-4 max-w-2xl text-muted-foreground">
-            No text editors, no XML diffing, no broken saves. Point it at your install and start turning knobs.
-          </p>
-        </Reveal>
-        <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {features.map((f, i) => (
-            <Reveal key={f.title} delay={(i % 3) * 100}>
-              <article className="group h-full rounded-md border border-border bg-card/60 p-7 transition-colors duration-300 hover:border-primary/60 hover:bg-card">
-                <f.icon className="size-7 text-ice transition-colors group-hover:text-primary" aria-hidden />
-                <h3 className="mt-5 font-display text-2xl tracking-wide">{f.title}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{f.body}</p>
-              </article>
-            </Reveal>
-          ))}
-        </div>
-      </section>
-
-      {/* Gallery */}
-      <section className="relative overflow-hidden border-y border-border bg-secondary/20 py-24">
-        <div className="mx-auto max-w-6xl px-6">
-          <Reveal>
-            <h2 className="font-display text-5xl tracking-tight md:text-6xl">INSIDE THE SHOP</h2>
-            <p className="mt-4 text-muted-foreground">Click a screenshot to open it full size. Arrow keys and Esc work in the viewer.</p>
-          </Reveal>
-          <div className="mt-12 grid gap-8 md:grid-cols-2">
-            {shots.map((s, i) => (
-              <Reveal key={s.label} delay={(i % 2) * 120} className={i === 0 ? "md:col-span-2" : ""}>
-                <figure className="overflow-hidden rounded-md border border-border bg-card shadow-[0_30px_60px_-35px_rgba(0,0,0,0.9)]">
+            <div
+              role="tablist"
+              aria-label="Platform"
+              className="inline-flex rounded-sm border border-border bg-card/50 p-1"
+            >
+              {(
+                [
+                  ["windows", "Windows"],
+                  ["linux", "Linux"],
+                ] as const
+              ).map(([id, label]) => {
+                const selected = platform === id;
+                return (
                   <button
+                    key={id}
                     type="button"
-                    onClick={() => setLightboxIndex(i)}
-                    className="m-0 block w-full cursor-zoom-in border-0 bg-transparent p-0 text-left"
-                    aria-label={`View ${s.label} full size`}
+                    role="tab"
+                    aria-selected={selected}
+                    id={`platform-tab-${id}`}
+                    onClick={() => {
+                      setPlatform(id);
+                      setLightboxIndex(null);
+                    }}
+                    className={`rounded-sm px-5 py-2.5 font-display text-sm tracking-[0.16em] transition-colors ${
+                      selected
+                        ? "bg-primary text-primary-foreground"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
                   >
-                    <img
-                      src={s.src}
-                      alt={s.alt}
-                      width={1782}
-                      height={1221}
-                      loading="lazy"
-                      className="h-auto w-full transition-transform duration-700 hover:scale-[1.02]"
-                    />
+                    {label}
                   </button>
-                  <figcaption className="border-t border-border px-5 py-3 text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                    {s.label}
-                  </figcaption>
-                </figure>
-              </Reveal>
-            ))}
-          </div>
+                );
+              })}
+            </div>
+          </Reveal>
+        </div>
+
+        <div
+          role="tabpanel"
+          aria-labelledby={`platform-tab-${platform}`}
+          className="pt-10"
+        >
+          <PlatformShowcase
+            platform={platform}
+            shots={activeShots}
+            heroSrc={heroSrc}
+            heroAlt={heroAlt}
+            onOpenShot={setLightboxIndex}
+          />
         </div>
       </section>
 
-      {/* How it works */}
+      {/* How it works — shared */}
       <section className="mx-auto max-w-6xl px-6 py-24">
         <Reveal>
           <h2 className="font-display text-5xl tracking-tight md:text-6xl">THREE STEPS</h2>
@@ -409,7 +509,7 @@ function Index() {
         </ol>
       </section>
 
-      {/* CTA */}
+      {/* CTA — shared */}
       <section className="relative isolate overflow-hidden aurora-bg grain-overlay border-t border-border">
         <Snowfall />
         <div className="relative z-10 mx-auto max-w-3xl px-6 py-28 text-center">
@@ -418,17 +518,36 @@ function Index() {
               <span className="shine-text">GET THE TUNING SHOP</span>
             </h2>
             <p className="mt-5 text-muted-foreground">
-              Version {APP_VERSION} · Windows installer · free forever · no account, no telemetry.
+              Stable {APP_VERSION_STABLE} · Beta {APP_VERSION_BETA} · free forever · no account, no telemetry.
             </p>
-            <a
-              href={RELEASE_URL}
-              target="_blank"
-              rel="noreferrer"
-              className="mt-10 inline-flex items-center gap-3 rounded-sm bg-primary px-9 py-4 font-display text-xl tracking-[0.12em] text-primary-foreground transition-transform hover:scale-[1.03]"
-            >
-              <Download className="size-5" aria-hidden />
-              DOWNLOAD LATEST RELEASE
-            </a>
+            <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
+              <a
+                href={RELEASE_LATEST_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-3 rounded-sm bg-primary px-7 py-4 font-display text-lg tracking-[0.12em] text-primary-foreground transition-transform hover:scale-[1.03]"
+              >
+                <Download className="size-5" aria-hidden />
+                WINDOWS INSTALLER
+              </a>
+              <a
+                href={RELEASES_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-3 rounded-sm border border-primary/50 bg-card/70 px-7 py-4 font-display text-lg tracking-[0.12em] text-foreground backdrop-blur transition-transform hover:scale-[1.03] hover:border-primary"
+              >
+                <Download className="size-5" aria-hidden />
+                LINUX FLATPAK
+              </a>
+            </div>
+            <p className="mt-4 text-xs text-muted-foreground">
+              Grab the Windows Setup from the latest Stable release, or the{" "}
+              <code className="rounded-sm bg-card px-1 py-0.5 text-ice">.flatpak</code> asset from Stable/Beta on{" "}
+              <a href={RELEASES_URL} target="_blank" rel="noreferrer" className="underline-offset-2 hover:text-ice hover:underline">
+                GitHub Releases
+              </a>
+              .
+            </p>
             <BadgeRow className="mt-6 justify-center" />
           </Reveal>
         </div>
@@ -451,7 +570,7 @@ function Index() {
         </div>
       </footer>
       <Lightbox
-        shots={shots}
+        shots={activeShots}
         index={lightboxIndex}
         onClose={() => setLightboxIndex(null)}
         onIndexChange={setLightboxIndex}

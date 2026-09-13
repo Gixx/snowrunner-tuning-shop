@@ -1,7 +1,7 @@
 name: Release
 
-# Windows product release only (WPF self-contained + Inno Setup).
-# Linux / Avalonia Flatpak packaging is not published from this workflow yet.
+# Windows: WPF self-contained + Inno Setup (+ portable zip).
+# Linux: Avalonia Desktop portable zip + Flatpak bundle.
 on:
   push:
     tags:
@@ -29,7 +29,7 @@ jobs:
         run: |
           $tag = "${{ github.ref_name }}"
           $version = $tag.TrimStart("v")
-          # Stable: 1.3.5 — Beta: 1.5.0-beta.1 (numbered prereleases only)
+          # Stable: 1.4.0 — Beta: 1.4.0-beta.1 (numbered prereleases only)
           if ($version -notmatch '^\d+\.\d+\.\d+(-beta\.\d+)?$') {
             throw "Tag must look like v1.0.0 or v1.0.0-beta.1 (got $tag)"
           }
@@ -155,17 +155,171 @@ jobs:
           body: |
             ## SnowRunner Tuning Shop ${{ steps.version.outputs.tag }}
 
-            Windows x64 **self-contained** build (no separate .NET install required).
             Beta tags (`v*-beta.N`) are published as GitHub prereleases; Stable-channel users are not notified.
 
-            ### Recommended
+            ### Windows (recommended)
             1. Download `SnowRunnerTuningShop-${{ steps.version.outputs.tag }}-win-x64-Setup.exe`
             2. Run the installer
             3. Launch **SnowRunner Tuning Shop** from the Start menu
 
-            ### Portable (optional)
-            The `.zip` is a portable extract-and-run copy of the same build.
+            Self-contained win-x64 (no separate .NET install). Portable `.zip` is the same build without the installer.
+
+            ### Linux (preview)
+            - **Flatpak (recommended):** `SnowRunnerTuningShop-${{ steps.version.outputs.tag }}-linux-x64.flatpak`
+              ```
+              flatpak install --user SnowRunnerTuningShop-${{ steps.version.outputs.tag }}-linux-x64.flatpak
+              flatpak run io.github.gixx.SnowRunnerTuningShop
+              ```
+            - **Portable zip:** extract `SnowRunnerTuningShop-${{ steps.version.outputs.tag }}-linux-x64.zip` and run `SnowRunnerTuningShop.Desktop`.
+
+            Avalonia UI preview. Close SnowRunner (including Proton) before writing `initial.pak`.
+            Home filesystem access is enabled so Steam paths under `~` work; use Flatseal for libraries outside `$HOME`.
+            Needs X11/XWayland (`--socket=x11`); Wayland-only without X11 will not start.
 
             See the README for baseline setup and tuning tips.
 
-            **Note:** This build is not Authenticode-signed. Windows SmartScreen may warn on first run — choose **More info → Run anyway** if prompted.
+            **Note:** Windows builds are not Authenticode-signed. SmartScreen may warn on first run — choose **More info → Run anyway** if prompted.
+
+  linux:
+    name: Linux release
+    needs: windows
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Resolve version
+        id: version
+        shell: bash
+        run: |
+          tag="${GITHUB_REF_NAME}"
+          version="${tag#v}"
+          if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-beta\.[0-9]+)?$ ]]; then
+            echo "Tag must look like v1.0.0 or v1.0.0-beta.1 (got $tag)" >&2
+            exit 1
+          fi
+          numeric="${version%%-*}"
+          if [[ "$version" == *-beta.* ]]; then
+            prerelease=true
+          else
+            prerelease=false
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "numeric=$numeric" >> "$GITHUB_OUTPUT"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "prerelease=$prerelease" >> "$GITHUB_OUTPUT"
+
+      - name: Verify AppInfo.Version matches tag
+        shell: bash
+        run: |
+          expected="${{ steps.version.outputs.version }}"
+          actual=$(sed -n 's/.*public const string Version = "\([^"]*\)".*/\1/p' src/SnowRunnerTuningShop.Core/AppInfo.cs | head -n1)
+          if [[ -z "$actual" ]]; then
+            echo "Could not parse AppInfo.Version" >&2
+            exit 1
+          fi
+          if [[ "$actual" != "$expected" ]]; then
+            echo "AppInfo.Version ($actual) does not match release tag version ($expected)." >&2
+            exit 1
+          fi
+          echo "AppInfo.Version matches tag: $actual"
+
+      - name: Inject Mailtrap API token
+        shell: bash
+        env:
+          MAILTRAP_API_TOKEN: ${{ secrets.MAILTRAP_API_TOKEN }}
+        run: |
+          if [[ -z "${MAILTRAP_API_TOKEN// }" ]]; then
+            echo "Repository secret MAILTRAP_API_TOKEN is missing." >&2
+            exit 1
+          fi
+          if [[ "$MAILTRAP_API_TOKEN" == PASTE_* ]]; then
+            echo "MAILTRAP_API_TOKEN still looks like a placeholder." >&2
+            exit 1
+          fi
+          path="src/SnowRunnerTuningShop.Core/Diagnostics/BugReportSecrets.Local.cs"
+          token="${MAILTRAP_API_TOKEN//\\/\\\\}"
+          token="${token//\"/\\\"}"
+          cat > "$path" <<EOF
+          namespace SnowRunnerTuningShop.Core.Diagnostics;
+
+          public static partial class BugReportSecrets
+          {
+              public const string MailtrapApiToken = "$token";
+          }
+          EOF
+          # Strip accidental leading spaces from the heredoc lines.
+          sed -i 's/^[[:space:]]*//' "$path"
+          echo "Wrote $path for release build."
+
+      - name: Restore Desktop
+        run: dotnet restore src/SnowRunnerTuningShop.Desktop/SnowRunnerTuningShop.Desktop.csproj
+
+      - name: Publish linux-x64 (self-contained)
+        run: >
+          dotnet publish src/SnowRunnerTuningShop.Desktop/SnowRunnerTuningShop.Desktop.csproj
+          -c Release
+          -r linux-x64
+          --self-contained true
+          -p:Version=${{ steps.version.outputs.numeric }}
+          -p:InformationalVersion=${{ steps.version.outputs.tag }}
+          -p:DebugType=None
+          -p:DebugSymbols=false
+          -o publish/SnowRunnerTuningShop-linux-x64
+
+      - name: Zip portable
+        id: zip
+        shell: bash
+        run: |
+          name="SnowRunnerTuningShop-${{ steps.version.outputs.tag }}-linux-x64.zip"
+          (cd publish/SnowRunnerTuningShop-linux-x64 && zip -r "../$name" .)
+          echo "asset=$name" >> "$GITHUB_OUTPUT"
+
+      - name: Install Flatpak builder
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y flatpak flatpak-builder
+          flatpak remote-add --if-not-exists --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+          flatpak install -y --user org.freedesktop.Platform//24.08 org.freedesktop.Sdk//24.08
+
+      - name: Build Flatpak bundle
+        id: flatpak
+        shell: bash
+        run: |
+          mkdir -p packaging/flatpak/publish
+          rm -rf packaging/flatpak/publish/*
+          cp -a publish/SnowRunnerTuningShop-linux-x64/. packaging/flatpak/publish/
+          chmod +x packaging/flatpak/publish/SnowRunnerTuningShop.Desktop || true
+          # Keep AppStream <release> in sync with the tag (incl. beta).
+          meta="packaging/flatpak/io.github.gixx.SnowRunnerTuningShop.metainfo.xml"
+          date_utc="$(date -u +%Y-%m-%d)"
+          sed -i -E "s|<release version=\"[^\"]*\" date=\"[^\"]*\"/>|<release version=\"${{ steps.version.outputs.version }}\" date=\"${date_utc}\"/>|" "$meta"
+          name="SnowRunnerTuningShop-${{ steps.version.outputs.tag }}-linux-x64.flatpak"
+          (
+            cd packaging/flatpak
+            flatpak-builder --user --force-clean --repo=repo build io.github.gixx.SnowRunnerTuningShop.yml
+            flatpak build-bundle repo "../../publish/$name" io.github.gixx.SnowRunnerTuningShop
+          )
+          test -f "publish/$name"
+          echo "asset=$name" >> "$GITHUB_OUTPUT"
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: SnowRunnerTuningShop-${{ steps.version.outputs.tag }}-linux-x64
+          path: |
+            publish/${{ steps.zip.outputs.asset }}
+            publish/${{ steps.flatpak.outputs.asset }}
+
+      - name: Attach Linux assets to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          files: |
+            publish/${{ steps.zip.outputs.asset }}
+            publish/${{ steps.flatpak.outputs.asset }}
