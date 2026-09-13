@@ -48,6 +48,38 @@ public sealed class XmlTagRewriteSafetyTests
     }
 
     [Fact]
+    public void Engine_responsiveness_alone_scales_existing_attribute()
+    {
+        const string xml =
+            """
+            <EngineVariants>
+              <Engine Name="e1" Torque="100000" FuelConsumption="5.0" DamageCapacity="200"
+                      EngineResponsiveness="0.04" />
+            </EngineVariants>
+            """;
+
+        var updated = EngineService.ApplyMultipliersToTextForTests(xml, 1, 1, 1, 2);
+
+        Assert.Contains("EngineResponsiveness=\"0.08\"", updated, StringComparison.Ordinal);
+        Assert.Contains("Torque=\"100000\"", updated, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Engine_responsiveness_alone_injects_scaled_default_when_missing()
+    {
+        const string xml =
+            """
+            <EngineVariants>
+              <Engine Name="e1" Torque="100000" FuelConsumption="5.0" DamageCapacity="200" />
+            </EngineVariants>
+            """;
+
+        var updated = EngineService.ApplyMultipliersToTextForTests(xml, 1, 1, 1, 2);
+
+        Assert.Contains("EngineResponsiveness=\"0.08\"", updated, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void Gearbox_multiplier_does_not_swallow_GameData_when_Gearbox_tag_is_truncated()
     {
         const string xml =

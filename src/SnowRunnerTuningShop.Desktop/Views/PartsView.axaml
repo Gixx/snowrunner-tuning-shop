@@ -1,0 +1,106 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:views="using:SnowRunnerTuningShop.Desktop.Views"
+             x:Class="SnowRunnerTuningShop.Desktop.Views.PartsView">
+  <Grid RowDefinitions="*,Auto">
+    <TabControl x:Name="PartsTabControl"
+                Grid.Row="0"
+                SelectionChanged="PartsTabControl_SelectionChanged">
+      <TabItem x:Name="WinchTab">
+        <Border Background="{DynamicResource AppCardBrush}"
+                BorderBrush="{DynamicResource AppCardStrokeBrush}"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="12"
+                Margin="0,12,0,0"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch">
+          <views:WinchTuningView x:Name="WinchTuningView" HorizontalAlignment="Stretch"/>
+        </Border>
+      </TabItem>
+      <TabItem x:Name="EngineTab">
+        <Border Background="{DynamicResource AppCardBrush}"
+                BorderBrush="{DynamicResource AppCardStrokeBrush}"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="12"
+                Margin="0,12,0,0"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch">
+          <views:EngineTuningView x:Name="EngineTuningView" HorizontalAlignment="Stretch"/>
+        </Border>
+      </TabItem>
+      <TabItem x:Name="GearboxTab">
+        <Border Background="{DynamicResource AppCardBrush}"
+                BorderBrush="{DynamicResource AppCardStrokeBrush}"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="12"
+                Margin="0,12,0,0"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch">
+          <views:GearboxTuningView x:Name="GearboxTuningView" HorizontalAlignment="Stretch"/>
+        </Border>
+      </TabItem>
+      <TabItem x:Name="SuspensionTab">
+        <Border Background="{DynamicResource AppCardBrush}"
+                BorderBrush="{DynamicResource AppCardStrokeBrush}"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="12"
+                Margin="0,12,0,0"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch">
+          <views:SuspensionTuningView x:Name="SuspensionTuningView" HorizontalAlignment="Stretch"/>
+        </Border>
+      </TabItem>
+      <TabItem x:Name="TiresTab">
+        <Border Background="{DynamicResource AppCardBrush}"
+                BorderBrush="{DynamicResource AppCardStrokeBrush}"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="12"
+                Margin="0,12,0,0"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch">
+          <views:TireTuningView x:Name="TireTuningView" HorizontalAlignment="Stretch"/>
+        </Border>
+      </TabItem>
+      <TabItem x:Name="CranesTab">
+        <Border Background="{DynamicResource AppCardBrush}"
+                BorderBrush="{DynamicResource AppCardStrokeBrush}"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="12"
+                Margin="0,12,0,0"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch">
+          <views:CraneTuningView x:Name="CraneTuningView" HorizontalAlignment="Stretch"/>
+        </Border>
+      </TabItem>
+    </TabControl>
+
+    <TextBlock x:Name="StatusText"
+               Grid.Row="1"
+               Margin="0,8,0,0"
+               TextWrapping="Wrap"
+               Foreground="{DynamicResource AppMutedBrush}"/>
+
+    <Border x:Name="LoadingOverlay"
+            Grid.Row="0"
+            Grid.RowSpan="2"
+            Background="#99000000"
+            IsVisible="False"
+            CornerRadius="8"
+            IsHitTestVisible="True"
+            ZIndex="10">
+      <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="14">
+        <ProgressBar Width="160"
+                     Height="4"
+                     IsIndeterminate="True"/>
+        <TextBlock x:Name="LoadingText"
+                   HorizontalAlignment="Center"/>
+      </StackPanel>
+    </Border>
+  </Grid>
+</UserControl>

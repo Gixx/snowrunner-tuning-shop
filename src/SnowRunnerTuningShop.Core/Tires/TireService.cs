@@ -660,15 +660,7 @@ public static class TireService
         entryPath.Contains("/_dlc/", StringComparison.OrdinalIgnoreCase) ? "DLC" : "Base";
 
 
-    private static string FormatNumeric(double value)
-    {
-        if (Math.Abs(value - Math.Round(value)) < 1e-9)
-        {
-            return ((long)Math.Round(value, MidpointRounding.AwayFromZero)).ToString(CultureInfo.InvariantCulture);
-        }
-
-        return value.ToString("0.######", CultureInfo.InvariantCulture);
-    }
+    private static string FormatNumeric(double value) => XmlNumericFormatting.Format(value);
 
 
     private readonly record struct TireFrictionValues(

@@ -655,7 +655,14 @@ public static class UiText
         public static string WorkspaceTitle => StringResources.Get("Settings.WorkspaceTitle", "Workspace");
         public static string WorkspaceHint => StringResources.Get("Settings.WorkspaceHint", "Restore the working pak from the baseline, refresh the baseline after a game update, or reapply your saved tuning profile.");
         public static string AboutTitle => StringResources.Get("Settings.AboutTitle", "About & support");
-        public static string AboutHint => StringResources.Get("Settings.AboutHint", "Project website, releases, and optional support via PayPal.");
+        public static string AboutHint => StringResources.Get("Settings.AboutHint", "Project website and optional support via PayPal.");
+        public static string UpdatesTitle => StringResources.Get("Settings.UpdatesTitle", "Updates");
+        public static string UpdatesHint => StringResources.Get(
+            "Settings.UpdatesHint",
+            "Check for new app builds. Stable only offers full releases; Beta also includes numbered prereleases such as 1.5.0-beta.1.");
+        public static string UpdateChannelLabel => StringResources.Get("Settings.UpdateChannelLabel", "Update channel");
+        public static string UpdateChannelStable => StringResources.Get("Settings.UpdateChannelStable", "Stable");
+        public static string UpdateChannelBeta => StringResources.Get("Settings.UpdateChannelBeta", "Beta");
         public static string InstalledVersion => StringResources.Format("Settings.InstalledVersion", "Installed version: {0}", AppInfo.Version);
         public static string CheckForUpdates => StringResources.Get("Settings.CheckForUpdates", "Check for updates");
         public static string DownloadUpdate => StringResources.Get("Settings.DownloadUpdate", "Download update");

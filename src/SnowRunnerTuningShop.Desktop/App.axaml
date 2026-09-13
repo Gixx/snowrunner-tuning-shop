@@ -34,6 +34,7 @@
   </Application.Resources>
   <Application.Styles>
     <FluentTheme />
+    <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
     <Style Selector="RadioButton.nav">
       <Setter Property="Padding" Value="12,10"/>
       <Setter Property="Margin" Value="0,0,0,4"/>
@@ -60,6 +61,15 @@
       <Setter Property="Background" Value="#C42B1C"/>
       <Setter Property="Foreground" Value="White"/>
       <Setter Property="BorderBrush" Value="#C42B1C"/>
+    </Style>
+    <!-- Keep accordion chrome full-width; content-sized Expanders jitter when slider labels change. -->
+    <Style Selector="Expander">
+      <Setter Property="HorizontalAlignment" Value="Stretch"/>
+      <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+    </Style>
+    <Style Selector="Expander /template/ ToggleButton#PART_ToggleButton">
+      <Setter Property="HorizontalAlignment" Value="Stretch"/>
+      <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
     </Style>
   </Application.Styles>
 </Application>

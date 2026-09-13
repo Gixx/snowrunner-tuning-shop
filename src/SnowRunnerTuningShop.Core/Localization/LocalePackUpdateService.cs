@@ -2,6 +2,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using SnowRunnerTuningShop.Core.Updates;
 
 namespace SnowRunnerTuningShop.Core.Localization;
 
@@ -140,8 +141,8 @@ public static class LocalePackUpdateService
             text = text[1..];
         }
 
-        return !Version.TryParse(AppInfo.Version, out var installed)
-            || !Version.TryParse(text, out var required)
+        return !AppSemVersion.TryParse(AppInfo.Version, out var installed)
+            || !AppSemVersion.TryParse(text, out var required)
             || installed >= required;
     }
 

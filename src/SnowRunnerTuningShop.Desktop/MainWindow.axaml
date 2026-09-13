@@ -52,7 +52,7 @@
       <Grid Grid.Row="1" Margin="20">
         <views:HomeView x:Name="HomeView"/>
         <views:GeneralView x:Name="GeneralView" IsVisible="False"/>
-        <views:PlaceholderView x:Name="PlaceholderParts" IsVisible="False"/>
+        <views:PartsView x:Name="PartsView" IsVisible="False"/>
         <views:PlaceholderView x:Name="PlaceholderVehicles" IsVisible="False"/>
         <views:PlaceholderView x:Name="PlaceholderTrailers" IsVisible="False"/>
         <views:PlaceholderView x:Name="PlaceholderPhotoMode" IsVisible="False"/>

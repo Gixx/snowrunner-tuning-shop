@@ -691,7 +691,7 @@ public static class SuspensionService
             return false;
         }
 
-        return SetOrReplaceAttribute(ref attributesText, attributeName, FormatNumeric(parsed * multiplier));
+        return SetOrReplaceAttribute(ref attributesText, attributeName, XmlNumericFormatting.Format(parsed * multiplier));
     }
 
     private static bool TryGetAttributeValue(string attributesText, string attributeName, out string value)
@@ -737,15 +737,7 @@ public static class SuspensionService
             ? parsed
             : fallback;
 
-    private static string FormatNumeric(double value)
-    {
-        if (Math.Abs(value - Math.Round(value)) < 1e-9)
-        {
-            return ((long)Math.Round(value, MidpointRounding.AwayFromZero)).ToString(CultureInfo.InvariantCulture);
-        }
-
-        return value.ToString("0.######", CultureInfo.InvariantCulture);
-    }
+    private static string FormatNumeric(double value) => XmlNumericFormatting.Format(value);
 
 
     private readonly record struct SuspensionAttributeValues(

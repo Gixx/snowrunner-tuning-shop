@@ -6,6 +6,7 @@ using SnowRunnerTuningShop.Core.Backup;
 using SnowRunnerTuningShop.Core.Models;
 using SnowRunnerTuningShop.Core.Pak;
 using SnowRunnerTuningShop.Core.Strings;
+using SnowRunnerTuningShop.Core.Tuning;
 using SnowRunnerTuningShop.Core.Xml;
 
 namespace SnowRunnerTuningShop.Core.Trucks;
@@ -14,6 +15,9 @@ public static class TruckTuningService
 {
     public const double GlobalFrontSteerMinimumDegrees = 10;
     public const double GlobalFrontSteerMaximumDegrees = 60;
+
+    /// <summary>Saber default when TruckData Responsiveness is omitted from XML.</summary>
+    public const double DefaultTruckResponsiveness = 0.4;
 
     private static readonly Regex TruckDataOpenRegex = new(
         @"<TruckData\b(?<attrs>[^<>]*)>",
@@ -390,7 +394,7 @@ public static class TruckTuningService
             HasNativeDiffLockOptions = hasNativeDiffLockOptions,
             DiffLock = TruckDiffLockXml.ResolveDiffLockMode(archive, text, diffRaw, hasNativeDiffLockOptions),
             DriveLayout = InferDriveLayout(text),
-            Responsiveness = ParseDouble(responsivenessRaw, 0.4),
+            Responsiveness = ParseDouble(responsivenessRaw, DefaultTruckResponsiveness),
             BaselineResponsiveness = ReadBaselineDouble(baselineText, text, "Responsiveness", 0.4),
             FrontSteerAngle = frontSteerAngle,
             BaselineFrontSteerAngle = baselineSteer.Front,
@@ -417,8 +421,26 @@ public static class TruckTuningService
         return updated;
     }
 
+    /// <summary>Test helper: apply vehicle global multipliers to a single truck XML string (no always-on drive flags).</summary>
+    internal static string ApplyGlobalMultipliersToTextForTests(
+        string baselineText,
+        double fuelMultiplier,
+        TruckFrontSteerGlobalMode frontSteerMode,
+        double responsivenessMultiplier,
+        double priceMultiplier) =>
+        ApplyGlobalMultipliersToText(
+            workingArchive: null,
+            truckId: "test",
+            baselineText,
+            fuelMultiplier,
+            frontSteerMode,
+            responsivenessMultiplier,
+            priceMultiplier,
+            alwaysOnDiffLock: false,
+            alwaysOnAwd: false);
+
     private static string ApplyGlobalMultipliersToText(
-        ZipArchive archive,
+        ZipArchive? workingArchive,
         string truckId,
         string baselineText,
         double fuelMultiplier,
@@ -428,16 +450,31 @@ public static class TruckTuningService
         bool alwaysOnDiffLock,
         bool alwaysOnAwd)
     {
+        var fuelBaseline = TuningMultiplierPresets.IsBaselineMultiplier(fuelMultiplier);
+        var responsivenessBaseline = TuningMultiplierPresets.IsBaselineMultiplier(responsivenessMultiplier);
+        var priceBaseline = TuningMultiplierPresets.IsBaselineMultiplier(priceMultiplier);
+        var steerBaseline = frontSteerMode == TruckFrontSteerGlobalMode.Baseline;
+
+        if (fuelBaseline
+            && responsivenessBaseline
+            && priceBaseline
+            && steerBaseline
+            && !alwaysOnDiffLock
+            && !alwaysOnAwd)
+        {
+            return baselineText;
+        }
+
         var truckData = TruckDataOpenRegex.Match(baselineText);
         if (!truckData.Success)
         {
-            return ApplyGlobalDriveFlags(archive, truckId, baselineText, alwaysOnDiffLock, alwaysOnAwd);
+            return ApplyGlobalDriveFlags(workingArchive, truckId, baselineText, alwaysOnDiffLock, alwaysOnAwd);
         }
 
         var attrs = VehicleGameDataXml.ParseAttributes(truckData.Groups["attrs"].Value);
         var updated = baselineText;
 
-        if (attrs.TryGetValue("FuelCapacity", out var fuelRaw))
+        if (!fuelBaseline && attrs.TryGetValue("FuelCapacity", out var fuelRaw))
         {
             var baselineFuel = ParseInt(fuelRaw, 0);
             if (baselineFuel > 0)
@@ -450,48 +487,58 @@ public static class TruckTuningService
             }
         }
 
-        var baselineResponsiveness = ParseDouble(
-            attrs.TryGetValue("Responsiveness", out var responsivenessRaw) ? responsivenessRaw : null,
-            0.4);
-        var scaledResponsiveness = Math.Clamp(baselineResponsiveness * responsivenessMultiplier, 0, 1);
-        updated = VehicleGameDataXml.SetTruckDataAttribute(
-            updated,
-            "Responsiveness",
-            FormatNumeric(scaledResponsiveness, preferInteger: false));
-
-        var baselinePrice = ExtractGameDataPrice(baselineText);
-        if (baselinePrice >= 0 && GameDataOpenRegex.IsMatch(baselineText))
+        if (!responsivenessBaseline)
         {
-            var scaledPrice = (int)Math.Clamp(
-                Math.Round(baselinePrice * priceMultiplier, MidpointRounding.AwayFromZero),
-                0,
-                9_999_999);
-            updated = ApplyGameDataPrice(updated, scaledPrice);
+            var baselineResponsiveness = ParseDouble(
+                attrs.TryGetValue("Responsiveness", out var responsivenessRaw) ? responsivenessRaw : null,
+                DefaultTruckResponsiveness);
+            var scaledResponsiveness = Math.Clamp(baselineResponsiveness * responsivenessMultiplier, 0, 1);
+            updated = VehicleGameDataXml.SetTruckDataAttribute(
+                updated,
+                "Responsiveness",
+                FormatNumeric(scaledResponsiveness, preferInteger: false));
         }
 
-        var (_, _, hasFrontSteer, _) = ParseSteerAngles(baselineText);
-        if (hasFrontSteer)
+        if (!priceBaseline && GameDataOpenRegex.IsMatch(baselineText))
         {
-            updated = frontSteerMode switch
+            var baselinePrice = ExtractGameDataPrice(baselineText);
+            // Match trailers: only scale a real store price; do not inject Price="0" when missing.
+            if (baselinePrice > 0)
             {
-                TruckFrontSteerGlobalMode.Minimum => ApplyFrontSteerAngle(updated, GlobalFrontSteerMinimumDegrees),
-                TruckFrontSteerGlobalMode.Maximum => ApplyFrontSteerAngle(updated, GlobalFrontSteerMaximumDegrees),
-                _ => updated,
-            };
+                var scaledPrice = (int)Math.Clamp(
+                    Math.Round(baselinePrice * priceMultiplier, MidpointRounding.AwayFromZero),
+                    0,
+                    9_999_999);
+                updated = ApplyGameDataPrice(updated, scaledPrice);
+            }
         }
 
-        return ApplyGlobalDriveFlags(archive, truckId, updated, alwaysOnDiffLock, alwaysOnAwd);
+        if (!steerBaseline)
+        {
+            var (_, _, hasFrontSteer, _) = ParseSteerAngles(baselineText);
+            if (hasFrontSteer)
+            {
+                updated = frontSteerMode switch
+                {
+                    TruckFrontSteerGlobalMode.Minimum => ApplyFrontSteerAngle(updated, GlobalFrontSteerMinimumDegrees),
+                    TruckFrontSteerGlobalMode.Maximum => ApplyFrontSteerAngle(updated, GlobalFrontSteerMaximumDegrees),
+                    _ => updated,
+                };
+            }
+        }
+
+        return ApplyGlobalDriveFlags(workingArchive, truckId, updated, alwaysOnDiffLock, alwaysOnAwd);
     }
 
     private static string ApplyGlobalDriveFlags(
-        ZipArchive archive,
+        ZipArchive? archive,
         string truckId,
         string truckXml,
         bool alwaysOnDiffLock,
         bool alwaysOnAwd)
     {
         var updated = truckXml;
-        if (alwaysOnDiffLock)
+        if (alwaysOnDiffLock && archive is not null)
         {
             updated = TruckDiffLockXml.ApplyAlwaysOnDiffLock(archive, updated, truckId);
         }
@@ -826,15 +873,8 @@ public static class TruckTuningService
             ? parsed
             : fallback;
 
-    private static string FormatNumeric(double value, bool preferInteger)
-    {
-        if (preferInteger || Math.Abs(value - Math.Round(value)) < 1e-9)
-        {
-            return ((long)Math.Round(value, MidpointRounding.AwayFromZero)).ToString(CultureInfo.InvariantCulture);
-        }
-
-        return value.ToString("0.######", CultureInfo.InvariantCulture);
-    }
+    private static string FormatNumeric(double value, bool preferInteger) =>
+        XmlNumericFormatting.Format(value, preferInteger);
 
     private static byte[] ReadEntryBytes(ZipArchiveEntry entry)
     {

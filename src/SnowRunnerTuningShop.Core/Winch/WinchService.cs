@@ -262,6 +262,18 @@ public static class WinchService
         double StrengthMult,
         bool IsEngineIgnitionRequired);
 
+    internal static string ApplyMultipliersToTextForTests(
+        string backupText,
+        double lengthMultiplier,
+        double strengthMultiplier,
+        bool forceAutonomousAll = false) =>
+        ApplyMultipliersToText(
+            backupText,
+            lengthMultiplier,
+            strengthMultiplier,
+            forceAutonomousAll,
+            out _);
+
     private static string ApplyMultipliersToText(
         string backupText,
         double lengthMultiplier,
@@ -359,7 +371,7 @@ public static class WinchService
         }
 
         var parsed = ParseDouble(rawValue, isStrengthMult ? 10 : 35);
-        var scaled = Math.Round(parsed * multiplier, 2, MidpointRounding.AwayFromZero);
+        var scaled = XmlNumericFormatting.Round(parsed * multiplier);
         return FormatNumeric(scaled, isStrengthMult);
     }
 
@@ -523,22 +535,8 @@ public static class WinchService
         return string.Equals(value, "true", StringComparison.OrdinalIgnoreCase);
     }
 
-    private static string FormatNumeric(double value, bool isStrengthMult)
-    {
-        if (Math.Abs(value - Math.Round(value)) < 1e-9)
-        {
-            var integer = ((int)Math.Round(value)).ToString(CultureInfo.InvariantCulture);
-            return isStrengthMult ? $"{integer}.0" : integer;
-        }
-
-        var text = value.ToString("0.######", CultureInfo.InvariantCulture);
-        if (isStrengthMult && !text.Contains('.', StringComparison.Ordinal))
-        {
-            text += ".0";
-        }
-
-        return text;
-    }
+    private static string FormatNumeric(double value, bool isStrengthMult) =>
+        XmlNumericFormatting.Format(value, preferInteger: false, keepTrailingDotZero: isStrengthMult);
 
 }
 

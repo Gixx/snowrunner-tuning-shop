@@ -12,8 +12,16 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 ## [Unreleased]
 
 ### Added
+- **Avalonia Desktop (Linux path):** `src/SnowRunnerTuningShop.Desktop` shell with Home, General, Parts, Settings, bug/crash dialogs; Vehicles / Trailers / Photo Mode remain placeholders. WPF remains the Windows product UI. Not published in the Windows release workflow yet.
+
+---
+
+## [1.3.5] — 2026-09-13
+
+### Added
 - **Parts → Cranes tab:** global arm-force and movement-speed multipliers plus per-crane edits for average arm `Motor Force` and `ControlledIK` speed coeffs (`Crane` / `LogCrane` truck addons).
-- **Avalonia Desktop (Linux path):** `src/SnowRunnerTuningShop.Desktop` shell with Home workspace (baseline / change location / restore / refresh / reapply), General (camera / trail rocks), Settings (theme / language / locale packs / updates / links / debug crash tests), Mailtrap bug-report dialog, crash-report dialog, sidebar nav, game-running write gate, and shared UI strings. Parts / Vehicles / Trailers / Photo Mode remain placeholders. WPF remains the Windows product UI.
+- **Update channels:** Settings → Updates with Stable / Beta channel selector. Stable uses GitHub `/releases/latest` (full releases only). Beta picks the highest SemVer among stable and numbered prereleases (`v1.5.0-beta.1`, `v1.5.0-beta.2`, …). Preference stored in `config.json`.
+- **Release workflow:** accepts `vX.Y.Z` and `vX.Y.Z-beta.N` tags; beta tags publish as GitHub prereleases. Still **Windows-only** (WPF win-x64 + Inno); no Linux/Flatpak publish yet.
 
 ### Changed
 - **Locale manager:** Add or Update languages lists only optional downloadable packs (e.g. hu/it/fi), not languages shipped with the app.
@@ -22,8 +30,12 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 - **Catalog thumbs:** Vehicles/Trailers decode thumbnails lazily (path cache) instead of eagerly at catalog load.
 - **CI:** after tests, `dotnet publish` win-x64 self-contained smoke output to `publish/smoke`.
 - **Locale tests:** measure every shipped `assets/localization/*.json` (not only en/de/zh-CN).
+- **Settings:** Updates moved to its own card (channel + check/download); About keeps website / PayPal.
 
 ### Fixed
+- **Engine responsiveness multiplier:** applying only the responsiveness slider now writes XML (previously `changed` stayed false when `EngineResponsiveness` scaled successfully, so the edit was discarded unless another slider also moved).
+- **Vehicles global multipliers:** fuel-/price-/steer-only applies no longer rewrite `Responsiveness` or inject `Price="0"` when those sliders stay at baseline; responsiveness-only still scales or injects the Saber default (`0.4`).
+- **XML float precision:** scaled/edited pak floats (parts, vehicles, general rock blend, etc.) round to at most two decimal places via shared `XmlNumericFormatting`, so presets like 1/3 no longer write repeating fractions such as `0.366667`.
 - **Cranes load/apply:** addon XML with sibling `<_templates>` + `<TruckAddon>` roots now parses (synthetic wrap); Arm force no longer shows 0 and Apply no longer fails with a false “corrupted XML” error.
 - **Cranes list:** show pak file stem (`File` column) so per-truck copies that share the same localized name are distinguishable.
 - **Cranes multipliers:** arm-force slider up to 10x; movement-speed slider capped at 3x.
@@ -307,7 +319,8 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ---
 
-[Unreleased]: https://github.com/Gixx/snowrunner-tuning-shop/compare/v1.3.4...HEAD
+[Unreleased]: https://github.com/Gixx/snowrunner-tuning-shop/compare/v1.3.5...HEAD
+[1.3.5]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.3.5
 [1.3.4]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.3.4
 [1.3.3]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.3.3
 [1.3.2]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.3.2

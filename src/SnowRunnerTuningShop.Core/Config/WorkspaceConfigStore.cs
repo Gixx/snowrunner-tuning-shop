@@ -2,6 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using SnowRunnerTuningShop.Core.Localization;
 using SnowRunnerTuningShop.Core.Profile;
+using SnowRunnerTuningShop.Core.Updates;
 
 namespace SnowRunnerTuningShop.Core.Config;
 
@@ -19,6 +20,9 @@ public sealed class WorkspaceConfig
 
     /// <summary>Latest GitHub release the user chose not to be notified about.</summary>
     public string? SkippedAppVersion { get; set; }
+
+    /// <summary>App update channel: Stable or Beta.</summary>
+    public string UpdateChannel { get; set; } = AppUpdateChannels.Stable;
 
     public Dictionary<string, EditionConfig> Editions { get; set; } =
         new(StringComparer.OrdinalIgnoreCase);
@@ -248,6 +252,18 @@ public static class WorkspaceConfigStore
         {
             var config = LoadUnlocked();
             config.SkippedAppVersion = string.IsNullOrWhiteSpace(version) ? null : version.Trim();
+            SaveUnlocked(config);
+        }
+    }
+
+    public static string GetUpdateChannel() => AppUpdateChannels.Normalize(Load().UpdateChannel);
+
+    public static void SetUpdateChannel(string? channel)
+    {
+        lock (Gate)
+        {
+            var config = LoadUnlocked();
+            config.UpdateChannel = AppUpdateChannels.Normalize(channel);
             SaveUnlocked(config);
         }
     }

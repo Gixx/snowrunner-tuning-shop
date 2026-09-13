@@ -34,4 +34,4 @@ Flatpak packaging comes in a later phase (`packaging/flatpak/`).
 
 ## Status
 
-Phase 1: Home, General, and Settings are wired. Parts / Vehicles / Trailers / Photo Mode are placeholders. Flatpak packaging is later.
+Phase 1: Home, General, Parts, and Settings are wired. Vehicles / Trailers / Photo Mode are placeholders. Flatpak packaging is later.

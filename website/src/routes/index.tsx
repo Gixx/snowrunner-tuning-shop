@@ -26,7 +26,7 @@ import shotPhotoMode from "@/assets/shot-photo-mode.png";
 import shotSettings from "@/assets/shot-settings.png";
 import mercedes3850 from "@/assets/mercedes-3850.png";
 import mercedesMamute from "@/assets/mercedes-mamute.png";
-import { SITE_DESCRIPTION, SITE_TITLE } from "@/lib/site";
+import { SITE_DESCRIPTION, SITE_TITLE, APP_VERSION } from "@/lib/site";
 
 const RELEASE_URL = "https://github.com/Gixx/snowrunner-tuning-shop/releases/latest";
 const REPO_URL = "https://github.com/Gixx/snowrunner-tuning-shop";
@@ -418,7 +418,7 @@ function Index() {
               <span className="shine-text">GET THE TUNING SHOP</span>
             </h2>
             <p className="mt-5 text-muted-foreground">
-              Version 1.3.2 · Windows installer · free forever · no account, no telemetry.
+              Version {APP_VERSION} · Windows installer · free forever · no account, no telemetry.
             </p>
             <a
               href={RELEASE_URL}

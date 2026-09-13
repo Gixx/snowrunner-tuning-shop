@@ -1,0 +1,75 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="SnowRunnerTuningShop.Desktop.Views.GearboxTuningView">
+  <Grid RowDefinitions="Auto,Auto,*">
+    <Expander x:Name="MultipliersExpander"
+              Grid.Row="0"
+              IsExpanded="True"
+              Margin="0,0,0,12"
+              HorizontalAlignment="Stretch"
+              Width="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}}">
+      <Grid ColumnDefinitions="*,*,*,Auto" HorizontalAlignment="Stretch">
+        <StackPanel Grid.Column="0" Margin="0,0,12,0">
+          <TextBlock x:Name="FuelMultiplierLabel"/>
+          <Slider x:Name="FuelMultiplierSlider"
+                  Minimum="0" Maximum="8" Value="4" TickFrequency="1" IsSnapToTickEnabled="True"
+                  PropertyChanged="MultiplierSlider_PropertyChanged"/>
+        </StackPanel>
+        <StackPanel Grid.Column="1" Margin="12,0,12,0">
+          <TextBlock x:Name="IdleMultiplierLabel"/>
+          <Slider x:Name="IdleMultiplierSlider"
+                  Minimum="0" Maximum="8" Value="4" TickFrequency="1" IsSnapToTickEnabled="True"
+                  PropertyChanged="MultiplierSlider_PropertyChanged"/>
+        </StackPanel>
+        <StackPanel Grid.Column="2" Margin="12,0,12,0">
+          <TextBlock x:Name="AwdMultiplierLabel"/>
+          <Slider x:Name="AwdMultiplierSlider"
+                  Minimum="0" Maximum="8" Value="4" TickFrequency="1" IsSnapToTickEnabled="True"
+                  PropertyChanged="MultiplierSlider_PropertyChanged"/>
+        </StackPanel>
+        <StackPanel Grid.Column="3" VerticalAlignment="Center">
+          <Button x:Name="ApplyMultipliersButton" Padding="14,8" Click="ApplyMultipliersButton_Click"/>
+        </StackPanel>
+      </Grid>
+    </Expander>
+
+    <Border Grid.Row="1"
+            Background="{DynamicResource AppCardBrush}"
+            BorderBrush="{DynamicResource AppCardStrokeBrush}"
+            BorderThickness="1"
+            CornerRadius="8"
+            Padding="12"
+            Margin="0,0,0,12">
+      <Grid ColumnDefinitions="*,280">
+        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+          <Button x:Name="SaveIndividualButton" Padding="14,8" Click="SaveIndividualButton_Click"/>
+          <Button x:Name="RestoreGearboxesButton" Padding="14,8" Click="RestoreGearboxesButton_Click"/>
+          <Button x:Name="ReloadButton" Padding="14,8" Click="ReloadButton_Click"/>
+        </StackPanel>
+        <TextBox x:Name="FilterTextBox"
+                 Grid.Column="1"
+                 Margin="16,0,0,0"
+                 VerticalAlignment="Center"
+                 TextChanged="FilterTextBox_TextChanged"/>
+      </Grid>
+    </Border>
+
+    <DataGrid x:Name="GearboxesGrid"
+              Grid.Row="2"
+              AutoGenerateColumns="False"
+              IsReadOnly="False"
+              HeadersVisibility="Column"
+              GridLinesVisibility="Horizontal"
+              CanUserReorderColumns="False">
+      <DataGrid.Columns>
+        <DataGridTextColumn Binding="{Binding Category}" Width="70" IsReadOnly="True"/>
+        <DataGridTextColumn Binding="{Binding DisplayName}" Width="160" IsReadOnly="True"/>
+        <DataGridTextColumn Binding="{Binding UsedBy}" Width="200" MinWidth="120" IsReadOnly="True"/>
+        <DataGridTextColumn Binding="{Binding Price}" Width="80" IsReadOnly="True"/>
+        <DataGridTextColumn Binding="{Binding FuelConsumption}" Width="90"/>
+        <DataGridTextColumn Binding="{Binding IdleFuelModifier}" Width="90"/>
+        <DataGridTextColumn Binding="{Binding AwdConsumptionModifier}" Width="100"/>
+      </DataGrid.Columns>
+    </DataGrid>
+  </Grid>
+</UserControl>

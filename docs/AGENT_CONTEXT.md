@@ -104,7 +104,7 @@ Steam pak example (dev machine may vary):
 - Services under `Core/{Engine,Winch,Gearbox,Suspension,Tires,Crane}/`; shared pak apply via `PartPakPipeline`.
 - Cranes are truck addons (`/classes/trucks/addons/`) with `AddonType` `Crane` / `LogCrane`; identity = file stem. Tunables: arm `Motor Force` + `ControlledIK` movement coeffs.
 - Truck/trailer XML helpers: `TruckDiffLockXml`, `VehicleGameDataXml`, `TrailerHitchXml`.
-- Parse/format numbers with **`CultureInfo.InvariantCulture`**.
+- Parse/format numbers with **`CultureInfo.InvariantCulture`**. Float XML attributes use shared `XmlNumericFormatting` (max **2** decimal places) so scaled presets like 1/3 do not write repeating fractions.
 
 ### Localization priority
 
@@ -132,10 +132,10 @@ English must contain every `keys.json` key; others fall back to English. Debug: 
 
 ## Release process
 
-1. Bump `AppInfo.Version`
+1. Bump `AppInfo.Version` (stable `X.Y.Z` or beta `X.Y.Z-beta.N`)
 2. Move `[Unreleased]` notes into `## [x.y.z] — YYYY-MM-DD` in `CHANGELOG.md` + footer links
 3. Commit when asked
-4. Tag `vMAJOR.MINOR.PATCH` → `release.yml` builds self-contained win-x64, Inno Setup, GitHub Release
+4. Tag `vMAJOR.MINOR.PATCH` or `vMAJOR.MINOR.PATCH-beta.N` → `release.yml` builds **Windows** self-contained win-x64 + Inno Setup + GitHub Release (beta tags → GitHub prerelease). Linux/Flatpak is not published from this workflow yet.
 
 Do **not** commit unless the user explicitly asks. Do **not** invent features or expand scope.
 
@@ -150,7 +150,7 @@ Tracked work notes may also live under gitignored `docs/plan/Linux-Avalonia-plan
 - Package target: **Flatpak** (not AppImage); sandbox must grant Steam/`initial.pak` filesystem access
 - Smoke VM: CachyOS Hyper-V (plus Ubuntu when available); not WSL
 - Phase 0 done when: empty Avalonia window runs on Windows + Linux with Core reference
-- Phase 1 (current): Home + General + Settings on Avalonia; Parts / Vehicles / Trailers / Photo Mode are placeholders
+- Phase 1 (current): Home + General + Parts + Settings on Avalonia; Vehicles / Trailers / Photo Mode are placeholders
 - See `src/SnowRunnerTuningShop.Desktop/README.md` for `dotnet run` / F5 / `linux-x64` publish
 - IDE on Linux: open `SnowRunnerTuningShop.Linux.slnx` (set via `.vscode/settings.json`) so Roslyn skips the WPF Windows TFM
 
@@ -161,6 +161,7 @@ Tracked work notes may also live under gitignored `docs/plan/Linux-Avalonia-plan
 | Area | Paths |
 |------|--------|
 | Version / URLs | `Core/AppInfo.cs` |
+| Updates | `Core/Updates/AppUpdateService.cs`, `AppSemVersion.cs`, `AppUpdateChannels.cs` |
 | Workspace | `Core/Config/WorkspaceConfigStore.cs`, `GameEditionDetector.cs` |
 | Baseline / health | `Core/Backup/PakBaselineService.cs`, `Core/Profile/WorkspaceHealthService.cs`, `TuningProfile*.cs` |
 | Pak I/O | `Core/Pak/InitialPakReader.cs`, `InitialPakWriter.cs`, `PakFileId.cs`, `PakInPlaceZipPatcher.cs`, `PakVanillaText.cs`, `PakCacheBlockLayoutGuard.cs` |
@@ -170,7 +171,7 @@ Tracked work notes may also live under gitignored `docs/plan/Linux-Avalonia-plan
 | Strings | `Core/Strings/GameStringsReader.cs`; UI `Localization/StringResources.cs`, `UiText.cs`, `LanguageService.cs` |
 | Crash | `Core/Diagnostics/CrashReport*.cs`, `Views/CrashReportWindow.*`, `GlobalExceptionHandler.cs` |
 | Shell (WPF) | `App.xaml.cs`, `MainWindow.*`, `AppSession.cs`, `AppPaths.cs`, `ThemeService.cs` |
-| Shell (Avalonia) | `src/SnowRunnerTuningShop.Desktop/` (`Program.cs`, `MainWindow.axaml*`, `Views/HomeView.*`) |
+| Shell (Avalonia) | `src/SnowRunnerTuningShop.Desktop/` (`Program.cs`, `MainWindow.axaml*`, `Views/{Home,General,Parts,Settings}View.*`) |
 
 ---
 

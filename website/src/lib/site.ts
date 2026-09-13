@@ -1,6 +1,8 @@
 /** Canonical URL of the GitHub Pages landing (trailing slash). */
 export const SITE_URL = "https://gixx.github.io/snowrunner-tuning-shop/";
 export const SITE_NAME = "SnowRunner Tuning Shop";
+/** Keep in sync with `AppInfo.Version` in Core (stable display on the landing page). */
+export const APP_VERSION = "1.3.5";
 export const SITE_TITLE = "SnowRunner Tuning Shop — Tune the Game's Default Settings";
 export const SITE_DESCRIPTION =
   "Free, open-source desktop tool to fine-tune SnowRunner's initial.pak: engines, gearboxes, suspensions, fuel, steering, AWD and diff lock — with a one-click baseline restore.";

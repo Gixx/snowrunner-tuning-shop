@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using SnowRunnerTuningShop.Core.Backup;
 using SnowRunnerTuningShop.Core.Pak;
+using SnowRunnerTuningShop.Core.Xml;
 
 namespace SnowRunnerTuningShop.Core.General;
 
@@ -558,7 +559,7 @@ public static class GeneralService
         var blended = modValue.Value + (scale * (baselineValue.Value - modValue.Value));
         var formatted = preferInteger && Math.Abs(blended - Math.Round(blended)) < 0.000001
             ? Math.Round(blended).ToString(CultureInfo.InvariantCulture)
-            : blended.ToString("0.######", CultureInfo.InvariantCulture);
+            : XmlNumericFormatting.Format(blended);
 
         if (!attributeRegex.IsMatch(targetText))
         {

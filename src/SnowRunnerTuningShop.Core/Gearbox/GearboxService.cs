@@ -391,15 +391,15 @@ public static class GearboxService
 
             var updatedAttrs = attrs;
             var changed = false;
-            changed |= SetOrReplaceAttribute(ref updatedAttrs, "FuelConsumption", FormatNumeric(target.FuelConsumption));
-            changed |= SetOrReplaceAttribute(ref updatedAttrs, "IdleFuelModifier", FormatNumeric(target.IdleFuelModifier));
+            changed |= SetOrReplaceAttribute(ref updatedAttrs, "FuelConsumption", XmlNumericFormatting.Format(target.FuelConsumption));
+            changed |= SetOrReplaceAttribute(ref updatedAttrs, "IdleFuelModifier", XmlNumericFormatting.Format(target.IdleFuelModifier));
 
             if (target.AwdConsumptionModifier.HasValue || AttributeExists(updatedAttrs, "AWDConsumptionModifier"))
             {
                 changed |= SetOrReplaceAttribute(
                     ref updatedAttrs,
                     "AWDConsumptionModifier",
-                    FormatNumeric(target.AwdConsumptionModifier ?? 0));
+                    XmlNumericFormatting.Format(target.AwdConsumptionModifier ?? 0));
             }
 
             if (!changed)
@@ -453,8 +453,8 @@ public static class GearboxService
             return false;
         }
 
-        var scaled = Math.Round(ParseDouble(rawValue, 0) * multiplier, 6, MidpointRounding.AwayFromZero);
-        return SetOrReplaceAttribute(ref attrs, attributeName, FormatNumeric(scaled));
+        var scaled = XmlNumericFormatting.Round(ParseDouble(rawValue, 0) * multiplier);
+        return SetOrReplaceAttribute(ref attrs, attributeName, XmlNumericFormatting.Format(scaled));
     }
 
     private static bool SetOrReplaceAttribute(ref string attrs, string attributeName, string value)
@@ -561,17 +561,6 @@ public static class GearboxService
         double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var parsed)
             ? parsed
             : fallback;
-
-    private static string FormatNumeric(double value)
-    {
-        if (Math.Abs(value - Math.Round(value)) < 1e-9)
-        {
-            return ((long)Math.Round(value, MidpointRounding.AwayFromZero)).ToString(CultureInfo.InvariantCulture);
-        }
-
-        return value.ToString("0.######", CultureInfo.InvariantCulture);
-    }
-
 
     private readonly record struct GearboxAttributeValues(
         double FuelConsumption,

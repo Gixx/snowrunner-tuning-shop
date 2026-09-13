@@ -432,7 +432,7 @@ public static class CraneService
                     continue;
                 }
 
-                var scaled = Math.Round(value * multiplier, 4, MidpointRounding.AwayFromZero);
+                var scaled = XmlNumericFormatting.Round(value * multiplier);
                 var formatted = FormatIk(scaled);
                 if (!string.Equals(attribute.Value, formatted, StringComparison.Ordinal))
                 {
@@ -609,26 +609,11 @@ public static class CraneService
             ? parsed
             : fallback;
 
-    private static string FormatForce(double value)
-    {
-        var rounded = Math.Round(value, MidpointRounding.AwayFromZero);
-        if (Math.Abs(value - rounded) < 1e-6)
-        {
-            return ((long)rounded).ToString(CultureInfo.InvariantCulture);
-        }
+    private static string FormatForce(double value) =>
+        XmlNumericFormatting.Format(value, preferInteger: true);
 
-        return value.ToString("0.######", CultureInfo.InvariantCulture);
-    }
-
-    private static string FormatIk(double value)
-    {
-        if (Math.Abs(value - Math.Round(value)) < 1e-9)
-        {
-            return ((int)Math.Round(value)).ToString(CultureInfo.InvariantCulture) + ".0";
-        }
-
-        return value.ToString("0.####", CultureInfo.InvariantCulture);
-    }
+    private static string FormatIk(double value) =>
+        XmlNumericFormatting.Format(value, preferInteger: false, keepTrailingDotZero: true);
 
 }
 

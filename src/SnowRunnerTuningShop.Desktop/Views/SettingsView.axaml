@@ -85,9 +85,18 @@
               CornerRadius="8"
               Padding="16">
         <StackPanel Spacing="8">
-          <TextBlock x:Name="AboutTitleText" FontWeight="SemiBold"/>
-          <TextBlock x:Name="AboutHintText" TextWrapping="Wrap" FontSize="11" Opacity="0.8"/>
+          <TextBlock x:Name="UpdatesTitleText" FontWeight="SemiBold"/>
+          <TextBlock x:Name="UpdatesHintText" TextWrapping="Wrap" FontSize="11" Opacity="0.8"/>
           <TextBlock x:Name="InstalledVersionText" TextWrapping="Wrap" FontSize="11" Opacity="0.8"/>
+          <Grid ColumnDefinitions="180,*">
+            <TextBlock x:Name="UpdateChannelLabelText" VerticalAlignment="Center" Opacity="0.8"/>
+            <ComboBox x:Name="UpdateChannelCombo"
+                      Grid.Column="1"
+                      MaxWidth="320"
+                      HorizontalAlignment="Left"
+                      MinWidth="220"
+                      SelectionChanged="UpdateChannelCombo_SelectionChanged"/>
+          </Grid>
           <TextBlock x:Name="UpdateStatusTextBlock" TextWrapping="Wrap" FontSize="11" Opacity="0.8"/>
           <WrapPanel>
             <Button x:Name="CheckForUpdatesButton"
@@ -99,6 +108,19 @@
                     Margin="0,0,8,8"
                     IsVisible="False"
                     Click="DownloadUpdateButton_Click"/>
+          </WrapPanel>
+        </StackPanel>
+      </Border>
+
+      <Border Background="{DynamicResource AppCardBrush}"
+              BorderBrush="{DynamicResource AppCardStrokeBrush}"
+              BorderThickness="1"
+              CornerRadius="8"
+              Padding="16">
+        <StackPanel Spacing="8">
+          <TextBlock x:Name="AboutTitleText" FontWeight="SemiBold"/>
+          <TextBlock x:Name="AboutHintText" TextWrapping="Wrap" FontSize="11" Opacity="0.8"/>
+          <WrapPanel>
             <Button x:Name="OpenWebsiteButton"
                     Padding="14,8"
                     Margin="0,0,8,8"

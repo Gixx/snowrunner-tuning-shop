@@ -19,6 +19,7 @@ public partial class SettingsView : UserControl
     private AppSession? _session;
     private bool _suppressThemeHandler;
     private bool _suppressLanguageHandler;
+    private bool _suppressUpdateChannelHandler;
     private AppUpdateCheckResult? _availableUpdate;
     private bool _initialized;
 
@@ -57,6 +58,9 @@ public partial class SettingsView : UserControl
         RestoreFullBaselineButton.Content = UiText.Main.RestoreFullBaseline;
         AboutTitleText.Text = UiText.Settings.AboutTitle;
         AboutHintText.Text = UiText.Settings.AboutHint;
+        UpdatesTitleText.Text = UiText.Settings.UpdatesTitle;
+        UpdatesHintText.Text = UiText.Settings.UpdatesHint;
+        UpdateChannelLabelText.Text = UiText.Settings.UpdateChannelLabel;
         InstalledVersionText.Text = UiText.Settings.InstalledVersion;
         CheckForUpdatesButton.Content = UiText.Settings.CheckForUpdates;
         DownloadUpdateButton.Content = UiText.Settings.DownloadUpdate;
@@ -82,10 +86,39 @@ public partial class SettingsView : UserControl
             _initialized = true;
             BindThemeCombo();
             BindLanguageCombo();
+            BindUpdateChannelCombo();
         }
 
         RefreshWorkspaceButtons();
         await RefreshUpdateStatusAsync();
+    }
+
+    private void BindUpdateChannelCombo()
+    {
+        UpdateChannelCombo.ItemsSource = new LabeledOption[]
+        {
+            new(UiText.Settings.UpdateChannelStable, AppUpdateChannels.Stable),
+            new(UiText.Settings.UpdateChannelBeta, AppUpdateChannels.Beta),
+        };
+        _suppressUpdateChannelHandler = true;
+        UpdateChannelCombo.SelectedItem = FindOption(UpdateChannelCombo, WorkspaceConfigStore.GetUpdateChannel());
+        _suppressUpdateChannelHandler = false;
+    }
+
+    private async void UpdateChannelCombo_SelectionChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        if (_suppressUpdateChannelHandler || UpdateChannelCombo.SelectedItem is not LabeledOption option)
+        {
+            return;
+        }
+
+        if (string.Equals(option.Value, WorkspaceConfigStore.GetUpdateChannel(), StringComparison.OrdinalIgnoreCase))
+        {
+            return;
+        }
+
+        WorkspaceConfigStore.SetUpdateChannel(option.Value);
+        await RefreshUpdateStatusAsync(forceRefresh: true);
     }
 
     private void BindThemeCombo()

@@ -1,0 +1,85 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="SnowRunnerTuningShop.Desktop.Views.SuspensionTuningView">
+  <Grid RowDefinitions="Auto,Auto,*">
+    <Expander x:Name="MultipliersExpander"
+              Grid.Row="0"
+              IsExpanded="True"
+              Margin="0,0,0,12"
+              HorizontalAlignment="Stretch"
+              Width="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}}">
+      <Grid ColumnDefinitions="*,*,*,*,Auto" HorizontalAlignment="Stretch">
+        <StackPanel Grid.Column="0" Margin="0,0,12,0">
+          <TextBlock x:Name="HeightMultiplierLabel"/>
+          <Slider x:Name="HeightMultiplierSlider"
+                  Minimum="0" Maximum="8" Value="4" TickFrequency="1" IsSnapToTickEnabled="True"
+                  PropertyChanged="MultiplierSlider_PropertyChanged"/>
+        </StackPanel>
+        <StackPanel Grid.Column="1" Margin="12,0,12,0">
+          <TextBlock x:Name="StrengthMultiplierLabel"/>
+          <Slider x:Name="StrengthMultiplierSlider"
+                  Minimum="0" Maximum="8" Value="4" TickFrequency="1" IsSnapToTickEnabled="True"
+                  PropertyChanged="MultiplierSlider_PropertyChanged"/>
+        </StackPanel>
+        <StackPanel Grid.Column="2" Margin="12,0,12,0">
+          <TextBlock x:Name="DampingMultiplierLabel"/>
+          <Slider x:Name="DampingMultiplierSlider"
+                  Minimum="0" Maximum="8" Value="4" TickFrequency="1" IsSnapToTickEnabled="True"
+                  PropertyChanged="MultiplierSlider_PropertyChanged"/>
+        </StackPanel>
+        <StackPanel Grid.Column="3" Margin="12,0,12,0">
+          <TextBlock x:Name="DamageMultiplierLabel"/>
+          <Slider x:Name="DamageMultiplierSlider"
+                  Minimum="0" Maximum="8" Value="4" TickFrequency="1" IsSnapToTickEnabled="True"
+                  PropertyChanged="MultiplierSlider_PropertyChanged"/>
+        </StackPanel>
+        <StackPanel Grid.Column="4" VerticalAlignment="Center">
+          <Button x:Name="ApplyMultipliersButton" Padding="14,8" Click="ApplyMultipliersButton_Click"/>
+        </StackPanel>
+      </Grid>
+    </Expander>
+
+    <Border Grid.Row="1"
+            Background="{DynamicResource AppCardBrush}"
+            BorderBrush="{DynamicResource AppCardStrokeBrush}"
+            BorderThickness="1"
+            CornerRadius="8"
+            Padding="12"
+            Margin="0,0,0,12">
+      <Grid ColumnDefinitions="*,280">
+        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+          <Button x:Name="SaveIndividualButton" Padding="14,8" Click="SaveIndividualButton_Click"/>
+          <Button x:Name="RestoreSuspensionsButton" Padding="14,8" Click="RestoreSuspensionsButton_Click"/>
+          <Button x:Name="ReloadButton" Padding="14,8" Click="ReloadButton_Click"/>
+        </StackPanel>
+        <TextBox x:Name="FilterTextBox"
+                 Grid.Column="1"
+                 Margin="16,0,0,0"
+                 VerticalAlignment="Center"
+                 TextChanged="FilterTextBox_TextChanged"/>
+      </Grid>
+    </Border>
+
+    <DataGrid x:Name="SuspensionsGrid"
+              Grid.Row="2"
+              AutoGenerateColumns="False"
+              IsReadOnly="False"
+              HeadersVisibility="Column"
+              GridLinesVisibility="Horizontal"
+              CanUserReorderColumns="False">
+      <DataGrid.Columns>
+        <DataGridTextColumn Binding="{Binding Category}" Width="70" IsReadOnly="True"/>
+        <DataGridTextColumn Binding="{Binding DisplayName}" Width="120" IsReadOnly="True"/>
+        <DataGridTextColumn Binding="{Binding UsedBy}" Width="180" MinWidth="120" IsReadOnly="True"/>
+        <DataGridTextColumn Binding="{Binding Price}" Width="80" IsReadOnly="True"/>
+        <DataGridTextColumn Binding="{Binding DamageCapacity}" Width="80"/>
+        <DataGridTextColumn Binding="{Binding FrontHeight}" Width="80"/>
+        <DataGridTextColumn Binding="{Binding FrontStrength}" Width="90"/>
+        <DataGridTextColumn Binding="{Binding FrontDampingText}" Width="90"/>
+        <DataGridTextColumn Binding="{Binding RearHeight}" Width="80"/>
+        <DataGridTextColumn Binding="{Binding RearStrength}" Width="90"/>
+        <DataGridTextColumn Binding="{Binding RearDampingText}" Width="90"/>
+      </DataGrid.Columns>
+    </DataGrid>
+  </Grid>
+</UserControl>

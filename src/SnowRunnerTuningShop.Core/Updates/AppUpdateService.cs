@@ -1,6 +1,7 @@
 using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using SnowRunnerTuningShop.Core.Config;
 
 namespace SnowRunnerTuningShop.Core.Updates;
 
@@ -17,7 +18,8 @@ public sealed record AppUpdateCheckResult(
     string? LatestVersion,
     string ReleasePageUrl,
     string? InstallerUrl,
-    string? ErrorMessage);
+    string? ErrorMessage,
+    AppUpdateChannel Channel = AppUpdateChannel.Stable);
 
 public sealed record AppUpdateDownloadProgress(long BytesReceived, long? TotalBytes)
 {
@@ -37,14 +39,19 @@ public static class AppUpdateService
     };
 
     private static AppUpdateCheckResult? _cache;
+    private static AppUpdateChannel _cachedChannel;
     private static DateTimeOffset _cachedAt;
 
     public static async Task<AppUpdateCheckResult> CheckAsync(
         bool forceRefresh = false,
+        AppUpdateChannel? channel = null,
         CancellationToken cancellationToken = default)
     {
+        var resolvedChannel = channel ?? AppUpdateChannels.Parse(WorkspaceConfigStore.GetUpdateChannel());
+
         if (!forceRefresh
             && _cache is not null
+            && _cachedChannel == resolvedChannel
             && DateTimeOffset.UtcNow - _cachedAt < TimeSpan.FromMinutes(10))
         {
             return _cache;
@@ -52,51 +59,68 @@ public static class AppUpdateService
 
         try
         {
-            using var request = new HttpRequestMessage(HttpMethod.Get, AppInfo.LatestReleaseApiUrl);
-            using var response = await Http.SendAsync(request, cancellationToken).ConfigureAwait(false);
-            response.EnsureSuccessStatusCode();
+            var release = resolvedChannel == AppUpdateChannel.Beta
+                ? await FetchNewestReleaseForChannelAsync(includePrereleases: true, cancellationToken)
+                    .ConfigureAwait(false)
+                : await FetchNewestReleaseForChannelAsync(includePrereleases: false, cancellationToken)
+                    .ConfigureAwait(false);
 
-            await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken)
-                .ConfigureAwait(false);
-            var release = await JsonSerializer.DeserializeAsync<GitHubRelease>(stream, JsonOptions, cancellationToken)
-                .ConfigureAwait(false);
-
-            var latestTag = release?.TagName;
-            if (!TryParseVersion(latestTag, out var latest)
-                || !TryParseVersion(AppInfo.Version, out var installed))
+            if (release is null
+                || !AppSemVersion.TryParse(release.TagName, out var latest)
+                || !AppSemVersion.TryParse(AppInfo.Version, out var installed))
             {
                 return Cache(new AppUpdateCheckResult(
                     AppUpdateStatus.Failed,
                     AppInfo.Version,
-                    latestTag,
+                    release?.TagName,
                     AppInfo.LatestReleasePageUrl,
                     null,
-                    "The GitHub release tag could not be parsed."));
+                    "The GitHub release tag could not be parsed.",
+                    resolvedChannel),
+                    resolvedChannel);
             }
 
-            var pageUrl = string.IsNullOrWhiteSpace(release?.HtmlUrl)
+            if (resolvedChannel == AppUpdateChannel.Stable && latest.IsPrerelease)
+            {
+                return Cache(new AppUpdateCheckResult(
+                    AppUpdateStatus.Failed,
+                    AppInfo.Version,
+                    latest.ToString(),
+                    AppInfo.LatestReleasePageUrl,
+                    null,
+                    "Stable channel received a prerelease tag.",
+                    resolvedChannel),
+                    resolvedChannel);
+            }
+
+            var pageUrl = string.IsNullOrWhiteSpace(release.HtmlUrl)
                 ? AppInfo.LatestReleasePageUrl
-                : release.HtmlUrl;
-            var installerUrl = FindInstallerUrl(release?.Assets);
+                : release.HtmlUrl!;
+            var installerUrl = FindInstallerUrl(release.Assets);
+            var latestText = latest.ToString();
 
             if (latest <= installed)
             {
                 return Cache(new AppUpdateCheckResult(
                     AppUpdateStatus.UpToDate,
                     AppInfo.Version,
-                    FormatVersion(latest),
+                    latestText,
                     pageUrl,
                     installerUrl,
-                    null));
+                    null,
+                    resolvedChannel),
+                    resolvedChannel);
             }
 
             return Cache(new AppUpdateCheckResult(
                 AppUpdateStatus.UpdateAvailable,
                 AppInfo.Version,
-                FormatVersion(latest),
+                latestText,
                 pageUrl,
                 installerUrl,
-                null));
+                null,
+                resolvedChannel),
+                resolvedChannel);
         }
         catch (Exception ex)
         {
@@ -106,18 +130,54 @@ public static class AppUpdateService
                 null,
                 AppInfo.LatestReleasePageUrl,
                 null,
-                ex.Message));
+                ex.Message,
+                resolvedChannel),
+                resolvedChannel);
         }
+    }
+
+    /// <summary>Test hook: pick the newest release tag for a channel from an in-memory list.</summary>
+    internal static string? SelectNewestTagForTests(
+        IEnumerable<(string TagName, bool Prerelease)> releases,
+        AppUpdateChannel channel)
+    {
+        AppSemVersion? best = null;
+        string? bestTag = null;
+        foreach (var release in releases)
+        {
+            if (channel == AppUpdateChannel.Stable && release.Prerelease)
+            {
+                continue;
+            }
+
+            if (!AppSemVersion.TryParse(release.TagName, out var version))
+            {
+                continue;
+            }
+
+            if (channel == AppUpdateChannel.Stable && version.IsPrerelease)
+            {
+                continue;
+            }
+
+            if (best is null || version > best.Value)
+            {
+                best = version;
+                bestTag = version.ToString();
+            }
+        }
+
+        return bestTag;
     }
 
     public static bool IsSameVersion(string? left, string? right)
     {
-        if (!TryParseVersion(left, out var a) || !TryParseVersion(right, out var b))
+        if (AppSemVersion.TryParse(left, out var a) && AppSemVersion.TryParse(right, out var b))
         {
-            return string.Equals(left?.Trim(), right?.Trim(), StringComparison.OrdinalIgnoreCase);
+            return a == b;
         }
 
-        return a == b;
+        return string.Equals(left?.Trim(), right?.Trim(), StringComparison.OrdinalIgnoreCase);
     }
 
     public static string BuildInstallerTempPath(string? installerUrl, string? latestVersion)
@@ -209,6 +269,60 @@ public static class AppUpdateService
         File.Move(tempPath, destinationPath);
     }
 
+    private static async Task<GitHubRelease?> FetchNewestReleaseForChannelAsync(
+        bool includePrereleases,
+        CancellationToken cancellationToken)
+    {
+        // Stable: GitHub /releases/latest never returns prereleases.
+        if (!includePrereleases)
+        {
+            using var request = new HttpRequestMessage(HttpMethod.Get, AppInfo.LatestReleaseApiUrl);
+            using var response = await Http.SendAsync(request, cancellationToken).ConfigureAwait(false);
+            response.EnsureSuccessStatusCode();
+            await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken)
+                .ConfigureAwait(false);
+            return await JsonSerializer.DeserializeAsync<GitHubRelease>(stream, JsonOptions, cancellationToken)
+                .ConfigureAwait(false);
+        }
+
+        // Beta: list releases and pick highest SemVer (stable or prerelease).
+        var url = $"https://api.github.com/repos/{AppInfo.GitHubOwner}/{AppInfo.GitHubRepo}/releases?per_page=40";
+        using var listRequest = new HttpRequestMessage(HttpMethod.Get, url);
+        using var listResponse = await Http.SendAsync(listRequest, cancellationToken).ConfigureAwait(false);
+        listResponse.EnsureSuccessStatusCode();
+        await using var listStream = await listResponse.Content.ReadAsStreamAsync(cancellationToken)
+            .ConfigureAwait(false);
+        var releases = await JsonSerializer.DeserializeAsync<GitHubRelease[]>(listStream, JsonOptions, cancellationToken)
+            .ConfigureAwait(false);
+        if (releases is null || releases.Length == 0)
+        {
+            return null;
+        }
+
+        GitHubRelease? bestRelease = null;
+        AppSemVersion? bestVersion = null;
+        foreach (var release in releases)
+        {
+            if (release.Draft)
+            {
+                continue;
+            }
+
+            if (!AppSemVersion.TryParse(release.TagName, out var version))
+            {
+                continue;
+            }
+
+            if (bestVersion is null || version > bestVersion.Value)
+            {
+                bestVersion = version;
+                bestRelease = release;
+            }
+        }
+
+        return bestRelease;
+    }
+
     private static string? TryGetFileNameFromUrl(string? url)
     {
         if (string.IsNullOrWhiteSpace(url)
@@ -236,9 +350,10 @@ public static class AppUpdateService
         }
     }
 
-    private static AppUpdateCheckResult Cache(AppUpdateCheckResult result)
+    private static AppUpdateCheckResult Cache(AppUpdateCheckResult result, AppUpdateChannel channel)
     {
         _cache = result;
+        _cachedChannel = channel;
         _cachedAt = DateTimeOffset.UtcNow;
         return result;
     }
@@ -260,28 +375,6 @@ public static class AppUpdateService
             ?? assets.FirstOrDefault(asset => !string.IsNullOrWhiteSpace(asset.BrowserDownloadUrl))
                 ?.BrowserDownloadUrl;
     }
-
-    private static bool TryParseVersion(string? value, out Version version)
-    {
-        version = new Version(0, 0);
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            return false;
-        }
-
-        var text = value.Trim();
-        if (text.StartsWith('v') || text.StartsWith('V'))
-        {
-            text = text[1..];
-        }
-
-        return Version.TryParse(text, out version!);
-    }
-
-    private static string FormatVersion(Version version) =>
-        version.Build < 0
-            ? $"{version.Major}.{version.Minor}"
-            : $"{version.Major}.{version.Minor}.{version.Build}";
 
     private static HttpClient CreateClient()
     {
@@ -315,6 +408,12 @@ public static class AppUpdateService
 
         [JsonPropertyName("html_url")]
         public string? HtmlUrl { get; set; }
+
+        [JsonPropertyName("prerelease")]
+        public bool Prerelease { get; set; }
+
+        [JsonPropertyName("draft")]
+        public bool Draft { get; set; }
 
         [JsonPropertyName("assets")]
         public GitHubAsset[]? Assets { get; set; }

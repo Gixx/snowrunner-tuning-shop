@@ -363,12 +363,18 @@ public static class EngineService
 
             if (!responsivenessBaseline && IsDamageOrResponsivenessTag(tag))
             {
-                if (!TryScaleAttribute(ref updatedAttrs, "EngineResponsiveness", engineResponsivenessMultiplier, preferInteger: false))
+                if (TryScaleAttribute(
+                        ref updatedAttrs,
+                        "EngineResponsiveness",
+                        engineResponsivenessMultiplier,
+                        preferInteger: false))
                 {
-                    var scaledDefault = Math.Round(
-                        DefaultEngineResponsiveness * engineResponsivenessMultiplier,
-                        6,
-                        MidpointRounding.AwayFromZero);
+                    changed = true;
+                }
+                else if (!AttributeExists(updatedAttrs, "EngineResponsiveness"))
+                {
+                    var scaledDefault = XmlNumericFormatting.Round(
+                        DefaultEngineResponsiveness * engineResponsivenessMultiplier);
                     changed |= SetOrReplaceAttribute(
                         ref updatedAttrs,
                         "EngineResponsiveness",
@@ -482,7 +488,10 @@ public static class EngineService
             return false;
         }
 
-        var scaled = Math.Round(ParseDouble(rawValue, 0) * multiplier, preferInteger ? 0 : 6, MidpointRounding.AwayFromZero);
+        var scaled = Math.Round(
+            ParseDouble(rawValue, 0) * multiplier,
+            preferInteger ? 0 : XmlNumericFormatting.DecimalPlaces,
+            MidpointRounding.AwayFromZero);
         return SetOrReplaceAttribute(ref attrs, attributeName, FormatNumeric(scaled, preferInteger));
     }
 
@@ -590,15 +599,8 @@ public static class EngineService
             ? parsed
             : fallback;
 
-    private static string FormatNumeric(double value, bool preferInteger)
-    {
-        if (preferInteger || Math.Abs(value - Math.Round(value)) < 1e-9)
-        {
-            return ((long)Math.Round(value, MidpointRounding.AwayFromZero)).ToString(CultureInfo.InvariantCulture);
-        }
-
-        return value.ToString("0.######", CultureInfo.InvariantCulture);
-    }
+    private static string FormatNumeric(double value, bool preferInteger) =>
+        XmlNumericFormatting.Format(value, preferInteger);
 
 
     private readonly record struct EngineAttributeValues(

@@ -1,5 +1,7 @@
 name: Release
 
+# Windows product release only (WPF self-contained + Inno Setup).
+# Linux / Avalonia Flatpak packaging is not published from this workflow yet.
 on:
   push:
     tags:
@@ -9,7 +11,8 @@ permissions:
   contents: write
 
 jobs:
-  release:
+  windows:
+    name: Windows release
     runs-on: windows-latest
     steps:
       - name: Checkout
@@ -26,11 +29,16 @@ jobs:
         run: |
           $tag = "${{ github.ref_name }}"
           $version = $tag.TrimStart("v")
-          if ($version -notmatch '^\d+\.\d+\.\d+') {
-            throw "Tag must look like v1.0.0 (got $tag)"
+          # Stable: 1.3.5 — Beta: 1.5.0-beta.1 (numbered prereleases only)
+          if ($version -notmatch '^\d+\.\d+\.\d+(-beta\.\d+)?$') {
+            throw "Tag must look like v1.0.0 or v1.0.0-beta.1 (got $tag)"
           }
+          $isPrerelease = $version -match '-beta\.'
+          $numericVersion = ($version -split '-')[0]
           "version=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          "numeric=$numericVersion" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
           "tag=$tag" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          "prerelease=$($isPrerelease.ToString().ToLowerInvariant())" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
 
       - name: Verify AppInfo.Version matches tag
         shell: pwsh
@@ -86,7 +94,7 @@ jobs:
           -c Release
           -r win-x64
           --self-contained true
-          -p:Version=${{ steps.version.outputs.version }}
+          -p:Version=${{ steps.version.outputs.numeric }}
           -p:InformationalVersion=${{ steps.version.outputs.tag }}
           -p:DebugType=None
           -p:DebugSymbols=false
@@ -140,6 +148,7 @@ jobs:
           tag_name: ${{ steps.version.outputs.tag }}
           name: SnowRunner Tuning Shop ${{ steps.version.outputs.tag }}
           generate_release_notes: true
+          prerelease: ${{ steps.version.outputs.prerelease == 'true' }}
           files: |
             publish/${{ steps.installer.outputs.asset }}
             publish/${{ steps.zip.outputs.asset }}
@@ -147,6 +156,7 @@ jobs:
             ## SnowRunner Tuning Shop ${{ steps.version.outputs.tag }}
 
             Windows x64 **self-contained** build (no separate .NET install required).
+            Beta tags (`v*-beta.N`) are published as GitHub prereleases; Stable-channel users are not notified.
 
             ### Recommended
             1. Download `SnowRunnerTuningShop-${{ steps.version.outputs.tag }}-win-x64-Setup.exe`

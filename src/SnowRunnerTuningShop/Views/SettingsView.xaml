@@ -148,11 +148,11 @@
                     Padding="16"
                     Margin="0,0,0,12">
                 <StackPanel>
-                    <TextBlock Text="{x:Static loc:UiText+Settings.AboutTitle}"
+                    <TextBlock Text="{x:Static loc:UiText+Settings.UpdatesTitle}"
                                FontWeight="SemiBold"
                                Foreground="{DynamicResource TextFillColorPrimaryBrush}"
                                Margin="0,0,0,8"/>
-                    <TextBlock Text="{x:Static loc:UiText+Settings.AboutHint}"
+                    <TextBlock Text="{x:Static loc:UiText+Settings.UpdatesHint}"
                                TextWrapping="Wrap"
                                FontSize="11"
                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
@@ -162,6 +162,21 @@
                                FontSize="11"
                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                                Margin="0,0,0,8"/>
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="180"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="{x:Static loc:UiText+Settings.UpdateChannelLabel}"
+                                   VerticalAlignment="Center"
+                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                        <ComboBox x:Name="UpdateChannelCombo"
+                                  Grid.Column="1"
+                                  MinWidth="220"
+                                  MaxWidth="320"
+                                  HorizontalAlignment="Left"
+                                  SelectionChanged="UpdateChannelCombo_SelectionChanged"/>
+                    </Grid>
                     <TextBlock x:Name="UpdateStatusTextBlock"
                                TextWrapping="Wrap"
                                FontSize="11"
@@ -179,6 +194,27 @@
                                 Margin="0,0,8,8"
                                 Visibility="Collapsed"
                                 Click="DownloadUpdateButton_Click"/>
+                    </WrapPanel>
+                </StackPanel>
+            </Border>
+
+            <Border Background="{DynamicResource CardBackgroundFillColorSecondaryBrush}"
+                    BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="16"
+                    Margin="0,0,0,12">
+                <StackPanel>
+                    <TextBlock Text="{x:Static loc:UiText+Settings.AboutTitle}"
+                               FontWeight="SemiBold"
+                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                               Margin="0,0,0,8"/>
+                    <TextBlock Text="{x:Static loc:UiText+Settings.AboutHint}"
+                               TextWrapping="Wrap"
+                               FontSize="11"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                               Margin="0,0,0,12"/>
+                    <WrapPanel>
                         <Button Content="{x:Static loc:UiText+Settings.OpenWebsite}"
                                 Padding="14,8"
                                 Margin="0,0,8,8"
