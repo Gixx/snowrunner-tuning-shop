@@ -8,6 +8,8 @@ public static class TuningMultiplierPresets
         0.25,
         1.0 / 3.0,
         0.5,
+        2.0 / 3.0,
+        0.75,
         1.0,
         2.0,
         3.0,
@@ -21,6 +23,8 @@ public static class TuningMultiplierPresets
         "1/4",
         "1/3",
         "1/2",
+        "2/3",
+        "3/4",
         "1 (baseline)",
         "2x",
         "3x",
@@ -28,9 +32,9 @@ public static class TuningMultiplierPresets
         "5x",
     ];
 
-    public const int BaselineIndex = 4;
+    public const int BaselineIndex = 6;
     public const int MinimumIndex = 0;
-    public const int MaximumIndex = 8;
+    public const int MaximumIndex = 10;
 
     public static int ClampIndex(int index) =>
         Math.Clamp(index, MinimumIndex, MaximumIndex);

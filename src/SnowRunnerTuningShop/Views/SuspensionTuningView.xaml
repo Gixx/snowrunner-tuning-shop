@@ -32,8 +32,8 @@
                                Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
                     <Slider x:Name="HeightMultiplierSlider"
                             Minimum="0"
-                            Maximum="8"
-                            Value="4"
+                            Maximum="10"
+                            Value="6"
                             TickFrequency="1"
                             IsSnapToTickEnabled="True"
                             ValueChanged="MultiplierSlider_ValueChanged"/>
@@ -45,8 +45,8 @@
                                Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
                     <Slider x:Name="StrengthMultiplierSlider"
                             Minimum="0"
-                            Maximum="8"
-                            Value="4"
+                            Maximum="10"
+                            Value="6"
                             TickFrequency="1"
                             IsSnapToTickEnabled="True"
                             ValueChanged="MultiplierSlider_ValueChanged"/>
@@ -58,8 +58,8 @@
                                Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
                     <Slider x:Name="DampingMultiplierSlider"
                             Minimum="0"
-                            Maximum="8"
-                            Value="4"
+                            Maximum="10"
+                            Value="6"
                             TickFrequency="1"
                             IsSnapToTickEnabled="True"
                             ValueChanged="MultiplierSlider_ValueChanged"/>
@@ -71,8 +71,8 @@
                                Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
                     <Slider x:Name="DamageMultiplierSlider"
                             Minimum="0"
-                            Maximum="8"
-                            Value="4"
+                            Maximum="10"
+                            Value="6"
                             TickFrequency="1"
                             IsSnapToTickEnabled="True"
                             ValueChanged="MultiplierSlider_ValueChanged"/>

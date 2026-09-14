@@ -12,19 +12,19 @@
         <StackPanel Grid.Column="0" Margin="0,0,12,0">
           <TextBlock x:Name="OnRoadFrictionMultiplierLabel"/>
           <Slider x:Name="OnRoadFrictionMultiplierSlider"
-                  Minimum="0" Maximum="8" Value="4" TickFrequency="1" IsSnapToTickEnabled="True"
+                  Minimum="0" Maximum="10" Value="6" TickFrequency="1" IsSnapToTickEnabled="True"
                   PropertyChanged="MultiplierSlider_PropertyChanged"/>
         </StackPanel>
         <StackPanel Grid.Column="1" Margin="12,0,12,0">
           <TextBlock x:Name="OffRoadFrictionMultiplierLabel"/>
           <Slider x:Name="OffRoadFrictionMultiplierSlider"
-                  Minimum="0" Maximum="8" Value="4" TickFrequency="1" IsSnapToTickEnabled="True"
+                  Minimum="0" Maximum="10" Value="6" TickFrequency="1" IsSnapToTickEnabled="True"
                   PropertyChanged="MultiplierSlider_PropertyChanged"/>
         </StackPanel>
         <StackPanel Grid.Column="2" Margin="12,0,12,0">
           <TextBlock x:Name="MudFrictionMultiplierLabel"/>
           <Slider x:Name="MudFrictionMultiplierSlider"
-                  Minimum="0" Maximum="8" Value="4" TickFrequency="1" IsSnapToTickEnabled="True"
+                  Minimum="0" Maximum="10" Value="6" TickFrequency="1" IsSnapToTickEnabled="True"
                   PropertyChanged="MultiplierSlider_PropertyChanged"/>
         </StackPanel>
         <CheckBox x:Name="GlobalIgnoreIceCheckBox"

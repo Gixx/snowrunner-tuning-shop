@@ -32,8 +32,8 @@
                                Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
                     <Slider x:Name="OnRoadFrictionMultiplierSlider"
                             Minimum="0"
-                            Maximum="8"
-                            Value="4"
+                            Maximum="10"
+                            Value="6"
                             TickFrequency="1"
                             IsSnapToTickEnabled="True"
                             ValueChanged="MultiplierSlider_ValueChanged"/>
@@ -45,8 +45,8 @@
                                Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
                     <Slider x:Name="OffRoadFrictionMultiplierSlider"
                             Minimum="0"
-                            Maximum="8"
-                            Value="4"
+                            Maximum="10"
+                            Value="6"
                             TickFrequency="1"
                             IsSnapToTickEnabled="True"
                             ValueChanged="MultiplierSlider_ValueChanged"/>
@@ -58,8 +58,8 @@
                                Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
                     <Slider x:Name="MudFrictionMultiplierSlider"
                             Minimum="0"
-                            Maximum="8"
-                            Value="4"
+                            Maximum="10"
+                            Value="6"
                             TickFrequency="1"
                             IsSnapToTickEnabled="True"
                             ValueChanged="MultiplierSlider_ValueChanged"/>

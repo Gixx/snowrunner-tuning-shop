@@ -13,8 +13,8 @@
           <TextBlock x:Name="LengthMultiplierLabel"/>
           <Slider x:Name="LengthMultiplierSlider"
                   Minimum="0"
-                  Maximum="8"
-                  Value="4"
+                  Maximum="10"
+                  Value="6"
                   TickFrequency="1"
                   IsSnapToTickEnabled="True"
                   PropertyChanged="MultiplierSlider_PropertyChanged"/>
@@ -23,8 +23,8 @@
           <TextBlock x:Name="StrengthMultiplierLabel"/>
           <Slider x:Name="StrengthMultiplierSlider"
                   Minimum="0"
-                  Maximum="8"
-                  Value="4"
+                  Maximum="10"
+                  Value="6"
                   TickFrequency="1"
                   IsSnapToTickEnabled="True"
                   PropertyChanged="MultiplierSlider_PropertyChanged"/>

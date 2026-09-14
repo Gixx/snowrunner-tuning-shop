@@ -30,8 +30,8 @@
                                Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
                     <Slider x:Name="LengthMultiplierSlider"
                             Minimum="0"
-                            Maximum="8"
-                            Value="4"
+                            Maximum="10"
+                            Value="6"
                             TickFrequency="1"
                             IsSnapToTickEnabled="True"
                             ValueChanged="LengthMultiplierSlider_ValueChanged"/>
@@ -43,8 +43,8 @@
                                Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
                     <Slider x:Name="StrengthMultiplierSlider"
                             Minimum="0"
-                            Maximum="8"
-                            Value="4"
+                            Maximum="10"
+                            Value="6"
                             TickFrequency="1"
                             IsSnapToTickEnabled="True"
                             ValueChanged="StrengthMultiplierSlider_ValueChanged"/>

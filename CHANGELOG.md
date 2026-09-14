@@ -11,6 +11,13 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ## [Unreleased]
 
+---
+
+## [1.4.0-beta.2] — 2026-09-14
+
+### Changed
+- **Global multipliers:** add **2/3** and **3/4** presets (between 1/2 and baseline) on Parts / Vehicles / Trailers / Cranes; XML writes stay at two decimal places (`2/3` → `0.67`).
+
 ### Fixed
 - **Vehicle Responsiveness=1 (#7):** write `Responsiveness="1.0"` (float form) instead of `"1"`, which could make trucks vanish from the store and map.
 
@@ -338,7 +345,8 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ---
 
-[Unreleased]: https://github.com/Gixx/snowrunner-tuning-shop/compare/v1.4.0-beta.1...HEAD
+[Unreleased]: https://github.com/Gixx/snowrunner-tuning-shop/compare/v1.4.0-beta.2...HEAD
+[1.4.0-beta.2]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.4.0-beta.2
 [1.4.0-beta.1]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.4.0-beta.1
 [1.3.5]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.3.5
 [1.3.4]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.3.4

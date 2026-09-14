@@ -95,8 +95,8 @@
                                    Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
                         <Slider x:Name="FuelMultiplierSlider"
                                 Minimum="0"
-                                Maximum="8"
-                                Value="4"
+                                Maximum="10"
+                                Value="6"
                                 TickFrequency="1"
                                 IsSnapToTickEnabled="True"
                                 IsEnabled="False"
@@ -109,8 +109,8 @@
                                    Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
                         <Slider x:Name="RepairsMultiplierSlider"
                                 Minimum="0"
-                                Maximum="8"
-                                Value="4"
+                                Maximum="10"
+                                Value="6"
                                 TickFrequency="1"
                                 IsSnapToTickEnabled="True"
                                 IsEnabled="False"
@@ -123,8 +123,8 @@
                                    Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
                         <Slider x:Name="WheelsMultiplierSlider"
                                 Minimum="0"
-                                Maximum="8"
-                                Value="4"
+                                Maximum="10"
+                                Value="6"
                                 TickFrequency="1"
                                 IsSnapToTickEnabled="True"
                                 IsEnabled="False"
@@ -147,8 +147,8 @@
                                    Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
                         <Slider x:Name="PriceMultiplierSlider"
                                 Minimum="0"
-                                Maximum="8"
-                                Value="4"
+                                Maximum="10"
+                                Value="6"
                                 TickFrequency="1"
                                 IsSnapToTickEnabled="True"
                                 IsEnabled="False"

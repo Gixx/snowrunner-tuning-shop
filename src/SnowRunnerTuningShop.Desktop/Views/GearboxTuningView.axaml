@@ -12,19 +12,19 @@
         <StackPanel Grid.Column="0" Margin="0,0,12,0">
           <TextBlock x:Name="FuelMultiplierLabel"/>
           <Slider x:Name="FuelMultiplierSlider"
-                  Minimum="0" Maximum="8" Value="4" TickFrequency="1" IsSnapToTickEnabled="True"
+                  Minimum="0" Maximum="10" Value="6" TickFrequency="1" IsSnapToTickEnabled="True"
                   PropertyChanged="MultiplierSlider_PropertyChanged"/>
         </StackPanel>
         <StackPanel Grid.Column="1" Margin="12,0,12,0">
           <TextBlock x:Name="IdleMultiplierLabel"/>
           <Slider x:Name="IdleMultiplierSlider"
-                  Minimum="0" Maximum="8" Value="4" TickFrequency="1" IsSnapToTickEnabled="True"
+                  Minimum="0" Maximum="10" Value="6" TickFrequency="1" IsSnapToTickEnabled="True"
                   PropertyChanged="MultiplierSlider_PropertyChanged"/>
         </StackPanel>
         <StackPanel Grid.Column="2" Margin="12,0,12,0">
           <TextBlock x:Name="AwdMultiplierLabel"/>
           <Slider x:Name="AwdMultiplierSlider"
-                  Minimum="0" Maximum="8" Value="4" TickFrequency="1" IsSnapToTickEnabled="True"
+                  Minimum="0" Maximum="10" Value="6" TickFrequency="1" IsSnapToTickEnabled="True"
                   PropertyChanged="MultiplierSlider_PropertyChanged"/>
         </StackPanel>
         <StackPanel Grid.Column="3" VerticalAlignment="Center">

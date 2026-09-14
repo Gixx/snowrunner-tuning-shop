@@ -30,8 +30,8 @@
                                Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
                     <Slider x:Name="ArmForceMultiplierSlider"
                             Minimum="0"
-                            Maximum="11"
-                            Value="4"
+                            Maximum="13"
+                            Value="6"
                             TickFrequency="1"
                             IsSnapToTickEnabled="True"
                             ValueChanged="ArmForceMultiplierSlider_ValueChanged"/>
@@ -43,8 +43,8 @@
                                Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
                     <Slider x:Name="MovementSpeedMultiplierSlider"
                             Minimum="0"
-                            Maximum="6"
-                            Value="4"
+                            Maximum="8"
+                            Value="6"
                             TickFrequency="1"
                             IsSnapToTickEnabled="True"
                             ValueChanged="MovementSpeedMultiplierSlider_ValueChanged"/>

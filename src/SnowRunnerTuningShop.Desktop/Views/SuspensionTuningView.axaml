@@ -12,25 +12,25 @@
         <StackPanel Grid.Column="0" Margin="0,0,12,0">
           <TextBlock x:Name="HeightMultiplierLabel"/>
           <Slider x:Name="HeightMultiplierSlider"
-                  Minimum="0" Maximum="8" Value="4" TickFrequency="1" IsSnapToTickEnabled="True"
+                  Minimum="0" Maximum="10" Value="6" TickFrequency="1" IsSnapToTickEnabled="True"
                   PropertyChanged="MultiplierSlider_PropertyChanged"/>
         </StackPanel>
         <StackPanel Grid.Column="1" Margin="12,0,12,0">
           <TextBlock x:Name="StrengthMultiplierLabel"/>
           <Slider x:Name="StrengthMultiplierSlider"
-                  Minimum="0" Maximum="8" Value="4" TickFrequency="1" IsSnapToTickEnabled="True"
+                  Minimum="0" Maximum="10" Value="6" TickFrequency="1" IsSnapToTickEnabled="True"
                   PropertyChanged="MultiplierSlider_PropertyChanged"/>
         </StackPanel>
         <StackPanel Grid.Column="2" Margin="12,0,12,0">
           <TextBlock x:Name="DampingMultiplierLabel"/>
           <Slider x:Name="DampingMultiplierSlider"
-                  Minimum="0" Maximum="8" Value="4" TickFrequency="1" IsSnapToTickEnabled="True"
+                  Minimum="0" Maximum="10" Value="6" TickFrequency="1" IsSnapToTickEnabled="True"
                   PropertyChanged="MultiplierSlider_PropertyChanged"/>
         </StackPanel>
         <StackPanel Grid.Column="3" Margin="12,0,12,0">
           <TextBlock x:Name="DamageMultiplierLabel"/>
           <Slider x:Name="DamageMultiplierSlider"
-                  Minimum="0" Maximum="8" Value="4" TickFrequency="1" IsSnapToTickEnabled="True"
+                  Minimum="0" Maximum="10" Value="6" TickFrequency="1" IsSnapToTickEnabled="True"
                   PropertyChanged="MultiplierSlider_PropertyChanged"/>
         </StackPanel>
         <StackPanel Grid.Column="4" VerticalAlignment="Center">

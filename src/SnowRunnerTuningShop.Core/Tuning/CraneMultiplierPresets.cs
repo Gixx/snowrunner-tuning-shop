@@ -11,6 +11,8 @@ public static class CraneMultiplierPresets
         0.25,
         1.0 / 3.0,
         0.5,
+        2.0 / 3.0,
+        0.75,
         1.0,
         2.0,
         3.0,
@@ -27,6 +29,8 @@ public static class CraneMultiplierPresets
         "1/4",
         "1/3",
         "1/2",
+        "2/3",
+        "3/4",
         "1 (baseline)",
         "2x",
         "3x",
@@ -43,6 +47,8 @@ public static class CraneMultiplierPresets
         0.25,
         1.0 / 3.0,
         0.5,
+        2.0 / 3.0,
+        0.75,
         1.0,
         2.0,
         3.0,
@@ -54,14 +60,16 @@ public static class CraneMultiplierPresets
         "1/4",
         "1/3",
         "1/2",
+        "2/3",
+        "3/4",
         "1 (baseline)",
         "2x",
         "3x",
     ];
 
-    public const int BaselineIndex = 4;
-    public const int ArmForceMaximumIndex = 11;
-    public const int MovementSpeedMaximumIndex = 6;
+    public const int BaselineIndex = 6;
+    public const int ArmForceMaximumIndex = 13;
+    public const int MovementSpeedMaximumIndex = 8;
 
     public static int ClampArmForceIndex(int index) =>
         Math.Clamp(index, 0, ArmForceMaximumIndex);
