@@ -13,14 +13,24 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ---
 
+## [1.4.0-beta.3] — 2026-09-14
+
+### Changed
+- **Update channel default:** when Settings has no explicit channel yet, prerelease builds (`*-beta.*`) use **Beta** and stable builds use **Stable**; an explicit choice in Settings still wins.
+
+### Fixed
+- **Vehicle Responsiveness UI:** show and keep `1.0` in the Vehicles field (not bare `1`) after load/save.
+- **EngineResponsiveness:** write integer-like values as `1.0` (same float style as truck Responsiveness / winch StrengthMult).
+
+---
+
 ## [1.4.0-beta.2] — 2026-09-14
 
 ### Changed
 - **Global multipliers:** add **2/3** and **3/4** presets (between 1/2 and baseline) on Parts / Vehicles / Trailers / Cranes; XML writes stay at two decimal places (`2/3` → `0.67`).
 
 ### Fixed
-- **Vehicle Responsiveness=1 (#7):** write and display `Responsiveness` as a float (`1.0`, not bare `1`) so trucks stay loadable in the store/map.
-- **EngineResponsiveness:** write integer-like values as `1.0` (same float style as truck Responsiveness / winch StrengthMult).
+- **Vehicle Responsiveness=1 (#7):** write `Responsiveness` as a float (`1.0`, not bare `1`) so trucks stay loadable in the store/map.
 
 ---
 
@@ -345,7 +355,8 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ---
 
-[Unreleased]: https://github.com/Gixx/snowrunner-tuning-shop/compare/v1.4.0-beta.2...HEAD
+[Unreleased]: https://github.com/Gixx/snowrunner-tuning-shop/compare/v1.4.0-beta.3...HEAD
+[1.4.0-beta.3]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.4.0-beta.3
 [1.4.0-beta.2]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.4.0-beta.2
 [1.4.0-beta.1]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.4.0-beta.1
 [1.3.5]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.3.5

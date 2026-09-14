@@ -21,8 +21,12 @@ public sealed class WorkspaceConfig
     /// <summary>Latest GitHub release the user chose not to be notified about.</summary>
     public string? SkippedAppVersion { get; set; }
 
-    /// <summary>App update channel: Stable or Beta.</summary>
-    public string UpdateChannel { get; set; } = AppUpdateChannels.Stable;
+    /// <summary>
+    /// App update channel: Stable or Beta.
+    /// Null/absent = not chosen yet; <see cref="WorkspaceConfigStore.GetUpdateChannel"/>
+    /// derives Beta from prerelease <see cref="AppInfo.Version"/>, otherwise Stable.
+    /// </summary>
+    public string? UpdateChannel { get; set; }
 
     public Dictionary<string, EditionConfig> Editions { get; set; } =
         new(StringComparer.OrdinalIgnoreCase);
@@ -256,13 +260,15 @@ public static class WorkspaceConfigStore
         }
     }
 
-    public static string GetUpdateChannel() => AppUpdateChannels.Normalize(Load().UpdateChannel);
+    public static string GetUpdateChannel() =>
+        AppUpdateChannels.Resolve(Load().UpdateChannel, AppInfo.Version);
 
     public static void SetUpdateChannel(string? channel)
     {
         lock (Gate)
         {
             var config = LoadUnlocked();
+            // Always persist an explicit Stable/Beta once the user (or caller) chooses.
             config.UpdateChannel = AppUpdateChannels.Normalize(channel);
             SaveUnlocked(config);
         }

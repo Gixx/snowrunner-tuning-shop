@@ -161,7 +161,7 @@ Tracked work notes may also live under gitignored `docs/plan/Linux-Avalonia-plan
 | Area | Paths |
 |------|--------|
 | Version / URLs | `Core/AppInfo.cs` |
-| Updates | `Core/Updates/AppUpdateService.cs`, `AppSemVersion.cs`, `AppUpdateChannels.cs` |
+| Updates | `Core/Updates/AppUpdateService.cs`, `AppSemVersion.cs`, `AppUpdateChannels.cs` (unset channel derives Beta from prerelease `AppInfo.Version`) |
 | Workspace | `Core/Config/WorkspaceConfigStore.cs`, `GameEditionDetector.cs` |
 | Baseline / health | `Core/Backup/PakBaselineService.cs`, `Core/Profile/WorkspaceHealthService.cs`, `TuningProfile*.cs` |
 | Pak I/O | `Core/Pak/InitialPakReader.cs`, `InitialPakWriter.cs`, `PakFileId.cs`, `PakInPlaceZipPatcher.cs`, `PakVanillaText.cs`, `PakCacheBlockLayoutGuard.cs` |

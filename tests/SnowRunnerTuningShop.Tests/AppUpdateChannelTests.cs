@@ -95,3 +95,20 @@ public sealed class AppUpdateChannelSelectionTests
         Assert.False(AppUpdateService.IsSameVersion("1.5.0-beta.1", "1.5.0-beta.2"));
     }
 }
+
+public sealed class AppUpdateChannelResolveTests
+{
+    [Theory]
+    [InlineData(null, "1.4.0-beta.2", AppUpdateChannels.Beta)]
+    [InlineData("", "1.4.0-beta.2", AppUpdateChannels.Beta)]
+    [InlineData("  ", "1.4.0", AppUpdateChannels.Stable)]
+    [InlineData(null, "1.4.0", AppUpdateChannels.Stable)]
+    [InlineData(null, "not-a-version", AppUpdateChannels.Stable)]
+    [InlineData(AppUpdateChannels.Stable, "1.4.0-beta.2", AppUpdateChannels.Stable)]
+    [InlineData(AppUpdateChannels.Beta, "1.4.0", AppUpdateChannels.Beta)]
+    public void Resolve_UsesExplicitConfigOtherwiseDerivesFromInstalledVersion(
+        string? configured,
+        string installed,
+        string expected) =>
+        Assert.Equal(expected, AppUpdateChannels.Resolve(configured, installed));
+}

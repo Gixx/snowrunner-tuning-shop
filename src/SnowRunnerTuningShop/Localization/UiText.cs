@@ -659,7 +659,7 @@ public static class UiText
         public static string UpdatesTitle => StringResources.Get("Settings.UpdatesTitle", "Updates");
         public static string UpdatesHint => StringResources.Get(
             "Settings.UpdatesHint",
-            "Check for new app builds. Stable only offers full releases; Beta also includes numbered prereleases such as 1.5.0-beta.1.");
+            "Check for new app builds. Stable only offers full releases; Beta also includes numbered prereleases such as 1.5.0-beta.1. Until you pick a channel, beta installs default to Beta and stable installs to Stable.");
         public static string UpdateChannelLabel => StringResources.Get("Settings.UpdateChannelLabel", "Update channel");
         public static string UpdateChannelStable => StringResources.Get("Settings.UpdateChannelStable", "Stable");
         public static string UpdateChannelBeta => StringResources.Get("Settings.UpdateChannelBeta", "Beta");

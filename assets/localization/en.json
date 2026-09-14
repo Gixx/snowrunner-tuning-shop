@@ -316,7 +316,7 @@
   "Settings.UpdateChannelLabel": "Update channel",
   "Settings.UpdateChannelStable": "Stable",
   "Settings.UpdateCheckFailed": "Could not check for updates. Try again later.",
-  "Settings.UpdatesHint": "Check for new app builds. Stable only offers full releases; Beta also includes numbered prereleases such as 1.5.0-beta.1.",
+  "Settings.UpdatesHint": "Check for new app builds. Stable only offers full releases; Beta also includes numbered prereleases such as 1.5.0-beta.1. Until you pick a channel, beta installs default to Beta and stable installs to Stable.",
   "Settings.UpdatesTitle": "Updates",
   "Settings.WorkspaceHint": "Restore the working pak from the baseline, refresh the baseline after a game update, or reapply your saved tuning profile.",
   "Settings.WorkspaceTitle": "Workspace",
