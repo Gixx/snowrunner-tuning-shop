@@ -11,6 +11,9 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ## [Unreleased]
 
+### Fixed
+- **Vehicle Responsiveness=1 (#7):** write `Responsiveness="1.0"` (float form) instead of `"1"`, which could make trucks vanish from the store and map.
+
 ---
 
 ## [1.4.0-beta.1] — 2026-09-13
@@ -59,6 +62,7 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 - **Linux / Proton:** `SnowRunnerProcessGuard` also matches `SnowRunner.exe` / `SnowRunner_BE.exe` so pak writes stay blocked while the game runs under Wine.
 - **Change location:** warn before creating a new edition baseline from a pak that already has a Tuning Shop marker.
 - **PakFileId:** ambiguous fuzzy suffix/prefix matches return no match instead of picking the first hit.
+- **Vehicle Responsiveness=1 (#7):** write `Responsiveness="1.0"` (float form) instead of `"1"`, which could make trucks vanish from the store and map.
 
 ---
 

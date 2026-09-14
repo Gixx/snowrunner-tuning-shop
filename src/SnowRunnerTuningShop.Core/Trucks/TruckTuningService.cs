@@ -496,7 +496,7 @@ public static class TruckTuningService
             updated = VehicleGameDataXml.SetTruckDataAttribute(
                 updated,
                 "Responsiveness",
-                FormatNumeric(scaledResponsiveness, preferInteger: false));
+                FormatResponsiveness(scaledResponsiveness));
         }
 
         if (!priceBaseline && GameDataOpenRegex.IsMatch(baselineText))
@@ -612,7 +612,7 @@ public static class TruckTuningService
 
     private static string ApplySteering(string text, TruckTuningDefinition truck)
     {
-        var updated = VehicleGameDataXml.SetTruckDataAttribute(text, "Responsiveness", FormatNumeric(truck.Responsiveness, preferInteger: false));
+        var updated = VehicleGameDataXml.SetTruckDataAttribute(text, "Responsiveness", FormatResponsiveness(truck.Responsiveness));
         if (truck.HasFrontSteer && truck.FrontSteerAngle is { } frontAngle)
         {
             updated = ApplyFrontSteerAngle(updated, frontAngle);
@@ -875,6 +875,13 @@ public static class TruckTuningService
 
     private static string FormatNumeric(double value, bool preferInteger) =>
         XmlNumericFormatting.Format(value, preferInteger);
+
+    /// <summary>
+    /// TruckData Responsiveness is a float in vanilla/mod XML (<c>0.3</c>, <c>1.0</c>).
+    /// Writing bare <c>1</c> for 1.0 can make the truck fail to load (missing from store/map).
+    /// </summary>
+    private static string FormatResponsiveness(double value) =>
+        XmlNumericFormatting.Format(value, preferInteger: false, keepTrailingDotZero: true);
 
     private static byte[] ReadEntryBytes(ZipArchiveEntry entry)
     {

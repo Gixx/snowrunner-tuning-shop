@@ -296,6 +296,29 @@ public sealed class SoloMultiplierApplyTests
     }
 
     [Fact]
+    public void Truck_responsiveness_one_writes_float_one_point_zero()
+    {
+        // Issue #7: Responsiveness="1" (integer form) made trucks vanish from store/map.
+        const string xml =
+            """
+            <Truck>
+              <TruckData FuelCapacity="100" Responsiveness="0.4" />
+              <GameData Price="5000" UnlockByRank="1" />
+            </Truck>
+            """;
+
+        var updated = TruckTuningService.ApplyGlobalMultipliersToTextForTests(
+            xml,
+            fuelMultiplier: 1,
+            TruckFrontSteerGlobalMode.Baseline,
+            responsivenessMultiplier: 2.5,
+            priceMultiplier: 1);
+
+        Assert.Contains("Responsiveness=\"1.0\"", updated, StringComparison.Ordinal);
+        Assert.DoesNotContain("Responsiveness=\"1\"", updated, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void Truck_responsiveness_alone_injects_scaled_default_when_missing()
     {
         const string xml =
