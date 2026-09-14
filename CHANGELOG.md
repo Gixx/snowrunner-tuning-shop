@@ -19,7 +19,8 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 - **Global multipliers:** add **2/3** and **3/4** presets (between 1/2 and baseline) on Parts / Vehicles / Trailers / Cranes; XML writes stay at two decimal places (`2/3` → `0.67`).
 
 ### Fixed
-- **Vehicle Responsiveness=1 (#7):** write `Responsiveness="1.0"` (float form) instead of `"1"`, which could make trucks vanish from the store and map.
+- **Vehicle Responsiveness=1 (#7):** write and display `Responsiveness` as a float (`1.0`, not bare `1`) so trucks stay loadable in the store/map.
+- **EngineResponsiveness:** write integer-like values as `1.0` (same float style as truck Responsiveness / winch StrengthMult).
 
 ---
 
@@ -69,7 +70,6 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 - **Linux / Proton:** `SnowRunnerProcessGuard` also matches `SnowRunner.exe` / `SnowRunner_BE.exe` so pak writes stay blocked while the game runs under Wine.
 - **Change location:** warn before creating a new edition baseline from a pak that already has a Tuning Shop marker.
 - **PakFileId:** ambiguous fuzzy suffix/prefix matches return no match instead of picking the first hit.
-- **Vehicle Responsiveness=1 (#7):** write `Responsiveness="1.0"` (float form) instead of `"1"`, which could make trucks vanish from the store and map.
 
 ---
 

@@ -367,7 +367,8 @@ public static class EngineService
                         ref updatedAttrs,
                         "EngineResponsiveness",
                         engineResponsivenessMultiplier,
-                        preferInteger: false))
+                        preferInteger: false,
+                        keepTrailingDotZero: true))
                 {
                     changed = true;
                 }
@@ -378,7 +379,7 @@ public static class EngineService
                     changed |= SetOrReplaceAttribute(
                         ref updatedAttrs,
                         "EngineResponsiveness",
-                        FormatNumeric(scaledDefault, preferInteger: false));
+                        FormatEngineResponsiveness(scaledDefault));
                 }
             }
 
@@ -428,7 +429,7 @@ public static class EngineService
                 changed |= SetOrReplaceAttribute(
                     ref updatedAttrs,
                     "EngineResponsiveness",
-                    FormatNumeric(target.EngineResponsiveness, preferInteger: false));
+                    FormatEngineResponsiveness(target.EngineResponsiveness));
             }
 
             if (!changed)
@@ -481,7 +482,12 @@ public static class EngineService
         return changed;
     }
 
-    private static bool TryScaleAttribute(ref string attrs, string attributeName, double multiplier, bool preferInteger)
+    private static bool TryScaleAttribute(
+        ref string attrs,
+        string attributeName,
+        double multiplier,
+        bool preferInteger,
+        bool keepTrailingDotZero = false)
     {
         if (!TryGetAttributeValue(attrs, attributeName, out var rawValue))
         {
@@ -492,7 +498,10 @@ public static class EngineService
             ParseDouble(rawValue, 0) * multiplier,
             preferInteger ? 0 : XmlNumericFormatting.DecimalPlaces,
             MidpointRounding.AwayFromZero);
-        return SetOrReplaceAttribute(ref attrs, attributeName, FormatNumeric(scaled, preferInteger));
+        return SetOrReplaceAttribute(
+            ref attrs,
+            attributeName,
+            FormatNumeric(scaled, preferInteger, keepTrailingDotZero));
     }
 
     private static bool SetOrReplaceAttribute(ref string attrs, string attributeName, string value)
@@ -599,8 +608,15 @@ public static class EngineService
             ? parsed
             : fallback;
 
-    private static string FormatNumeric(double value, bool preferInteger) =>
-        XmlNumericFormatting.Format(value, preferInteger);
+    private static string FormatNumeric(double value, bool preferInteger, bool keepTrailingDotZero = false) =>
+        XmlNumericFormatting.Format(value, preferInteger, keepTrailingDotZero);
+
+    /// <summary>
+    /// EngineResponsiveness is a float in vanilla XML (e.g. <c>0.04</c>, <c>1.0</c>).
+    /// Prefer <c>1.0</c> over bare <c>1</c> — same class of issue as TruckData Responsiveness (#7).
+    /// </summary>
+    private static string FormatEngineResponsiveness(double value) =>
+        FormatNumeric(value, preferInteger: false, keepTrailingDotZero: true);
 
 
     private readonly record struct EngineAttributeValues(

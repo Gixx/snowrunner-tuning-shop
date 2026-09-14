@@ -880,7 +880,7 @@ public static class TruckTuningService
     /// TruckData Responsiveness is a float in vanilla/mod XML (<c>0.3</c>, <c>1.0</c>).
     /// Writing bare <c>1</c> for 1.0 can make the truck fail to load (missing from store/map).
     /// </summary>
-    private static string FormatResponsiveness(double value) =>
+    public static string FormatResponsiveness(double value) =>
         XmlNumericFormatting.Format(value, preferInteger: false, keepTrailingDotZero: true);
 
     private static byte[] ReadEntryBytes(ZipArchiveEntry entry)

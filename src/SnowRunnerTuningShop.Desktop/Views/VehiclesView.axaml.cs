@@ -699,7 +699,7 @@ public partial class VehiclesView : UserControl
             _currentTruck = truck;
             FuelCapacityTextBox.Text = truck.FuelCapacity.ToString(CultureInfo.InvariantCulture);
             StorePriceTextBox.Text = truck.Price.ToString(CultureInfo.InvariantCulture);
-            ResponsivenessTextBox.Text = truck.Responsiveness.ToString("0.######", CultureInfo.InvariantCulture);
+            ResponsivenessTextBox.Text = TruckTuningService.FormatResponsiveness(truck.Responsiveness);
             BindStoreUnlockFields(truck);
             FrontSteerRow.IsVisible = truck.HasFrontSteer;
             FrontSteerHintText.IsVisible = truck.HasFrontSteer;
@@ -986,6 +986,8 @@ public partial class VehiclesView : UserControl
             TuningStatusText.Text = UiText.Vehicles.InvalidResponsiveness;
             return false;
         }
+
+        ResponsivenessTextBox.Text = TruckTuningService.FormatResponsiveness(responsiveness);
 
         if (_currentTruck?.HasFrontSteer == true)
         {

@@ -61,6 +61,23 @@ public sealed class SoloMultiplierApplyTests
         Assert.DoesNotContain("EngineResponsiveness=", updated, StringComparison.Ordinal);
     }
 
+    [Fact]
+    public void Engine_responsiveness_one_writes_float_one_point_zero()
+    {
+        const string xml =
+            """
+            <EngineVariants>
+              <Engine Name="e1" Torque="100000" FuelConsumption="5.0" DamageCapacity="200"
+                      EngineResponsiveness="0.5" />
+            </EngineVariants>
+            """;
+
+        var updated = EngineService.ApplyMultipliersToTextForTests(xml, 1, 1, 1, 2);
+
+        Assert.Contains("EngineResponsiveness=\"1.0\"", updated, StringComparison.Ordinal);
+        Assert.DoesNotContain("EngineResponsiveness=\"1\"", updated, StringComparison.Ordinal);
+    }
+
     [Theory]
     [InlineData(2, 1, 1, "FuelConsumption=\"3\"")]
     [InlineData(1, 2, 1, "IdleFuelModifier=\"0.6\"")]
