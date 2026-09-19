@@ -77,7 +77,7 @@
       <DataGrid.Columns>
         <DataGridTextColumn Binding="{Binding Category}" Width="90" IsReadOnly="True"/>
         <DataGridTextColumn Binding="{Binding DisplayName}" Width="220" IsReadOnly="True"/>
-        <DataGridTextColumn Binding="{Binding Price}" Width="80" IsReadOnly="True"/>
+        <DataGridTextColumn Binding="{Binding Price}" Width="80"/>
         <DataGridTextColumn Binding="{Binding Length}" Width="90"/>
         <DataGridTextColumn Binding="{Binding StrengthMult}" Width="80"/>
         <DataGridCheckBoxColumn Binding="{Binding IsAutonomous}" Width="100"/>

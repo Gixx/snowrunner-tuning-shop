@@ -14,6 +14,9 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 ### Added
 - **Vehicles → Engine sets:** per-truck modal to assign/unassign existing `classes/engines` sets via `EngineSocket Type` (WPF + Avalonia), with name filter for engines/sets.
 
+### Fixed
+- **Parts Price column:** Price is editable in Engine / Gearbox / Suspension / Tires / Winch / Crane tables and is written to `GameData Price` on save.
+
 ---
 
 ## [1.4.0-beta.3] — 2026-09-14

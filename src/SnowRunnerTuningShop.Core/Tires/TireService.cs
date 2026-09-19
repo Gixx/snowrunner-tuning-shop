@@ -125,6 +125,7 @@ public static class TireService
                 var updates = group.ToDictionary(
                     item => item.Name,
                     item => new TireFrictionValues(
+                        item.Price,
                         item.OnRoadFriction,
                         item.OffRoadFriction,
                         item.MudFriction,
@@ -558,6 +559,7 @@ public static class TireService
             return $"<WheelFriction{updatedAttrs.TrimEnd()} />";
         }, 1);
 
+        changed |= PartXmlHelpers.TrySetPrice(ref updatedBlock, target.Price);
         return changed;
     }
 
@@ -581,7 +583,8 @@ public static class TireService
             if (Math.Abs(existing.OnRoadFriction - target.OnRoadFriction) > 1e-6
                 || Math.Abs(existing.OffRoadFriction - target.OffRoadFriction) > 1e-6
                 || Math.Abs(existing.MudFriction - target.MudFriction) > 1e-6
-                || existing.IgnoreIce != target.IgnoreIce)
+                || existing.IgnoreIce != target.IgnoreIce
+                || existing.Price != target.Price)
             {
                 changed++;
             }
@@ -664,6 +667,7 @@ public static class TireService
 
 
     private readonly record struct TireFrictionValues(
+        int Price,
         double OnRoadFriction,
         double OffRoadFriction,
         double MudFriction,

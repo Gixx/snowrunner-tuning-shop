@@ -284,13 +284,28 @@ public partial class WinchTuningView : UserControl
         private double _length;
         private double _strengthMult;
         private bool _isEngineIgnitionRequired;
+        private int _price;
 
         public required string EntryPath { get; init; }
         public required string Name { get; init; }
         public required string DisplayName { get; init; }
         public required string SourceFile { get; init; }
         public required string Category { get; init; }
-        public int Price { get; init; }
+
+        public int Price
+        {
+            get => _price;
+            set
+            {
+                if (_price == value)
+                {
+                    return;
+                }
+
+                _price = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Price)));
+            }
+        }
 
         public double Length
         {

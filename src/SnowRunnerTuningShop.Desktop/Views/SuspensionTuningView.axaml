@@ -71,7 +71,7 @@
         <DataGridTextColumn Binding="{Binding Category}" Width="70" IsReadOnly="True"/>
         <DataGridTextColumn Binding="{Binding DisplayName}" Width="120" IsReadOnly="True"/>
         <DataGridTextColumn Binding="{Binding UsedBy}" Width="180" MinWidth="120" IsReadOnly="True"/>
-        <DataGridTextColumn Binding="{Binding Price}" Width="80" IsReadOnly="True"/>
+        <DataGridTextColumn Binding="{Binding Price}" Width="80"/>
         <DataGridTextColumn Binding="{Binding DamageCapacity}" Width="80"/>
         <DataGridTextColumn Binding="{Binding FrontHeight}" Width="80"/>
         <DataGridTextColumn Binding="{Binding FrontStrength}" Width="90"/>

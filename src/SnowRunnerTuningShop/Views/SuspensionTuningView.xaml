@@ -152,8 +152,9 @@
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Header="{x:Static loc:UiText+Suspension.PriceColumn}" Binding="{Binding Price}" Width="80" IsReadOnly="True"
-                                    ElementStyle="{StaticResource TuningGridTextElementStyle}"/>
+                <DataGridTextColumn Header="{x:Static loc:UiText+Suspension.PriceColumn}" Binding="{Binding Price, Converter={StaticResource InvariantIntConverter}, UpdateSourceTrigger=LostFocus}" Width="80"
+                                    ElementStyle="{StaticResource TuningGridTextElementStyle}"
+                                    EditingElementStyle="{StaticResource TuningGridTextEditingStyle}"/>
                 <DataGridTextColumn Header="{x:Static loc:UiText+Suspension.DamageColumn}" Binding="{Binding DamageCapacity, Converter={StaticResource InvariantDoubleConverter}, UpdateSourceTrigger=LostFocus}" Width="80"
                                     ElementStyle="{StaticResource TuningGridTextElementStyle}"
                                     EditingElementStyle="{StaticResource TuningGridTextEditingStyle}"/>

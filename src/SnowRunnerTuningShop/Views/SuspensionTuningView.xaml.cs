@@ -291,6 +291,7 @@ public partial class SuspensionTuningView : UserControl
         private double? _rearHeight;
         private double? _rearStrength;
         private double? _rearDamping;
+        private int _price;
 
         public required string EntryPath { get; init; }
         public required string Name { get; init; }
@@ -301,7 +302,22 @@ public partial class SuspensionTuningView : UserControl
         public required string UsedBy { get; init; }
         public required string UsedByTooltip { get; init; }
         public required string Category { get; init; }
-        public int Price { get; init; }
+
+        public int Price
+        {
+            get => _price;
+            set
+            {
+                if (_price == value)
+                {
+                    return;
+                }
+
+                _price = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Price)));
+            }
+        }
+
         public bool HasFront { get; init; }
         public bool HasRear { get; init; }
 

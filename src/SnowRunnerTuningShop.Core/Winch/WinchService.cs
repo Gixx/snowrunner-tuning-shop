@@ -101,6 +101,7 @@ public static class WinchService
                 foreach (var winch in group)
                 {
                     updates[winch.Name] = new WinchAttributeValues(
+                        winch.Price,
                         winch.Length,
                         winch.StrengthMult,
                         winch.IsEngineIgnitionRequired);
@@ -258,6 +259,7 @@ public static class WinchService
     }
 
     private readonly record struct WinchAttributeValues(
+        int Price,
         double Length,
         double StrengthMult,
         bool IsEngineIgnitionRequired);
@@ -416,6 +418,7 @@ public static class WinchService
                     element,
                     "IsEngineIgnitionRequired",
                     target.IsEngineIgnitionRequired ? "true" : "false");
+                changed |= SetWinchPrice(element, target.Price);
 
                 if (changed)
                 {
@@ -459,7 +462,8 @@ public static class WinchService
 
             if (Math.Abs(currentWinch.Length - targetWinch.Length) > 1e-9
                 || Math.Abs(currentWinch.StrengthMult - targetWinch.StrengthMult) > 1e-9
-                || currentWinch.IsEngineIgnitionRequired != targetWinch.IsEngineIgnitionRequired)
+                || currentWinch.IsEngineIgnitionRequired != targetWinch.IsEngineIgnitionRequired
+                || currentWinch.Price != targetWinch.Price)
             {
                 changed++;
             }
@@ -474,6 +478,32 @@ public static class WinchService
         if (attribute is null)
         {
             element.SetAttributeValue(attributeName, value);
+            return true;
+        }
+
+        if (string.Equals(attribute.Value, value, StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        attribute.Value = value;
+        return true;
+    }
+
+    private static bool SetWinchPrice(XElement winchElement, int price)
+    {
+        var value = price.ToString(CultureInfo.InvariantCulture);
+        var gameData = winchElement.Descendants()
+            .FirstOrDefault(node => node.Name.LocalName.Equals("GameData", StringComparison.OrdinalIgnoreCase));
+        if (gameData is null)
+        {
+            return false;
+        }
+
+        var attribute = gameData.Attribute("Price");
+        if (attribute is null)
+        {
+            gameData.SetAttributeValue("Price", value);
             return true;
         }
 

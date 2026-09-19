@@ -24,6 +24,39 @@ public static class PartXmlHelpers
             : 0;
     }
 
+    /// <summary>
+    /// Updates the first <c>Price="…"</c> in <paramref name="text"/>, or adds Price on the first
+    /// <c>GameData</c> open tag when missing. Returns false when nothing changed.
+    /// </summary>
+    public static bool TrySetPrice(ref string text, int price)
+    {
+        var value = price.ToString(CultureInfo.InvariantCulture);
+        var match = PriceRegex.Match(text);
+        if (match.Success)
+        {
+            if (string.Equals(match.Groups["value"].Value, value, StringComparison.Ordinal))
+            {
+                return false;
+            }
+
+            var valueGroup = match.Groups["value"];
+            text = string.Concat(
+                text.AsSpan(0, valueGroup.Index),
+                value,
+                text.AsSpan(valueGroup.Index + valueGroup.Length));
+            return true;
+        }
+
+        var updated = VehicleGameDataXml.SetGameDataAttribute(text, "Price", value);
+        if (string.Equals(updated, text, StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        text = updated;
+        return true;
+    }
+
     public static string FormatUsedBy(IReadOnlyList<string> vehicleNames)
     {
         if (vehicleNames.Count == 0)

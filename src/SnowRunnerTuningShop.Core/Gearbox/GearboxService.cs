@@ -110,6 +110,7 @@ public static class GearboxService
                 var updates = group.ToDictionary(
                     gearbox => gearbox.Name,
                     gearbox => new GearboxAttributeValues(
+                        gearbox.Price,
                         gearbox.FuelConsumption,
                         gearbox.IdleFuelModifier,
                         gearbox.AwdConsumptionModifier),
@@ -376,49 +377,93 @@ public static class GearboxService
             return false;
         }
 
-        var localChanged = 0;
-        var result = GearboxOpenTagRegex.Replace(content, match =>
+        var matches = GearboxOpenTagRegex.Matches(content);
+        if (matches.Count == 0)
         {
-            var attrs = match.Groups["attrs"].Value;
-            var self = match.Groups["self"].Value;
-            var parsed = ParseAttributes(attrs);
-            if (!parsed.TryGetValue("Name", out var name)
-                || string.IsNullOrWhiteSpace(name)
-                || !updates.TryGetValue(name, out var target))
+            return false;
+        }
+
+        var builder = new StringBuilder(content.Length);
+        var lastIndex = 0;
+        var localChanged = 0;
+
+        for (var i = 0; i < matches.Count; i++)
+        {
+            var match = matches[i];
+            var attrs = ParseAttributes(match.Groups["attrs"].Value);
+            var blockEnd = IndexOfNextElementOpenTag(content, match.Index + 1, "Gearbox");
+            if (blockEnd < 0)
             {
-                return match.Value;
+                blockEnd = content.Length;
             }
 
-            var updatedAttrs = attrs;
-            var changed = false;
-            changed |= SetOrReplaceAttribute(ref updatedAttrs, "FuelConsumption", XmlNumericFormatting.Format(target.FuelConsumption));
-            changed |= SetOrReplaceAttribute(ref updatedAttrs, "IdleFuelModifier", XmlNumericFormatting.Format(target.IdleFuelModifier));
+            var block = content[match.Index..blockEnd];
+            builder.Append(content, lastIndex, match.Index - lastIndex);
 
-            if (target.AwdConsumptionModifier.HasValue || AttributeExists(updatedAttrs, "AWDConsumptionModifier"))
+            if (attrs.TryGetValue("Name", out var name)
+                && !string.IsNullOrWhiteSpace(name)
+                && updates.TryGetValue(name, out var target)
+                && TryApplyUpdatesToGearboxBlock(block, target, out var updatedBlock))
             {
-                changed |= SetOrReplaceAttribute(
-                    ref updatedAttrs,
-                    "AWDConsumptionModifier",
-                    XmlNumericFormatting.Format(target.AwdConsumptionModifier ?? 0));
+                builder.Append(updatedBlock);
+                localChanged++;
+            }
+            else
+            {
+                builder.Append(block);
             }
 
-            if (!changed)
-            {
-                return match.Value;
-            }
+            lastIndex = blockEnd;
+        }
 
-            localChanged++;
-            return $"<Gearbox{updatedAttrs}{self}>";
-        });
+        builder.Append(content, lastIndex, content.Length - lastIndex);
 
         if (localChanged == 0)
         {
             return false;
         }
 
-        updatedText = result;
+        updatedText = builder.ToString();
         changedGearboxes = localChanged;
         return true;
+    }
+
+    private static bool TryApplyUpdatesToGearboxBlock(
+        string block,
+        GearboxAttributeValues target,
+        out string updatedBlock)
+    {
+        updatedBlock = block;
+        var changed = false;
+
+        updatedBlock = GearboxOpenTagRegex.Replace(updatedBlock, match =>
+        {
+            var attrs = match.Groups["attrs"].Value;
+            var self = match.Groups["self"].Value;
+            var updatedAttrs = attrs;
+            var localChanged = false;
+            localChanged |= SetOrReplaceAttribute(ref updatedAttrs, "FuelConsumption", XmlNumericFormatting.Format(target.FuelConsumption));
+            localChanged |= SetOrReplaceAttribute(ref updatedAttrs, "IdleFuelModifier", XmlNumericFormatting.Format(target.IdleFuelModifier));
+
+            if (target.AwdConsumptionModifier.HasValue || AttributeExists(updatedAttrs, "AWDConsumptionModifier"))
+            {
+                localChanged |= SetOrReplaceAttribute(
+                    ref updatedAttrs,
+                    "AWDConsumptionModifier",
+                    XmlNumericFormatting.Format(target.AwdConsumptionModifier ?? 0));
+            }
+
+            if (!localChanged)
+            {
+                return match.Value;
+            }
+
+            changed = true;
+            return $"<Gearbox{updatedAttrs}{self}>";
+        }, 1);
+
+        changed |= PartXmlHelpers.TrySetPrice(ref updatedBlock, target.Price);
+        return changed;
     }
 
     private static int CountNamedDifferences(string currentText, string updatedText)
@@ -435,7 +480,8 @@ public static class GearboxService
                 continue;
             }
 
-            if (Math.Abs(existing.FuelConsumption - target.FuelConsumption) > 1e-6
+            if (existing.Price != target.Price
+                || Math.Abs(existing.FuelConsumption - target.FuelConsumption) > 1e-6
                 || Math.Abs(existing.IdleFuelModifier - target.IdleFuelModifier) > 1e-6
                 || !NullableDoubleEquals(existing.AwdConsumptionModifier, target.AwdConsumptionModifier))
             {
@@ -563,6 +609,7 @@ public static class GearboxService
             : fallback;
 
     private readonly record struct GearboxAttributeValues(
+        int Price,
         double FuelConsumption,
         double IdleFuelModifier,
         double? AwdConsumptionModifier);

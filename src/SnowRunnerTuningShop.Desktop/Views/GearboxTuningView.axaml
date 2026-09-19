@@ -65,7 +65,7 @@
         <DataGridTextColumn Binding="{Binding Category}" Width="70" IsReadOnly="True"/>
         <DataGridTextColumn Binding="{Binding DisplayName}" Width="160" IsReadOnly="True"/>
         <DataGridTextColumn Binding="{Binding UsedBy}" Width="200" MinWidth="120" IsReadOnly="True"/>
-        <DataGridTextColumn Binding="{Binding Price}" Width="80" IsReadOnly="True"/>
+        <DataGridTextColumn Binding="{Binding Price}" Width="80"/>
         <DataGridTextColumn Binding="{Binding FuelConsumption}" Width="90"/>
         <DataGridTextColumn Binding="{Binding IdleFuelModifier}" Width="90"/>
         <DataGridTextColumn Binding="{Binding AwdConsumptionModifier}" Width="100"/>

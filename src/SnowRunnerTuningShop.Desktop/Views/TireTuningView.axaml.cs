@@ -363,6 +363,7 @@ public partial class TireTuningView : UserControl
 
     public sealed class TireRowViewModel : INotifyPropertyChanged
     {
+        private int _price;
         private double _onRoadFriction;
         private double _offRoadFriction;
         private double _mudFriction;
@@ -377,7 +378,18 @@ public partial class TireTuningView : UserControl
         public required string UsedBy { get; set; }
         public required string UsedByTooltip { get; set; }
         public required string Category { get; init; }
-        public int Price { get; init; }
+
+        public int Price
+        {
+            get => _price;
+            set
+            {
+                if (_price == value) return;
+                _price = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Price)));
+            }
+        }
+
         public required string FrictionTemplate { get; init; }
         public IReadOnlyList<TireInstanceRef> Instances { get; set; } = [];
 

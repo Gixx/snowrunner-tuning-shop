@@ -119,6 +119,7 @@ public static class SuspensionService
                 var updates = group.ToDictionary(
                     item => item.Name,
                     item => new SuspensionAttributeValues(
+                        item.Price,
                         item.DamageCapacity,
                         item.FrontHeight,
                         item.FrontStrength,
@@ -558,6 +559,7 @@ public static class SuspensionService
             return $"<Suspension{updatedAttrs}{self}>";
         });
 
+        changed |= PartXmlHelpers.TrySetPrice(ref updatedBlock, target.Price);
         return changed;
     }
 
@@ -575,7 +577,8 @@ public static class SuspensionService
                 continue;
             }
 
-            if (Math.Abs(existing.DamageCapacity - target.DamageCapacity) > 1e-6
+            if (existing.Price != target.Price
+                || Math.Abs(existing.DamageCapacity - target.DamageCapacity) > 1e-6
                 || !NullableDoubleEquals(existing.FrontHeight, target.FrontHeight)
                 || !NullableDoubleEquals(existing.FrontStrength, target.FrontStrength)
                 || !NullableDoubleEquals(existing.FrontDamping, target.FrontDamping)
@@ -741,6 +744,7 @@ public static class SuspensionService
 
 
     private readonly record struct SuspensionAttributeValues(
+        int Price,
         double DamageCapacity,
         double? FrontHeight,
         double? FrontStrength,

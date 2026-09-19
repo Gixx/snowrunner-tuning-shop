@@ -327,6 +327,7 @@ public partial class SuspensionTuningView : UserControl
 
     public sealed class SuspensionRowViewModel : INotifyPropertyChanged
     {
+        private int _price;
         private double _damageCapacity;
         private double? _frontHeight;
         private double? _frontStrength;
@@ -344,7 +345,18 @@ public partial class SuspensionTuningView : UserControl
         public required string UsedBy { get; init; }
         public required string UsedByTooltip { get; init; }
         public required string Category { get; init; }
-        public int Price { get; init; }
+
+        public int Price
+        {
+            get => _price;
+            set
+            {
+                if (_price == value) return;
+                _price = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Price)));
+            }
+        }
+
         public bool HasFront { get; init; }
         public bool HasRear { get; init; }
 

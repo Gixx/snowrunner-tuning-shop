@@ -283,6 +283,7 @@ public partial class EngineTuningView : UserControl
 
     public sealed class EngineRowViewModel : INotifyPropertyChanged
     {
+        private int _price;
         private double _torque;
         private double _fuelConsumption;
         private double _damageCapacity;
@@ -298,7 +299,21 @@ public partial class EngineTuningView : UserControl
         public required string UsedBy { get; init; }
         public required string UsedByTooltip { get; init; }
         public required string Category { get; init; }
-        public int Price { get; init; }
+
+        public int Price
+        {
+            get => _price;
+            set
+            {
+                if (_price == value)
+                {
+                    return;
+                }
+
+                _price = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Price)));
+            }
+        }
 
         public double Torque
         {

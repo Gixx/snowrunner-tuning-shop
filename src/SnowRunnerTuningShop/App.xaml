@@ -7,6 +7,7 @@
              ThemeMode="System">
     <Application.Resources>
         <conv:InvariantDoubleConverter x:Key="InvariantDoubleConverter"/>
+        <conv:InvariantIntConverter x:Key="InvariantIntConverter"/>
         <Style x:Key="NavRadioStyle" TargetType="RadioButton">
             <Setter Property="Padding" Value="12,10"/>
             <Setter Property="Margin" Value="0,0,0,4"/>

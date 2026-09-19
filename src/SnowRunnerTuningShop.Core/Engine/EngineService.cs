@@ -131,6 +131,7 @@ public static class EngineService
                 var updates = group.ToDictionary(
                     engine => engine.Name,
                     engine => new EngineAttributeValues(
+                        engine.Price,
                         engine.Torque,
                         engine.FuelConsumption,
                         engine.DamageCapacity,
@@ -405,50 +406,121 @@ public static class EngineService
             return false;
         }
 
-        var localChanged = 0;
-        var result = EngineOpenTagRegex.Replace(content, match =>
+        var matches = EngineOpenTagRegex.Matches(content);
+        if (matches.Count == 0)
         {
-            var attrs = match.Groups["attrs"].Value;
-            var self = match.Groups["self"].Value;
-            var parsed = ParseAttributes(attrs);
-            if (!parsed.TryGetValue("Name", out var name)
-                || string.IsNullOrWhiteSpace(name)
-                || !updates.TryGetValue(name, out var target))
+            return false;
+        }
+
+        var builder = new StringBuilder(content.Length);
+        var lastIndex = 0;
+        var localChanged = 0;
+
+        for (var i = 0; i < matches.Count; i++)
+        {
+            var match = matches[i];
+            var attrs = ParseAttributes(match.Groups["attrs"].Value);
+            var blockEnd = IndexOfNextElementOpenTag(content, match.Index + 1, "Engine");
+            if (blockEnd < 0)
             {
-                return match.Value;
+                blockEnd = content.Length;
             }
 
-            var updatedAttrs = attrs;
-            var changed = false;
-            changed |= SetOrReplaceAttribute(ref updatedAttrs, "Torque", FormatNumeric(target.Torque, preferInteger: true));
-            changed |= SetOrReplaceAttribute(ref updatedAttrs, "FuelConsumption", FormatNumeric(target.FuelConsumption, preferInteger: false));
-            changed |= SetOrReplaceAttribute(ref updatedAttrs, "DamageCapacity", FormatNumeric(target.DamageCapacity, preferInteger: true));
+            var block = content[match.Index..blockEnd];
+            builder.Append(content, lastIndex, match.Index - lastIndex);
 
-            if (ShouldWriteEngineResponsiveness(target, updatedAttrs))
+            if (attrs.TryGetValue("Name", out var name)
+                && !string.IsNullOrWhiteSpace(name)
+                && updates.TryGetValue(name, out var target)
+                && TryApplyUpdatesToEngineBlock(block, target, out var updatedBlock))
             {
-                changed |= SetOrReplaceAttribute(
-                    ref updatedAttrs,
-                    "EngineResponsiveness",
-                    FormatEngineResponsiveness(target.EngineResponsiveness));
+                builder.Append(updatedBlock);
+                localChanged++;
+            }
+            else
+            {
+                builder.Append(block);
             }
 
-            if (!changed)
-            {
-                return match.Value;
-            }
+            lastIndex = blockEnd;
+        }
 
-            localChanged++;
-            return $"<Engine{updatedAttrs}{self}>";
-        });
+        builder.Append(content, lastIndex, content.Length - lastIndex);
 
         if (localChanged == 0)
         {
             return false;
         }
 
-        updatedText = result;
+        updatedText = builder.ToString();
         changedEngines = localChanged;
         return true;
+    }
+
+    private static bool TryApplyUpdatesToEngineBlock(
+        string block,
+        EngineAttributeValues target,
+        out string updatedBlock)
+    {
+        updatedBlock = block;
+        var changed = false;
+
+        updatedBlock = EngineOpenTagRegex.Replace(updatedBlock, match =>
+        {
+            var attrs = match.Groups["attrs"].Value;
+            var self = match.Groups["self"].Value;
+            var updatedAttrs = attrs;
+            var localChanged = false;
+            localChanged |= SetOrReplaceAttribute(ref updatedAttrs, "Torque", FormatNumeric(target.Torque, preferInteger: true));
+            localChanged |= SetOrReplaceAttribute(ref updatedAttrs, "FuelConsumption", FormatNumeric(target.FuelConsumption, preferInteger: false));
+            localChanged |= SetOrReplaceAttribute(ref updatedAttrs, "DamageCapacity", FormatNumeric(target.DamageCapacity, preferInteger: true));
+
+            if (ShouldWriteEngineResponsiveness(target, updatedAttrs))
+            {
+                localChanged |= SetOrReplaceAttribute(
+                    ref updatedAttrs,
+                    "EngineResponsiveness",
+                    FormatEngineResponsiveness(target.EngineResponsiveness));
+            }
+
+            if (!localChanged)
+            {
+                return match.Value;
+            }
+
+            changed = true;
+            return $"<Engine{updatedAttrs}{self}>";
+        }, 1);
+
+        changed |= PartXmlHelpers.TrySetPrice(ref updatedBlock, target.Price);
+        return changed;
+    }
+
+    /// <summary>Test hook: apply named engine field updates (including Price) to XML text.</summary>
+    internal static string ApplyEngineUpdatesToTextForTests(
+        string content,
+        string engineName,
+        int price,
+        double torque,
+        double fuelConsumption,
+        double damageCapacity,
+        double engineResponsiveness,
+        bool hasEngineResponsiveness = true)
+    {
+        var updates = new Dictionary<string, EngineAttributeValues>(StringComparer.OrdinalIgnoreCase)
+        {
+            [engineName] = new EngineAttributeValues(
+                price,
+                torque,
+                fuelConsumption,
+                damageCapacity,
+                engineResponsiveness,
+                hasEngineResponsiveness),
+        };
+
+        return TryApplyEngineUpdatesToText(content, updates, out var updated, out _)
+            ? updated
+            : content;
     }
 
     private static bool ShouldWriteEngineResponsiveness(EngineAttributeValues target, string attrs) =>
@@ -470,7 +542,8 @@ public static class EngineService
                 continue;
             }
 
-            if (Math.Abs(existing.Torque - target.Torque) > 1e-6
+            if (existing.Price != target.Price
+                || Math.Abs(existing.Torque - target.Torque) > 1e-6
                 || Math.Abs(existing.FuelConsumption - target.FuelConsumption) > 1e-6
                 || Math.Abs(existing.DamageCapacity - target.DamageCapacity) > 1e-6
                 || Math.Abs(existing.EngineResponsiveness - target.EngineResponsiveness) > 1e-6)
@@ -620,6 +693,7 @@ public static class EngineService
 
 
     private readonly record struct EngineAttributeValues(
+        int Price,
         double Torque,
         double FuelConsumption,
         double DamageCapacity,

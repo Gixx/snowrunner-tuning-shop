@@ -224,6 +224,7 @@ public static class CraneService
                 target.SpeedOYWithLoad,
                 target.SpeedXZ,
                 target.SpeedXZWithLoad);
+            anyChanges |= SetCranePrice(document, target.Price);
 
             if (!anyChanges)
             {
@@ -443,6 +444,32 @@ public static class CraneService
         }
 
         return anyChanges;
+    }
+
+    private static bool SetCranePrice(XDocument document, int price)
+    {
+        var value = price.ToString(CultureInfo.InvariantCulture);
+        var gameData = document.Descendants()
+            .FirstOrDefault(node => node.Name.LocalName.Equals("GameData", StringComparison.OrdinalIgnoreCase));
+        if (gameData is null)
+        {
+            return false;
+        }
+
+        var attribute = gameData.Attribute("Price");
+        if (attribute is null)
+        {
+            gameData.SetAttributeValue("Price", value);
+            return true;
+        }
+
+        if (string.Equals(attribute.Value, value, StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        attribute.Value = value;
+        return true;
     }
 
     private static bool SetIkSpeeds(

@@ -290,6 +290,7 @@ public partial class CraneTuningView : UserControl
         private double _speedOYWithLoad;
         private double _speedXZ;
         private double _speedXZWithLoad;
+        private int _price;
 
         public required string EntryPath { get; init; }
         public required string Name { get; init; }
@@ -297,7 +298,22 @@ public partial class CraneTuningView : UserControl
         public required string SourceFile { get; init; }
         public required string Category { get; init; }
         public required string AddonType { get; init; }
-        public int Price { get; init; }
+
+        public int Price
+        {
+            get => _price;
+            set
+            {
+                if (_price == value)
+                {
+                    return;
+                }
+
+                _price = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Price)));
+            }
+        }
+
         public int ArmMotorCount { get; init; }
 
         public double AverageArmForce

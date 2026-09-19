@@ -275,6 +275,7 @@ public partial class GearboxTuningView : UserControl
 
     public sealed class GearboxRowViewModel : INotifyPropertyChanged
     {
+        private int _price;
         private double _fuelConsumption;
         private double _idleFuelModifier;
         private double? _awdConsumptionModifier;
@@ -288,7 +289,21 @@ public partial class GearboxTuningView : UserControl
         public required string UsedBy { get; init; }
         public required string UsedByTooltip { get; init; }
         public required string Category { get; init; }
-        public int Price { get; init; }
+
+        public int Price
+        {
+            get => _price;
+            set
+            {
+                if (_price == value)
+                {
+                    return;
+                }
+
+                _price = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Price)));
+            }
+        }
 
         public double FuelConsumption
         {

@@ -118,8 +118,11 @@
                                     ElementStyle="{StaticResource TuningGridTextElementStyle}"/>
                 <DataGridTextColumn Header="{x:Static loc:UiText+Crane.FileColumn}" Binding="{Binding Name}" Width="160" IsReadOnly="True"
                                     ElementStyle="{StaticResource TuningGridTextElementStyle}"/>
-                <DataGridTextColumn Header="{x:Static loc:UiText+Crane.PriceColumn}" Binding="{Binding Price}" Width="70" IsReadOnly="True"
-                                    ElementStyle="{StaticResource TuningGridTextElementStyle}"/>
+                <DataGridTextColumn Header="{x:Static loc:UiText+Crane.PriceColumn}"
+                                    Binding="{Binding Price, Converter={StaticResource InvariantIntConverter}, UpdateSourceTrigger=LostFocus}"
+                                    Width="70"
+                                    ElementStyle="{StaticResource TuningGridTextElementStyle}"
+                                    EditingElementStyle="{StaticResource TuningGridTextEditingStyle}"/>
                 <DataGridTextColumn Header="{x:Static loc:UiText+Crane.ArmForceColumn}"
                                     Binding="{Binding AverageArmForce, Converter={StaticResource InvariantDoubleConverter}, UpdateSourceTrigger=LostFocus}"
                                     Width="100"
