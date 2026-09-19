@@ -35,6 +35,12 @@
   <Application.Styles>
     <FluentTheme />
     <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
+    <!-- Make sort glyphs a bit clearer (Fluent already shows them when sorted). -->
+    <Style Selector="DataGridColumnHeader /template/ Path#SortIcon">
+      <Setter Property="Width" Value="10"/>
+      <Setter Property="Height" Value="10"/>
+      <Setter Property="Opacity" Value="0.9"/>
+    </Style>
     <Style Selector="RadioButton.nav">
       <Setter Property="Padding" Value="12,10"/>
       <Setter Property="Margin" Value="0,0,0,4"/>

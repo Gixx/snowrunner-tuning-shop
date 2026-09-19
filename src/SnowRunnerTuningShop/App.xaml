@@ -129,6 +129,20 @@
             <EventSetter Event="Loaded" Handler="TuningDataGrid_Loaded"/>
         </Style>
 
+        <Style x:Key="DataGridColumnHeaderGripperStyle" TargetType="Thumb">
+            <Setter Property="Width" Value="8"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Cursor" Value="SizeWE"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Thumb">
+                        <Border Background="{TemplateBinding Background}"
+                                Padding="{TemplateBinding Padding}"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <Style TargetType="DataGridColumnHeader">
             <Setter Property="Background" Value="{DynamicResource CardBackgroundFillColorSecondaryBrush}"/>
             <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}"/>
@@ -139,6 +153,62 @@
             <Setter Property="HorizontalContentAlignment" Value="Left"/>
             <Setter Property="TextBlock.TextTrimming" Value="None"/>
             <Setter Property="TextBlock.TextWrapping" Value="NoWrap"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="DataGridColumnHeader">
+                        <Grid Background="{TemplateBinding Background}">
+                            <Border BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    Padding="{TemplateBinding Padding}"
+                                    Background="Transparent">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <ContentPresenter VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                      SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                                      RecognizesAccessKey="True"/>
+                                    <TextBlock x:Name="SortAscendingMark"
+                                               Grid.Column="1"
+                                               Margin="6,0,0,0"
+                                               VerticalAlignment="Center"
+                                               FontSize="10"
+                                               Foreground="{TemplateBinding Foreground}"
+                                               Text="🞁"
+                                               Visibility="Collapsed"/>
+                                    <TextBlock x:Name="SortDescendingMark"
+                                               Grid.Column="1"
+                                               Margin="6,0,0,0"
+                                               VerticalAlignment="Center"
+                                               FontSize="10"
+                                               Foreground="{TemplateBinding Foreground}"
+                                               Text="🞃"
+                                               Visibility="Collapsed"/>
+                                </Grid>
+                            </Border>
+                            <Thumb x:Name="PART_LeftHeaderGripper"
+                                   HorizontalAlignment="Left"
+                                   Style="{StaticResource DataGridColumnHeaderGripperStyle}"/>
+                            <Thumb x:Name="PART_RightHeaderGripper"
+                                   HorizontalAlignment="Right"
+                                   Style="{StaticResource DataGridColumnHeaderGripperStyle}"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="SortDirection" Value="Ascending">
+                                <Setter TargetName="SortAscendingMark" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                            <Trigger Property="SortDirection" Value="Descending">
+                                <Setter TargetName="SortDescendingMark" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource SubtleFillColorSecondaryBrush}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
 
         <Style TargetType="DataGridRow">

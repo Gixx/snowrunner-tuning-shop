@@ -17,6 +17,15 @@ public static class EngineService
     /// <summary>Saber default when EngineResponsiveness is omitted from XML.</summary>
     public const double DefaultEngineResponsiveness = 0.04;
 
+    /// <summary>Saber min for MaxDeltaAngVel.</summary>
+    public const double MinMaxDeltaAngVel = 0;
+
+    /// <summary>
+    /// Practical editor max. Saber docs allow up to 1_000_000, but vanilla engines
+    /// are typically ~0.01–0.1; 10 leaves headroom without absurd values.
+    /// </summary>
+    public const double MaxMaxDeltaAngVel = 10;
+
     private static readonly string[] DamageAndResponsivenessTags =
     [
         "Engine",
@@ -136,7 +145,9 @@ public static class EngineService
                         engine.FuelConsumption,
                         engine.DamageCapacity,
                         engine.EngineResponsiveness,
-                        engine.HasEngineResponsiveness),
+                        engine.HasEngineResponsiveness,
+                        engine.MaxDeltaAngVel,
+                        engine.HasMaxDeltaAngVel),
                     StringComparer.OrdinalIgnoreCase);
 
                 if (!TryApplyEngineUpdatesToText(text, updates, out var updatedText, out var fileChanged))
@@ -229,6 +240,10 @@ public static class EngineService
                     ? ParseDouble(attrs["EngineResponsiveness"], DefaultEngineResponsiveness)
                     : DefaultEngineResponsiveness,
                 HasEngineResponsiveness = hasResponsiveness,
+                MaxDeltaAngVel = attrs.ContainsKey("MaxDeltaAngVel")
+                    ? ParseDouble(attrs["MaxDeltaAngVel"], 0)
+                    : null,
+                HasMaxDeltaAngVel = attrs.ContainsKey("MaxDeltaAngVel"),
             });
         }
 
@@ -475,6 +490,14 @@ public static class EngineService
             localChanged |= SetOrReplaceAttribute(ref updatedAttrs, "FuelConsumption", FormatNumeric(target.FuelConsumption, preferInteger: false));
             localChanged |= SetOrReplaceAttribute(ref updatedAttrs, "DamageCapacity", FormatNumeric(target.DamageCapacity, preferInteger: true));
 
+            if (ShouldWriteMaxDeltaAngVel(target, updatedAttrs))
+            {
+                localChanged |= SetOrReplaceAttribute(
+                    ref updatedAttrs,
+                    "MaxDeltaAngVel",
+                    FormatNumeric(ClampMaxDeltaAngVel(target.MaxDeltaAngVel ?? 0), preferInteger: false));
+            }
+
             if (ShouldWriteEngineResponsiveness(target, updatedAttrs))
             {
                 localChanged |= SetOrReplaceAttribute(
@@ -496,7 +519,7 @@ public static class EngineService
         return changed;
     }
 
-    /// <summary>Test hook: apply named engine field updates (including Price) to XML text.</summary>
+    /// <summary>Test hook: apply named engine field updates (including Price / MaxDeltaAngVel) to XML text.</summary>
     internal static string ApplyEngineUpdatesToTextForTests(
         string content,
         string engineName,
@@ -505,7 +528,8 @@ public static class EngineService
         double fuelConsumption,
         double damageCapacity,
         double engineResponsiveness,
-        bool hasEngineResponsiveness = true)
+        bool hasEngineResponsiveness = true,
+        double? maxDeltaAngVel = null)
     {
         var updates = new Dictionary<string, EngineAttributeValues>(StringComparer.OrdinalIgnoreCase)
         {
@@ -515,13 +539,21 @@ public static class EngineService
                 fuelConsumption,
                 damageCapacity,
                 engineResponsiveness,
-                hasEngineResponsiveness),
+                hasEngineResponsiveness,
+                maxDeltaAngVel,
+                HasMaxDeltaAngVel: maxDeltaAngVel.HasValue),
         };
 
         return TryApplyEngineUpdatesToText(content, updates, out var updated, out _)
             ? updated
             : content;
     }
+
+    private static double ClampMaxDeltaAngVel(double value) =>
+        Math.Clamp(value, MinMaxDeltaAngVel, MaxMaxDeltaAngVel);
+
+    private static bool ShouldWriteMaxDeltaAngVel(EngineAttributeValues target, string attrs) =>
+        target.MaxDeltaAngVel.HasValue;
 
     private static bool ShouldWriteEngineResponsiveness(EngineAttributeValues target, string attrs) =>
         target.HasEngineResponsiveness
@@ -546,13 +578,29 @@ public static class EngineService
                 || Math.Abs(existing.Torque - target.Torque) > 1e-6
                 || Math.Abs(existing.FuelConsumption - target.FuelConsumption) > 1e-6
                 || Math.Abs(existing.DamageCapacity - target.DamageCapacity) > 1e-6
-                || Math.Abs(existing.EngineResponsiveness - target.EngineResponsiveness) > 1e-6)
+                || Math.Abs(existing.EngineResponsiveness - target.EngineResponsiveness) > 1e-6
+                || !NullableDoubleEquals(existing.MaxDeltaAngVel, target.MaxDeltaAngVel))
             {
                 changed++;
             }
         }
 
         return changed;
+    }
+
+    private static bool NullableDoubleEquals(double? left, double? right)
+    {
+        if (left is null && right is null)
+        {
+            return true;
+        }
+
+        if (left is null || right is null)
+        {
+            return false;
+        }
+
+        return Math.Abs(left.Value - right.Value) <= 1e-9;
     }
 
     private static bool TryScaleAttribute(
@@ -698,7 +746,9 @@ public static class EngineService
         double FuelConsumption,
         double DamageCapacity,
         double EngineResponsiveness,
-        bool HasEngineResponsiveness);
+        bool HasEngineResponsiveness,
+        double? MaxDeltaAngVel,
+        bool HasMaxDeltaAngVel);
 }
 
 public sealed record EngineSaveResult(int UpdatedFiles, int ChangedEngines);

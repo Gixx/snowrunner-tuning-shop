@@ -1010,6 +1010,10 @@ public static class UiText
         public static string FuelColumn => StringResources.Get("Engine.FuelColumn", "Fuel");
         public static string DamageColumn => StringResources.Get("Engine.DamageColumn", "Damage");
         public static string ResponsivenessColumn => StringResources.Get("Engine.ResponsivenessColumn", "Responsiveness");
+        public static string MaxDeltaAngVelColumn => StringResources.Get("Engine.MaxDeltaAngVelColumn", "MaxΔAngVel*");
+        public static string MaxDeltaAngVelFootnote => StringResources.Get(
+            "Engine.MaxDeltaAngVelFootnote",
+            "* MaxDeltaAngVel = max wheel angular acceleration. Empty = attribute missing in XML (not the same as 0). Vanilla is typically ~0.01–0.1; this app clamps writes to 0–10. Smaller = slower acceleration; top speed is still limited by gearbox AngVel.");
         public static string NoData => StringResources.Get("Engine.NoData", "No engine data loaded.");
         public static string LoadPakFirst => StringResources.Get("Engine.LoadPakFirst", "Load an initial.pak file first.");
         public static string SaveSuccessTitle => StringResources.Get("Engine.SaveSuccessTitle", "Saved successfully");
@@ -1079,6 +1083,12 @@ public static class UiText
         public static string FuelColumn => StringResources.Get("Gearbox.FuelColumn", "Fuel");
         public static string IdleColumn => StringResources.Get("Gearbox.IdleColumn", "Idle");
         public static string AwdColumn => StringResources.Get("Gearbox.AwdColumn", "AWD");
+        public static string TopGearAngVelColumn => StringResources.Get("Gearbox.TopGearAngVelColumn", "Top Gear*");
+        public static string HighGearAngVelColumn => StringResources.Get("Gearbox.HighGearAngVelColumn", "High*");
+        public static string ReverseGearAngVelColumn => StringResources.Get("Gearbox.ReverseGearAngVelColumn", "Reverse*");
+        public static string AngVelFootnote => StringResources.Get(
+            "Gearbox.AngVelFootnote",
+            "* AngVel = max wheel angular speed in that mode (Saber range 0.1–32). Top Gear* is the highest Auto gear — editing it scales all Auto gears. High* is H, Reverse* is R. Engine acceleration limiter is MaxDeltaAngVel on the Engines page.");
         public static string NoData => StringResources.Get("Gearbox.NoData", "No gearbox data loaded.");
         public static string LoadPakFirst => StringResources.Get("Gearbox.LoadPakFirst", "Load an initial.pak file first.");
         public static string SaveSuccessTitle => StringResources.Get("Gearbox.SaveSuccessTitle", "Saved successfully");

@@ -12,6 +12,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <Expander Grid.Row="0"
@@ -150,7 +151,23 @@
                 <DataGridTextColumn Header="{x:Static loc:UiText+Gearbox.AwdColumn}" Binding="{Binding AwdConsumptionModifier, Converter={StaticResource InvariantDoubleConverter}, TargetNullValue='', UpdateSourceTrigger=LostFocus}" Width="100"
                                     ElementStyle="{StaticResource TuningGridTextElementStyle}"
                                     EditingElementStyle="{StaticResource TuningGridTextEditingStyle}"/>
+                <DataGridTextColumn Header="{x:Static loc:UiText+Gearbox.TopGearAngVelColumn}" Binding="{Binding MaxGearAngVel, Converter={StaticResource InvariantDoubleConverter}, TargetNullValue='', UpdateSourceTrigger=LostFocus}" Width="90"
+                                    ElementStyle="{StaticResource TuningGridTextElementStyle}"
+                                    EditingElementStyle="{StaticResource TuningGridTextEditingStyle}"/>
+                <DataGridTextColumn Header="{x:Static loc:UiText+Gearbox.HighGearAngVelColumn}" Binding="{Binding HighGearAngVel, Converter={StaticResource InvariantDoubleConverter}, TargetNullValue='', UpdateSourceTrigger=LostFocus}" Width="80"
+                                    ElementStyle="{StaticResource TuningGridTextElementStyle}"
+                                    EditingElementStyle="{StaticResource TuningGridTextEditingStyle}"/>
+                <DataGridTextColumn Header="{x:Static loc:UiText+Gearbox.ReverseGearAngVelColumn}" Binding="{Binding ReverseGearAngVel, Converter={StaticResource InvariantDoubleConverter}, TargetNullValue='', UpdateSourceTrigger=LostFocus}" Width="90"
+                                    ElementStyle="{StaticResource TuningGridTextElementStyle}"
+                                    EditingElementStyle="{StaticResource TuningGridTextEditingStyle}"/>
             </DataGrid.Columns>
         </DataGrid>
+
+        <TextBlock Grid.Row="3"
+                   Margin="0,8,0,0"
+                   TextWrapping="Wrap"
+                   FontSize="11"
+                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                   Text="{x:Static loc:UiText+Gearbox.AngVelFootnote}"/>
     </Grid>
 </UserControl>

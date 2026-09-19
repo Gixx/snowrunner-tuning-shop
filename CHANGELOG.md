@@ -13,6 +13,11 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ### Added
 - **Vehicles → Engine sets:** per-truck modal to assign/unassign existing `classes/engines` sets via `EngineSocket Type` (WPF + Avalonia), with name filter for engines/sets.
+- **Gearbox AngVel:** editable Top Gear* / High* / Reverse* columns (Saber range 0.1–32) with a footnote under the table.
+- **Engine MaxDeltaAngVel:** editable acceleration-limiter column; writes clamp to 0–10 (vanilla typically ~0.01–0.1). Empty cell means the attribute is missing in XML (not a literal 0).
+
+### Changed
+- **DataGrid sort headers:** show 🞁 / 🞃 on the active sorted column (WPF; Avalonia Fluent already indicates sort).
 
 ### Fixed
 - **Parts Price column:** Price is editable in Engine / Gearbox / Suspension / Tires / Winch / Crane tables and is written to `GameData Price` on save.

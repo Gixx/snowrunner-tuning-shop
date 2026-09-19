@@ -72,6 +72,7 @@ public partial class EngineTuningView : UserControl
         RestoreEnginesButton.Content = UiText.Engine.RestoreEnginesToBaseline;
         ReloadButton.Content = UiText.Engine.RefreshList;
         FilterTextBox.PlaceholderText = UiText.Engine.FilterPlaceholder;
+        MaxDeltaAngVelFootnoteText.Text = UiText.Engine.MaxDeltaAngVelFootnote;
         PartsTuningUiHelpers.SetColumnHeaders(
             EnginesGrid,
             UiText.Engine.CategoryColumn,
@@ -81,7 +82,8 @@ public partial class EngineTuningView : UserControl
             UiText.Engine.TorqueColumn,
             UiText.Engine.FuelColumn,
             UiText.Engine.DamageColumn,
-            UiText.Engine.ResponsivenessColumn);
+            UiText.Engine.ResponsivenessColumn,
+            UiText.Engine.MaxDeltaAngVelColumn);
     }
 
     private void ReloadButton_Click(object? sender, RoutedEventArgs e)
@@ -329,6 +331,8 @@ public partial class EngineTuningView : UserControl
         private double _damageCapacity;
         private double _engineResponsiveness;
         private bool _hasEngineResponsiveness;
+        private double? _maxDeltaAngVel;
+        private bool _hasMaxDeltaAngVel;
 
         public required string EntryPath { get; init; }
         public required string Name { get; init; }
@@ -396,6 +400,25 @@ public partial class EngineTuningView : UserControl
             }
         }
 
+        public double? MaxDeltaAngVel
+        {
+            get => _maxDeltaAngVel;
+            set
+            {
+                if (_maxDeltaAngVel == value
+                    || (_maxDeltaAngVel is double left
+                        && value is double right
+                        && Math.Abs(left - right) < 1e-9))
+                {
+                    return;
+                }
+
+                _maxDeltaAngVel = value;
+                _hasMaxDeltaAngVel = value.HasValue;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MaxDeltaAngVel)));
+            }
+        }
+
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public static EngineRowViewModel FromDefinition(EngineDefinition definition) =>
@@ -416,6 +439,8 @@ public partial class EngineTuningView : UserControl
                 DamageCapacity = definition.DamageCapacity,
                 _engineResponsiveness = definition.EngineResponsiveness,
                 _hasEngineResponsiveness = definition.HasEngineResponsiveness,
+                _maxDeltaAngVel = definition.MaxDeltaAngVel,
+                _hasMaxDeltaAngVel = definition.HasMaxDeltaAngVel,
             };
 
         public EngineDefinition ToDefinition() =>
@@ -437,6 +462,8 @@ public partial class EngineTuningView : UserControl
                 EngineResponsiveness = EngineResponsiveness,
                 HasEngineResponsiveness = _hasEngineResponsiveness
                     || Math.Abs(EngineResponsiveness - EngineService.DefaultEngineResponsiveness) > 1e-6,
+                MaxDeltaAngVel = MaxDeltaAngVel,
+                HasMaxDeltaAngVel = _hasMaxDeltaAngVel || MaxDeltaAngVel.HasValue,
             };
     }
 }

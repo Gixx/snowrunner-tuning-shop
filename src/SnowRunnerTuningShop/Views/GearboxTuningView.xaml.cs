@@ -279,6 +279,9 @@ public partial class GearboxTuningView : UserControl
         private double _fuelConsumption;
         private double _idleFuelModifier;
         private double? _awdConsumptionModifier;
+        private double? _maxGearAngVel;
+        private double? _highGearAngVel;
+        private double? _reverseGearAngVel;
 
         public required string EntryPath { get; init; }
         public required string Name { get; init; }
@@ -353,6 +356,60 @@ public partial class GearboxTuningView : UserControl
             }
         }
 
+        public double? MaxGearAngVel
+        {
+            get => _maxGearAngVel;
+            set
+            {
+                if (_maxGearAngVel == value
+                    || (_maxGearAngVel is double left
+                        && value is double right
+                        && Math.Abs(left - right) < 0.0001))
+                {
+                    return;
+                }
+
+                _maxGearAngVel = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MaxGearAngVel)));
+            }
+        }
+
+        public double? HighGearAngVel
+        {
+            get => _highGearAngVel;
+            set
+            {
+                if (_highGearAngVel == value
+                    || (_highGearAngVel is double left
+                        && value is double right
+                        && Math.Abs(left - right) < 0.0001))
+                {
+                    return;
+                }
+
+                _highGearAngVel = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HighGearAngVel)));
+            }
+        }
+
+        public double? ReverseGearAngVel
+        {
+            get => _reverseGearAngVel;
+            set
+            {
+                if (_reverseGearAngVel == value
+                    || (_reverseGearAngVel is double left
+                        && value is double right
+                        && Math.Abs(left - right) < 0.0001))
+                {
+                    return;
+                }
+
+                _reverseGearAngVel = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ReverseGearAngVel)));
+            }
+        }
+
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public static GearboxRowViewModel FromDefinition(GearboxDefinition definition) =>
@@ -371,6 +428,9 @@ public partial class GearboxTuningView : UserControl
                 FuelConsumption = definition.FuelConsumption,
                 IdleFuelModifier = definition.IdleFuelModifier,
                 AwdConsumptionModifier = definition.AwdConsumptionModifier,
+                MaxGearAngVel = definition.MaxGearAngVel,
+                HighGearAngVel = definition.HighGearAngVel,
+                ReverseGearAngVel = definition.ReverseGearAngVel,
             };
 
         public GearboxDefinition ToDefinition() =>
@@ -389,6 +449,9 @@ public partial class GearboxTuningView : UserControl
                 FuelConsumption = FuelConsumption,
                 IdleFuelModifier = IdleFuelModifier,
                 AwdConsumptionModifier = AwdConsumptionModifier,
+                MaxGearAngVel = MaxGearAngVel,
+                HighGearAngVel = HighGearAngVel,
+                ReverseGearAngVel = ReverseGearAngVel,
             };
     }
 }

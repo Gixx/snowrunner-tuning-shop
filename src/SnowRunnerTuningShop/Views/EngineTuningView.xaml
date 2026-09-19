@@ -12,6 +12,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <Expander Grid.Row="0"
@@ -172,7 +173,17 @@
                 <DataGridTextColumn Header="{x:Static loc:UiText+Engine.ResponsivenessColumn}" Binding="{Binding EngineResponsiveness, Converter={StaticResource InvariantDoubleConverter}, UpdateSourceTrigger=LostFocus}" Width="110"
                                     ElementStyle="{StaticResource TuningGridTextElementStyle}"
                                     EditingElementStyle="{StaticResource TuningGridTextEditingStyle}"/>
+                <DataGridTextColumn Header="{x:Static loc:UiText+Engine.MaxDeltaAngVelColumn}" Binding="{Binding MaxDeltaAngVel, Converter={StaticResource InvariantDoubleConverter}, TargetNullValue='', UpdateSourceTrigger=LostFocus}" Width="110"
+                                    ElementStyle="{StaticResource TuningGridTextElementStyle}"
+                                    EditingElementStyle="{StaticResource TuningGridTextEditingStyle}"/>
             </DataGrid.Columns>
         </DataGrid>
+
+        <TextBlock Grid.Row="3"
+                   Margin="0,8,0,0"
+                   TextWrapping="Wrap"
+                   FontSize="11"
+                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                   Text="{x:Static loc:UiText+Engine.MaxDeltaAngVelFootnote}"/>
     </Grid>
 </UserControl>

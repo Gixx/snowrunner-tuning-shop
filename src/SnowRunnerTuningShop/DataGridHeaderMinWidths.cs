@@ -12,6 +12,7 @@ namespace SnowRunnerTuningShop;
 internal static class DataGridHeaderMinWidths
 {
     private const double HeaderHorizontalPadding = 24; // matches DataGridColumnHeader Padding 12,8
+    private const double SortGlyphAllowance = 16;
     private const double ResizeGripAllowance = 14;
 
     public static void Apply(DataGrid dataGrid)
@@ -48,7 +49,10 @@ internal static class DataGridHeaderMinWidths
                 Brushes.Black,
                 pixelsPerDip);
 
-            var minWidth = Math.Ceiling(formatted.Width) + HeaderHorizontalPadding + ResizeGripAllowance;
+            var minWidth = Math.Ceiling(formatted.Width)
+                + HeaderHorizontalPadding
+                + SortGlyphAllowance
+                + ResizeGripAllowance;
             if (column.MinWidth < minWidth)
             {
                 column.MinWidth = minWidth;

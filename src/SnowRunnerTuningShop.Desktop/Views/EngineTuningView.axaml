@@ -1,7 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="SnowRunnerTuningShop.Desktop.Views.EngineTuningView">
-  <Grid RowDefinitions="Auto,Auto,*">
+  <Grid RowDefinitions="Auto,Auto,*,Auto">
     <Expander x:Name="MultipliersExpander"
               Grid.Row="0"
               IsExpanded="True"
@@ -76,7 +76,15 @@
         <DataGridTextColumn Binding="{Binding FuelConsumption}" Width="80"/>
         <DataGridTextColumn Binding="{Binding DamageCapacity}" Width="90"/>
         <DataGridTextColumn Binding="{Binding EngineResponsiveness}" Width="110"/>
+        <DataGridTextColumn Binding="{Binding MaxDeltaAngVel}" Width="110"/>
       </DataGrid.Columns>
     </DataGrid>
+
+    <TextBlock x:Name="MaxDeltaAngVelFootnoteText"
+               Grid.Row="3"
+               Margin="0,8,0,0"
+               TextWrapping="Wrap"
+               FontSize="11"
+               Foreground="{DynamicResource AppMutedBrush}"/>
   </Grid>
 </UserControl>

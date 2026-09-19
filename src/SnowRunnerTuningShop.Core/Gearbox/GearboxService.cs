@@ -14,9 +14,20 @@ namespace SnowRunnerTuningShop.Core.Gearbox;
 
 public static class GearboxService
 {
+    /// <summary>Saber min for Gear / HighGear / ReverseGear AngVel.</summary>
+    public const double MinAngVel = 0.1;
+
+    /// <summary>Saber max for Gear / HighGear / ReverseGear AngVel.</summary>
+    public const double MaxAngVel = 32.0;
+
     // Attrs must not accept '<' or the match can swallow the next tag (issue #6).
     private static readonly Regex GearboxOpenTagRegex = new(
         @"<Gearbox\b(?<attrs>[^<>/]*?)(?<self>/?)>",
+        RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+
+    // Longer names first; Gear\b still rejects Gearbox / GearboxParams.
+    private static readonly Regex GearSpeedTagRegex = new(
+        @"<(?<tag>HighGear|ReverseGear|Gear)\b(?<attrs>[^<>/]*?)(?<self>/?)>",
         RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
     private static readonly Regex AttributeRegex = new(
@@ -113,7 +124,10 @@ public static class GearboxService
                         gearbox.Price,
                         gearbox.FuelConsumption,
                         gearbox.IdleFuelModifier,
-                        gearbox.AwdConsumptionModifier),
+                        gearbox.AwdConsumptionModifier,
+                        gearbox.MaxGearAngVel,
+                        gearbox.HighGearAngVel,
+                        gearbox.ReverseGearAngVel),
                     StringComparer.OrdinalIgnoreCase);
 
                 if (!TryApplyUpdatesToText(text, updates, out var updatedText, out var fileChanged))
@@ -182,6 +196,7 @@ public static class GearboxService
             }
 
             var block = content[match.Index..blockEnd];
+            var (maxGearAngVel, highGearAngVel, reverseGearAngVel) = ExtractAngVels(block);
             gearboxes.Add(new GearboxDefinition
             {
                 EntryPath = entryPath,
@@ -202,10 +217,46 @@ public static class GearboxService
                 AwdConsumptionModifier = hasAwd
                     ? ParseDouble(attrs["AWDConsumptionModifier"], 0)
                     : null,
+                MaxGearAngVel = maxGearAngVel,
+                HighGearAngVel = highGearAngVel,
+                ReverseGearAngVel = reverseGearAngVel,
             });
         }
 
         return gearboxes;
+    }
+
+    private static (double? MaxGear, double? HighGear, double? ReverseGear) ExtractAngVels(string block)
+    {
+        double? maxGear = null;
+        double? highGear = null;
+        double? reverseGear = null;
+
+        foreach (Match match in GearSpeedTagRegex.Matches(block))
+        {
+            var attrs = ParseAttributes(match.Groups["attrs"].Value);
+            if (!attrs.TryGetValue("AngVel", out var raw) || string.IsNullOrWhiteSpace(raw))
+            {
+                continue;
+            }
+
+            var angVel = ParseDouble(raw, 0);
+            var tag = match.Groups["tag"].Value;
+            if (tag.Equals("Gear", StringComparison.OrdinalIgnoreCase))
+            {
+                maxGear = maxGear is null ? angVel : Math.Max(maxGear.Value, angVel);
+            }
+            else if (tag.Equals("HighGear", StringComparison.OrdinalIgnoreCase))
+            {
+                highGear = angVel;
+            }
+            else if (tag.Equals("ReverseGear", StringComparison.OrdinalIgnoreCase))
+            {
+                reverseGear = angVel;
+            }
+        }
+
+        return (maxGear, highGear, reverseGear);
     }
 
     private static Dictionary<string, IReadOnlyList<string>> BuildGearboxSetUsage(
@@ -463,7 +514,161 @@ public static class GearboxService
         }, 1);
 
         changed |= PartXmlHelpers.TrySetPrice(ref updatedBlock, target.Price);
+        changed |= TryApplyAngVelUpdates(ref updatedBlock, target);
         return changed;
+    }
+
+    private static bool TryApplyAngVelUpdates(ref string block, GearboxAttributeValues target)
+    {
+        var changed = false;
+        changed |= TryScaleGearAngVels(ref block, target.MaxGearAngVel);
+        changed |= TrySetSingleGearAngVel(ref block, "HighGear", target.HighGearAngVel);
+        changed |= TrySetSingleGearAngVel(ref block, "ReverseGear", target.ReverseGearAngVel);
+        return changed;
+    }
+
+    private static bool TryScaleGearAngVels(ref string block, double? targetMax)
+    {
+        if (targetMax is null)
+        {
+            return false;
+        }
+
+        var clampedTarget = ClampAngVel(targetMax.Value);
+        var gearMatches = new List<(Match Match, double AngVel)>();
+        foreach (Match match in GearSpeedTagRegex.Matches(block))
+        {
+            if (!match.Groups["tag"].Value.Equals("Gear", StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            var attrs = ParseAttributes(match.Groups["attrs"].Value);
+            if (!attrs.TryGetValue("AngVel", out var raw) || string.IsNullOrWhiteSpace(raw))
+            {
+                continue;
+            }
+
+            gearMatches.Add((match, ParseDouble(raw, 0)));
+        }
+
+        if (gearMatches.Count == 0)
+        {
+            return false;
+        }
+
+        var currentMax = gearMatches.Max(item => item.AngVel);
+        if (Math.Abs(currentMax - clampedTarget) <= 1e-6)
+        {
+            return false;
+        }
+
+        var scale = currentMax > 1e-9 ? clampedTarget / currentMax : 1.0;
+        var changed = false;
+        for (var i = gearMatches.Count - 1; i >= 0; i--)
+        {
+            var (match, angVel) = gearMatches[i];
+            var next = currentMax > 1e-9
+                ? ClampAngVel(angVel * scale)
+                : clampedTarget;
+            if (Math.Abs(next - angVel) <= 1e-6)
+            {
+                continue;
+            }
+
+            var attrs = match.Groups["attrs"].Value;
+            var self = match.Groups["self"].Value;
+            if (!SetOrReplaceAttribute(ref attrs, "AngVel", XmlNumericFormatting.Format(next)))
+            {
+                continue;
+            }
+
+            var replacement = $"<{match.Groups["tag"].Value}{attrs}{self}>";
+            block = string.Concat(
+                block.AsSpan(0, match.Index),
+                replacement,
+                block.AsSpan(match.Index + match.Length));
+            changed = true;
+        }
+
+        return changed;
+    }
+
+    private static bool TrySetSingleGearAngVel(ref string block, string tagName, double? targetAngVel)
+    {
+        if (targetAngVel is null)
+        {
+            return false;
+        }
+
+        var clamped = ClampAngVel(targetAngVel.Value);
+        Match? targetMatch = null;
+        foreach (Match match in GearSpeedTagRegex.Matches(block))
+        {
+            if (match.Groups["tag"].Value.Equals(tagName, StringComparison.OrdinalIgnoreCase))
+            {
+                targetMatch = match;
+                break;
+            }
+        }
+
+        if (targetMatch is null)
+        {
+            return false;
+        }
+
+        var attrs = targetMatch.Groups["attrs"].Value;
+        var self = targetMatch.Groups["self"].Value;
+        var parsed = ParseAttributes(attrs);
+        if (parsed.TryGetValue("AngVel", out var currentRaw)
+            && Math.Abs(ParseDouble(currentRaw, 0) - clamped) <= 1e-6)
+        {
+            return false;
+        }
+
+        if (!SetOrReplaceAttribute(ref attrs, "AngVel", XmlNumericFormatting.Format(clamped)))
+        {
+            return false;
+        }
+
+        var replacement = $"<{targetMatch.Groups["tag"].Value}{attrs}{self}>";
+        block = string.Concat(
+            block.AsSpan(0, targetMatch.Index),
+            replacement,
+            block.AsSpan(targetMatch.Index + targetMatch.Length));
+        return true;
+    }
+
+    private static double ClampAngVel(double value) =>
+        Math.Clamp(value, MinAngVel, MaxAngVel);
+
+    /// <summary>Test hook: apply gearbox field updates (including AngVel) to XML text.</summary>
+    internal static string ApplyGearboxUpdatesToTextForTests(
+        string content,
+        string gearboxName,
+        int price,
+        double fuelConsumption,
+        double idleFuelModifier,
+        double? awdConsumptionModifier,
+        double? maxGearAngVel,
+        double? highGearAngVel,
+        double? reverseGearAngVel)
+    {
+        var updates = new Dictionary<string, GearboxAttributeValues>(StringComparer.OrdinalIgnoreCase)
+        {
+            [gearboxName] = new GearboxAttributeValues(
+                price,
+                fuelConsumption,
+                idleFuelModifier,
+                awdConsumptionModifier,
+                maxGearAngVel,
+                highGearAngVel,
+                reverseGearAngVel),
+        };
+
+        return TryApplyUpdatesToText(content, updates, out var updated, out _)
+            ? updated
+            : content;
     }
 
     private static int CountNamedDifferences(string currentText, string updatedText)
@@ -483,7 +688,10 @@ public static class GearboxService
             if (existing.Price != target.Price
                 || Math.Abs(existing.FuelConsumption - target.FuelConsumption) > 1e-6
                 || Math.Abs(existing.IdleFuelModifier - target.IdleFuelModifier) > 1e-6
-                || !NullableDoubleEquals(existing.AwdConsumptionModifier, target.AwdConsumptionModifier))
+                || !NullableDoubleEquals(existing.AwdConsumptionModifier, target.AwdConsumptionModifier)
+                || !NullableDoubleEquals(existing.MaxGearAngVel, target.MaxGearAngVel)
+                || !NullableDoubleEquals(existing.HighGearAngVel, target.HighGearAngVel)
+                || !NullableDoubleEquals(existing.ReverseGearAngVel, target.ReverseGearAngVel))
             {
                 changed++;
             }
@@ -612,7 +820,10 @@ public static class GearboxService
         int Price,
         double FuelConsumption,
         double IdleFuelModifier,
-        double? AwdConsumptionModifier);
+        double? AwdConsumptionModifier,
+        double? MaxGearAngVel,
+        double? HighGearAngVel,
+        double? ReverseGearAngVel);
 
     private static bool NullableDoubleEquals(double? left, double? right)
     {
