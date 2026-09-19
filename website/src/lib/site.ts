@@ -2,8 +2,8 @@
 export const SITE_URL = "https://gixx.github.io/snowrunner-tuning-shop/";
 export const SITE_NAME = "SnowRunner Tuning Shop";
 /** Latest Stable-channel release (full SemVer). */
-export const APP_VERSION_STABLE = "1.3.5";
-/** Latest Beta-channel release (numbered prerelease). Keep in sync with `AppInfo.Version` while shipping betas. */
+export const APP_VERSION_STABLE = "1.4.0";
+/** Latest Beta-channel release (numbered prerelease). */
 export const APP_VERSION_BETA = "1.4.0-beta.3";
 export const SITE_TITLE = "SnowRunner Tuning Shop — Tune the Game's Default Settings";
 export const SITE_DESCRIPTION =

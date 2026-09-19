@@ -10,6 +10,11 @@ import {
   ShieldCheck,
   Layers,
   ArrowRight,
+  MonitorSmartphone,
+  Volume2,
+  Wrench,
+  GaugeCircle,
+  Tag,
 } from "lucide-react";
 
 import { Snowfall } from "@/components/Snowfall";
@@ -22,7 +27,6 @@ import shotVehicles from "@/assets/shot-vehicles.png";
 import shotVehicle from "@/assets/shot-vehicle.png";
 import shotTrailers from "@/assets/shot-trailers.png";
 import shotTrailer from "@/assets/shot-trailer.png";
-import shotPhotoMode from "@/assets/shot-photo-mode.png";
 import shotSettings from "@/assets/shot-settings.png";
 import shotHomeLinux from "@/assets/shot-home-linux.png";
 import shotGeneralLinux from "@/assets/shot-general-linux.png";
@@ -61,9 +65,14 @@ const badges = [
     alt: "WPF on .NET",
   },
   {
+    href: "https://avaloniaui.net/",
+    src: "https://img.shields.io/badge/Avalonia-.NET-8B44FF?style=flat-square&logo=avalonia&logoColor=white",
+    alt: "Avalonia on .NET",
+  },
+  {
     href: RELEASE_LATEST_URL,
-    src: "https://img.shields.io/badge/platform-Windows-0078D4?style=flat-square&logo=windows&logoColor=white",
-    alt: "Windows",
+    src: "https://img.shields.io/badge/platform-Windows%2FLinux-0078D4?style=flat-square&logo=windows&logoColor=white",
+    alt: "Windows/Linux",
   },
   {
     href: RELEASE_LATEST_URL,
@@ -104,6 +113,34 @@ export const Route = createFileRoute("/")({
   }),
   component: Index,
 });
+
+const whatsNew = [
+  {
+    icon: MonitorSmartphone,
+    title: "Linux joins the garage",
+    body: "The full Tuning Shop now ships for Linux too — same workflows, same restore safety net, ready for Steam Deck and desktop installs.",
+  },
+  {
+    icon: Volume2,
+    title: "Sounds that match the truck",
+    body: "Give any vehicle a different engine growl or horn, then preview idle, high revs, and the honk before you commit.",
+  },
+  {
+    icon: Wrench,
+    title: "Engines you actually want",
+    body: "Pick which engine packs each truck can unlock in the garage. No more being stuck with the factory shortlist.",
+  },
+  {
+    icon: GaugeCircle,
+    title: "Speed you can feel",
+    body: "Tune how hard gears pull and how eagerly the engine climbs — top gear, high, reverse, and acceleration response in plain language.",
+  },
+  {
+    icon: Tag,
+    title: "Price & toughness, everywhere",
+    body: "Store prices and durability sit side by side for engines, gearboxes, suspensions, and tires — edit one row or scale a whole class.",
+  },
+];
 
 const features = [
   {
@@ -180,11 +217,6 @@ const windowsShots: GalleryShot[] = [
     src: shotVehicle,
     alt: "Vehicle tuning panel for the Futom 7290RA with fuel tank, steering and store settings",
     label: "Vehicle tuning",
-  },
-  {
-    src: shotPhotoMode,
-    alt: "Photo Mode defaults with weather, color grading, vignette and film grain",
-    label: "Photo Mode defaults",
   },
   {
     src: shotSettings,
@@ -292,6 +324,31 @@ function PlatformShowcase({
       </section>
 
       <section className="mx-auto max-w-6xl px-6 py-24">
+        <Reveal>
+          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.28em] text-primary">
+            Version {APP_VERSION_STABLE}
+          </p>
+          <h2 className="font-display text-5xl tracking-tight md:text-6xl">
+            WHAT&apos;S NEW IN VERSION {APP_VERSION_STABLE}
+          </h2>
+          <p className="mt-4 max-w-2xl text-muted-foreground">
+            A bigger shop: more platforms, more control over how trucks sound and pull — without opening a single XML file.
+          </p>
+        </Reveal>
+        <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {whatsNew.map((item, i) => (
+            <Reveal key={item.title} delay={(i % 3) * 100}>
+              <article className="group h-full rounded-md border border-border bg-card/60 p-7 transition-colors duration-300 hover:border-primary/60 hover:bg-card">
+                <item.icon className="size-7 text-ice transition-colors group-hover:text-primary" aria-hidden />
+                <h3 className="mt-5 font-display text-2xl tracking-wide">{item.title}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{item.body}</p>
+              </article>
+            </Reveal>
+          ))}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-6 pb-24">
         <Reveal>
           <h2 className="font-display text-5xl tracking-tight md:text-6xl">WHAT YOU CAN TUNE</h2>
           <p className="mt-4 max-w-2xl text-muted-foreground">

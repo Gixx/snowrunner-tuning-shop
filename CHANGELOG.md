@@ -11,6 +11,10 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ## [Unreleased]
 
+---
+
+## [1.4.0] — 2026-09-19
+
 ### Added
 - **Vehicle horn / engine sounds:** detail page dropdowns under Engine sets to assign `<Honk>` and Engine* banks by sound set id (e.g. `ford_f750`); Save changes writes them. Preview play/stop when `shared_sound.pak` is beside `initial.pak` (horn + idle + high).
 - **Vehicles → Engine sets:** per-truck modal to assign/unassign existing `classes/engines` sets via `EngineSocket Type` (WPF + Avalonia), with name filter for engines/sets.
@@ -369,7 +373,8 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ---
 
-[Unreleased]: https://github.com/Gixx/snowrunner-tuning-shop/compare/v1.4.0-beta.3...HEAD
+[Unreleased]: https://github.com/Gixx/snowrunner-tuning-shop/compare/v1.4.0...HEAD
+[1.4.0]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.4.0
 [1.4.0-beta.3]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.4.0-beta.3
 [1.4.0-beta.2]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.4.0-beta.2
 [1.4.0-beta.1]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.4.0-beta.1
