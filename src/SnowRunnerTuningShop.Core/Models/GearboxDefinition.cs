@@ -14,6 +14,7 @@ public sealed class GearboxDefinition
     public string UsedByTooltip { get; init; } = "";
     public required string Category { get; init; }
     public int Price { get; init; }
+    public double DamageCapacity { get; set; }
     public double FuelConsumption { get; set; }
     public double IdleFuelModifier { get; set; }
     /// <summary>Null when AWDConsumptionModifier is absent in XML.</summary>

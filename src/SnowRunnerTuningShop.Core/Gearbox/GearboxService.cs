@@ -122,6 +122,7 @@ public static class GearboxService
                     gearbox => gearbox.Name,
                     gearbox => new GearboxAttributeValues(
                         gearbox.Price,
+                        gearbox.DamageCapacity,
                         gearbox.FuelConsumption,
                         gearbox.IdleFuelModifier,
                         gearbox.AwdConsumptionModifier,
@@ -212,6 +213,7 @@ public static class GearboxService
                 UsedByTooltip = FormatUsedByTooltip(usedByNames),
                 Category = InferCategory(entryPath),
                 Price = PartXmlHelpers.ExtractPrice(block),
+                DamageCapacity = ParseDouble(attrs.GetValueOrDefault("DamageCapacity"), 0),
                 FuelConsumption = ParseDouble(attrs.GetValueOrDefault("FuelConsumption"), 0),
                 IdleFuelModifier = ParseDouble(attrs.GetValueOrDefault("IdleFuelModifier"), 0),
                 AwdConsumptionModifier = hasAwd
@@ -493,6 +495,7 @@ public static class GearboxService
             var self = match.Groups["self"].Value;
             var updatedAttrs = attrs;
             var localChanged = false;
+            localChanged |= SetOrReplaceAttribute(ref updatedAttrs, "DamageCapacity", XmlNumericFormatting.Format(target.DamageCapacity));
             localChanged |= SetOrReplaceAttribute(ref updatedAttrs, "FuelConsumption", XmlNumericFormatting.Format(target.FuelConsumption));
             localChanged |= SetOrReplaceAttribute(ref updatedAttrs, "IdleFuelModifier", XmlNumericFormatting.Format(target.IdleFuelModifier));
 
@@ -652,12 +655,14 @@ public static class GearboxService
         double? awdConsumptionModifier,
         double? maxGearAngVel,
         double? highGearAngVel,
-        double? reverseGearAngVel)
+        double? reverseGearAngVel,
+        double damageCapacity = 0)
     {
         var updates = new Dictionary<string, GearboxAttributeValues>(StringComparer.OrdinalIgnoreCase)
         {
             [gearboxName] = new GearboxAttributeValues(
                 price,
+                damageCapacity,
                 fuelConsumption,
                 idleFuelModifier,
                 awdConsumptionModifier,
@@ -686,6 +691,7 @@ public static class GearboxService
             }
 
             if (existing.Price != target.Price
+                || Math.Abs(existing.DamageCapacity - target.DamageCapacity) > 1e-6
                 || Math.Abs(existing.FuelConsumption - target.FuelConsumption) > 1e-6
                 || Math.Abs(existing.IdleFuelModifier - target.IdleFuelModifier) > 1e-6
                 || !NullableDoubleEquals(existing.AwdConsumptionModifier, target.AwdConsumptionModifier)
@@ -818,6 +824,7 @@ public static class GearboxService
 
     private readonly record struct GearboxAttributeValues(
         int Price,
+        double DamageCapacity,
         double FuelConsumption,
         double IdleFuelModifier,
         double? AwdConsumptionModifier,

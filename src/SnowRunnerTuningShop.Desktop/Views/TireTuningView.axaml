@@ -70,6 +70,7 @@
         <DataGridTextColumn Binding="{Binding DisplayName}" Width="160" IsReadOnly="True"/>
         <DataGridTextColumn Binding="{Binding UsedBy}" Width="200" MinWidth="120" IsReadOnly="True"/>
         <DataGridTextColumn Binding="{Binding Price}" Width="80"/>
+        <DataGridTextColumn Binding="{Binding DamageCapacity}" Width="90"/>
         <DataGridTextColumn Binding="{Binding OnRoadFriction}" Width="90"/>
         <DataGridTextColumn Binding="{Binding OffRoadFriction}" Width="90"/>
         <DataGridTextColumn Binding="{Binding MudFriction}" Width="80"/>

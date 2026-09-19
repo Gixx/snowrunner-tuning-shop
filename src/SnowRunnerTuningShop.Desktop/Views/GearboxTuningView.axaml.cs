@@ -79,6 +79,7 @@ public partial class GearboxTuningView : UserControl
             UiText.Gearbox.NameColumn,
             UiText.Gearbox.UsedByColumn,
             UiText.Gearbox.PriceColumn,
+            UiText.Gearbox.DamageColumn,
             UiText.Gearbox.FuelColumn,
             UiText.Gearbox.IdleColumn,
             UiText.Gearbox.AwdColumn,
@@ -319,6 +320,7 @@ public partial class GearboxTuningView : UserControl
     public sealed class GearboxRowViewModel : INotifyPropertyChanged
     {
         private int _price;
+        private double _damageCapacity;
         private double _fuelConsumption;
         private double _idleFuelModifier;
         private double? _awdConsumptionModifier;
@@ -344,6 +346,17 @@ public partial class GearboxTuningView : UserControl
                 if (_price == value) return;
                 _price = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Price)));
+            }
+        }
+
+        public double DamageCapacity
+        {
+            get => _damageCapacity;
+            set
+            {
+                if (Math.Abs(_damageCapacity - value) < 0.0001) return;
+                _damageCapacity = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(DamageCapacity)));
             }
         }
 
@@ -456,6 +469,7 @@ public partial class GearboxTuningView : UserControl
                 UsedByTooltip = definition.UsedByTooltip,
                 Category = definition.Category,
                 Price = definition.Price,
+                DamageCapacity = definition.DamageCapacity,
                 FuelConsumption = definition.FuelConsumption,
                 IdleFuelModifier = definition.IdleFuelModifier,
                 AwdConsumptionModifier = definition.AwdConsumptionModifier,
@@ -477,6 +491,7 @@ public partial class GearboxTuningView : UserControl
                 UsedByTooltip = UsedByTooltip,
                 Category = Category,
                 Price = Price,
+                DamageCapacity = DamageCapacity,
                 FuelConsumption = FuelConsumption,
                 IdleFuelModifier = IdleFuelModifier,
                 AwdConsumptionModifier = AwdConsumptionModifier,

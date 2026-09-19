@@ -372,6 +372,8 @@ public static class TruckTuningService
             ? TruckDiffLockXml.HasNativeDiffLockInfrastructure(baselineArchive!, baselineText, truckId)
             : TruckDiffLockXml.HasNativeDiffLockInfrastructure(archive, text, truckId);
 
+        var sounds = TruckSoundsService.ReadAssignment(text);
+
         truck = new TruckTuningDefinition
         {
             EntryPath = entryPath,
@@ -402,6 +404,8 @@ public static class TruckTuningService
             BaselineRearSteerAngle = baselineSteer.Rear,
             HasFrontSteer = hasFrontSteer,
             HasRearSteer = hasRearSteer,
+            HornSoundSetId = sounds.HornSoundSetId,
+            EngineSoundSetId = sounds.EngineSoundSetId,
         };
         return true;
     }
@@ -418,6 +422,16 @@ public static class TruckTuningService
         updated = ApplySteering(updated, truck);
         updated = TruckDiffLockXml.ApplyDiffLock(archive, updated, truck);
         updated = ApplyDriveLayout(updated, truck.DriveLayout);
+        if (!string.IsNullOrWhiteSpace(truck.HornSoundSetId) || !string.IsNullOrWhiteSpace(truck.EngineSoundSetId))
+        {
+            var catalog = TruckSoundsService.LoadCatalogFromArchive(archive);
+            updated = TruckSoundsService.ApplyAssignment(
+                updated,
+                catalog,
+                truck.HornSoundSetId,
+                truck.EngineSoundSetId);
+        }
+
         return updated;
     }
 

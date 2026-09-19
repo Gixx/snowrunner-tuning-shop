@@ -149,6 +149,9 @@
                 <DataGridTextColumn Header="{x:Static loc:UiText+Tires.PriceColumn}" Binding="{Binding Price, Converter={StaticResource InvariantIntConverter}, UpdateSourceTrigger=LostFocus}" Width="80"
                                     ElementStyle="{StaticResource TuningGridTextElementStyle}"
                                     EditingElementStyle="{StaticResource TuningGridTextEditingStyle}"/>
+                <DataGridTextColumn Header="{x:Static loc:UiText+Tires.DamageColumn}" Binding="{Binding DamageCapacity, Converter={StaticResource InvariantDoubleConverter}, UpdateSourceTrigger=LostFocus}" Width="90"
+                                    ElementStyle="{StaticResource TuningGridTextElementStyle}"
+                                    EditingElementStyle="{StaticResource TuningGridTextEditingStyle}"/>
                 <DataGridTextColumn Header="{x:Static loc:UiText+Tires.OnRoadFrictionColumn}" Binding="{Binding OnRoadFriction, Converter={StaticResource InvariantDoubleConverter}, UpdateSourceTrigger=LostFocus}" Width="90"
                                     ElementStyle="{StaticResource TuningGridTextElementStyle}"
                                     EditingElementStyle="{StaticResource TuningGridTextEditingStyle}"/>

@@ -80,6 +80,7 @@ public partial class TireTuningView : UserControl
             UiText.Tires.NameColumn,
             UiText.Tires.UsedByColumn,
             UiText.Tires.PriceColumn,
+            UiText.Tires.DamageColumn,
             UiText.Tires.OnRoadFrictionColumn,
             UiText.Tires.OffRoadFrictionColumn,
             UiText.Tires.MudFrictionColumn,
@@ -364,6 +365,7 @@ public partial class TireTuningView : UserControl
     public sealed class TireRowViewModel : INotifyPropertyChanged
     {
         private int _price;
+        private double _damageCapacity;
         private double _onRoadFriction;
         private double _offRoadFriction;
         private double _mudFriction;
@@ -387,6 +389,17 @@ public partial class TireTuningView : UserControl
                 if (_price == value) return;
                 _price = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Price)));
+            }
+        }
+
+        public double DamageCapacity
+        {
+            get => _damageCapacity;
+            set
+            {
+                if (Math.Abs(_damageCapacity - value) < 0.0001) return;
+                _damageCapacity = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(DamageCapacity)));
             }
         }
 
@@ -452,6 +465,7 @@ public partial class TireTuningView : UserControl
                 UsedByTooltip = definition.UsedByTooltip,
                 Category = definition.Category,
                 Price = definition.Price,
+                DamageCapacity = definition.DamageCapacity,
                 FrictionTemplate = definition.FrictionTemplate,
                 OnRoadFriction = definition.OnRoadFriction,
                 OffRoadFriction = definition.OffRoadFriction,
@@ -465,6 +479,7 @@ public partial class TireTuningView : UserControl
                 definition.Category,
                 definition.DisplayName,
                 definition.Price,
+                definition.DamageCapacity,
                 definition.OnRoadFriction,
                 definition.OffRoadFriction,
                 definition.MudFriction,
@@ -490,6 +505,7 @@ public partial class TireTuningView : UserControl
                     UsedByTooltip = UsedByTooltip,
                     Category = Category,
                     Price = Price,
+                    DamageCapacity = DamageCapacity,
                     FrictionTemplate = instance.FrictionTemplate,
                     OnRoadFriction = OnRoadFriction,
                     OffRoadFriction = OffRoadFriction,
@@ -504,6 +520,7 @@ public partial class TireTuningView : UserControl
         string Category,
         string DisplayName,
         int Price,
+        double DamageCapacity,
         double OnRoadFriction,
         double OffRoadFriction,
         double MudFriction,

@@ -498,6 +498,22 @@ public static class UiText
         public static string EngineSetsSavedStatus => StringResources.Get(
             "Vehicles.EngineSetsSavedStatus",
             "Engine sets updated for this vehicle.");
+        public static string HornSoundLabel => StringResources.Get("Vehicles.HornSoundLabel", "Horn sound");
+        public static string HornSoundHint => StringResources.Get(
+            "Vehicles.HornSoundHint",
+            "Sets the truck <Honk> bank (shared_sound.pak). Saved with Save changes.");
+        public static string EngineSoundLabel => StringResources.Get("Vehicles.EngineSoundLabel", "Engine sound");
+        public static string EngineSoundHint => StringResources.Get(
+            "Vehicles.EngineSoundHint",
+            "Sets Engine* banks under <Sounds> (idle/high/start/…). Tag coverage follows the donor set. Saved with Save changes.");
+        public static string SoundPlay => StringResources.Get("Vehicles.SoundPlay", "▶");
+        public static string SoundStop => StringResources.Get("Vehicles.SoundStop", "■");
+        public static string SoundPlayHornTooltip => StringResources.Get("Vehicles.SoundPlayHornTooltip", "Play / stop horn");
+        public static string SoundPlayIdleTooltip => StringResources.Get("Vehicles.SoundPlayIdleTooltip", "Play / stop engine idle");
+        public static string SoundPlayHighTooltip => StringResources.Get("Vehicles.SoundPlayHighTooltip", "Play / stop engine high");
+        public static string SoundPreviewUnavailable => StringResources.Get(
+            "Vehicles.SoundPreviewUnavailable",
+            "Preview needs shared_sound.pak next to initial.pak.");
         public static string SaveChanges => StringResources.Get("Vehicles.SaveChanges", "Save changes");
         public static string RestoreThisVehicle => StringResources.Get("Vehicles.RestoreThisVehicle", "Restore this vehicle to baseline");
         public static string RestoreAllVehicles => StringResources.Get("Vehicles.RestoreAllVehicles", "Restore all vehicles to baseline");
@@ -1080,6 +1096,7 @@ public static class UiText
         public static string NameColumn => StringResources.Get("Gearbox.NameColumn", "Name");
         public static string UsedByColumn => StringResources.Get("Gearbox.UsedByColumn", "Used by");
         public static string PriceColumn => StringResources.Get("Gearbox.PriceColumn", "Price");
+        public static string DamageColumn => StringResources.Get("Gearbox.DamageColumn", "Damage");
         public static string FuelColumn => StringResources.Get("Gearbox.FuelColumn", "Fuel");
         public static string IdleColumn => StringResources.Get("Gearbox.IdleColumn", "Idle");
         public static string AwdColumn => StringResources.Get("Gearbox.AwdColumn", "AWD");
@@ -1216,6 +1233,7 @@ public static class UiText
         public static string NameColumn => StringResources.Get("Tires.NameColumn", "Name");
         public static string UsedByColumn => StringResources.Get("Tires.UsedByColumn", "Used by");
         public static string PriceColumn => StringResources.Get("Tires.PriceColumn", "Price");
+        public static string DamageColumn => StringResources.Get("Tires.DamageColumn", "Damage");
         public static string OnRoadFrictionColumn => StringResources.Get("Tires.OnRoadFrictionColumn", "On-road");
         public static string OffRoadFrictionColumn => StringResources.Get("Tires.OffRoadFrictionColumn", "Off-road");
         public static string MudFrictionColumn => StringResources.Get("Tires.MudFrictionColumn", "Mud");

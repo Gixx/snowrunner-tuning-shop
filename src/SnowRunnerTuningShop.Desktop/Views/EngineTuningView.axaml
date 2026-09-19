@@ -72,9 +72,9 @@
         <DataGridTextColumn Binding="{Binding DisplayName}" Width="180" IsReadOnly="True"/>
         <DataGridTextColumn Binding="{Binding UsedBy}" Width="200" MinWidth="120" IsReadOnly="True"/>
         <DataGridTextColumn Binding="{Binding Price}" Width="80"/>
+        <DataGridTextColumn Binding="{Binding DamageCapacity}" Width="90"/>
         <DataGridTextColumn Binding="{Binding Torque}" Width="100"/>
         <DataGridTextColumn Binding="{Binding FuelConsumption}" Width="80"/>
-        <DataGridTextColumn Binding="{Binding DamageCapacity}" Width="90"/>
         <DataGridTextColumn Binding="{Binding EngineResponsiveness}" Width="110"/>
         <DataGridTextColumn Binding="{Binding MaxDeltaAngVel}" Width="110"/>
       </DataGrid.Columns>

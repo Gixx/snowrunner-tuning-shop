@@ -9,6 +9,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
+using SnowRunnerTuningShop.Audio;
 using SnowRunnerTuningShop.Controls;
 using SnowRunnerTuningShop.Core.Backup;
 using SnowRunnerTuningShop.Core.Diagnostics;
@@ -38,12 +39,18 @@ public partial class VehiclesView : UserControl
     private int _loadVersion;
     private CancellationTokenSource? _loadCts;
     private Storyboard? _spinnerStoryboard;
+    private TruckSoundCatalog? _soundCatalog;
+    private string? _soundCatalogPakPath;
+    private readonly TruckSoundPreviewPlayer _soundPreview = new();
+    private bool _suppressSoundComboSync;
 
     public VehiclesView()
     {
         InitializeComponent();
         VehiclesItems.ItemsSource = _visible;
         Loaded += VehiclesView_Loaded;
+        Unloaded += (_, _) => _soundPreview.Dispose();
+        _soundPreview.PlayingChanged += (_, _) => Dispatcher.Invoke(RefreshSoundPlayButtons);
 
         DiffLockCombo.DisplayMemberPath = nameof(LabeledValue<TruckDiffLockMode>.Label);
         DiffLockCombo.SelectedValuePath = nameof(LabeledValue<TruckDiffLockMode>.Value);
@@ -56,6 +63,10 @@ public partial class VehiclesView : UserControl
             new(UiText.Vehicles.DriveAlwaysAwd, TruckDriveLayout.AlwaysAwd),
             new(UiText.Vehicles.DriveSelectableAwd, TruckDriveLayout.SelectableAwd),
         };
+
+        HornSoundPlayButton.Content = UiText.Vehicles.SoundPlay;
+        EngineIdlePlayButton.Content = UiText.Vehicles.SoundPlay;
+        EngineHighPlayButton.Content = UiText.Vehicles.SoundPlay;
     }
 
     public void AttachSession(AppSession session)
@@ -93,6 +104,9 @@ public partial class VehiclesView : UserControl
     {
         _trucks = [];
         _trucksPakPath = null;
+        _soundCatalog = null;
+        _soundCatalogPakPath = null;
+        _soundPreview.Stop();
         RefreshGlobalMultipliersPanel();
         if (_currentCard is not null && DetailPanel.Visibility == Visibility.Visible)
         {
@@ -669,6 +683,7 @@ public partial class VehiclesView : UserControl
             BindDiffLockOptions(truck);
             DriveCombo.SelectedValue = truck.DriveLayout;
             RefreshEngineSetsButton(truck);
+            await BindSoundCombosAsync(truck);
             RefreshSafeRangeHints();
             TuningHintText.Visibility = Visibility.Collapsed;
             TuningForm.Visibility = Visibility.Visible;
@@ -681,6 +696,104 @@ public partial class VehiclesView : UserControl
                 SetLoading(false);
             }
         }
+    }
+
+    private async Task BindSoundCombosAsync(TruckTuningDefinition truck)
+    {
+        if (string.IsNullOrWhiteSpace(_session?.PakPath))
+        {
+            return;
+        }
+
+        var pakPath = _session.PakPath;
+        if (!string.Equals(_soundCatalogPakPath, pakPath, StringComparison.OrdinalIgnoreCase) || _soundCatalog is null)
+        {
+            _soundCatalog = await Task.Run(() => TruckSoundsService.LoadCatalog(pakPath));
+            _soundCatalogPakPath = pakPath;
+        }
+
+        var canPreview = TruckSoundsService.CanPreviewSounds(pakPath);
+        HornSoundPlayButton.Visibility = canPreview ? Visibility.Visible : Visibility.Collapsed;
+        EngineIdlePlayButton.Visibility = canPreview ? Visibility.Visible : Visibility.Collapsed;
+        EngineHighPlayButton.Visibility = canPreview ? Visibility.Visible : Visibility.Collapsed;
+
+        _suppressSoundComboSync = true;
+        try
+        {
+            HornSoundCombo.ItemsSource = _soundCatalog.HornSetIds.ToArray();
+            EngineSoundCombo.ItemsSource = _soundCatalog.EngineSetIds.ToArray();
+            HornSoundCombo.SelectedItem = truck.HornSoundSetId;
+            EngineSoundCombo.SelectedItem = truck.EngineSoundSetId;
+        }
+        finally
+        {
+            _suppressSoundComboSync = false;
+        }
+
+        RefreshSoundPlayButtons();
+    }
+
+    private void HornSoundCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (_suppressSoundComboSync || _currentTruck is null)
+        {
+            return;
+        }
+
+        _currentTruck.HornSoundSetId = HornSoundCombo.SelectedItem as string;
+        RefreshSoundPlayButtons();
+    }
+
+    private void EngineSoundCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (_suppressSoundComboSync || _currentTruck is null)
+        {
+            return;
+        }
+
+        _currentTruck.EngineSoundSetId = EngineSoundCombo.SelectedItem as string;
+        RefreshSoundPlayButtons();
+    }
+
+    private void HornSoundPlayButton_Click(object sender, RoutedEventArgs e) =>
+        ToggleSoundPreview("horn", "Honk", HornSoundCombo.SelectedItem as string);
+
+    private void EngineIdlePlayButton_Click(object sender, RoutedEventArgs e) =>
+        ToggleSoundPreview("idle", "EngineIdle", EngineSoundCombo.SelectedItem as string);
+
+    private void EngineHighPlayButton_Click(object sender, RoutedEventArgs e) =>
+        ToggleSoundPreview("high", "EngineHigh", EngineSoundCombo.SelectedItem as string);
+
+    private void ToggleSoundPreview(string key, string tag, string? soundSetId)
+    {
+        if (string.IsNullOrWhiteSpace(_session?.PakPath) || _soundCatalog is null || string.IsNullOrWhiteSpace(soundSetId))
+        {
+            return;
+        }
+
+        var logical = TruckSoundsService.ResolvePreviewPath(_soundCatalog, soundSetId, tag);
+        if (logical is null
+            || !TruckSoundsService.TryReadSoundWav(_session.PakPath, logical, out var wav))
+        {
+            TuningStatusText.Text = UiText.Vehicles.SoundPreviewUnavailable;
+            return;
+        }
+
+        _soundPreview.Toggle(key, wav);
+        RefreshSoundPlayButtons();
+    }
+
+    private void RefreshSoundPlayButtons()
+    {
+        HornSoundPlayButton.Content = _soundPreview.IsPlaying("horn")
+            ? UiText.Vehicles.SoundStop
+            : UiText.Vehicles.SoundPlay;
+        EngineIdlePlayButton.Content = _soundPreview.IsPlaying("idle")
+            ? UiText.Vehicles.SoundStop
+            : UiText.Vehicles.SoundPlay;
+        EngineHighPlayButton.Content = _soundPreview.IsPlaying("high")
+            ? UiText.Vehicles.SoundStop
+            : UiText.Vehicles.SoundPlay;
     }
 
     private async Task EnsureTrucksLoadedAsync(string pakPath, CancellationToken cancellationToken = default)
@@ -900,6 +1013,8 @@ public partial class VehiclesView : UserControl
         _currentTruck.Responsiveness = responsiveness;
         _currentTruck.FrontSteerAngle = frontSteer;
         _currentTruck.RearSteerAngle = rearSteer;
+        _currentTruck.HornSoundSetId = HornSoundCombo.SelectedItem as string;
+        _currentTruck.EngineSoundSetId = EngineSoundCombo.SelectedItem as string;
 
         using (PakWriteUi.BeginBusyWrite(SaveTuningButton, RestoreVehicleButton))
         {

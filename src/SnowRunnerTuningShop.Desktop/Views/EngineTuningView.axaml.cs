@@ -79,9 +79,9 @@ public partial class EngineTuningView : UserControl
             UiText.Engine.NameColumn,
             UiText.Engine.UsedByColumn,
             UiText.Engine.PriceColumn,
+            UiText.Engine.DamageColumn,
             UiText.Engine.TorqueColumn,
             UiText.Engine.FuelColumn,
-            UiText.Engine.DamageColumn,
             UiText.Engine.ResponsivenessColumn,
             UiText.Engine.MaxDeltaAngVelColumn);
     }

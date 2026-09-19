@@ -329,6 +329,7 @@ public partial class TireTuningView : UserControl
         private double _mudFriction;
         private bool _ignoreIce;
         private int _price;
+        private double _damageCapacity;
 
         public required string EntryPath { get; init; }
         public required string Name { get; init; }
@@ -352,6 +353,21 @@ public partial class TireTuningView : UserControl
 
                 _price = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Price)));
+            }
+        }
+
+        public double DamageCapacity
+        {
+            get => _damageCapacity;
+            set
+            {
+                if (Math.Abs(_damageCapacity - value) < 0.0001)
+                {
+                    return;
+                }
+
+                _damageCapacity = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(DamageCapacity)));
             }
         }
 
@@ -433,6 +449,7 @@ public partial class TireTuningView : UserControl
                 UsedByTooltip = definition.UsedByTooltip,
                 Category = definition.Category,
                 Price = definition.Price,
+                DamageCapacity = definition.DamageCapacity,
                 FrictionTemplate = definition.FrictionTemplate,
                 OnRoadFriction = definition.OnRoadFriction,
                 OffRoadFriction = definition.OffRoadFriction,
@@ -446,6 +463,7 @@ public partial class TireTuningView : UserControl
                 definition.Category,
                 definition.DisplayName,
                 definition.Price,
+                definition.DamageCapacity,
                 definition.OnRoadFriction,
                 definition.OffRoadFriction,
                 definition.MudFriction,
@@ -471,6 +489,7 @@ public partial class TireTuningView : UserControl
                     UsedByTooltip = UsedByTooltip,
                     Category = Category,
                     Price = Price,
+                    DamageCapacity = DamageCapacity,
                     FrictionTemplate = instance.FrictionTemplate,
                     OnRoadFriction = OnRoadFriction,
                     OffRoadFriction = OffRoadFriction,
@@ -485,6 +504,7 @@ public partial class TireTuningView : UserControl
         string Category,
         string DisplayName,
         int Price,
+        double DamageCapacity,
         double OnRoadFriction,
         double OffRoadFriction,
         double MudFriction,

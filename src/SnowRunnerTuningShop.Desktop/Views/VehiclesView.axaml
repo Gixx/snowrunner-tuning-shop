@@ -560,6 +560,54 @@
                            FontSize="11"
                            Foreground="{DynamicResource AppMutedBrush}"/>
 
+                <Grid ColumnDefinitions="140,*" Margin="0,0,0,6">
+                  <TextBlock x:Name="HornSoundLabelText"
+                             VerticalAlignment="Center"
+                             Foreground="{DynamicResource AppMutedBrush}"/>
+                  <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                    <ComboBox x:Name="HornSoundCombo"
+                              MaxWidth="280"
+                              MinWidth="200"
+                              HorizontalAlignment="Left"
+                              SelectionChanged="HornSoundCombo_SelectionChanged"/>
+                    <Button x:Name="HornSoundPlayButton"
+                            MinWidth="40"
+                            Padding="10,6"
+                            Click="HornSoundPlayButton_Click"/>
+                  </StackPanel>
+                </Grid>
+                <TextBlock x:Name="HornSoundHintText"
+                           Margin="140,0,0,12"
+                           TextWrapping="Wrap"
+                           FontSize="11"
+                           Foreground="{DynamicResource AppMutedBrush}"/>
+
+                <Grid ColumnDefinitions="140,*" Margin="0,0,0,6">
+                  <TextBlock x:Name="EngineSoundLabelText"
+                             VerticalAlignment="Center"
+                             Foreground="{DynamicResource AppMutedBrush}"/>
+                  <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6">
+                    <ComboBox x:Name="EngineSoundCombo"
+                              MaxWidth="280"
+                              MinWidth="200"
+                              HorizontalAlignment="Left"
+                              SelectionChanged="EngineSoundCombo_SelectionChanged"/>
+                    <Button x:Name="EngineIdlePlayButton"
+                            MinWidth="40"
+                            Padding="10,6"
+                            Click="EngineIdlePlayButton_Click"/>
+                    <Button x:Name="EngineHighPlayButton"
+                            MinWidth="40"
+                            Padding="10,6"
+                            Click="EngineHighPlayButton_Click"/>
+                  </StackPanel>
+                </Grid>
+                <TextBlock x:Name="EngineSoundHintText"
+                           Margin="140,0,0,18"
+                           TextWrapping="Wrap"
+                           FontSize="11"
+                           Foreground="{DynamicResource AppMutedBrush}"/>
+
                 <StackPanel Orientation="Horizontal" Spacing="8">
                   <Button x:Name="SaveTuningButton"
                           Padding="14,8"

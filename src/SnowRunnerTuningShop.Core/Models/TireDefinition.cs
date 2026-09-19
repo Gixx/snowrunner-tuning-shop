@@ -15,6 +15,8 @@ public sealed class TireDefinition
     public IReadOnlyList<string> UsedByVehicles { get; init; } = [];
     public required string Category { get; init; }
     public int Price { get; init; }
+    /// <summary>Wheel-set <c>TruckWheels DamageCapacity</c> (shared by all tires in the file).</summary>
+    public double DamageCapacity { get; set; }
     public string FrictionTemplate { get; init; } = "";
 
     /// <summary>Game UI "On-road" — XML BodyFrictionAsphalt.</summary>

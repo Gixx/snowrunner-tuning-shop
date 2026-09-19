@@ -85,6 +85,12 @@ public sealed class TruckTuningDefinition
     public bool HasFrontSteer { get; init; }
 
     public bool HasRearSteer { get; init; }
+
+    /// <summary>Sound set id for &lt;Honk&gt; (folder under trucks/…), e.g. ford_f750.</summary>
+    public string? HornSoundSetId { get; set; }
+
+    /// <summary>Sound set id for Engine* tags under &lt;Sounds&gt;.</summary>
+    public string? EngineSoundSetId { get; set; }
 }
 
 public sealed record TruckTuningSaveResult(int UpdatedFiles, int ChangedTrucks = 0);

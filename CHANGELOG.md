@@ -12,6 +12,7 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 ## [Unreleased]
 
 ### Added
+- **Vehicle horn / engine sounds:** detail page dropdowns under Engine sets to assign `<Honk>` and Engine* banks by sound set id (e.g. `ford_f750`); Save changes writes them. Preview play/stop when `shared_sound.pak` is beside `initial.pak` (horn + idle + high).
 - **Vehicles → Engine sets:** per-truck modal to assign/unassign existing `classes/engines` sets via `EngineSocket Type` (WPF + Avalonia), with name filter for engines/sets.
 - **Gearbox AngVel:** editable Top Gear* / High* / Reverse* columns (Saber range 0.1–32) with a footnote under the table.
 - **Engine MaxDeltaAngVel:** editable acceleration-limiter column; writes clamp to 0–10 (vanilla typically ~0.01–0.1). Empty cell means the attribute is missing in XML (not a literal 0).
@@ -22,6 +23,7 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ### Fixed
 - **Parts Price column:** Price is editable in Engine / Gearbox / Suspension / Tires / Winch / Crane tables and is written to `GameData Price` on save.
+- **Parts Damage column:** Gearbox and Tires tables expose DamageCapacity (tires: shared `TruckWheels` value); Engine / Suspension / Gearbox / Tires all place Damage immediately after Price.
 
 ---
 

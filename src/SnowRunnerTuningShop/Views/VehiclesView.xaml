@@ -762,6 +762,70 @@
                                        FontSize="11"
                                        Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
 
+                            <Grid Margin="0,0,0,6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="140"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{x:Static loc:UiText+Vehicles.HornSoundLabel}"
+                                           VerticalAlignment="Center"
+                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                    <ComboBox x:Name="HornSoundCombo"
+                                              MaxWidth="280"
+                                              MinWidth="200"
+                                              HorizontalAlignment="Left"
+                                              Padding="8,6"
+                                              SelectionChanged="HornSoundCombo_SelectionChanged"/>
+                                    <Button x:Name="HornSoundPlayButton"
+                                            Margin="8,0,0,0"
+                                            MinWidth="40"
+                                            Padding="10,6"
+                                            Click="HornSoundPlayButton_Click"
+                                            ToolTip="{x:Static loc:UiText+Vehicles.SoundPlayHornTooltip}"/>
+                                </StackPanel>
+                            </Grid>
+                            <TextBlock Text="{x:Static loc:UiText+Vehicles.HornSoundHint}"
+                                       Margin="140,0,0,12"
+                                       TextWrapping="Wrap"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+
+                            <Grid Margin="0,0,0,6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="140"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{x:Static loc:UiText+Vehicles.EngineSoundLabel}"
+                                           VerticalAlignment="Center"
+                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                    <ComboBox x:Name="EngineSoundCombo"
+                                              MaxWidth="280"
+                                              MinWidth="200"
+                                              HorizontalAlignment="Left"
+                                              Padding="8,6"
+                                              SelectionChanged="EngineSoundCombo_SelectionChanged"/>
+                                    <Button x:Name="EngineIdlePlayButton"
+                                            Margin="8,0,0,0"
+                                            MinWidth="40"
+                                            Padding="10,6"
+                                            Click="EngineIdlePlayButton_Click"
+                                            ToolTip="{x:Static loc:UiText+Vehicles.SoundPlayIdleTooltip}"/>
+                                    <Button x:Name="EngineHighPlayButton"
+                                            Margin="6,0,0,0"
+                                            MinWidth="40"
+                                            Padding="10,6"
+                                            Click="EngineHighPlayButton_Click"
+                                            ToolTip="{x:Static loc:UiText+Vehicles.SoundPlayHighTooltip}"/>
+                                </StackPanel>
+                            </Grid>
+                            <TextBlock Text="{x:Static loc:UiText+Vehicles.EngineSoundHint}"
+                                       Margin="140,0,0,18"
+                                       TextWrapping="Wrap"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+
                             <StackPanel Orientation="Horizontal">
                                 <Button x:Name="SaveTuningButton"
                                         Content="{x:Static loc:UiText+Vehicles.SaveChanges}"

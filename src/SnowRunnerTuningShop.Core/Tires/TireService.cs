@@ -20,6 +20,10 @@ public static class TireService
         @"<TruckTire\b(?<attrs>[^<>]*)>",
         RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
+    private static readonly Regex TruckWheelsOpenTagRegex = new(
+        @"<TruckWheels\b(?<attrs>[^<>]*)>",
+        RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+
     // WheelFriction is always a self-closing empty element. Require "/>" so a truncated
     // tag cannot backtrack into the following <GameData> (issue #6 / ankatra mash).
     // Do not use a "[^"]*" alternative here — with backtracking it can still span '<'.
@@ -131,8 +135,11 @@ public static class TireService
                         item.MudFriction,
                         item.IgnoreIce),
                     StringComparer.OrdinalIgnoreCase);
+                var setDamageCapacity = ResolvePreferredDamageCapacity(
+                    group.Select(item => item.DamageCapacity),
+                    ExtractTruckWheelsDamageCapacity(text));
 
-                if (!TryApplyUpdatesToText(text, updates, out var updatedText, out var fileChanged))
+                if (!TryApplyUpdatesToText(text, updates, setDamageCapacity, out var updatedText, out var fileChanged))
                 {
                     continue;
                 }
@@ -179,6 +186,7 @@ public static class TireService
         var usedByNames = setUsage is not null && setUsage.TryGetValue(setId, out var names)
             ? names
             : Array.Empty<string>();
+        var setDamageCapacity = ExtractTruckWheelsDamageCapacity(content);
 
         var matches = TruckTireOpenTagRegex.Matches(content);
         for (var i = 0; i < matches.Count; i++)
@@ -226,6 +234,7 @@ public static class TireService
                 UsedByVehicles = usedByNames,
                 Category = InferCategory(entryPath),
                 Price = PartXmlHelpers.ExtractPrice(block),
+                DamageCapacity = setDamageCapacity,
                 FrictionTemplate = frictionTemplate ?? "",
                 OnRoadFriction = resolved.BodyFrictionAsphalt,
                 OffRoadFriction = resolved.BodyFriction,
@@ -462,6 +471,7 @@ public static class TireService
     private static bool TryApplyUpdatesToText(
         string content,
         IReadOnlyDictionary<string, TireFrictionValues> updates,
+        double setDamageCapacity,
         out string updatedText,
         out int changedTires)
     {
@@ -509,16 +519,71 @@ public static class TireService
         }
 
         builder.Append(content, lastIndex, content.Length - lastIndex);
+        var candidate = builder.ToString();
+        var damageChanged = TrySetTruckWheelsDamageCapacity(ref candidate, setDamageCapacity);
 
-        if (localChanged == 0)
+        if (localChanged == 0 && !damageChanged)
         {
             return false;
         }
 
-        updatedText = builder.ToString();
-        changedTires = localChanged;
+        updatedText = candidate;
+        changedTires = localChanged > 0 ? localChanged : (damageChanged ? 1 : 0);
         return true;
     }
+
+    private static double ExtractTruckWheelsDamageCapacity(string content)
+    {
+        var match = TruckWheelsOpenTagRegex.Match(content);
+        if (!match.Success)
+        {
+            return 0;
+        }
+
+        var attrs = ParseAttributes(match.Groups["attrs"].Value);
+        return ParseDouble(attrs.GetValueOrDefault("DamageCapacity"), 0);
+    }
+
+    private static double ResolvePreferredDamageCapacity(IEnumerable<double> values, double current)
+    {
+        foreach (var value in values)
+        {
+            if (Math.Abs(value - current) > 1e-6)
+            {
+                return value;
+            }
+        }
+
+        return current;
+    }
+
+    private static bool TrySetTruckWheelsDamageCapacity(ref string content, double damageCapacity)
+    {
+        var match = TruckWheelsOpenTagRegex.Match(content);
+        if (!match.Success)
+        {
+            return false;
+        }
+
+        var attrs = match.Groups["attrs"].Value;
+        var updatedAttrs = attrs;
+        if (!SetOrReplaceAttribute(ref updatedAttrs, "DamageCapacity", FormatNumeric(damageCapacity)))
+        {
+            return false;
+        }
+
+        var replacement = $"<TruckWheels{updatedAttrs}>";
+        content = string.Concat(
+            content.AsSpan(0, match.Index),
+            replacement,
+            content.AsSpan(match.Index + match.Length));
+        return true;
+    }
+
+    private static double ParseDouble(string? value, double fallback) =>
+        double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var parsed)
+            ? parsed
+            : fallback;
 
     private static bool TryApplyUpdatesToTireBlock(
         string block,
@@ -584,7 +649,8 @@ public static class TireService
                 || Math.Abs(existing.OffRoadFriction - target.OffRoadFriction) > 1e-6
                 || Math.Abs(existing.MudFriction - target.MudFriction) > 1e-6
                 || existing.IgnoreIce != target.IgnoreIce
-                || existing.Price != target.Price)
+                || existing.Price != target.Price
+                || Math.Abs(existing.DamageCapacity - target.DamageCapacity) > 1e-6)
             {
                 changed++;
             }
@@ -665,6 +731,13 @@ public static class TireService
 
     private static string FormatNumeric(double value) => XmlNumericFormatting.Format(value);
 
+
+    /// <summary>Test hook: rewrite TruckWheels DamageCapacity only.</summary>
+    internal static string ApplyTireDamageCapacityForTests(string content, double damageCapacity)
+    {
+        var updated = content;
+        return TrySetTruckWheelsDamageCapacity(ref updated, damageCapacity) ? updated : content;
+    }
 
     private readonly record struct TireFrictionValues(
         int Price,
