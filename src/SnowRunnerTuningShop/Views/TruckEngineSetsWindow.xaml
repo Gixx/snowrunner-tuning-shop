@@ -1,0 +1,99 @@
+<Window x:Class="SnowRunnerTuningShop.Views.TruckEngineSetsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:loc="clr-namespace:SnowRunnerTuningShop.Localization"
+        Title="{x:Static loc:UiText+Vehicles.EngineSetsTitle}"
+        Width="760"
+        Height="520"
+        MinWidth="560"
+        MinHeight="360"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="CanResize"
+        ShowInTaskbar="False">
+  <Window.Resources>
+    <Style x:Key="EngineSetCheckBoxStyle" TargetType="CheckBox">
+      <Setter Property="HorizontalAlignment" Value="Center"/>
+      <Setter Property="VerticalAlignment" Value="Center"/>
+      <Setter Property="Margin" Value="8,0"/>
+    </Style>
+  </Window.Resources>
+  <Grid Margin="20">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+
+    <TextBlock x:Name="HintText"
+               TextWrapping="Wrap"
+               FontSize="12"
+               Margin="0,0,0,12"
+               Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+
+    <Grid Grid.Row="1" Margin="0,0,0,10">
+      <TextBox x:Name="SearchBox"
+               Padding="10,7"
+               VerticalContentAlignment="Center"
+               TextChanged="SearchBox_TextChanged"/>
+      <TextBlock x:Name="SearchPlaceholder"
+                 Text="{x:Static loc:UiText+Vehicles.EngineSetsSearchPlaceholder}"
+                 Margin="14,0,0,0"
+                 VerticalAlignment="Center"
+                 Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                 IsHitTestVisible="False"/>
+    </Grid>
+
+    <DataGrid x:Name="SetsGrid"
+              Grid.Row="2"
+              AutoGenerateColumns="False"
+              CanUserAddRows="False"
+              CanUserDeleteRows="False"
+              CanUserReorderColumns="False"
+              HeadersVisibility="Column"
+              SelectionMode="Single"
+              GridLinesVisibility="Horizontal"
+              RowHeaderWidth="0">
+      <DataGrid.Columns>
+        <DataGridCheckBoxColumn Header=""
+                                Binding="{Binding IsAssigned, UpdateSourceTrigger=PropertyChanged}"
+                                Width="64"
+                                MinWidth="64"
+                                ElementStyle="{StaticResource EngineSetCheckBoxStyle}"
+                                EditingElementStyle="{StaticResource EngineSetCheckBoxStyle}"/>
+        <DataGridTextColumn Header="{x:Static loc:UiText+Vehicles.EngineSetColumn}"
+                            Binding="{Binding SetId}"
+                            IsReadOnly="True"
+                            Width="180"/>
+        <DataGridTextColumn Header="{x:Static loc:UiText+Vehicles.EngineNamesColumn}"
+                            Binding="{Binding EngineNamesText}"
+                            IsReadOnly="True"
+                            Width="*"/>
+      </DataGrid.Columns>
+    </DataGrid>
+
+    <TextBlock x:Name="StatusText"
+               Grid.Row="3"
+               Margin="0,10,0,10"
+               TextWrapping="Wrap"
+               FontSize="12"
+               Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+
+    <DockPanel Grid.Row="4" LastChildFill="False">
+      <Button DockPanel.Dock="Right"
+              x:Name="ApplyButton"
+              Content="{x:Static loc:UiText+Vehicles.EngineSetsApply}"
+              Padding="14,8"
+              MinWidth="100"
+              Click="ApplyButton_Click"/>
+      <Button DockPanel.Dock="Right"
+              Content="{x:Static loc:UiText+Vehicles.EngineSetsCancel}"
+              Padding="14,8"
+              MinWidth="100"
+              Margin="0,0,8,0"
+              IsCancel="True"
+              Click="CancelButton_Click"/>
+    </DockPanel>
+  </Grid>
+</Window>

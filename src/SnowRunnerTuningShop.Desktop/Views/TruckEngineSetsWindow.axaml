@@ -1,0 +1,67 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="SnowRunnerTuningShop.Desktop.Views.TruckEngineSetsWindow"
+        Width="760"
+        Height="520"
+        MinWidth="560"
+        MinHeight="360"
+        WindowStartupLocation="CenterOwner"
+        CanResize="True"
+        ShowInTaskbar="False">
+  <Grid Margin="20" RowDefinitions="Auto,Auto,*,Auto,Auto">
+    <TextBlock x:Name="HintText"
+               TextWrapping="Wrap"
+               FontSize="12"
+               Margin="0,0,0,12"
+               Foreground="{DynamicResource AppMutedBrush}"/>
+
+    <TextBox x:Name="SearchBox"
+             Grid.Row="1"
+             Margin="0,0,0,10"
+             Padding="10,7"
+             TextChanged="SearchBox_TextChanged"/>
+
+    <DataGrid x:Name="SetsGrid"
+              Grid.Row="2"
+              AutoGenerateColumns="False"
+              CanUserReorderColumns="False"
+              CanUserResizeColumns="True"
+              CanUserSortColumns="False"
+              HeadersVisibility="Column"
+              SelectionMode="Single"
+              GridLinesVisibility="Horizontal"
+              IsReadOnly="False">
+      <DataGrid.Columns>
+        <DataGridCheckBoxColumn Width="64"
+                                Binding="{Binding IsAssigned}"/>
+        <DataGridTextColumn IsReadOnly="True"
+                            Width="180"
+                            Binding="{Binding SetId}"/>
+        <DataGridTextColumn IsReadOnly="True"
+                            Width="*"
+                            Binding="{Binding EngineNamesText}"/>
+      </DataGrid.Columns>
+    </DataGrid>
+
+    <TextBlock x:Name="StatusText"
+               Grid.Row="3"
+               Margin="0,10,0,10"
+               TextWrapping="Wrap"
+               FontSize="12"
+               Foreground="{DynamicResource AppMutedBrush}"/>
+
+    <StackPanel Grid.Row="4"
+                Orientation="Horizontal"
+                HorizontalAlignment="Right"
+                Spacing="8">
+      <Button x:Name="CancelButton"
+              MinWidth="100"
+              Padding="14,8"
+              Click="CancelButton_Click"/>
+      <Button x:Name="ApplyButton"
+              MinWidth="100"
+              Padding="14,8"
+              Click="ApplyButton_Click"/>
+    </StackPanel>
+  </Grid>
+</Window>

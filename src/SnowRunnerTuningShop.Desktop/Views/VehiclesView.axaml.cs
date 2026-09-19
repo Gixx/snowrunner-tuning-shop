@@ -124,6 +124,9 @@ public partial class VehiclesView : UserControl
         DiffLockLabelText.Text = UiText.Vehicles.DiffLockLabel;
         DriveLabelText.Text = UiText.Vehicles.DriveLabel;
         DriveHintText.Text = UiText.Vehicles.DriveHint;
+        EngineSetsLabelText.Text = UiText.Vehicles.EngineSetsLabel;
+        EngineSetsHintText.Text = UiText.Vehicles.EngineSetsHint;
+        EngineSetsButton.Content = UiText.Vehicles.EngineSetsButton(0);
         SaveTuningButton.Content = UiText.Vehicles.SaveChanges;
         RestoreVehicleButton.Content = UiText.Vehicles.RestoreThisVehicle;
         LoadingText.Text = UiText.Parts.Loading;
@@ -725,6 +728,7 @@ public partial class VehiclesView : UserControl
 
             BindDiffLockOptions(truck);
             SelectDrive(truck.DriveLayout);
+            RefreshEngineSetsButton(truck);
             RefreshSafeRangeHints();
             TuningHintText.IsVisible = false;
             TuningForm.IsVisible = true;
@@ -815,6 +819,86 @@ public partial class VehiclesView : UserControl
             && PakBaselineService.HasBaseline(_session.PakPath)
             && canWrite;
         SaveTuningButton.IsEnabled = _currentTruck is not null && canWrite;
+        EngineSetsButton.IsEnabled = _currentTruck is not null && canWrite;
+    }
+
+    private void RefreshEngineSetsButton(TruckTuningDefinition truck)
+    {
+        EngineSetsButton.Content = UiText.Vehicles.EngineSetsButton(0);
+        if (string.IsNullOrWhiteSpace(_session?.PakPath))
+        {
+            return;
+        }
+
+        try
+        {
+            var assigned = TruckEngineSetsService.GetAssignedSetIds(_session.PakPath, truck.EntryPath);
+            var hasSocket = TruckEngineSetsService.HasEngineSocket(_session.PakPath, truck.EntryPath);
+            EngineSetsButton.Content = UiText.Vehicles.EngineSetsButton(assigned.Count);
+            EngineSetsButton.IsEnabled = hasSocket && PakWriteUi.CanWrite(_session);
+        }
+        catch (Exception ex)
+        {
+            TuningStatusText.Text = ex.Message;
+            EngineSetsButton.IsEnabled = false;
+        }
+    }
+
+    private async void EngineSetsButton_Click(object? sender, RoutedEventArgs e)
+    {
+        if (_currentTruck is null || string.IsNullOrWhiteSpace(_session?.PakPath) || _currentCard is null)
+        {
+            return;
+        }
+
+        var owner = OwnerWindow;
+        if (owner is null)
+        {
+            return;
+        }
+
+        if (!await PakWriteUi.TryProceed(owner, _session))
+        {
+            return;
+        }
+
+        TruckEngineSetsSnapshot snapshot;
+        try
+        {
+            var pakPath = _session.PakPath;
+            var entryPath = _currentTruck.EntryPath;
+            snapshot = await Task.Run(() => TruckEngineSetsService.Load(pakPath, entryPath, AppLanguage.Current));
+        }
+        catch (Exception ex)
+        {
+            TuningStatusText.Text = ex.Message;
+            return;
+        }
+
+        var dialog = new TruckEngineSetsWindow(snapshot);
+        var applied = await dialog.ShowDialog<bool?>(owner);
+        if (applied != true)
+        {
+            return;
+        }
+
+        try
+        {
+            using (PakWriteUi.BeginBusyWrite(owner, SaveTuningButton, RestoreVehicleButton, EngineSetsButton))
+            {
+                var pakPath = _session.PakPath;
+                var entryPath = _currentTruck.EntryPath;
+                var selected = dialog.SelectedSetIds;
+                await Task.Run(() => TruckEngineSetsService.Apply(pakPath, entryPath, selected));
+            }
+
+            TuningStatusText.Text = UiText.Vehicles.EngineSetsSavedStatus;
+            await LoadTuningAsync(_currentCard);
+        }
+        catch (Exception ex)
+        {
+            TuningStatusText.Text = ex.Message;
+        }
     }
 
     private async void SaveTuningButton_Click(object? sender, RoutedEventArgs e)

@@ -741,6 +741,27 @@
                                        FontSize="11"
                                        Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
 
+                            <Grid Margin="0,0,0,6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="140"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{x:Static loc:UiText+Vehicles.EngineSetsLabel}"
+                                           VerticalAlignment="Center"
+                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                <Button x:Name="EngineSetsButton"
+                                        Grid.Column="1"
+                                        MaxWidth="280"
+                                        HorizontalAlignment="Left"
+                                        Padding="12,7"
+                                        Click="EngineSetsButton_Click"/>
+                            </Grid>
+                            <TextBlock Text="{x:Static loc:UiText+Vehicles.EngineSetsHint}"
+                                       Margin="140,0,0,18"
+                                       TextWrapping="Wrap"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+
                             <StackPanel Orientation="Horizontal">
                                 <Button x:Name="SaveTuningButton"
                                         Content="{x:Static loc:UiText+Vehicles.SaveChanges}"

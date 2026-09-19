@@ -475,6 +475,29 @@ public static class UiText
         public static string DiffLockHintNative => StringResources.Get("Vehicles.DiffLockHintNative", "Switchable and Upgradeable use the truck's built-in diff-lock upgrade slot.");
         public static string DiffLockHintSimple => StringResources.Get("Vehicles.DiffLockHintSimple", "This truck has no diff-lock upgrade in the game. Only None or Always on can be set.");
         public static string DriveHint => StringResources.Get("Vehicles.DriveHint", "RWD matches the garage \"AWD: No\". Selectable AWD enables the in-cab switch (Torque full). Upgradeable AWD in-game also needs a transfer-case addon socket; connectable alone is not enough.");
+        public static string EngineSetsLabel => StringResources.Get("Vehicles.EngineSetsLabel", "Engine sets");
+        public static string EngineSetsHint => StringResources.Get(
+            "Vehicles.EngineSetsHint",
+            "Choose which engine set files (classes/engines) this truck can use. Shared sets affect every truck that references them.");
+        public static string EngineSetsButton(int count) =>
+            count == 1
+                ? StringResources.Format("Vehicles.EngineSetsButtonOne", "{0} assigned set", count)
+                : StringResources.Format("Vehicles.EngineSetsButtonMany", "{0} assigned sets", count);
+        public static string EngineSetsTitle => StringResources.Get("Vehicles.EngineSetsTitle", "Engine sets");
+        public static string EngineSetColumn => StringResources.Get("Vehicles.EngineSetColumn", "Set");
+        public static string EngineNamesColumn => StringResources.Get("Vehicles.EngineNamesColumn", "Engines");
+        public static string EngineSetsSearchPlaceholder => StringResources.Get(
+            "Vehicles.EngineSetsSearchPlaceholder",
+            "Filter by engine or set name…");
+        public static string EngineSetsApply => StringResources.Get("Vehicles.EngineSetsApply", "Apply");
+        public static string EngineSetsCancel => StringResources.Get("Vehicles.EngineSetsCancel", "Cancel");
+        public static string EngineSetsNeedOne => StringResources.Get("Vehicles.EngineSetsNeedOne", "Select at least one engine set.");
+        public static string EngineSetsMissingSocket => StringResources.Get(
+            "Vehicles.EngineSetsMissingSocket",
+            "This truck has no EngineSocket in its XML.");
+        public static string EngineSetsSavedStatus => StringResources.Get(
+            "Vehicles.EngineSetsSavedStatus",
+            "Engine sets updated for this vehicle.");
         public static string SaveChanges => StringResources.Get("Vehicles.SaveChanges", "Save changes");
         public static string RestoreThisVehicle => StringResources.Get("Vehicles.RestoreThisVehicle", "Restore this vehicle to baseline");
         public static string RestoreAllVehicles => StringResources.Get("Vehicles.RestoreAllVehicles", "Restore all vehicles to baseline");

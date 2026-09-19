@@ -11,6 +11,9 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ## [Unreleased]
 
+### Added
+- **Vehicles → Engine sets:** per-truck modal to assign/unassign existing `classes/engines` sets via `EngineSocket Type` (WPF + Avalonia), with name filter for engines/sets.
+
 ---
 
 ## [1.4.0-beta.3] — 2026-09-14

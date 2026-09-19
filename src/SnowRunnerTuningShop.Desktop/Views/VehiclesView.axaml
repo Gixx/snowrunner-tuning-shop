@@ -543,6 +543,23 @@
                            FontSize="11"
                            Foreground="{DynamicResource AppMutedBrush}"/>
 
+                <Grid ColumnDefinitions="140,*" Margin="0,0,0,6">
+                  <TextBlock x:Name="EngineSetsLabelText"
+                             VerticalAlignment="Center"
+                             Foreground="{DynamicResource AppMutedBrush}"/>
+                  <Button x:Name="EngineSetsButton"
+                          Grid.Column="1"
+                          MaxWidth="280"
+                          HorizontalAlignment="Left"
+                          Padding="12,7"
+                          Click="EngineSetsButton_Click"/>
+                </Grid>
+                <TextBlock x:Name="EngineSetsHintText"
+                           Margin="140,0,0,18"
+                           TextWrapping="Wrap"
+                           FontSize="11"
+                           Foreground="{DynamicResource AppMutedBrush}"/>
+
                 <StackPanel Orientation="Horizontal" Spacing="8">
                   <Button x:Name="SaveTuningButton"
                           Padding="14,8"
