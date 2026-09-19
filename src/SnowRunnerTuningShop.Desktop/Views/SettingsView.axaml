@@ -126,11 +126,25 @@
                     Margin="0,0,8,8"
                     Click="OpenWebsiteButton_Click"/>
             <Button x:Name="DonatePayPalButton"
-                    Padding="14,8"
+                    Classes="paypalDonate"
                     Margin="0,0,8,8"
-                    Background="#FFC439"
-                    Foreground="#111111"
-                    Click="DonatePayPalButton_Click"/>
+                    Click="DonatePayPalButton_Click">
+              <StackPanel Orientation="Horizontal" Spacing="7">
+                <TextBlock x:Name="DonateWithText"
+                           FontSize="13"
+                           Foreground="#111111"
+                           VerticalAlignment="Center"
+                           Margin="0,1,0,0"/>
+                <TextBlock FontFamily="Arial"
+                           FontStyle="Italic"
+                           FontWeight="Bold"
+                           FontSize="16"
+                           VerticalAlignment="Center">
+                  <Run Text="Pay" Foreground="#003087"/>
+                  <Run Text="Pal" Foreground="#009CDE"/>
+                </TextBlock>
+              </StackPanel>
+            </Button>
           </WrapPanel>
         </StackPanel>
       </Border>

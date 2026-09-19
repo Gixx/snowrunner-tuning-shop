@@ -18,6 +18,7 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ### Changed
 - **DataGrid sort headers:** show 🞁 / 🞃 on the active sorted column (WPF; Avalonia Fluent already indicates sort).
+- **Avalonia shell polish:** nav items use list-style (no radio circles), page background matches header/sidebar gray, Donate button shows the PayPal wordmark like WPF.
 
 ### Fixed
 - **Parts Price column:** Price is editable in Engine / Gearbox / Suspension / Tires / Winch / Crane tables and is written to `GameData Price` on save.

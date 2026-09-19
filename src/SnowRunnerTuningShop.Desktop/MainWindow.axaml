@@ -8,9 +8,10 @@
         Height="815"
         MinWidth="900"
         MinHeight="680"
-        TransparencyLevelHint="None">
-  <Grid>
-    <Grid x:Name="MainContent">
+        TransparencyLevelHint="None"
+        Background="{DynamicResource AppPageBrush}">
+  <Grid Background="{DynamicResource AppPageBrush}">
+    <Grid x:Name="MainContent" Background="{DynamicResource AppPageBrush}">
       <Grid.RowDefinitions>
         <RowDefinition Height="Auto"/>
         <RowDefinition Height="*"/>
@@ -50,7 +51,7 @@
         </StackPanel>
       </Border>
 
-      <Grid Grid.Row="1" Margin="20">
+      <Grid Grid.Row="1" Margin="20" Background="{DynamicResource AppPageBrush}">
         <views:HomeView x:Name="HomeView"/>
         <views:GeneralView x:Name="GeneralView" IsVisible="False"/>
         <views:PartsView x:Name="PartsView" IsVisible="False"/>

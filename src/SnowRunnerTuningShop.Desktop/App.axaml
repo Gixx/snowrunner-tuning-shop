@@ -10,6 +10,9 @@
           <SolidColorBrush x:Key="AppCardStrokeBrush" Color="#FF3F3F3F"/>
           <SolidColorBrush x:Key="AppHeaderBrush" Color="#FF202020"/>
           <SolidColorBrush x:Key="AppNavPaneBrush" Color="#FF202020"/>
+          <SolidColorBrush x:Key="AppPageBrush" Color="#FF202020"/>
+          <SolidColorBrush x:Key="AppNavItemHoverBrush" Color="#22FFFFFF"/>
+          <SolidColorBrush x:Key="AppNavItemSelectedBrush" Color="#33FFFFFF"/>
           <SolidColorBrush x:Key="AppCautionBrush" Color="#33D29922"/>
           <SolidColorBrush x:Key="AppCautionStrokeBrush" Color="#D29922"/>
           <SolidColorBrush x:Key="AppSuccessBrush" Color="#22107C10"/>
@@ -22,6 +25,9 @@
           <SolidColorBrush x:Key="AppCardStrokeBrush" Color="#FFD0D0D0"/>
           <SolidColorBrush x:Key="AppHeaderBrush" Color="#FFF3F3F3"/>
           <SolidColorBrush x:Key="AppNavPaneBrush" Color="#FFF3F3F3"/>
+          <SolidColorBrush x:Key="AppPageBrush" Color="#FFF3F3F3"/>
+          <SolidColorBrush x:Key="AppNavItemHoverBrush" Color="#22000000"/>
+          <SolidColorBrush x:Key="AppNavItemSelectedBrush" Color="#33000000"/>
           <SolidColorBrush x:Key="AppCautionBrush" Color="#33D29922"/>
           <SolidColorBrush x:Key="AppCautionStrokeBrush" Color="#D29922"/>
           <SolidColorBrush x:Key="AppSuccessBrush" Color="#22107C10"/>
@@ -41,6 +47,7 @@
       <Setter Property="Height" Value="10"/>
       <Setter Property="Opacity" Value="0.9"/>
     </Style>
+    <!-- List-style nav items (no radio chrome), matching WPF NavRadioStyle. -->
     <Style Selector="RadioButton.nav">
       <Setter Property="Padding" Value="12,10"/>
       <Setter Property="Margin" Value="0,0,0,4"/>
@@ -48,7 +55,27 @@
       <Setter Property="HorizontalContentAlignment" Value="Left"/>
       <Setter Property="Background" Value="Transparent"/>
       <Setter Property="BorderThickness" Value="0"/>
-      <Setter Property="CornerRadius" Value="6"/>
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="Template">
+        <ControlTemplate>
+          <Border x:Name="Root"
+                  Background="{TemplateBinding Background}"
+                  CornerRadius="6"
+                  Padding="{TemplateBinding Padding}">
+            <ContentPresenter x:Name="PART_ContentPresenter"
+                              Content="{TemplateBinding Content}"
+                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                              VerticalAlignment="Center"/>
+          </Border>
+        </ControlTemplate>
+      </Setter>
+    </Style>
+    <Style Selector="RadioButton.nav:pointerover /template/ Border#Root">
+      <Setter Property="Background" Value="{DynamicResource AppNavItemHoverBrush}"/>
+    </Style>
+    <Style Selector="RadioButton.nav:checked /template/ Border#Root">
+      <Setter Property="Background" Value="{DynamicResource AppNavItemSelectedBrush}"/>
     </Style>
     <Style Selector="RadioButton.nav:checked">
       <Setter Property="FontWeight" Value="SemiBold"/>
@@ -62,6 +89,21 @@
       <Setter Property="FontWeight" Value="SemiBold"/>
       <Setter Property="Background" Value="Transparent"/>
       <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="Cursor" Value="Hand"/>
+    </Style>
+    <Style Selector="Button.paypalDonate">
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="Padding" Value="18,9"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="Background" Value="#FFC439"/>
+      <Setter Property="Foreground" Value="#111111"/>
+      <Setter Property="CornerRadius" Value="20"/>
+    </Style>
+    <Style Selector="Button.paypalDonate:pointerover">
+      <Setter Property="Background" Value="#FFB52E"/>
+    </Style>
+    <Style Selector="Button.paypalDonate:pressed">
+      <Setter Property="Background" Value="#E5A61D"/>
     </Style>
     <Style Selector="Button.danger">
       <Setter Property="Background" Value="#C42B1C"/>

@@ -65,7 +65,7 @@ public partial class SettingsView : UserControl
         CheckForUpdatesButton.Content = UiText.Settings.CheckForUpdates;
         DownloadUpdateButton.Content = UiText.Settings.DownloadUpdate;
         OpenWebsiteButton.Content = UiText.Settings.OpenWebsite;
-        DonatePayPalButton.Content = UiText.Settings.DonatePayPal;
+        DonateWithText.Text = UiText.Settings.DonateWith;
         ToolTip.SetTip(DonatePayPalButton, UiText.Settings.DonatePayPal);
         FeedbackTitleText.Text = UiText.Settings.FeedbackTitle;
         FeedbackHintText.Text = UiText.Settings.FeedbackHint;
