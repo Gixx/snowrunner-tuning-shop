@@ -10,11 +10,8 @@ import {
   ShieldCheck,
   Layers,
   ArrowRight,
-  MonitorSmartphone,
-  Volume2,
   Wrench,
   GaugeCircle,
-  Tag,
 } from "lucide-react";
 
 import { Snowfall } from "@/components/Snowfall";
@@ -116,29 +113,29 @@ export const Route = createFileRoute("/")({
 
 const whatsNew = [
   {
-    icon: MonitorSmartphone,
-    title: "Linux joins the garage",
-    body: "The full Tuning Shop now ships for Linux too — same workflows, same restore safety net, ready for Steam Deck and desktop installs.",
-  },
-  {
-    icon: Volume2,
-    title: "Sounds that match the truck",
-    body: "Give any vehicle a different engine growl or horn, then preview idle, high revs, and the honk before you commit.",
-  },
-  {
-    icon: Wrench,
-    title: "Engines you actually want",
-    body: "Pick which engine packs each truck can unlock in the garage. No more being stuck with the factory shortlist.",
+    icon: Gauge,
+    title: "Per-axle steering",
+    body: "Every XML wheel/axle template gets its own angle — frontmost first, numbered clearly. Shared rear templates stay honest; no fake camera axles.",
   },
   {
     icon: GaugeCircle,
-    title: "Speed you can feel",
-    body: "Tune how hard gears pull and how eagerly the engine climbs — top gear, high, reverse, and acceleration response in plain language.",
+    title: "Steer tempo, three knobs",
+    body: "Steer speed, back-steer speed, and responsiveness — turn-in, recenter, and input feel, each editable on the vehicle detail page.",
   },
   {
-    icon: Tag,
-    title: "Price & toughness, everywhere",
-    body: "Store prices and durability sit side by side for engines, gearboxes, suspensions, and tires — edit one row or scale a whole class.",
+    icon: Layers,
+    title: "Mass you can scale",
+    body: "Primary chassis mass for trucks and trailers, with a global multiplier from featherweight to double. Nested bodies scale with it.",
+  },
+  {
+    icon: Fuel,
+    title: "Add-on capacities",
+    body: "A new Parts → Add-ons tab for fuel, water, repairs, and spare wheels on truck addons that already carry them — edit one row or scale the class.",
+  },
+  {
+    icon: Wrench,
+    title: "Detail page, clearer cards",
+    body: "Vehicle tuning is split into cards: store & unlock, axle steer, steer speeds, diff lock & drive, then engines and sounds — Save stays on the darker strip below.",
   },
 ];
 
@@ -156,7 +153,7 @@ const features = [
   {
     icon: Gauge,
     title: "Steering you can feel",
-    body: "Front steer angle and how quickly the wheel snaps back to center — turn a barge into something that actually corners.",
+    body: "Per-axle angles plus steer speed, back-steer speed, and responsiveness — turn a barge into something that actually corners.",
   },
   {
     icon: Lock,
@@ -332,7 +329,7 @@ function PlatformShowcase({
             WHAT&apos;S NEW IN VERSION {APP_VERSION_STABLE}
           </h2>
           <p className="mt-4 max-w-2xl text-muted-foreground">
-            A bigger shop: more platforms, more control over how trucks sound and pull — without opening a single XML file.
+            Finer steering, real chassis mass, and add-on capacities — still without opening a single XML file.
           </p>
         </Reveal>
         <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">

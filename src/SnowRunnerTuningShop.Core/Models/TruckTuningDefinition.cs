@@ -75,10 +75,20 @@ public sealed class TruckTuningDefinition
 
     public TruckDriveLayout DriveLayout { get; set; }
 
-    /// <summary>TruckData Responsiveness — steering wheel return speed.</summary>
+    /// <summary>TruckData Responsiveness — steering-wheel input feel (not return-to-center).</summary>
     public double Responsiveness { get; set; }
 
     public double BaselineResponsiveness { get; init; }
+
+    /// <summary>TruckData SteerSpeed — how quickly the wheels turn when steering.</summary>
+    public double SteerSpeed { get; set; }
+
+    public double BaselineSteerSpeed { get; init; }
+
+    /// <summary>TruckData BackSteerSpeed — how quickly the wheels return to center.</summary>
+    public double BackSteerSpeed { get; set; }
+
+    public double BaselineBackSteerSpeed { get; init; }
 
     /// <summary>Primary chassis <c>PhysicsModel</c>/<c>Body Mass</c> (ImpactType=Truck when present).</summary>
     public bool HasMass { get; init; }

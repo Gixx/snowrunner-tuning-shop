@@ -11,11 +11,18 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ## [Unreleased]
 
+---
+
+## [1.4.1] — 2026-09-24
+
 ### Added
 - **Vehicle / trailer Mass:** detail pages edit primary chassis `PhysicsModel` `Body Mass` (nested masses scale with it). List pages gain a Mass global multiplier from 1/5 to 2x using the usual preset steps; scaled values use two-decimal XML formatting so 1/3-style fractions stay finite.
 - **Parts → Add-ons:** lists truck addons that already have Fuel / Water / Repairs / Spare wheels on `TruckData` (~60+). Editable capacities + store price; empty cells where an attribute is absent (never invents XML). Global multipliers for each field.
 - **Per-axle steering:** vehicle detail lists every wheel/axle with an independent `SteeringAngle` field (preserves Ackermann pairs), ordered front→rear and labeled `1st axle` / `2nd axle` / …. Ignores camera `<Front>`/`<Rear>` tags (no `Torque`). Empty/0 restores baseline on vanilla-steered axles (never strips); on non-steered axles injects rear counter-steer (−60…0) or removes it. Global Front (10°/60°) and Rear (−10°/−60°) presets only touch originally steerable axles. Hint text clarifies that rows are XML templates (a 6×6 may share one `RearWheel`), not physical axle count.
-- **Vehicle detail layout:** tuning fields split into cards (store/mass/rank; axle steer; drive; engines/sounds) with Save/Restore on the darker page background.
+- **SteerSpeed / BackSteerSpeed:** vehicle detail edits TruckData turn-in and return-to-center speeds (0–1) alongside Responsiveness; Responsiveness hint no longer claims it controls recenter.
+
+### Changed
+- **Vehicle detail layout:** tuning fields split into cards (store/mass/rank; axle steer; steer speeds/responsiveness; diff lock/drive; engines/sounds) with Save/Restore on the darker page background.
 
 ---
 
@@ -379,7 +386,8 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ---
 
-[Unreleased]: https://github.com/Gixx/snowrunner-tuning-shop/compare/v1.4.0...HEAD
+[Unreleased]: https://github.com/Gixx/snowrunner-tuning-shop/compare/v1.4.1...HEAD
+[1.4.1]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.4.1
 [1.4.0]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.4.0
 [1.4.0-beta.3]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.4.0-beta.3
 [1.4.0-beta.2]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.4.0-beta.2

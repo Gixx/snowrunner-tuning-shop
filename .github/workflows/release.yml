@@ -29,7 +29,7 @@ jobs:
         run: |
           $tag = "${{ github.ref_name }}"
           $version = $tag.TrimStart("v")
-          # Stable: 1.4.0 — Beta: 1.4.0-beta.1 (numbered prereleases only)
+          # Stable: 1.4.1 — Beta: 1.4.1-beta.1 (numbered prereleases only)
           if ($version -notmatch '^\d+\.\d+\.\d+(-beta\.\d+)?$') {
             throw "Tag must look like v1.0.0 or v1.0.0-beta.1 (got $tag)"
           }

@@ -21,6 +21,12 @@ public static class TruckTuningService
     /// <summary>Saber default when TruckData Responsiveness is omitted from XML.</summary>
     public const double DefaultTruckResponsiveness = 0.4;
 
+    /// <summary>Saber default when TruckData SteerSpeed is omitted from XML.</summary>
+    public const double DefaultTruckSteerSpeed = 0.025;
+
+    /// <summary>Saber default when TruckData BackSteerSpeed is omitted from XML.</summary>
+    public const double DefaultTruckBackSteerSpeed = 0.015;
+
     private static readonly Regex TruckDataOpenRegex = new(
         @"<TruckData\b(?<attrs>[^<>]*)>",
         RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
@@ -368,6 +374,8 @@ public static class TruckTuningService
         attrs.TryGetValue("FuelCapacity", out var fuelRaw);
         attrs.TryGetValue("DiffLockType", out var diffRaw);
         attrs.TryGetValue("Responsiveness", out var responsivenessRaw);
+        attrs.TryGetValue("SteerSpeed", out var steerSpeedRaw);
+        attrs.TryGetValue("BackSteerSpeed", out var backSteerSpeedRaw);
         var uiMatch = VehicleUiNameRegex.Match(text);
         var uiKey = uiMatch.Success ? uiMatch.Groups["value"].Value : "";
 
@@ -407,7 +415,11 @@ public static class TruckTuningService
             DiffLock = TruckDiffLockXml.ResolveDiffLockMode(archive, text, diffRaw, hasNativeDiffLockOptions),
             DriveLayout = InferDriveLayout(text),
             Responsiveness = ParseDouble(responsivenessRaw, DefaultTruckResponsiveness),
-            BaselineResponsiveness = ReadBaselineDouble(baselineText, text, "Responsiveness", 0.4),
+            BaselineResponsiveness = ReadBaselineDouble(baselineText, text, "Responsiveness", DefaultTruckResponsiveness),
+            SteerSpeed = ParseDouble(steerSpeedRaw, DefaultTruckSteerSpeed),
+            BaselineSteerSpeed = ReadBaselineDouble(baselineText, text, "SteerSpeed", DefaultTruckSteerSpeed),
+            BackSteerSpeed = ParseDouble(backSteerSpeedRaw, DefaultTruckBackSteerSpeed),
+            BaselineBackSteerSpeed = ReadBaselineDouble(baselineText, text, "BackSteerSpeed", DefaultTruckBackSteerSpeed),
             HasMass = hasMass,
             Mass = hasMass ? mass : 0,
             BaselineMass = hasMass ? baselineMass : 0,
@@ -540,7 +552,7 @@ public static class TruckTuningService
             updated = VehicleGameDataXml.SetTruckDataAttribute(
                 updated,
                 "Responsiveness",
-                FormatResponsiveness(scaledResponsiveness));
+                FormatUnitInterval(scaledResponsiveness));
         }
 
         if (!priceBaseline && GameDataOpenRegex.IsMatch(baselineText))
@@ -652,7 +664,18 @@ public static class TruckTuningService
 
     private static string ApplySteering(string text, TruckTuningDefinition truck)
     {
-        var updated = VehicleGameDataXml.SetTruckDataAttribute(text, "Responsiveness", FormatResponsiveness(truck.Responsiveness));
+        var updated = VehicleGameDataXml.SetTruckDataAttribute(
+            text,
+            "Responsiveness",
+            FormatUnitInterval(truck.Responsiveness));
+        updated = VehicleGameDataXml.SetTruckDataAttribute(
+            updated,
+            "SteerSpeed",
+            FormatUnitInterval(truck.SteerSpeed));
+        updated = VehicleGameDataXml.SetTruckDataAttribute(
+            updated,
+            "BackSteerSpeed",
+            FormatUnitInterval(truck.BackSteerSpeed));
         return TruckSteerXml.ApplySteerAxles(updated, truck.SteerAxles);
     }
 
@@ -853,10 +876,12 @@ public static class TruckTuningService
         XmlNumericFormatting.Format(value, preferInteger);
 
     /// <summary>
-    /// TruckData Responsiveness is a float in vanilla/mod XML (<c>0.3</c>, <c>1.0</c>).
-    /// Writing bare <c>1</c> for 1.0 can make the truck fail to load (missing from store/map).
+    /// TruckData unit-interval floats (Responsiveness, SteerSpeed, BackSteerSpeed) use values like
+    /// <c>0.3</c>, <c>1.0</c>. Writing bare <c>1</c> for 1.0 can make the truck fail to load.
     /// </summary>
-    public static string FormatResponsiveness(double value) =>
+    public static string FormatResponsiveness(double value) => FormatUnitInterval(value);
+
+    public static string FormatUnitInterval(double value) =>
         XmlNumericFormatting.Format(value, preferInteger: false, keepTrailingDotZero: true);
 
     public static string FormatMass(double value) =>

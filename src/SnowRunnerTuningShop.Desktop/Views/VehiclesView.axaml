@@ -537,6 +537,50 @@
                         Margin="0,0,0,12">
                   <StackPanel>
                 <Grid ColumnDefinitions="140,*" Margin="0,0,0,6">
+                  <TextBlock x:Name="SteerSpeedLabelText"
+                             VerticalAlignment="Center"
+                             Foreground="{DynamicResource AppMutedBrush}"/>
+                  <TextBox x:Name="SteerSpeedTextBox"
+                           Grid.Column="1"
+                           MaxWidth="140"
+                           HorizontalAlignment="Left"
+                           Padding="10,7"
+                           TextChanged="TuningNumericTextBox_TextChanged"/>
+                </Grid>
+                <TextBlock x:Name="SteerSpeedHintText"
+                           Margin="140,0,0,4"
+                           TextWrapping="Wrap"
+                           FontSize="11"
+                           Foreground="{DynamicResource AppMutedBrush}"/>
+                <TextBlock x:Name="SteerSpeedSafeRangeHint"
+                           Margin="140,0,0,14"
+                           FontSize="11"
+                           TextWrapping="Wrap"
+                           Foreground="{DynamicResource AppMutedBrush}"/>
+
+                <Grid ColumnDefinitions="140,*" Margin="0,0,0,6">
+                  <TextBlock x:Name="BackSteerSpeedLabelText"
+                             VerticalAlignment="Center"
+                             Foreground="{DynamicResource AppMutedBrush}"/>
+                  <TextBox x:Name="BackSteerSpeedTextBox"
+                           Grid.Column="1"
+                           MaxWidth="140"
+                           HorizontalAlignment="Left"
+                           Padding="10,7"
+                           TextChanged="TuningNumericTextBox_TextChanged"/>
+                </Grid>
+                <TextBlock x:Name="BackSteerSpeedHintText"
+                           Margin="140,0,0,4"
+                           TextWrapping="Wrap"
+                           FontSize="11"
+                           Foreground="{DynamicResource AppMutedBrush}"/>
+                <TextBlock x:Name="BackSteerSpeedSafeRangeHint"
+                           Margin="140,0,0,14"
+                           FontSize="11"
+                           TextWrapping="Wrap"
+                           Foreground="{DynamicResource AppMutedBrush}"/>
+
+                <Grid ColumnDefinitions="140,*" Margin="0,0,0,6">
                   <TextBlock x:Name="ResponsivenessLabelText"
                              VerticalAlignment="Center"
                              Foreground="{DynamicResource AppMutedBrush}"/>
@@ -553,11 +597,20 @@
                            FontSize="11"
                            Foreground="{DynamicResource AppMutedBrush}"/>
                 <TextBlock x:Name="ResponsivenessSafeRangeHint"
-                           Margin="140,0,0,14"
+                           Margin="140,0,0,0"
                            FontSize="11"
                            TextWrapping="Wrap"
                            Foreground="{DynamicResource AppMutedBrush}"/>
+                  </StackPanel>
+                </Border>
 
+                <Border Background="{DynamicResource AppCardBrush}"
+                        BorderBrush="{DynamicResource AppCardStrokeBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="16"
+                        Margin="0,0,0,12">
+                  <StackPanel>
                 <Grid ColumnDefinitions="140,*" Margin="0,0,0,14">
                   <TextBlock x:Name="DiffLockLabelText"
                              VerticalAlignment="Center"

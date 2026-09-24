@@ -27,7 +27,13 @@ public sealed class TuningFieldRange
         Baseline = baseline,
     };
 
-    public static TuningFieldRange Responsiveness(double? baseline) => new()
+    public static TuningFieldRange Responsiveness(double? baseline) => UnitInterval(baseline);
+
+    public static TuningFieldRange SteerSpeed(double? baseline) => UnitInterval(baseline);
+
+    public static TuningFieldRange BackSteerSpeed(double? baseline) => UnitInterval(baseline);
+
+    public static TuningFieldRange UnitInterval(double? baseline) => new()
     {
         Min = 0,
         Max = 1,

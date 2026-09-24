@@ -129,6 +129,10 @@ public partial class VehiclesView : UserControl
         UnlockRankLabelText.Text = UiText.Vehicles.UnlockRankLabel;
         UnlockRankHintText.Text = UiText.Vehicles.UnlockRankHint;
         SteerAxlesHintText.Text = UiText.Vehicles.SteerAxlesHint;
+        SteerSpeedLabelText.Text = UiText.Vehicles.SteerSpeedLabel;
+        SteerSpeedHintText.Text = UiText.Vehicles.SteerSpeedHint;
+        BackSteerSpeedLabelText.Text = UiText.Vehicles.BackSteerSpeedLabel;
+        BackSteerSpeedHintText.Text = UiText.Vehicles.BackSteerSpeedHint;
         ResponsivenessLabelText.Text = UiText.Vehicles.ResponsivenessLabel;
         ResponsivenessHintText.Text = UiText.Vehicles.ResponsivenessHint;
         DiffLockLabelText.Text = UiText.Vehicles.DiffLockLabel;
@@ -759,6 +763,8 @@ public partial class VehiclesView : UserControl
             FuelCapacityTextBox.Text = truck.FuelCapacity.ToString(CultureInfo.InvariantCulture);
             StorePriceTextBox.Text = truck.Price.ToString(CultureInfo.InvariantCulture);
             ResponsivenessTextBox.Text = TruckTuningService.FormatResponsiveness(truck.Responsiveness);
+            SteerSpeedTextBox.Text = TruckTuningService.FormatUnitInterval(truck.SteerSpeed);
+            BackSteerSpeedTextBox.Text = TruckTuningService.FormatUnitInterval(truck.BackSteerSpeed);
             MassRow.IsVisible = truck.HasMass;
             MassHintText.IsVisible = truck.HasMass;
             MassSafeRangeHint.IsVisible = truck.HasMass;
@@ -1078,6 +1084,8 @@ public partial class VehiclesView : UserControl
                 out var unlockRank,
                 out var diffLock,
                 out var drive,
+                out var steerSpeed,
+                out var backSteerSpeed,
                 out var responsiveness,
                 out var mass))
         {
@@ -1096,6 +1104,8 @@ public partial class VehiclesView : UserControl
         _currentTruck.UnlockByRank = unlockRank;
         _currentTruck.DiffLock = diffLock;
         _currentTruck.DriveLayout = drive;
+        _currentTruck.SteerSpeed = steerSpeed;
+        _currentTruck.BackSteerSpeed = backSteerSpeed;
         _currentTruck.Responsiveness = responsiveness;
         if (_currentTruck.HasMass)
         {
@@ -1177,6 +1187,8 @@ public partial class VehiclesView : UserControl
         out int unlockRank,
         out TruckDiffLockMode diffLock,
         out TruckDriveLayout drive,
+        out double steerSpeed,
+        out double backSteerSpeed,
         out double responsiveness,
         out double mass)
     {
@@ -1186,6 +1198,8 @@ public partial class VehiclesView : UserControl
         unlockRank = 0;
         diffLock = TruckDiffLockMode.Switchable;
         drive = TruckDriveLayout.AlwaysAwd;
+        steerSpeed = 0;
+        backSteerSpeed = 0;
         responsiveness = 0;
         mass = 0;
 
@@ -1219,6 +1233,32 @@ public partial class VehiclesView : UserControl
         {
             storeCountries = _currentTruck?.BaselineStoreCountries ?? "";
         }
+
+        if (!double.TryParse(
+                SteerSpeedTextBox.Text?.Trim(),
+                NumberStyles.Float,
+                CultureInfo.InvariantCulture,
+                out steerSpeed)
+            || steerSpeed is < 0 or > 1)
+        {
+            TuningStatusText.Text = UiText.Vehicles.InvalidSteerSpeed;
+            return false;
+        }
+
+        SteerSpeedTextBox.Text = TruckTuningService.FormatUnitInterval(steerSpeed);
+
+        if (!double.TryParse(
+                BackSteerSpeedTextBox.Text?.Trim(),
+                NumberStyles.Float,
+                CultureInfo.InvariantCulture,
+                out backSteerSpeed)
+            || backSteerSpeed is < 0 or > 1)
+        {
+            TuningStatusText.Text = UiText.Vehicles.InvalidBackSteerSpeed;
+            return false;
+        }
+
+        BackSteerSpeedTextBox.Text = TruckTuningService.FormatUnitInterval(backSteerSpeed);
 
         if (!double.TryParse(
                 ResponsivenessTextBox.Text?.Trim(),
@@ -1454,6 +1494,14 @@ public partial class VehiclesView : UserControl
             StorePriceTextBox,
             TuningFieldRange.StorePrice(_currentTruck.BaselinePrice));
 
+        SafeRangeHintPresenter.Refresh(
+            SteerSpeedSafeRangeHint,
+            SteerSpeedTextBox,
+            TuningFieldRange.SteerSpeed(_currentTruck.BaselineSteerSpeed));
+        SafeRangeHintPresenter.Refresh(
+            BackSteerSpeedSafeRangeHint,
+            BackSteerSpeedTextBox,
+            TuningFieldRange.BackSteerSpeed(_currentTruck.BaselineBackSteerSpeed));
         SafeRangeHintPresenter.Refresh(
             ResponsivenessSafeRangeHint,
             ResponsivenessTextBox,

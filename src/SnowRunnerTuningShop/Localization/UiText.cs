@@ -502,7 +502,20 @@ public static class UiText
         }
 
         public static string ResponsivenessLabel => StringResources.Get("Vehicles.ResponsivenessLabel", "Responsiveness");
-        public static string ResponsivenessHint => StringResources.Get("Vehicles.ResponsivenessHint", "How quickly the steering wheel returns to center (TruckData Responsiveness). Range: 0–1; higher = snappier.");
+        public static string ResponsivenessHint => StringResources.Get(
+            "Vehicles.ResponsivenessHint",
+            "Steering-wheel input feel (TruckData Responsiveness). Range: 0–1; higher = snappier response. Return-to-center speed is BackSteerSpeed.");
+        public static string SteerSpeedLabel => StringResources.Get("Vehicles.SteerSpeedLabel", "Steer speed");
+        public static string SteerSpeedHint => StringResources.Get(
+            "Vehicles.SteerSpeedHint",
+            "How quickly the wheels turn when you steer (TruckData SteerSpeed). Range: 0–1; higher = faster turn-in.");
+        public static string BackSteerSpeedLabel => StringResources.Get("Vehicles.BackSteerSpeedLabel", "Back-steer speed");
+        public static string BackSteerSpeedHint => StringResources.Get(
+            "Vehicles.BackSteerSpeedHint",
+            "How quickly the wheels return to center after a turn (TruckData BackSteerSpeed). Range: 0–1; higher = faster recenter.");
+        public static string InvalidResponsiveness => StringResources.Get("Vehicles.InvalidResponsiveness", "Responsiveness must be between 0 and 1.");
+        public static string InvalidSteerSpeed => StringResources.Get("Vehicles.InvalidSteerSpeed", "Steer speed must be between 0 and 1.");
+        public static string InvalidBackSteerSpeed => StringResources.Get("Vehicles.InvalidBackSteerSpeed", "Back-steer speed must be between 0 and 1.");
         public static string DiffLockLabel => StringResources.Get("Vehicles.DiffLockLabel", "Diff lock");
         public static string DriveLabel => StringResources.Get("Vehicles.DriveLabel", "Drive");
         public static string DiffLockAlwaysOn => StringResources.Get("Vehicles.DiffLockAlwaysOn", "Always on");
@@ -569,7 +582,6 @@ public static class UiText
         public static string LoadPakHint => StringResources.Get("Vehicles.LoadPakHint", "Load an initial.pak on the Home page first.");
         public static string TruckNotFound => StringResources.Get("Vehicles.TruckNotFound", "This vehicle could not be matched to a truck XML in the loaded pak.");
         public static string InvalidFuel => StringResources.Get("Vehicles.InvalidFuel", "Fuel tank must be a whole number of liters (1–10000).");
-        public static string InvalidResponsiveness => StringResources.Get("Vehicles.InvalidResponsiveness", "Responsiveness must be between 0 and 1.");
         public static string InvalidSteerAxle(string axleLabel) =>
             StringResources.Format(
                 "Vehicles.InvalidSteerAxle",
