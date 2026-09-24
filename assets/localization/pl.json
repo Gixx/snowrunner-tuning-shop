@@ -505,6 +505,8 @@
   "Vehicles.Scout": "Zwiadowca",
   "Vehicles.SearchPlaceholder": "Szukaj według nazwy…",
   "Vehicles.SteerAngleUnit": "°",
+  "Vehicles.SteerAxlesHint": "Te wiersze to szablony kół/osi z XML ciężarówki (FrontWheel, RearWheel, FirstAxle, …) — nie każda fizyczna oś na modelu. 6×6 często współdzieli jeden szablon RearWheel dla obu osi tylnych, dlatego widać tylko dwa wiersze. Osie sterujące już w baseline pozostają w zakresie vanilla (0 lub puste przywraca baseline). Osie bez sterowania w baseline mogą dostać tylne kontrasterowanie (−60°…0°); 0 lub puste usuwa je.",
+  "Vehicles.SteerAxleAddedHint": "Ta oś nie ma sterowania w baseline. Podaj wartość od −60° do 0°, aby dodać tylne kontrasterowanie; 0 lub puste usuwa je.",
   "Vehicles.StorePriceLabel": "Cena sklepowa",
   "Vehicles.StoreRegionsLabel": "Regiony sklepu",
   "Vehicles.StoreUnlocksHint": "Zastosuj odblokowanie regionu i rangi w kodzie XML każdej ciężarówki. Brak regionu powoduje, że ciężarówki pojawiają się w każdym regionalnym sklepie z ciężarówkami. Odblokuj wszystkie zestawy UnlockByRank na 0.",

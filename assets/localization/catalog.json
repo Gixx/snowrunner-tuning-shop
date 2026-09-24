@@ -6,98 +6,98 @@
       "displayName": "English",
       "gameLanguage": "english",
       "innoLanguage": "english",
-      "revision": 4
+      "revision": 5
     },
     {
       "uiCulture": "de",
       "displayName": "Deutsch",
       "gameLanguage": "german",
       "innoLanguage": "german",
-      "revision": 4
+      "revision": 5
     },
     {
       "uiCulture": "fr",
       "displayName": "Français",
       "gameLanguage": "french",
       "innoLanguage": "french",
-      "revision": 4
+      "revision": 5
     },
     {
       "uiCulture": "es",
       "displayName": "Español",
       "gameLanguage": "spanish",
       "innoLanguage": "spanish",
-      "revision": 4
+      "revision": 5
     },
     {
       "uiCulture": "pt",
       "displayName": "Português",
       "gameLanguage": "portuguese",
       "innoLanguage": "portuguese",
-      "revision": 4
+      "revision": 5
     },
     {
       "uiCulture": "pt-BR",
       "displayName": "Português (Brasil)",
       "gameLanguage": "brazilian",
       "innoLanguage": "brazilianportuguese",
-      "revision": 4
+      "revision": 5
     },
     {
       "uiCulture": "pl",
       "displayName": "Polski",
       "gameLanguage": "polish",
       "innoLanguage": "polish",
-      "revision": 4
+      "revision": 5
     },
     {
       "uiCulture": "ru",
       "displayName": "Русский",
       "gameLanguage": "russian",
       "innoLanguage": "russian",
-      "revision": 4
+      "revision": 5
     },
     {
       "uiCulture": "uk",
       "displayName": "Українська",
       "gameLanguage": "ukrainian",
       "innoLanguage": "ukrainian",
-      "revision": 4
+      "revision": 5
     },
     {
       "uiCulture": "zh-CN",
       "displayName": "简体中文",
       "gameLanguage": "chinese_simplified",
       "innoLanguage": "chinesesimplified",
-      "revision": 4
+      "revision": 5
     },
     {
       "uiCulture": "zh-TW",
       "displayName": "繁體中文",
       "gameLanguage": "chinese_traditional",
       "innoLanguage": "chinesetraditional",
-      "revision": 4
+      "revision": 5
     },
     {
       "uiCulture": "hu",
       "displayName": "Magyar",
       "gameLanguage": "hungarian",
       "innoLanguage": "hungarian",
-      "revision": 1
+      "revision": 2
     },
     {
       "uiCulture": "it",
       "displayName": "Italiano",
       "gameLanguage": "italian",
       "innoLanguage": "italian",
-      "revision": 1
+      "revision": 2
     },
     {
       "uiCulture": "fi",
       "displayName": "Suomi",
       "gameLanguage": "finnish",
       "innoLanguage": "finnish",
-      "revision": 1
+      "revision": 2
     }
   ]
 }

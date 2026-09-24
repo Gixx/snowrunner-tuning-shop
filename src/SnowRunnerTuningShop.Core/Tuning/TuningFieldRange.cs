@@ -1,3 +1,5 @@
+using SnowRunnerTuningShop.Core.Trucks;
+
 namespace SnowRunnerTuningShop.Core.Tuning;
 
 public sealed class TuningFieldRange
@@ -44,6 +46,30 @@ public sealed class TuningFieldRange
     {
         Min = -90,
         Max = 0,
+        Baseline = baseline,
+        UnitSuffix = "°",
+    };
+
+    public static TuningFieldRange AddedRearSteerDegrees(double? baseline) => new()
+    {
+        Min = TruckSteerXml.AddedRearMinDegrees,
+        Max = TruckSteerXml.AddedRearMaxDegrees,
+        Baseline = baseline,
+        UnitSuffix = "°",
+    };
+
+    public static TuningFieldRange VanillaFrontSteerDegrees(double? baseline) => new()
+    {
+        Min = TruckSteerXml.VanillaFrontMinDegrees,
+        Max = TruckSteerXml.VanillaFrontMaxDegrees,
+        Baseline = baseline,
+        UnitSuffix = "°",
+    };
+
+    public static TuningFieldRange VanillaRearSteerDegrees(double? baseline) => new()
+    {
+        Min = TruckSteerXml.VanillaRearMinDegrees,
+        Max = TruckSteerXml.VanillaRearMaxDegrees,
         Baseline = baseline,
         UnitSuffix = "°",
     };

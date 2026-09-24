@@ -56,7 +56,7 @@ Shared session: `AppSession`. Shell: `MainWindow.*`.
 | Home | `Views/HomeView.*` | Baseline, install location, restore, refresh after game update, reapply profile, workspace health, updates |
 | General | `Views/GeneralView.*`, `Core/General/GeneralService.cs` | Camera clip; trail rock scale (mod assets in `assets/general/no-stones`) |
 | Parts | `Views/PartsView.*` + Winch/Engine/Gearbox/Suspension/Tire/Add-ons/Crane tabs | Global multipliers + per-row edits; Used-by; restore category |
-| Vehicles | `Views/VehiclesView.*`, `Core/Trucks/TruckTuningService.cs` | Catalog + per-truck edit + global vehicle multipliers / unlocks |
+| Vehicles | `Views/VehiclesView.*`, `Core/Trucks/TruckTuningService.cs`, `TruckSteerXml` | Catalog + per-truck edit (per-axle steer) + global vehicle multipliers / unlocks |
 | Trailers | `Views/TrailersView.*`, `Core/Trailers/TrailerTuningService.cs` | Catalog + capacities/price/quest; global multipliers |
 | Photo Mode | `Views/PhotoModeView.*`, `Core/PhotoMode/*` | Defaults in `initial.cache_block`; Time from sslbundle is **read-only** (Apply must not write sslbundle) |
 | Settings | `Views/SettingsView.*` | Theme, UI language, locale downloads, links, updates |

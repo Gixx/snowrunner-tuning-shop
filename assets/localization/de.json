@@ -505,6 +505,8 @@
   "Vehicles.Scout": "Scout",
   "Vehicles.SearchPlaceholder": "Nach Namen suchen…",
   "Vehicles.SteerAngleUnit": "°",
+  "Vehicles.SteerAxlesHint": "Diese Zeilen sind die Rad-/Achs-Vorlagen der LKW-XML (FrontWheel, RearWheel, FirstAxle, …) — nicht jede physische Achse am Modell. Ein 6×6 teilt oft eine RearWheel-Vorlage für beide Hinterachsen, daher erscheinen nur zwei Zeilen. Achsen, die in der Baseline bereits lenken, bleiben im Vanilla-Bereich (0 oder leer stellt die Baseline wieder her). Achsen ohne Baseline-Lenkung können Gegenlenkung hinten erhalten (−60°…0°); 0 oder leer entfernt sie.",
+  "Vehicles.SteerAxleAddedHint": "Diese Achse hat keine Baseline-Lenkung. Wert von −60° bis 0° für hintere Gegenlenkung; 0 oder leer entfernt sie.",
   "Vehicles.StorePriceLabel": "Ladenpreis",
   "Vehicles.StoreRegionsLabel": "Store-Regionen",
   "Vehicles.StoreUnlocksHint": "Wenden Sie Regions- und Rangfreischaltungen auf jedes Lkw-XML an. Region-Free sorgt dafür, dass LKWs in jedem regionalen LKW-Laden erscheinen. Alle freischalten setzt UnlockByRank auf 0.",

@@ -505,6 +505,8 @@
   "Vehicles.Scout": "Scout",
   "Vehicles.SearchPlaceholder": "Cerca per nome…",
   "Vehicles.SteerAngleUnit": "°",
+  "Vehicles.SteerAxlesHint": "Queste righe sono i modelli ruota/asse dell’XML del camion (FrontWheel, RearWheel, FirstAxle, …) — non ogni asse fisico del modello. Un 6×6 spesso condivide un solo modello RearWheel per entrambi gli assi posteriori, quindi compaiono solo due righe. Gli assi già sterzanti nella baseline restano nel range vanilla (0 o vuoto ripristina la baseline). Gli assi senza sterzo in baseline possono ricevere controsterzo posteriore (−60°…0°); 0 o vuoto lo rimuove.",
+  "Vehicles.SteerAxleAddedHint": "Questo asse non ha sterzo in baseline. Inserisci un valore da −60° a 0° per aggiungere controsterzo posteriore; 0 o vuoto lo rimuove.",
   "Vehicles.StorePriceLabel": "Prezzo negozio",
   "Vehicles.StoreRegionsLabel": "Regioni negozio",
   "Vehicles.StoreUnlocksHint": "Applica sblocchi di regione e rango a ogni XML camion. Senza regione fa comparire i camion in ogni negozio regionale. Sblocca tutti imposta UnlockByRank a 0.",

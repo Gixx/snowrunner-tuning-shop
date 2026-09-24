@@ -471,16 +471,16 @@ public static class LocalePackStore
 
     private static List<LocaleCatalogEntry> BuiltinCatalog() =>
     [
-        new() { UiCulture = "en", DisplayName = "English", GameLanguage = "english", InnoLanguage = "english", Revision = 4 },
-        new() { UiCulture = "de", DisplayName = "Deutsch", GameLanguage = "german", InnoLanguage = "german", Revision = 4 },
-        new() { UiCulture = "fr", DisplayName = "Français", GameLanguage = "french", InnoLanguage = "french", Revision = 4 },
-        new() { UiCulture = "es", DisplayName = "Español", GameLanguage = "spanish", InnoLanguage = "spanish", Revision = 4 },
-        new() { UiCulture = "pt", DisplayName = "Português", GameLanguage = "portuguese", InnoLanguage = "portuguese", Revision = 4 },
-        new() { UiCulture = "pt-BR", DisplayName = "Português (Brasil)", GameLanguage = "brazilian", InnoLanguage = "brazilianportuguese", Revision = 4 },
-        new() { UiCulture = "pl", DisplayName = "Polski", GameLanguage = "polish", InnoLanguage = "polish", Revision = 4 },
-        new() { UiCulture = "ru", DisplayName = "Русский", GameLanguage = "russian", InnoLanguage = "russian", Revision = 4 },
-        new() { UiCulture = "uk", DisplayName = "Українська", GameLanguage = "ukrainian", InnoLanguage = "ukrainian", Revision = 4 },
-        new() { UiCulture = "zh-CN", DisplayName = "简体中文", GameLanguage = "chinese_simplified", InnoLanguage = "chinesesimplified", Revision = 4 },
-        new() { UiCulture = "zh-TW", DisplayName = "繁體中文", GameLanguage = "chinese_traditional", InnoLanguage = "chinesetraditional", Revision = 4 },
+        new() { UiCulture = "en", DisplayName = "English", GameLanguage = "english", InnoLanguage = "english", Revision = 5 },
+        new() { UiCulture = "de", DisplayName = "Deutsch", GameLanguage = "german", InnoLanguage = "german", Revision = 5 },
+        new() { UiCulture = "fr", DisplayName = "Français", GameLanguage = "french", InnoLanguage = "french", Revision = 5 },
+        new() { UiCulture = "es", DisplayName = "Español", GameLanguage = "spanish", InnoLanguage = "spanish", Revision = 5 },
+        new() { UiCulture = "pt", DisplayName = "Português", GameLanguage = "portuguese", InnoLanguage = "portuguese", Revision = 5 },
+        new() { UiCulture = "pt-BR", DisplayName = "Português (Brasil)", GameLanguage = "brazilian", InnoLanguage = "brazilianportuguese", Revision = 5 },
+        new() { UiCulture = "pl", DisplayName = "Polski", GameLanguage = "polish", InnoLanguage = "polish", Revision = 5 },
+        new() { UiCulture = "ru", DisplayName = "Русский", GameLanguage = "russian", InnoLanguage = "russian", Revision = 5 },
+        new() { UiCulture = "uk", DisplayName = "Українська", GameLanguage = "ukrainian", InnoLanguage = "ukrainian", Revision = 5 },
+        new() { UiCulture = "zh-CN", DisplayName = "简体中文", GameLanguage = "chinese_simplified", InnoLanguage = "chinesesimplified", Revision = 5 },
+        new() { UiCulture = "zh-TW", DisplayName = "繁體中文", GameLanguage = "chinese_traditional", InnoLanguage = "chinesetraditional", Revision = 5 },
     ];
 }

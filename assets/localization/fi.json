@@ -505,6 +505,8 @@
   "Vehicles.Scout": "Tiedustelu",
   "Vehicles.SearchPlaceholder": "Hae nimen mukaan…",
   "Vehicles.SteerAngleUnit": "°",
+  "Vehicles.SteerAxlesHint": "Nämä rivit ovat kuorma-auton XML:n pyörä-/akselimalleja (FrontWheel, RearWheel, FirstAxle, …) — eivät jokainen fyysinen akseli mallissa. 6×6 jakaa usein yhden RearWheel-mallin molemmille taka-akseleille, joten näkyy vain kaksi riviä. Baselineissa jo ohjaavat akselit pysyvät vanilla-alueella (0 tai tyhjä palauttaa baselinen). Ilman baseline-ohjausta oleville akseleille voi lisätä takavastaohjauksen (−60°…0°); 0 tai tyhjä poistaa sen.",
+  "Vehicles.SteerAxleAddedHint": "Tällä akselilla ei ole baseline-ohjausta. Anna arvo −60°–0° takavastaohjauksen lisäämiseksi; 0 tai tyhjä poistaa sen.",
   "Vehicles.StorePriceLabel": "Kauppahinta",
   "Vehicles.StoreRegionsLabel": "Kaupan alueet",
   "Vehicles.StoreUnlocksHint": "Käytä alue- ja arvoavaukset jokaiseen kuorma-auton XML:ään. Alueeton näyttää autot jokaisessa aluekaupassa. Avaa kaikki asettaa UnlockByRank-arvoksi 0.",

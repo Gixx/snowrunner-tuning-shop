@@ -505,6 +505,8 @@
   "Vehicles.Scout": "Escoteiro",
   "Vehicles.SearchPlaceholder": "Pesquise por nome…",
   "Vehicles.SteerAngleUnit": "°",
+  "Vehicles.SteerAxlesHint": "Estas linhas são os modelos de roda/eixo do XML do camião (FrontWheel, RearWheel, FirstAxle, …) — não cada eixo físico do modelo. Um 6×6 partilha frequentemente um único modelo RearWheel pelos dois eixos traseiros, por isso só aparecem duas linhas. Eixos que já viram na baseline ficam na faixa vanilla (0 ou vazio restaura a baseline). Eixos sem direção na baseline podem receber contra-direção traseira (−60°…0°); 0 ou vazio remove-a.",
+  "Vehicles.SteerAxleAddedHint": "Este eixo não tem direção na baseline. Introduza um valor de −60° a 0° para adicionar contra-direção traseira; 0 ou vazio remove-a.",
   "Vehicles.StorePriceLabel": "Preço da loja",
   "Vehicles.StoreRegionsLabel": "Regiões da loja",
   "Vehicles.StoreUnlocksHint": "Aplique desbloqueios de região e classificação em cada XML de caminhão. Livre de região faz com que os caminhões apareçam em todas as lojas regionais de caminhões. Desbloqueie todos os conjuntos de UnlockByRank como 0.",

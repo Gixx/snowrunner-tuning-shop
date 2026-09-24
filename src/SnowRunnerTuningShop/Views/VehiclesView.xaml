@@ -185,6 +185,20 @@
                                 IsEnabled="False"
                                 ValueChanged="GlobalMultiplierSlider_ValueChanged"/>
                     </StackPanel>
+
+                    <StackPanel Grid.Row="3" Grid.Column="1" Margin="12,12,12,0">
+                        <TextBlock x:Name="RearSteerGlobalLabel"
+                                   Text="{x:Static loc:UiText+Vehicles.RearSteerGlobalDefault}"
+                                   Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                        <Slider x:Name="RearSteerGlobalSlider"
+                                Minimum="0"
+                                Maximum="2"
+                                Value="1"
+                                TickFrequency="1"
+                                IsSnapToTickEnabled="True"
+                                IsEnabled="False"
+                                ValueChanged="GlobalMultiplierSlider_ValueChanged"/>
+                    </StackPanel>
                 </Grid>
             </Expander>
 
@@ -487,11 +501,9 @@
                 </StackPanel>
 
                 <Border Grid.Column="1"
-                        Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
-                        BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
-                        BorderThickness="1"
-                        CornerRadius="8"
-                        Padding="16">
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Padding="0">
                     <Grid>
                         <TextBlock x:Name="TuningHintText"
                                    Text="{x:Static loc:UiText+Vehicles.LoadPakHint}"
@@ -503,9 +515,16 @@
                             <TextBlock Text="{x:Static loc:UiText+Vehicles.TuningTitle}"
                                        FontWeight="SemiBold"
                                        FontSize="16"
-                                       Margin="0,0,0,16"
+                                       Margin="0,0,0,12"
                                        Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
 
+                            <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                                    BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="8"
+                                    Padding="16"
+                                    Margin="0,0,0,12">
+                                <StackPanel>
                             <Grid Margin="0,0,0,14">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="140"/>
@@ -640,83 +659,79 @@
                                 </Grid>
                             </Grid>
                             <TextBlock Text="{x:Static loc:UiText+Vehicles.UnlockRankHint}"
-                                       Margin="140,0,0,14"
+                                       Margin="140,0,0,0"
                                        TextWrapping="Wrap"
                                        FontSize="11"
                                        Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                </StackPanel>
+                            </Border>
 
-                            <Grid x:Name="FrontSteerRow" Margin="0,0,0,6">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="140"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Text="{x:Static loc:UiText+Vehicles.FrontSteerLabel}"
-                                           VerticalAlignment="Center"
-                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
-                                <Grid Grid.Column="1">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="140"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBox x:Name="FrontSteerTextBox"
-                                             Padding="10,7"
-                                             VerticalContentAlignment="Center"
-                                             TextChanged="TuningNumericTextBox_TextChanged"/>
-                                    <TextBlock Grid.Column="1"
-                                               Text="{x:Static loc:UiText+Vehicles.SteerAngleUnit}"
-                                               Margin="10,0,0,0"
-                                               VerticalAlignment="Center"
-                                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
-                                </Grid>
-                            </Grid>
-                            <TextBlock x:Name="FrontSteerHintText"
-                                       Margin="140,0,0,4"
-                                       Text="{x:Static loc:UiText+Vehicles.FrontSteerHint}"
+                            <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                                    BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="8"
+                                    Padding="16"
+                                    Margin="0,0,0,12">
+                                <StackPanel>
+                            <TextBlock x:Name="SteerAxlesHintText"
+                                       Text="{x:Static loc:UiText+Vehicles.SteerAxlesHint}"
+                                       Margin="0,0,0,8"
                                        TextWrapping="Wrap"
                                        FontSize="11"
                                        Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
-                            <TextBlock x:Name="FrontSteerSafeRangeHint"
-                                       Margin="140,0,0,14"
-                                       FontSize="11"
-                                       TextWrapping="Wrap"
-                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                            <ItemsControl x:Name="SteerAxlesItems" Margin="0,0,0,0">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Margin="0,0,0,10">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="140"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Text="{Binding DisplayLabel}"
+                                                           VerticalAlignment="Center"
+                                                           TextWrapping="Wrap"
+                                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                                <Grid Grid.Column="1">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="140"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBox Text="{Binding AngleText, UpdateSourceTrigger=PropertyChanged}"
+                                                             Padding="10,7"
+                                                             VerticalContentAlignment="Center"/>
+                                                    <TextBlock Grid.Column="1"
+                                                               Text="{x:Static loc:UiText+Vehicles.SteerAngleUnit}"
+                                                               Margin="10,0,0,0"
+                                                               VerticalAlignment="Center"
+                                                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                                </Grid>
+                                            </Grid>
+                                            <TextBlock Text="{Binding AddedHintText}"
+                                                       Visibility="{Binding AddedHintVisibility}"
+                                                       Margin="140,4,0,0"
+                                                       TextWrapping="Wrap"
+                                                       FontSize="11"
+                                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                            <TextBlock Text="{Binding SafeRangeText}"
+                                                       Foreground="{Binding SafeRangeBrush}"
+                                                       Margin="140,2,0,0"
+                                                       TextWrapping="Wrap"
+                                                       FontSize="11"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                                </StackPanel>
+                            </Border>
 
-                            <Grid x:Name="RearSteerRow" Margin="0,0,0,6">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="140"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Text="{x:Static loc:UiText+Vehicles.RearSteerLabel}"
-                                           VerticalAlignment="Center"
-                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
-                                <Grid Grid.Column="1">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="140"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBox x:Name="RearSteerTextBox"
-                                             Padding="10,7"
-                                             VerticalContentAlignment="Center"
-                                             TextChanged="TuningNumericTextBox_TextChanged"/>
-                                    <TextBlock Grid.Column="1"
-                                               Text="{x:Static loc:UiText+Vehicles.SteerAngleUnit}"
-                                               Margin="10,0,0,0"
-                                               VerticalAlignment="Center"
-                                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
-                                </Grid>
-                            </Grid>
-                            <TextBlock x:Name="RearSteerHintText"
-                                       Margin="140,0,0,4"
-                                       Text="{x:Static loc:UiText+Vehicles.RearSteerHint}"
-                                       TextWrapping="Wrap"
-                                       FontSize="11"
-                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
-                            <TextBlock x:Name="RearSteerSafeRangeHint"
-                                       Margin="140,0,0,14"
-                                       FontSize="11"
-                                       TextWrapping="Wrap"
-                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
-
+                            <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                                    BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="8"
+                                    Padding="16"
+                                    Margin="0,0,0,12">
+                                <StackPanel>
                             <Grid Margin="0,0,0,6">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="140"/>
@@ -779,11 +794,20 @@
                                           Padding="8,6"/>
                             </Grid>
                             <TextBlock Text="{x:Static loc:UiText+Vehicles.DriveHint}"
-                                       Margin="140,0,0,18"
+                                       Margin="140,0,0,0"
                                        TextWrapping="Wrap"
                                        FontSize="11"
                                        Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                </StackPanel>
+                            </Border>
 
+                            <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                                    BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="8"
+                                    Padding="16"
+                                    Margin="0,0,0,12">
+                                <StackPanel>
                             <Grid Margin="0,0,0,6">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="140"/>
@@ -864,12 +888,14 @@
                                 </StackPanel>
                             </Grid>
                             <TextBlock Text="{x:Static loc:UiText+Vehicles.EngineSoundHint}"
-                                       Margin="140,0,0,18"
+                                       Margin="140,0,0,0"
                                        TextWrapping="Wrap"
                                        FontSize="11"
                                        Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                </StackPanel>
+                            </Border>
 
-                            <StackPanel Orientation="Horizontal">
+                            <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
                                 <Button x:Name="SaveTuningButton"
                                         Content="{x:Static loc:UiText+Vehicles.SaveChanges}"
                                         Padding="14,8"

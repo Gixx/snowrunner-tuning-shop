@@ -505,6 +505,8 @@
   "Vehicles.Scout": "Explorar",
   "Vehicles.SearchPlaceholder": "Buscar por nombre…",
   "Vehicles.SteerAngleUnit": "°",
+  "Vehicles.SteerAxlesHint": "Estas filas son las plantillas de rueda/eje del XML del camión (FrontWheel, RearWheel, FirstAxle, …), no cada eje físico del modelo. Un 6×6 suele compartir una sola plantilla RearWheel en ambos ejes traseros, por eso solo aparecen dos filas. Los ejes que ya giran en la baseline se mantienen en el rango vanilla (0 o vacío restaura la baseline). Los ejes sin dirección de baseline pueden recibir contraviraje trasero (−60°…0°); 0 o vacío lo quita.",
+  "Vehicles.SteerAxleAddedHint": "Este eje no tiene dirección en la baseline. Introduce un valor de −60° a 0° para añadir contraviraje trasero; 0 o vacío lo quita.",
   "Vehicles.StorePriceLabel": "Precio de la tienda",
   "Vehicles.StoreRegionsLabel": "Regiones de la tienda",
   "Vehicles.StoreUnlocksHint": "Aplique desbloqueos de región y clasificación en cada XML de camión. Sin región hace que los camiones aparezcan en todas las tiendas de camiones regionales. Desbloquear todos establece UnlockByRank en 0.",

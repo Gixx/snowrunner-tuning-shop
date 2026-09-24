@@ -25,6 +25,7 @@ public partial class VehiclesView : UserControl
 {
     private readonly List<VehicleCard> _all = [];
     private readonly ObservableCollection<VehicleCard> _visible = [];
+    private readonly ObservableCollection<SteerAxleRowViewModel> _steerAxleRows = [];
     private IReadOnlyDictionary<string, VehicleMetaInfo> _metadata =
         new Dictionary<string, VehicleMetaInfo>(StringComparer.OrdinalIgnoreCase);
     private IReadOnlyList<TruckTuningDefinition> _trucks = [];
@@ -48,6 +49,7 @@ public partial class VehiclesView : UserControl
     {
         InitializeComponent();
         VehiclesItems.ItemsSource = _visible;
+        SteerAxlesItems.ItemsSource = _steerAxleRows;
         ApplyStaticText();
         Unloaded += (_, _) => _soundPreview.Dispose();
         _soundPreview.PlayingChanged += (_, _) =>
@@ -89,6 +91,7 @@ public partial class VehiclesView : UserControl
         AlwaysOnAwdCheckBox.Content = UiText.Vehicles.AlwaysOnAwd;
         FuelMultiplierLabel.Text = UiText.Vehicles.FuelMultiplierDefault;
         FrontSteerGlobalLabel.Text = UiText.Vehicles.FrontSteerGlobalDefault;
+        RearSteerGlobalLabel.Text = UiText.Vehicles.RearSteerGlobalDefault;
         ResponsivenessMultiplierLabel.Text = UiText.Vehicles.ResponsivenessMultiplierDefault;
         PriceMultiplierLabel.Text = UiText.Vehicles.PriceMultiplierDefault;
         MassMultiplierLabel.Text = UiText.Vehicles.MassMultiplierDefault;
@@ -125,12 +128,7 @@ public partial class VehiclesView : UserControl
         RegionFreeHintText.Text = UiText.Vehicles.RegionFreeHint;
         UnlockRankLabelText.Text = UiText.Vehicles.UnlockRankLabel;
         UnlockRankHintText.Text = UiText.Vehicles.UnlockRankHint;
-        FrontSteerLabelText.Text = UiText.Vehicles.FrontSteerLabel;
-        FrontSteerUnitText.Text = UiText.Vehicles.SteerAngleUnit;
-        FrontSteerHintText.Text = UiText.Vehicles.FrontSteerHint;
-        RearSteerLabelText.Text = UiText.Vehicles.RearSteerLabel;
-        RearSteerUnitText.Text = UiText.Vehicles.SteerAngleUnit;
-        RearSteerHintText.Text = UiText.Vehicles.RearSteerHint;
+        SteerAxlesHintText.Text = UiText.Vehicles.SteerAxlesHint;
         ResponsivenessLabelText.Text = UiText.Vehicles.ResponsivenessLabel;
         ResponsivenessHintText.Text = UiText.Vehicles.ResponsivenessHint;
         DiffLockLabelText.Text = UiText.Vehicles.DiffLockLabel;
@@ -195,6 +193,7 @@ public partial class VehiclesView : UserControl
         ApplyGlobalMultipliersButton.IsEnabled = canApply;
         FuelMultiplierSlider.IsEnabled = canApply;
         FrontSteerGlobalSlider.IsEnabled = canApply;
+        RearSteerGlobalSlider.IsEnabled = canApply;
         ResponsivenessMultiplierSlider.IsEnabled = canApply;
         PriceMultiplierSlider.IsEnabled = canApply;
         MassMultiplierSlider.IsEnabled = canApply;
@@ -214,11 +213,13 @@ public partial class VehiclesView : UserControl
     }
 
     private const int FrontSteerGlobalBaselineIndex = 1;
+    private const int RearSteerGlobalBaselineIndex = 1;
 
     private void ResetGlobalMultiplierSlidersToBaseline()
     {
         FuelMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
         FrontSteerGlobalSlider.Value = FrontSteerGlobalBaselineIndex;
+        RearSteerGlobalSlider.Value = RearSteerGlobalBaselineIndex;
         ResponsivenessMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
         PriceMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
         MassMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
@@ -240,6 +241,7 @@ public partial class VehiclesView : UserControl
             UiText.Slider.FuelTank,
             GetMultiplierIndex(FuelMultiplierSlider));
         FrontSteerGlobalLabel.Text = GetFrontSteerGlobalLabel(GetFrontSteerGlobalIndex(FrontSteerGlobalSlider));
+        RearSteerGlobalLabel.Text = GetRearSteerGlobalLabel(GetRearSteerGlobalIndex(RearSteerGlobalSlider));
         ResponsivenessMultiplierLabel.Text = UiText.Slider.Caption(
             UiText.Slider.Responsiveness,
             GetMultiplierIndex(ResponsivenessMultiplierSlider));
@@ -263,6 +265,20 @@ public partial class VehiclesView : UserControl
             0 => UiText.Vehicles.FrontSteerGlobalMin,
             2 => UiText.Vehicles.FrontSteerGlobalMax,
             _ => UiText.Vehicles.FrontSteerGlobalDefault,
+        };
+
+    private static int GetRearSteerGlobalIndex(Slider slider) =>
+        Math.Clamp((int)Math.Round(slider.Value, MidpointRounding.AwayFromZero), 0, 2);
+
+    private static TruckRearSteerGlobalMode GetRearSteerGlobalMode(Slider slider) =>
+        (TruckRearSteerGlobalMode)GetRearSteerGlobalIndex(slider);
+
+    private static string GetRearSteerGlobalLabel(int index) =>
+        index switch
+        {
+            0 => UiText.Vehicles.RearSteerGlobalMin,
+            2 => UiText.Vehicles.RearSteerGlobalMax,
+            _ => UiText.Vehicles.RearSteerGlobalDefault,
         };
 
     private static int GetMultiplierIndex(Slider slider) =>
@@ -315,6 +331,7 @@ public partial class VehiclesView : UserControl
                 // Capture UI control values on the UI thread before Task.Run.
                 var fuel = GetMultiplier(FuelMultiplierSlider);
                 var frontSteer = GetFrontSteerGlobalMode(FrontSteerGlobalSlider);
+                var rearSteer = GetRearSteerGlobalMode(RearSteerGlobalSlider);
                 var responsiveness = GetMultiplier(ResponsivenessMultiplierSlider);
                 var price = GetMultiplier(PriceMultiplierSlider);
                 var mass = GetMassMultiplier(MassMultiplierSlider);
@@ -325,6 +342,7 @@ public partial class VehiclesView : UserControl
                     pakPath,
                     fuel,
                     frontSteer,
+                    rearSteer,
                     responsiveness,
                     price,
                     mass,
@@ -746,26 +764,10 @@ public partial class VehiclesView : UserControl
             MassSafeRangeHint.IsVisible = truck.HasMass;
             MassTextBox.Text = truck.HasMass ? TruckTuningService.FormatMass(truck.Mass) : "";
             BindStoreUnlockFields(truck);
-            FrontSteerRow.IsVisible = truck.HasFrontSteer;
-            FrontSteerHintText.IsVisible = truck.HasFrontSteer;
-            if (truck.HasFrontSteer && truck.FrontSteerAngle is { } frontAngle)
+            _steerAxleRows.Clear();
+            foreach (var axle in truck.SteerAxles)
             {
-                FrontSteerTextBox.Text = frontAngle.ToString("0.######", CultureInfo.InvariantCulture);
-            }
-            else
-            {
-                FrontSteerTextBox.Text = "";
-            }
-
-            RearSteerRow.IsVisible = truck.HasRearSteer;
-            RearSteerHintText.IsVisible = truck.HasRearSteer;
-            if (truck.HasRearSteer && truck.RearSteerAngle is { } rearAngle)
-            {
-                RearSteerTextBox.Text = rearAngle.ToString("0.######", CultureInfo.InvariantCulture);
-            }
-            else
-            {
-                RearSteerTextBox.Text = "";
+                _steerAxleRows.Add(new SteerAxleRowViewModel(axle));
             }
 
             BindDiffLockOptions(truck);
@@ -808,6 +810,7 @@ public partial class VehiclesView : UserControl
         TuningHintText.Text = message;
         TuningHintText.IsVisible = true;
         RestoreVehicleButton.IsEnabled = false;
+        _steerAxleRows.Clear();
     }
 
     private void BindDiffLockOptions(TruckTuningDefinition truck)
@@ -1076,10 +1079,14 @@ public partial class VehiclesView : UserControl
                 out var diffLock,
                 out var drive,
                 out var responsiveness,
-                out var mass,
-                out var frontSteer,
-                out var rearSteer))
+                out var mass))
         {
+            return;
+        }
+
+        if (!TryApplySteerAxles(out var steerError))
+        {
+            TuningStatusText.Text = steerError!;
             return;
         }
 
@@ -1094,8 +1101,7 @@ public partial class VehiclesView : UserControl
         {
             _currentTruck.Mass = mass;
         }
-        _currentTruck.FrontSteerAngle = frontSteer;
-        _currentTruck.RearSteerAngle = rearSteer;
+        _currentTruck.SteerAxles = _steerAxleRows.Select(row => row.Axle).ToList();
         _currentTruck.HornSoundSetId = HornSoundCombo.SelectedItem as string;
         _currentTruck.EngineSoundSetId = EngineSoundCombo.SelectedItem as string;
 
@@ -1172,9 +1178,7 @@ public partial class VehiclesView : UserControl
         out TruckDiffLockMode diffLock,
         out TruckDriveLayout drive,
         out double responsiveness,
-        out double mass,
-        out double? frontSteer,
-        out double? rearSteer)
+        out double mass)
     {
         fuel = 0;
         price = 0;
@@ -1184,8 +1188,6 @@ public partial class VehiclesView : UserControl
         drive = TruckDriveLayout.AlwaysAwd;
         responsiveness = 0;
         mass = 0;
-        frontSteer = null;
-        rearSteer = null;
 
         if (!int.TryParse(FuelCapacityTextBox.Text?.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out fuel)
             || fuel is < 1 or > 10000)
@@ -1247,38 +1249,6 @@ public partial class VehiclesView : UserControl
             MassTextBox.Text = TruckTuningService.FormatMass(mass);
         }
 
-        if (_currentTruck?.HasFrontSteer == true)
-        {
-            if (!double.TryParse(
-                    FrontSteerTextBox.Text?.Trim(),
-                    NumberStyles.Float,
-                    CultureInfo.InvariantCulture,
-                    out var parsedFront)
-                || parsedFront is < 0 or > 90)
-            {
-                TuningStatusText.Text = UiText.Vehicles.InvalidFrontSteer;
-                return false;
-            }
-
-            frontSteer = parsedFront;
-        }
-
-        if (_currentTruck?.HasRearSteer == true)
-        {
-            if (!double.TryParse(
-                    RearSteerTextBox.Text?.Trim(),
-                    NumberStyles.Float,
-                    CultureInfo.InvariantCulture,
-                    out var parsedRear)
-                || parsedRear is < -90 or > 0)
-            {
-                TuningStatusText.Text = UiText.Vehicles.InvalidRearSteer;
-                return false;
-            }
-
-            rearSteer = parsedRear;
-        }
-
         if (DiffLockCombo.SelectedItem is not LabeledValue<TruckDiffLockMode> selectedDiff
             || DriveCombo.SelectedItem is not LabeledValue<TruckDriveLayout> selectedDrive)
         {
@@ -1296,6 +1266,74 @@ public partial class VehiclesView : UserControl
 
         diffLock = diffMode;
         drive = selectedDrive.Value;
+        return true;
+    }
+
+    /// <summary>
+    /// Parses every steer-axle row's text into <see cref="TruckSteerAxle.Angle"/>.
+    /// Empty text clears to null (restore/remove); 0 is allowed and also clears per Core rules.
+    /// </summary>
+    private bool TryApplySteerAxles(out string? errorMessage)
+    {
+        errorMessage = null;
+
+        foreach (var row in _steerAxleRows)
+        {
+            var axle = row.Axle;
+            var text = row.AngleText.Trim();
+            if (text.Length == 0)
+            {
+                axle.Angle = null;
+                continue;
+            }
+
+            if (!double.TryParse(text, NumberStyles.Float, CultureInfo.InvariantCulture, out var value))
+            {
+                errorMessage = axle.HadSteerInBaseline
+                    ? UiText.Vehicles.InvalidSteerAxle(row.DisplayLabel)
+                    : UiText.Vehicles.InvalidAddedRearSteer(row.DisplayLabel);
+                return false;
+            }
+
+            if (Math.Abs(value) < 1e-9)
+            {
+                axle.Angle = 0;
+                row.AngleText = "";
+                continue;
+            }
+
+            if (axle.HadSteerInBaseline)
+            {
+                if (axle.BaselineAngle is > 0
+                    && value is < TruckSteerXml.VanillaFrontMinDegrees or > TruckSteerXml.VanillaFrontMaxDegrees)
+                {
+                    errorMessage = UiText.Vehicles.InvalidSteerAxle(row.DisplayLabel);
+                    return false;
+                }
+
+                if (axle.BaselineAngle is < 0
+                    && value is < TruckSteerXml.VanillaRearMinDegrees or > TruckSteerXml.VanillaRearMaxDegrees)
+                {
+                    errorMessage = UiText.Vehicles.InvalidSteerAxle(row.DisplayLabel);
+                    return false;
+                }
+
+                axle.Angle = value;
+            }
+            else
+            {
+                if (value > 0 || value < TruckSteerXml.AddedRearMinDegrees)
+                {
+                    errorMessage = UiText.Vehicles.InvalidAddedRearSteer(row.DisplayLabel);
+                    return false;
+                }
+
+                axle.Angle = value;
+            }
+
+            row.AngleText = TruckSteerXml.FormatSteerAngle(axle.Angle.Value);
+        }
+
         return true;
     }
 
@@ -1415,32 +1453,6 @@ public partial class VehiclesView : UserControl
             PriceSafeRangeHint,
             StorePriceTextBox,
             TuningFieldRange.StorePrice(_currentTruck.BaselinePrice));
-
-        if (_currentTruck.HasFrontSteer)
-        {
-            FrontSteerSafeRangeHint.IsVisible = true;
-            SafeRangeHintPresenter.Refresh(
-                FrontSteerSafeRangeHint,
-                FrontSteerTextBox,
-                TuningFieldRange.FrontSteerDegrees(_currentTruck.BaselineFrontSteerAngle));
-        }
-        else
-        {
-            FrontSteerSafeRangeHint.IsVisible = false;
-        }
-
-        if (_currentTruck.HasRearSteer)
-        {
-            RearSteerSafeRangeHint.IsVisible = true;
-            SafeRangeHintPresenter.Refresh(
-                RearSteerSafeRangeHint,
-                RearSteerTextBox,
-                TuningFieldRange.RearSteerDegrees(_currentTruck.BaselineRearSteerAngle));
-        }
-        else
-        {
-            RearSteerSafeRangeHint.IsVisible = false;
-        }
 
         SafeRangeHintPresenter.Refresh(
             ResponsivenessSafeRangeHint,

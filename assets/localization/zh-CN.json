@@ -505,6 +505,8 @@
   "Vehicles.Scout": "侦察",
   "Vehicles.SearchPlaceholder": "按名称搜索…",
   "Vehicles.SteerAngleUnit": "°",
+  "Vehicles.SteerAxlesHint": "这些行是卡车 XML 的车轮/车轴模板（FrontWheel、RearWheel、FirstAxle 等），不是模型上的每一根物理车轴。6×6 经常用同一个 RearWheel 模板对应两根后桥，因此只显示两行。基线中已有转向的车轴保持原版范围（0 或留空恢复基线）。无基线转向的车轴可添加后桥反向转向（−60°…0°）；0 或留空则移除。",
+  "Vehicles.SteerAxleAddedHint": "此车轴在基线中没有转向。输入 −60° 到 0° 可添加后桥反向转向；0 或留空则移除。",
   "Vehicles.StorePriceLabel": "商店价格",
   "Vehicles.StoreRegionsLabel": "商店地区",
   "Vehicles.StoreUnlocksHint": "对每辆卡车 XML 应用地区和等级解锁。全区域使卡车出现在每个地区商店。全部解锁将 UnlockByRank 设为 0。",

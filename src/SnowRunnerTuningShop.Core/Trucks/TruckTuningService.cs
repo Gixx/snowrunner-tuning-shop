@@ -13,8 +13,10 @@ namespace SnowRunnerTuningShop.Core.Trucks;
 
 public static class TruckTuningService
 {
-    public const double GlobalFrontSteerMinimumDegrees = 10;
-    public const double GlobalFrontSteerMaximumDegrees = 60;
+    public const double GlobalFrontSteerMinimumDegrees = TruckSteerXml.GlobalFrontSteerMinimumDegrees;
+    public const double GlobalFrontSteerMaximumDegrees = TruckSteerXml.GlobalFrontSteerMaximumDegrees;
+    public const double GlobalRearSteerMinimumDegrees = TruckSteerXml.GlobalRearSteerMinimumDegrees;
+    public const double GlobalRearSteerMaximumDegrees = TruckSteerXml.GlobalRearSteerMaximumDegrees;
 
     /// <summary>Saber default when TruckData Responsiveness is omitted from XML.</summary>
     public const double DefaultTruckResponsiveness = 0.4;
@@ -33,10 +35,6 @@ public static class TruckTuningService
 
     private static readonly Regex TorqueTagRegex = new(
         @"<(?<tag>FrontWheel|RearWheel|FirstAxle|SecondAxle|ThirdAxle|FourthAxle|FrontAxle|RearAxle|MiddleAxle|MiddleWheel|Front|Rear)\b(?<attrs>[^<>]*\bTorque\s*=\s*""[^""]*""[^<>]*)(?<self>/?)>",
-        RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
-
-    private static readonly Regex SteeringAngleAttributeRegex = new(
-        @"(?<prefix>SteeringAngle\s*=\s*"")(?<value>[^""]*)(?<suffix>"")",
         RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
     public static IReadOnlyList<TruckTuningDefinition> LoadTrucks(string pakPath, string language = "english")
@@ -92,6 +90,7 @@ public static class TruckTuningService
         string pakPath,
         double fuelMultiplier,
         TruckFrontSteerGlobalMode frontSteerMode,
+        TruckRearSteerGlobalMode rearSteerMode,
         double responsivenessMultiplier,
         double priceMultiplier,
         double massMultiplier,
@@ -107,6 +106,11 @@ public static class TruckTuningService
             throw new ArgumentOutOfRangeException(nameof(frontSteerMode), "Unsupported front steer preset.");
         }
 
+        if (!Enum.IsDefined(rearSteerMode))
+        {
+            throw new ArgumentOutOfRangeException(nameof(rearSteerMode), "Unsupported rear steer preset.");
+        }
+
         return MutateDirectTrucksFromBaseline(
             pakPath,
             (workingArchive, entryPath, baselineText) => ApplyGlobalMultipliersToText(
@@ -115,6 +119,7 @@ public static class TruckTuningService
                 baselineText,
                 fuelMultiplier,
                 frontSteerMode,
+                rearSteerMode,
                 responsivenessMultiplier,
                 priceMultiplier,
                 massMultiplier,
@@ -363,14 +368,11 @@ public static class TruckTuningService
         attrs.TryGetValue("FuelCapacity", out var fuelRaw);
         attrs.TryGetValue("DiffLockType", out var diffRaw);
         attrs.TryGetValue("Responsiveness", out var responsivenessRaw);
-        var (frontSteerAngle, rearSteerAngle, hasFrontSteer, hasRearSteer) = ParseSteerAngles(text);
         var uiMatch = VehicleUiNameRegex.Match(text);
         var uiKey = uiMatch.Success ? uiMatch.Groups["value"].Value : "";
 
         var baselineText = TryReadTruckText(baselineArchive, entryPath);
-        var baselineSteer = baselineText is not null
-            ? ParseSteerAngles(baselineText)
-            : ParseSteerAngles(text);
+        var steerAxles = TruckSteerXml.ParseSteerAxles(text, baselineText);
         var hasNativeDiffLockOptions = baselineText is not null
             ? TruckDiffLockXml.HasNativeDiffLockInfrastructure(baselineArchive!, baselineText, truckId)
             : TruckDiffLockXml.HasNativeDiffLockInfrastructure(archive, text, truckId);
@@ -409,12 +411,7 @@ public static class TruckTuningService
             HasMass = hasMass,
             Mass = hasMass ? mass : 0,
             BaselineMass = hasMass ? baselineMass : 0,
-            FrontSteerAngle = frontSteerAngle,
-            BaselineFrontSteerAngle = baselineSteer.Front,
-            RearSteerAngle = rearSteerAngle,
-            BaselineRearSteerAngle = baselineSteer.Rear,
-            HasFrontSteer = hasFrontSteer,
-            HasRearSteer = hasRearSteer,
+            SteerAxles = steerAxles,
             HornSoundSetId = sounds.HornSoundSetId,
             EngineSoundSetId = sounds.EngineSoundSetId,
         };
@@ -458,13 +455,15 @@ public static class TruckTuningService
         TruckFrontSteerGlobalMode frontSteerMode,
         double responsivenessMultiplier,
         double priceMultiplier,
-        double massMultiplier = 1.0) =>
+        double massMultiplier = 1.0,
+        TruckRearSteerGlobalMode rearSteerMode = TruckRearSteerGlobalMode.Baseline) =>
         ApplyGlobalMultipliersToText(
             workingArchive: null,
             truckId: "test",
             baselineText,
             fuelMultiplier,
             frontSteerMode,
+            rearSteerMode,
             responsivenessMultiplier,
             priceMultiplier,
             massMultiplier,
@@ -477,6 +476,7 @@ public static class TruckTuningService
         string baselineText,
         double fuelMultiplier,
         TruckFrontSteerGlobalMode frontSteerMode,
+        TruckRearSteerGlobalMode rearSteerMode,
         double responsivenessMultiplier,
         double priceMultiplier,
         double massMultiplier,
@@ -487,13 +487,15 @@ public static class TruckTuningService
         var responsivenessBaseline = TuningMultiplierPresets.IsBaselineMultiplier(responsivenessMultiplier);
         var priceBaseline = TuningMultiplierPresets.IsBaselineMultiplier(priceMultiplier);
         var massBaseline = TuningMultiplierPresets.IsBaselineMultiplier(massMultiplier);
-        var steerBaseline = frontSteerMode == TruckFrontSteerGlobalMode.Baseline;
+        var frontSteerBaseline = frontSteerMode == TruckFrontSteerGlobalMode.Baseline;
+        var rearSteerBaseline = rearSteerMode == TruckRearSteerGlobalMode.Baseline;
 
         if (fuelBaseline
             && responsivenessBaseline
             && priceBaseline
             && massBaseline
-            && steerBaseline
+            && frontSteerBaseline
+            && rearSteerBaseline
             && !alwaysOnDiffLock
             && !alwaysOnAwd)
         {
@@ -506,6 +508,10 @@ public static class TruckTuningService
             var withoutTruckData = massBaseline
                 ? baselineText
                 : VehiclePhysicsMassXml.ScaleAllMasses(baselineText, massMultiplier);
+            withoutTruckData = TruckSteerXml.ApplyGlobalSteerPresets(
+                withoutTruckData,
+                frontSteerMode,
+                rearSteerMode);
             return ApplyGlobalDriveFlags(workingArchive, truckId, withoutTruckData, alwaysOnDiffLock, alwaysOnAwd);
         }
 
@@ -556,18 +562,9 @@ public static class TruckTuningService
             updated = VehiclePhysicsMassXml.ScaleAllMasses(updated, massMultiplier);
         }
 
-        if (!steerBaseline)
+        if (!frontSteerBaseline || !rearSteerBaseline)
         {
-            var (_, _, hasFrontSteer, _) = ParseSteerAngles(baselineText);
-            if (hasFrontSteer)
-            {
-                updated = frontSteerMode switch
-                {
-                    TruckFrontSteerGlobalMode.Minimum => ApplyFrontSteerAngle(updated, GlobalFrontSteerMinimumDegrees),
-                    TruckFrontSteerGlobalMode.Maximum => ApplyFrontSteerAngle(updated, GlobalFrontSteerMaximumDegrees),
-                    _ => updated,
-                };
-            }
+            updated = TruckSteerXml.ApplyGlobalSteerPresets(updated, frontSteerMode, rearSteerMode);
         }
 
         return ApplyGlobalDriveFlags(workingArchive, truckId, updated, alwaysOnDiffLock, alwaysOnAwd);
@@ -656,71 +653,7 @@ public static class TruckTuningService
     private static string ApplySteering(string text, TruckTuningDefinition truck)
     {
         var updated = VehicleGameDataXml.SetTruckDataAttribute(text, "Responsiveness", FormatResponsiveness(truck.Responsiveness));
-        if (truck.HasFrontSteer && truck.FrontSteerAngle is { } frontAngle)
-        {
-            updated = ApplyFrontSteerAngle(updated, frontAngle);
-        }
-
-        if (truck.HasRearSteer && truck.RearSteerAngle is { } rearAngle)
-        {
-            updated = ApplyRearSteerAngle(updated, rearAngle);
-        }
-
-        return updated;
-    }
-
-    private static string ApplyFrontSteerAngle(string text, double angle)
-    {
-        var formatted = FormatNumeric(angle, preferInteger: false);
-        return SteeringAngleAttributeRegex.Replace(
-            text,
-            match => ReplaceSteeringAngleIf(match, current => current >= 0, formatted));
-    }
-
-    private static string ApplyRearSteerAngle(string text, double angle)
-    {
-        var formatted = FormatNumeric(angle, preferInteger: false);
-        return SteeringAngleAttributeRegex.Replace(
-            text,
-            match => ReplaceSteeringAngleIf(match, current => current < 0, formatted));
-    }
-
-    private static string ReplaceSteeringAngleIf(Match match, Func<double, bool> predicate, string formatted)
-    {
-        if (!double.TryParse(match.Groups["value"].Value, NumberStyles.Float, CultureInfo.InvariantCulture, out var current)
-            || !predicate(current))
-        {
-            return match.Value;
-        }
-
-        return $"{match.Groups["prefix"].Value}{formatted}{match.Groups["suffix"].Value}";
-    }
-
-    private static List<double> ParseSteeringAngles(string text)
-    {
-        var angles = new List<double>();
-        foreach (Match match in SteeringAngleAttributeRegex.Matches(text))
-        {
-            if (double.TryParse(match.Groups["value"].Value, NumberStyles.Float, CultureInfo.InvariantCulture, out var parsed))
-            {
-                angles.Add(parsed);
-            }
-        }
-
-        return angles;
-    }
-
-    private static (double? Front, double? Rear, bool HasFront, bool HasRear) ParseSteerAngles(string text)
-    {
-        var angles = ParseSteeringAngles(text);
-        var positive = angles.Where(angle => angle > 0).ToArray();
-        var negative = angles.Where(angle => angle < 0).ToArray();
-
-        return (
-            positive.Length > 0 ? positive.Max() : null,
-            negative.Length > 0 ? negative.Min() : null,
-            positive.Length > 0,
-            negative.Length > 0);
+        return TruckSteerXml.ApplySteerAxles(updated, truck.SteerAxles);
     }
 
     private static string? TryReadTruckText(ZipArchive? archive, string entryPath)

@@ -25,6 +25,14 @@ public enum TruckFrontSteerGlobalMode
     Maximum = 2,
 }
 
+/// <summary>Three-position global rear counter-steer preset (not a baseline multiplier).</summary>
+public enum TruckRearSteerGlobalMode
+{
+    Minimum = 0,
+    Baseline = 1,
+    Maximum = 2,
+}
+
 public sealed class TruckTuningDefinition
 {
     public required string EntryPath { get; init; }
@@ -79,19 +87,14 @@ public sealed class TruckTuningDefinition
 
     public double BaselineMass { get; init; }
 
-    /// <summary>Front steering angle in degrees (0–90), or null when the truck has no front steer wheels.</summary>
-    public double? FrontSteerAngle { get; set; }
+    /// <summary>Per axle/wheel <c>SteeringAngle</c> editors (file order).</summary>
+    public List<TruckSteerAxle> SteerAxles { get; set; } = [];
 
-    public double? BaselineFrontSteerAngle { get; init; }
+    public bool HasBaselineFrontSteer =>
+        SteerAxles.Any(axle => axle.HadSteerInBaseline && axle.BaselineAngle is > 0);
 
-    /// <summary>Rear counter-steer angle in degrees (−90–0), or null when the truck has no rear steer wheels.</summary>
-    public double? RearSteerAngle { get; set; }
-
-    public double? BaselineRearSteerAngle { get; init; }
-
-    public bool HasFrontSteer { get; init; }
-
-    public bool HasRearSteer { get; init; }
+    public bool HasBaselineRearSteer =>
+        SteerAxles.Any(axle => axle.HadSteerInBaseline && axle.BaselineAngle is < 0);
 
     /// <summary>Sound set id for &lt;Honk&gt; (folder under trucks/…), e.g. ford_f750.</summary>
     public string? HornSoundSetId { get; set; }

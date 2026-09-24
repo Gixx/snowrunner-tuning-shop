@@ -505,6 +505,8 @@
   "Vehicles.Scout": "Éclaireur",
   "Vehicles.SearchPlaceholder": "Rechercher par nom…",
   "Vehicles.SteerAngleUnit": "°",
+  "Vehicles.SteerAxlesHint": "Ces lignes sont les modèles de roue/essieu du XML du camion (FrontWheel, RearWheel, FirstAxle, …) — pas chaque essieu physique du modèle. Un 6×6 partage souvent un seul modèle RearWheel pour les deux essieux arrière, d’où seulement deux lignes. Les essieux déjà directeurs dans la baseline restent dans la plage vanilla (0 ou vide restaure la baseline). Les essieux sans direction de baseline peuvent recevoir un contre-braquage arrière (−60°…0°) ; 0 ou vide le retire.",
+  "Vehicles.SteerAxleAddedHint": "Cet essieu n’a pas de direction en baseline. Entrez une valeur de −60° à 0° pour ajouter un contre-braquage arrière ; 0 ou vide la retire.",
   "Vehicles.StorePriceLabel": "Prix magasin",
   "Vehicles.StoreRegionsLabel": "Régions du magasin",
   "Vehicles.StoreUnlocksHint": "Appliquez les déverrouillages de région et de classement sur chaque XML de camion. Sans région, les camions apparaissent dans tous les magasins de camions régionaux. Déverrouillez tous les ensembles UnlockByRank sur 0.",

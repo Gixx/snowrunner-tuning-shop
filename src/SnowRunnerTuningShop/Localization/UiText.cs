@@ -420,11 +420,14 @@ public static class UiText
         public static string FrontSteerGlobalDefault => StringResources.Get("Vehicles.FrontSteerGlobalDefault", "Front steer: Default (baseline)");
         public static string FrontSteerGlobalMin => StringResources.Get("Vehicles.FrontSteerGlobalMin", "Front steer: Min (10°)");
         public static string FrontSteerGlobalMax => StringResources.Get("Vehicles.FrontSteerGlobalMax", "Front steer: Max (60°)");
+        public static string RearSteerGlobalDefault => StringResources.Get("Vehicles.RearSteerGlobalDefault", "Rear steer: Default (baseline)");
+        public static string RearSteerGlobalMin => StringResources.Get("Vehicles.RearSteerGlobalMin", "Rear steer: Min (−10°)");
+        public static string RearSteerGlobalMax => StringResources.Get("Vehicles.RearSteerGlobalMax", "Rear steer: Max (−60°)");
         public static string ResponsivenessMultiplierDefault => StringResources.Get("Vehicles.ResponsivenessMultiplierDefault", "Responsiveness: 1 (baseline)");
         public static string PriceMultiplierDefault => StringResources.Get("Vehicles.PriceMultiplierDefault", "Store price: 1 (baseline)");
         public static string MassMultiplierDefault => StringResources.Get("Vehicles.MassMultiplierDefault", "Mass: 1 (baseline)");
         public static string ApplyGlobalMultipliers => StringResources.Get("Vehicles.ApplyGlobalMultipliers", "Apply to all vehicles");
-        public static string GlobalMultipliersHint => StringResources.Get("Vehicles.GlobalMultipliersHint", "Fuel tank, store price, responsiveness, and mass scale from baseline. Front steer uses three presets: Min (10°), Default (baseline per truck), Max (60°). Always-on diff lock and AWD, when checked, are forced on every truck. Independent of the category filter below.");
+        public static string GlobalMultipliersHint => StringResources.Get("Vehicles.GlobalMultipliersHint", "Fuel tank, store price, responsiveness, and mass scale from baseline. Front steer and rear counter-steer each use three presets — Min, Default (baseline per truck), Max — and only change axles that already steer in the baseline files. Always-on diff lock and AWD, when checked, are forced on every truck. Independent of the category filter below.");
         public static string AlwaysOnDiffLock => StringResources.Get("Vehicles.AlwaysOnDiffLock", "Always on diff lock");
         public static string AlwaysOnAwd => StringResources.Get("Vehicles.AlwaysOnAwd", "Always on AWD");
         public static string StoreUnlocksTitle => StringResources.Get("Vehicles.StoreUnlocksTitle", "Store unlocks (all vehicles)");
@@ -468,12 +471,37 @@ public static class UiText
         public static string StoreRegionsLabel => StringResources.Get("Vehicles.StoreRegionsLabel", "Store regions");
         public static string UnlockRankLabel => StringResources.Get("Vehicles.UnlockRankLabel", "Unlock rank");
         public static string UnlockRankHint => StringResources.Get("Vehicles.UnlockRankHint", "Player rank required in the truck store (GameData UnlockByRank). Use 0 to clear the rank gate.");
-        public static string FrontSteerLabel => StringResources.Get("Vehicles.FrontSteerLabel", "Front steer");
-        public static string RearSteerLabel => StringResources.Get("Vehicles.RearSteerLabel", "Rear steer");
         public static string SteerAngleUnit => StringResources.Get("Vehicles.SteerAngleUnit", "°");
+        public static string SteerAxlesHint => StringResources.Get(
+            "Vehicles.SteerAxlesHint",
+            "These rows are the truck XML's wheel/axle templates (FrontWheel, RearWheel, FirstAxle, …) — not every physical axle on the model. A 6×6 often shares one RearWheel template across both rear axles, so only two rows appear. Axles that already steer in the baseline stay clamped to their vanilla range (0 or empty restores the baseline). Axles without baseline steering can get rear counter-steer (−60°…0°); 0 or empty removes it.");
+        public static string SteerAxleAddedHint => StringResources.Get(
+            "Vehicles.SteerAxleAddedHint",
+            "This axle has no baseline steering. Enter a value from −60° to 0° to add rear counter-steer; 0 or empty removes it.");
+
+        public static string AxleOrdinalLabel(int order)
+        {
+            var ordinal = order switch
+            {
+                1 => "1st",
+                2 => "2nd",
+                3 => "3rd",
+                _ when order % 100 is >= 11 and <= 13 => $"{order}th",
+                _ => (order % 10) switch
+                {
+                    1 => $"{order}st",
+                    2 => $"{order}nd",
+                    3 => $"{order}rd",
+                    _ => $"{order}th",
+                },
+            };
+            return string.Format(
+                System.Globalization.CultureInfo.CurrentUICulture,
+                StringResources.Get("Vehicles.AxleOrdinalFormat", "{0} axle"),
+                ordinal);
+        }
+
         public static string ResponsivenessLabel => StringResources.Get("Vehicles.ResponsivenessLabel", "Responsiveness");
-        public static string FrontSteerHint => StringResources.Get("Vehicles.FrontSteerHint", "Maximum turn for front steering wheels. Applies to all front steer axles. Range: 0° to 90°.");
-        public static string RearSteerHint => StringResources.Get("Vehicles.RearSteerHint", "Rear-axle counter-steer (turns opposite to the front). Applies to all rear steer axles. Range: −90° to 0°.");
         public static string ResponsivenessHint => StringResources.Get("Vehicles.ResponsivenessHint", "How quickly the steering wheel returns to center (TruckData Responsiveness). Range: 0–1; higher = snappier.");
         public static string DiffLockLabel => StringResources.Get("Vehicles.DiffLockLabel", "Diff lock");
         public static string DriveLabel => StringResources.Get("Vehicles.DriveLabel", "Drive");
@@ -542,8 +570,16 @@ public static class UiText
         public static string TruckNotFound => StringResources.Get("Vehicles.TruckNotFound", "This vehicle could not be matched to a truck XML in the loaded pak.");
         public static string InvalidFuel => StringResources.Get("Vehicles.InvalidFuel", "Fuel tank must be a whole number of liters (1–10000).");
         public static string InvalidResponsiveness => StringResources.Get("Vehicles.InvalidResponsiveness", "Responsiveness must be between 0 and 1.");
-        public static string InvalidFrontSteer => StringResources.Get("Vehicles.InvalidFrontSteer", "Front steer must be between 0 and 90 degrees.");
-        public static string InvalidRearSteer => StringResources.Get("Vehicles.InvalidRearSteer", "Rear steer must be between -90 and 0 degrees.");
+        public static string InvalidSteerAxle(string axleLabel) =>
+            StringResources.Format(
+                "Vehicles.InvalidSteerAxle",
+                "{0}: enter a valid angle within the vanilla range shown, or 0/leave empty to restore the baseline.",
+                axleLabel);
+        public static string InvalidAddedRearSteer(string axleLabel) =>
+            StringResources.Format(
+                "Vehicles.InvalidAddedRearSteer",
+                "{0}: added rear counter-steer must be between −60° and 0° (0 or empty removes it).",
+                axleLabel);
         public static string InvalidPrice => StringResources.Get("Vehicles.InvalidPrice", "Store price must be a whole number from 0 to 9,999,999.");
         public static string InvalidUnlockRank => StringResources.Get("Vehicles.InvalidUnlockRank", "Unlock rank must be a whole number from 0 to 30.");
         public static string SaveSuccessTitle => StringResources.Get("Vehicles.SaveSuccessTitle", "Saved successfully");

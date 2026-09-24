@@ -553,6 +553,8 @@
   "Vehicles.Scout": "Felderítő",
   "Vehicles.SearchPlaceholder": "Keresés név szerint…",
   "Vehicles.SteerAngleUnit": "°",
+  "Vehicles.SteerAxlesHint": "Ezek a sorok a teherautó XML kerék/tengely-sablonjai (FrontWheel, RearWheel, FirstAxle, …) — nem minden fizikai tengely a modellen. Egy 6×6 gyakran egyetlen RearWheel sablont használ mindkét hátsó tengelyhez, ezért csak két sor jelenik meg. A baseline-ban már kormányzott tengelyek a vanilla tartományban maradnak (0 vagy üres visszaállítja a baseline-t). Baseline kormányzás nélküli tengelyekhez hátsó ellenkormányzás adható (−60°…0°); 0 vagy üres törli.",
+  "Vehicles.SteerAxleAddedHint": "Ennek a tengelynek nincs baseline kormányzása. −60° és 0° közötti értékkel hátsó ellenkormányzás adható; 0 vagy üres törli.",
   "Vehicles.StorePriceLabel": "Bolti ár",
   "Vehicles.StoreRegionsLabel": "Bolti régiók",
   "Vehicles.StoreUnlocksHint": "Régió- és rangfeloldások alkalmazása minden teherautó XML-jén. A régiófüggetlen minden regionális boltban megjeleníti a teherautókat. Az összes feloldása UnlockByRank = 0.",
