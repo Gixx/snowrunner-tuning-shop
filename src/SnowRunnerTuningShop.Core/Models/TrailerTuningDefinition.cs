@@ -45,6 +45,13 @@ public sealed class TrailerTuningDefinition
     /// </summary>
     public bool MakeAvailableInStore { get; set; }
 
+    /// <summary>Primary chassis <c>PhysicsModel</c>/<c>Body Mass</c> (ImpactType=Truck when present).</summary>
+    public bool HasMass { get; init; }
+
+    public double Mass { get; set; }
+
+    public double BaselineMass { get; init; }
+
     public bool HasFuel { get; init; }
 
     public int FuelCapacity { get; set; }

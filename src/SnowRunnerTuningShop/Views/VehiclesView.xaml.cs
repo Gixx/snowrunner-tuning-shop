@@ -130,6 +130,7 @@ public partial class VehiclesView : UserControl
         FrontSteerGlobalSlider.IsEnabled = canApply;
         ResponsivenessMultiplierSlider.IsEnabled = canApply;
         PriceMultiplierSlider.IsEnabled = canApply;
+        MassMultiplierSlider.IsEnabled = canApply;
         AlwaysOnDiffLockCheckBox.IsEnabled = canApply;
         AlwaysOnAwdCheckBox.IsEnabled = canApply;
         ReleaseRegionLockCheckBox.IsEnabled = canApply;
@@ -153,6 +154,7 @@ public partial class VehiclesView : UserControl
         FrontSteerGlobalSlider.Value = FrontSteerGlobalBaselineIndex;
         ResponsivenessMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
         PriceMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
+        MassMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
     }
 
     private void GlobalMultiplierSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -177,6 +179,9 @@ public partial class VehiclesView : UserControl
         PriceMultiplierLabel.Text = UiText.Slider.Caption(
             UiText.Slider.StorePrice,
             GetMultiplierIndex(PriceMultiplierSlider));
+        MassMultiplierLabel.Text = UiText.Slider.Caption(
+            UiText.Slider.Mass,
+            GetMassMultiplierIndex(MassMultiplierSlider));
     }
 
     private static int GetFrontSteerGlobalIndex(Slider slider) =>
@@ -196,8 +201,14 @@ public partial class VehiclesView : UserControl
     private static int GetMultiplierIndex(Slider slider) =>
         TuningMultiplierPresets.ClampIndex((int)Math.Round(slider.Value, MidpointRounding.AwayFromZero));
 
+    private static int GetMassMultiplierIndex(Slider slider) =>
+        TuningMultiplierPresets.ClampMassIndex((int)Math.Round(slider.Value, MidpointRounding.AwayFromZero));
+
     private static double GetMultiplier(Slider slider) =>
         TuningMultiplierPresets.GetValue(GetMultiplierIndex(slider));
+
+    private static double GetMassMultiplier(Slider slider) =>
+        TuningMultiplierPresets.GetValue(GetMassMultiplierIndex(slider));
 
     private void ApplyGlobalMultipliersButton_Click(object sender, RoutedEventArgs e)
     {
@@ -239,6 +250,7 @@ public partial class VehiclesView : UserControl
                     GetFrontSteerGlobalMode(FrontSteerGlobalSlider),
                     GetMultiplier(ResponsivenessMultiplierSlider),
                     GetMultiplier(PriceMultiplierSlider),
+                    GetMassMultiplier(MassMultiplierSlider),
                     AlwaysOnDiffLockCheckBox.IsChecked == true,
                     AlwaysOnAwdCheckBox.IsChecked == true);
 
@@ -657,6 +669,10 @@ public partial class VehiclesView : UserControl
             FuelCapacityTextBox.Text = truck.FuelCapacity.ToString(CultureInfo.InvariantCulture);
             StorePriceTextBox.Text = truck.Price.ToString(CultureInfo.InvariantCulture);
             ResponsivenessTextBox.Text = TruckTuningService.FormatResponsiveness(truck.Responsiveness);
+            MassRow.Visibility = truck.HasMass ? Visibility.Visible : Visibility.Collapsed;
+            MassHintText.Visibility = truck.HasMass ? Visibility.Visible : Visibility.Collapsed;
+            MassSafeRangeHint.Visibility = truck.HasMass ? Visibility.Visible : Visibility.Collapsed;
+            MassTextBox.Text = truck.HasMass ? TruckTuningService.FormatMass(truck.Mass) : "";
             BindStoreUnlockFields(truck);
             FrontSteerRow.Visibility = truck.HasFrontSteer ? Visibility.Visible : Visibility.Collapsed;
             FrontSteerHintText.Visibility = truck.HasFrontSteer ? Visibility.Visible : Visibility.Collapsed;
@@ -998,6 +1014,7 @@ public partial class VehiclesView : UserControl
                 out var diffLock,
                 out var drive,
                 out var responsiveness,
+                out var mass,
                 out var frontSteer,
                 out var rearSteer))
         {
@@ -1011,6 +1028,10 @@ public partial class VehiclesView : UserControl
         _currentTruck.DiffLock = diffLock;
         _currentTruck.DriveLayout = drive;
         _currentTruck.Responsiveness = responsiveness;
+        if (_currentTruck.HasMass)
+        {
+            _currentTruck.Mass = mass;
+        }
         _currentTruck.FrontSteerAngle = frontSteer;
         _currentTruck.RearSteerAngle = rearSteer;
         _currentTruck.HornSoundSetId = HornSoundCombo.SelectedItem as string;
@@ -1085,6 +1106,7 @@ public partial class VehiclesView : UserControl
         out TruckDiffLockMode diffLock,
         out TruckDriveLayout drive,
         out double responsiveness,
+        out double mass,
         out double? frontSteer,
         out double? rearSteer)
     {
@@ -1095,6 +1117,7 @@ public partial class VehiclesView : UserControl
         diffLock = TruckDiffLockMode.Switchable;
         drive = TruckDriveLayout.AlwaysAwd;
         responsiveness = 0;
+        mass = 0;
         frontSteer = null;
         rearSteer = null;
 
@@ -1141,6 +1164,22 @@ public partial class VehiclesView : UserControl
         }
 
         ResponsivenessTextBox.Text = TruckTuningService.FormatResponsiveness(responsiveness);
+
+        if (_currentTruck?.HasMass == true)
+        {
+            if (!double.TryParse(
+                    MassTextBox.Text.Trim(),
+                    NumberStyles.Float,
+                    CultureInfo.InvariantCulture,
+                    out mass)
+                || mass is < 0.01 or > 200_000)
+            {
+                TuningStatusText.Text = UiText.Vehicles.InvalidMass;
+                return false;
+            }
+
+            MassTextBox.Text = TruckTuningService.FormatMass(mass);
+        }
 
         if (_currentTruck?.HasFrontSteer == true)
         {
@@ -1340,6 +1379,19 @@ public partial class VehiclesView : UserControl
             ResponsivenessSafeRangeHint,
             ResponsivenessTextBox,
             TuningFieldRange.Responsiveness(_currentTruck.BaselineResponsiveness));
+
+        if (_currentTruck.HasMass)
+        {
+            MassSafeRangeHint.Visibility = Visibility.Visible;
+            SafeRangeHintPresenter.Refresh(
+                MassSafeRangeHint,
+                MassTextBox,
+                TuningFieldRange.PhysicsMass(_currentTruck.BaselineMass));
+        }
+        else
+        {
+            MassSafeRangeHint.Visibility = Visibility.Collapsed;
+        }
     }
 
     private void SetBasedOnDisplay(VehicleBasedOnFormatter.ParsedBasedOn? basedOn)

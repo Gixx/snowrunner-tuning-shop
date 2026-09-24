@@ -79,6 +79,7 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
                     <TextBlock Grid.Row="0"
@@ -133,7 +134,7 @@
 
                     <Button x:Name="ApplyGlobalMultipliersButton"
                             Grid.Row="1"
-                            Grid.RowSpan="2"
+                            Grid.RowSpan="3"
                             Grid.Column="3"
                             Content="{x:Static loc:UiText+Vehicles.ApplyGlobalMultipliers}"
                             Padding="14,8"
@@ -170,6 +171,20 @@
                               VerticalAlignment="Center"
                               Margin="12,12,12,0"
                               IsEnabled="False"/>
+
+                    <StackPanel Grid.Row="3" Grid.Column="0" Margin="0,12,12,0">
+                        <TextBlock x:Name="MassMultiplierLabel"
+                                   Text="{x:Static loc:UiText+Vehicles.MassMultiplierDefault}"
+                                   Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                        <Slider x:Name="MassMultiplierSlider"
+                                Minimum="0"
+                                Maximum="7"
+                                Value="6"
+                                TickFrequency="1"
+                                IsSnapToTickEnabled="True"
+                                IsEnabled="False"
+                                ValueChanged="GlobalMultiplierSlider_ValueChanged"/>
+                    </StackPanel>
                 </Grid>
             </Expander>
 
@@ -516,6 +531,34 @@
                                 </Grid>
                             </Grid>
                             <TextBlock x:Name="FuelSafeRangeHint"
+                                       Margin="140,0,0,14"
+                                       FontSize="11"
+                                       TextWrapping="Wrap"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+
+                            <Grid x:Name="MassRow" Margin="0,0,0,6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="140"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{x:Static loc:UiText+Vehicles.MassLabel}"
+                                           VerticalAlignment="Center"
+                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                <TextBox x:Name="MassTextBox"
+                                         Grid.Column="1"
+                                         MaxWidth="140"
+                                         HorizontalAlignment="Left"
+                                         Padding="10,7"
+                                         VerticalContentAlignment="Center"
+                                         TextChanged="TuningNumericTextBox_TextChanged"/>
+                            </Grid>
+                            <TextBlock x:Name="MassHintText"
+                                       Text="{x:Static loc:UiText+Vehicles.MassHint}"
+                                       Margin="140,0,0,4"
+                                       TextWrapping="Wrap"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                            <TextBlock x:Name="MassSafeRangeHint"
                                        Margin="140,0,0,14"
                                        FontSize="11"
                                        TextWrapping="Wrap"

@@ -14,6 +14,9 @@ obj/
 initial.pak.backup-*
 artifacts/
 
+# Local CI / manual publish smoke outputs
+publish/
+
 # Website (GitHub Pages)
 website/node_modules/
 website/dist/

@@ -29,12 +29,14 @@ public partial class PartsView : UserControl
         GearboxTuningView.AttachSession(session);
         SuspensionTuningView.AttachSession(session);
         TireTuningView.AttachSession(session);
+        AddonCapacityTuningView.AttachSession(session);
         CraneTuningView.AttachSession(session);
         WinchTuningView.StatusChanged += (_, message) => StatusText.Text = message;
         EngineTuningView.StatusChanged += (_, message) => StatusText.Text = message;
         GearboxTuningView.StatusChanged += (_, message) => StatusText.Text = message;
         SuspensionTuningView.StatusChanged += (_, message) => StatusText.Text = message;
         TireTuningView.StatusChanged += (_, message) => StatusText.Text = message;
+        AddonCapacityTuningView.StatusChanged += (_, message) => StatusText.Text = message;
         CraneTuningView.StatusChanged += (_, message) => StatusText.Text = message;
         _session.PakChanged += (_, _) => _ = ReloadPartsAsync();
         _session.BaselineChanged += (_, _) => RefreshWriteGates();
@@ -51,12 +53,14 @@ public partial class PartsView : UserControl
         GearboxTuningView.SetPakWritesAllowed(allowed);
         SuspensionTuningView.SetPakWritesAllowed(allowed);
         TireTuningView.SetPakWritesAllowed(allowed);
+        AddonCapacityTuningView.SetPakWritesAllowed(allowed);
         CraneTuningView.SetPakWritesAllowed(allowed);
         WinchTuningView.RefreshRestoreButton();
         EngineTuningView.RefreshRestoreButton();
         GearboxTuningView.RefreshRestoreButton();
         SuspensionTuningView.RefreshRestoreButton();
         TireTuningView.RefreshRestoreButton();
+        AddonCapacityTuningView.RefreshRestoreButton();
         CraneTuningView.RefreshRestoreButton();
     }
 
@@ -86,6 +90,7 @@ public partial class PartsView : UserControl
             GearboxTuningView.Clear();
             SuspensionTuningView.Clear();
             TireTuningView.Clear();
+            AddonCapacityTuningView.Clear();
             CraneTuningView.Clear();
             SetLoading(false);
         }
@@ -138,6 +143,9 @@ public partial class PartsView : UserControl
                 case "tires":
                     await TireTuningView.LoadFromPakAsync(pakPath, cancellationToken);
                     break;
+                case "addons":
+                    await AddonCapacityTuningView.LoadFromPakAsync(pakPath, cancellationToken);
+                    break;
                 case "cranes":
                     await CraneTuningView.LoadFromPakAsync(pakPath, cancellationToken);
                     break;
@@ -189,6 +197,11 @@ public partial class PartsView : UserControl
         if (ReferenceEquals(PartsTabControl.SelectedItem, TiresTab))
         {
             return "tires";
+        }
+
+        if (ReferenceEquals(PartsTabControl.SelectedItem, AddonsTab))
+        {
+            return "addons";
         }
 
         if (ReferenceEquals(PartsTabControl.SelectedItem, CranesTab))

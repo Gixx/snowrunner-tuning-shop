@@ -80,6 +80,7 @@ public static class UiText
         }
 
         public static string FuelTank => StringResources.Get("Vehicles.FuelTankLabel", "Fuel tank");
+        public static string Mass => StringResources.Get("Vehicles.MassLabel", "Mass");
         public static string Responsiveness => StringResources.Get("Vehicles.ResponsivenessLabel", "Responsiveness");
         public static string StorePrice => StringResources.Get("Vehicles.StorePriceLabel", "Store price");
         public static string Torque => StringResources.Get("Engine.TorqueColumn", "Torque");
@@ -95,6 +96,8 @@ public static class UiText
         public static string Mud => StringResources.Get("Tires.MudFrictionColumn", "Mud");
         public static string RepairParts => StringResources.Get("Trailers.RepairPartsLabel", "Repair parts");
         public static string SpareWheels => StringResources.Get("Trailers.SpareWheelsLabel", "Spare wheels");
+        public static string Fuel => StringResources.Get("Slider.Fuel", "Fuel");
+        public static string Water => StringResources.Get("Slider.Water", "Water");
         public static string LengthMultiplier => StringResources.Get("Slider.LengthMultiplier", "Length multiplier");
         public static string StrengthMultiplier => StringResources.Get("Slider.StrengthMultiplier", "Strength multiplier");
         public static string ArmForceMultiplier => StringResources.Get("Slider.ArmForceMultiplier", "Arm force multiplier");
@@ -234,6 +237,7 @@ public static class UiText
         public static string Gearbox => StringResources.Get("Parts.Gearbox", "Gearbox");
         public static string Suspension => StringResources.Get("Parts.Suspension", "Suspension");
         public static string Tires => StringResources.Get("Parts.Tires", "Tires");
+        public static string Addons => StringResources.Get("Parts.Addons", "Add-ons");
         public static string Cranes => StringResources.Get("Parts.Cranes", "Cranes");
         public static string ComingSoon => StringResources.Get("Parts.ComingSoon", "Coming soon.");
         public static string LoadPakHint => StringResources.Get("Parts.LoadPakHint", "Load an initial.pak on the Home page first.");
@@ -418,8 +422,9 @@ public static class UiText
         public static string FrontSteerGlobalMax => StringResources.Get("Vehicles.FrontSteerGlobalMax", "Front steer: Max (60°)");
         public static string ResponsivenessMultiplierDefault => StringResources.Get("Vehicles.ResponsivenessMultiplierDefault", "Responsiveness: 1 (baseline)");
         public static string PriceMultiplierDefault => StringResources.Get("Vehicles.PriceMultiplierDefault", "Store price: 1 (baseline)");
+        public static string MassMultiplierDefault => StringResources.Get("Vehicles.MassMultiplierDefault", "Mass: 1 (baseline)");
         public static string ApplyGlobalMultipliers => StringResources.Get("Vehicles.ApplyGlobalMultipliers", "Apply to all vehicles");
-        public static string GlobalMultipliersHint => StringResources.Get("Vehicles.GlobalMultipliersHint", "Fuel tank, store price, and responsiveness scale from baseline. Front steer uses three presets: Min (10°), Default (baseline per truck), Max (60°). Always-on diff lock and AWD, when checked, are forced on every truck. Independent of the category filter below.");
+        public static string GlobalMultipliersHint => StringResources.Get("Vehicles.GlobalMultipliersHint", "Fuel tank, store price, responsiveness, and mass scale from baseline. Front steer uses three presets: Min (10°), Default (baseline per truck), Max (60°). Always-on diff lock and AWD, when checked, are forced on every truck. Independent of the category filter below.");
         public static string AlwaysOnDiffLock => StringResources.Get("Vehicles.AlwaysOnDiffLock", "Always on diff lock");
         public static string AlwaysOnAwd => StringResources.Get("Vehicles.AlwaysOnAwd", "Always on AWD");
         public static string StoreUnlocksTitle => StringResources.Get("Vehicles.StoreUnlocksTitle", "Store unlocks (all vehicles)");
@@ -450,6 +455,13 @@ public static class UiText
         public static string TuningTitle => StringResources.Get("Vehicles.TuningTitle", "Vehicle tuning");
         public static string FuelTankLabel => StringResources.Get("Vehicles.FuelTankLabel", "Fuel tank");
         public static string FuelUnit => StringResources.Get("Vehicles.FuelUnit", "L");
+        public static string MassLabel => StringResources.Get("Vehicles.MassLabel", "Mass");
+        public static string MassHint => StringResources.Get(
+            "Vehicles.MassHint",
+            "Primary chassis weight (PhysicsModel Body Mass). Nested body masses scale with it. Lower = easier to accelerate and tow.");
+        public static string InvalidMass => StringResources.Get(
+            "Vehicles.InvalidMass",
+            "Mass must be a number from 0.01 to 200000.");
         public static string StorePriceLabel => StringResources.Get("Vehicles.StorePriceLabel", "Store price");
         public static string RegionFreeLabel => StringResources.Get("Vehicles.RegionFreeLabel", "Region-free");
         public static string RegionFreeHint => StringResources.Get("Vehicles.RegionFreeHint", "When checked, this truck is listed in every regional truck store (GameData Country = all regions).");
@@ -577,14 +589,14 @@ public static class UiText
         public static string RestoreThisTrailer => StringResources.Get("Trailers.RestoreThisTrailer", "Restore this trailer to baseline");
         public static string RestoreAllTrailers => StringResources.Get("Trailers.RestoreAllTrailers", "Restore all trailers to baseline");
         public static string RestoreAllTrailersConfirmTitle => StringResources.Get("Trailers.RestoreAllTrailersConfirmTitle", "Restore all trailers?");
-        public static string RestoreAllTrailersConfirmMessage => StringResources.Get("Trailers.RestoreAllTrailersConfirmMessage", "This restores every trailer XML from your baseline pak (fuel, water, repairs, wheels, price, unlock rank, and store availability). Continue?");
+        public static string RestoreAllTrailersConfirmMessage => StringResources.Get("Trailers.RestoreAllTrailersConfirmMessage", "This restores every trailer XML from your baseline pak (fuel, water, repairs, wheels, mass, price, unlock rank, and store availability). Continue?");
         public static string RestoreAllTrailersSuccessTitle => StringResources.Get("Trailers.RestoreAllTrailersSuccessTitle", "Trailers restored");
         public static string RestoreSuccessTitle => StringResources.Get("Trailers.RestoreSuccessTitle", "Trailer restored");
         public static string SaveSuccessTitle => StringResources.Get("Trailers.SaveSuccessTitle", "Saved successfully");
         public static string SaveErrorTitle => StringResources.Get("Trailers.SaveErrorTitle", "Save error");
         public static string LoadPakForGlobalHint => StringResources.Get("Trailers.LoadPakForGlobalHint", "Load an initial.pak on the Home page to enable global trailer multipliers.");
         public static string GlobalMultipliersTitle => StringResources.Get("Trailers.GlobalMultipliersTitle", "Global multipliers (relative to the baseline values)");
-        public static string GlobalMultipliersHint => StringResources.Get("Trailers.GlobalMultipliersHint", "Fuel, repair parts, spare wheels, and store price scale from baseline on trailers that already have those fields. Independent of the hitch filter below.");
+        public static string GlobalMultipliersHint => StringResources.Get("Trailers.GlobalMultipliersHint", "Fuel, repair parts, spare wheels, store price, and mass scale from baseline on trailers that already have those fields. Independent of the hitch filter below.");
         public static string ApplyGlobalMultipliers => StringResources.Get("Trailers.ApplyGlobalMultipliers", "Apply to all trailers");
         public static string StoreUnlocksTitle => StringResources.Get("Trailers.StoreUnlocksTitle", "Trailer store");
         public static string StoreUnlocksHint => StringResources.Get("Trailers.StoreUnlocksHint", "Quest trailers are hidden by GameData IsQuest (including values inherited from a parent XML). Trains and similar special hitches also need a regular trailer socket so the store can list them. Restore all trailers to undo.");
@@ -597,6 +609,14 @@ public static class UiText
         public static string RepairsMultiplierDefault => StringResources.Get("Trailers.RepairsMultiplierDefault", "Repair parts: 1 (baseline)");
         public static string WheelsMultiplierDefault => StringResources.Get("Trailers.WheelsMultiplierDefault", "Spare wheels: 1 (baseline)");
         public static string PriceMultiplierDefault => StringResources.Get("Trailers.PriceMultiplierDefault", "Store price: 1 (baseline)");
+        public static string MassMultiplierDefault => StringResources.Get("Trailers.MassMultiplierDefault", "Mass: 1 (baseline)");
+        public static string MassLabel => StringResources.Get("Trailers.MassLabel", "Mass");
+        public static string MassHint => StringResources.Get(
+            "Trailers.MassHint",
+            "Primary chassis weight (PhysicsModel Body Mass). Nested body masses scale with it. Lower = easier to tow.");
+        public static string InvalidMass => StringResources.Get(
+            "Trailers.InvalidMass",
+            "Mass must be a number from 0.01 to 200000.");
         public static string InvalidFuel => StringResources.Get("Trailers.InvalidFuel", "Fuel tank must be a whole number of liters (1–10000).");
         public static string InvalidWater => StringResources.Get("Trailers.InvalidWater", "Water tank must be a whole number of liters (1–10000).");
         public static string InvalidRepairs => StringResources.Get("Trailers.InvalidRepairs", "Repair parts must be a whole number from 0 to 10,000.");
@@ -604,7 +624,7 @@ public static class UiText
         public static string InvalidPrice => StringResources.Get("Trailers.InvalidPrice", "Store price must be a whole number from 0 to 9,999,999.");
         public static string InvalidUnlockRank => StringResources.Get("Trailers.InvalidUnlockRank", "Unlock rank must be a whole number from 0 to 30.");
         public static string NoChangesToSave => StringResources.Get("Trailers.NoChangesToSave", "No trailer changes were detected to save.");
-        public static string NoTunableFields => StringResources.Get("Trailers.NoTunableFields", "This trailer has no fuel, water, repair, wheel, or store-price fields to edit.");
+        public static string NoTunableFields => StringResources.Get("Trailers.NoTunableFields", "This trailer has no fuel, water, repair, wheel, mass, or store-price fields to edit.");
 
         public static string GlobalMultipliersSavedMessage(int changedTrailers, int updatedFiles) =>
             StringResources.Format(
@@ -1346,6 +1366,49 @@ public static class UiText
                 "Winch.RestoreWinchesMessage",
                 "Winch values were restored from the baseline.\n\nUpdated winches: {0}\nUpdated files: {1}",
                 changedWinches,
+                updatedFiles);
+    }
+
+    public static class AddonCapacity
+    {
+        public static string GlobalMultipliersTitle => StringResources.Get("AddonCapacity.GlobalMultipliersTitle", "Global multipliers (relative to the baseline values)");
+        public static string FuelMultiplierDefault => StringResources.Get("AddonCapacity.FuelMultiplierDefault", "Fuel: 1 (baseline)");
+        public static string WaterMultiplierDefault => StringResources.Get("AddonCapacity.WaterMultiplierDefault", "Water: 1 (baseline)");
+        public static string RepairsMultiplierDefault => StringResources.Get("AddonCapacity.RepairsMultiplierDefault", "Repair parts: 1 (baseline)");
+        public static string WheelsMultiplierDefault => StringResources.Get("AddonCapacity.WheelsMultiplierDefault", "Spare wheels: 1 (baseline)");
+        public static string PriceMultiplierDefault => StringResources.Get("AddonCapacity.PriceMultiplierDefault", "Store price: 1 (baseline)");
+        public static string Apply => StringResources.Get("AddonCapacity.Apply", "Apply");
+        public static string SaveIndividualChanges => StringResources.Get("AddonCapacity.SaveIndividualChanges", "Save individual changes");
+        public static string RestoreAddonsToBaseline => StringResources.Get("AddonCapacity.RestoreAddonsToBaseline", "Restore add-ons to baseline");
+        public static string RefreshList => StringResources.Get("AddonCapacity.RefreshList", "Refresh list");
+        public static string FilterPlaceholder => StringResources.Get("AddonCapacity.FilterPlaceholder", "Filter category, name…");
+        public static string CategoryColumn => StringResources.Get("AddonCapacity.CategoryColumn", "Category");
+        public static string NameColumn => StringResources.Get("AddonCapacity.NameColumn", "Name");
+        public static string PriceColumn => StringResources.Get("AddonCapacity.PriceColumn", "Price");
+        public static string FuelColumn => StringResources.Get("AddonCapacity.FuelColumn", "Fuel");
+        public static string WaterColumn => StringResources.Get("AddonCapacity.WaterColumn", "Water");
+        public static string RepairsColumn => StringResources.Get("AddonCapacity.RepairsColumn", "Repairs");
+        public static string WheelsColumn => StringResources.Get("AddonCapacity.WheelsColumn", "Spare wheels");
+        public static string LoadPakFirst => StringResources.Get("AddonCapacity.LoadPakFirst", "Load an initial.pak file first.");
+        public static string SaveErrorTitle => StringResources.Get("AddonCapacity.SaveErrorTitle", "Save error");
+        public static string LoadErrorTitle => StringResources.Get("AddonCapacity.LoadErrorTitle", "Load error");
+        public static string ConfirmRestoreTitle => StringResources.Get("AddonCapacity.ConfirmRestoreTitle", "Restore add-ons?");
+        public static string ConfirmRestoreMessage => StringResources.Get(
+            "AddonCapacity.ConfirmRestoreMessage",
+            "This restores every add-on XML from your baseline pak (fuel, water, repair parts, spare wheels, and price). Continue?");
+
+        public static string MultipliersAppliedStatus(int changedAddons, int updatedFiles) =>
+            StringResources.Format(
+                "AddonCapacity.MultipliersAppliedStatus",
+                "Multipliers applied. Updated add-ons: {0}, files: {1}.",
+                changedAddons,
+                updatedFiles);
+
+        public static string IndividualSavedStatus(int changedAddons, int updatedFiles) =>
+            StringResources.Format(
+                "AddonCapacity.IndividualSavedStatus",
+                "Individual changes saved. Add-ons: {0}, files: {1}.",
+                changedAddons,
                 updatedFiles);
     }
 

@@ -6,6 +6,7 @@ using SnowRunnerTuningShop.Core.Backup;
 using SnowRunnerTuningShop.Core.Models;
 using SnowRunnerTuningShop.Core.Pak;
 using SnowRunnerTuningShop.Core.Strings;
+using SnowRunnerTuningShop.Core.Tuning;
 using SnowRunnerTuningShop.Core.Xml;
 
 namespace SnowRunnerTuningShop.Core.Trailers;
@@ -97,12 +98,14 @@ public static class TrailerTuningService
         double fuelMultiplier,
         double repairsMultiplier,
         double wheelsMultiplier,
-        double priceMultiplier)
+        double priceMultiplier,
+        double massMultiplier)
     {
         PartPakPipeline.ValidateMultiplier(fuelMultiplier, nameof(fuelMultiplier));
         PartPakPipeline.ValidateMultiplier(repairsMultiplier, nameof(repairsMultiplier));
         PartPakPipeline.ValidateMultiplier(wheelsMultiplier, nameof(wheelsMultiplier));
         PartPakPipeline.ValidateMultiplier(priceMultiplier, nameof(priceMultiplier));
+        PartPakPipeline.ValidateMultiplier(massMultiplier, nameof(massMultiplier));
 
         return MutateTrailersFromBaseline(
             pakPath,
@@ -111,7 +114,8 @@ public static class TrailerTuningService
                 fuelMultiplier,
                 repairsMultiplier,
                 wheelsMultiplier,
-                priceMultiplier));
+                priceMultiplier,
+                massMultiplier));
     }
 
     public static TrailerTuningSaveResult MakeQuestTrailersPurchasable(string pakPath)
@@ -324,6 +328,10 @@ public static class TrailerTuningService
         var baselineIsQuest = ResolveIsQuest(baselineText ?? text, baselineById ?? workingById);
         var hasStoreHitch = TrailerHitchXml.IsStoreHitchReady(text);
         var baselineHasStoreHitch = TrailerHitchXml.IsStoreHitchReady(baselineText ?? text);
+        var hasMass = VehiclePhysicsMassXml.TryReadPrimaryMass(text, out var mass);
+        var baselineMass = VehiclePhysicsMassXml.TryReadPrimaryMass(baselineText ?? text, out var parsedBaselineMass)
+            ? parsedBaselineMass
+            : mass;
 
         trailer = new TrailerTuningDefinition
         {
@@ -339,6 +347,9 @@ public static class TrailerTuningService
             BaselineIsQuest = baselineIsQuest,
             HasStoreCompatibleHitch = hasStoreHitch,
             BaselineHasStoreCompatibleHitch = baselineHasStoreHitch,
+            HasMass = hasMass,
+            Mass = hasMass ? mass : 0,
+            BaselineMass = hasMass ? baselineMass : 0,
             HasFuel = hasFuel,
             FuelCapacity = fuel,
             BaselineFuelCapacity = ReadBaselineInt(baselineText, text, "FuelCapacity", fuel),
@@ -376,6 +387,11 @@ public static class TrailerTuningService
         if (trailer.HasWater)
         {
             updated = VehicleGameDataXml.ApplyExistingTruckDataInt(updated, "WaterCapacity", trailer.WaterCapacity);
+        }
+
+        if (trailer.HasMass)
+        {
+            updated = VehiclePhysicsMassXml.ApplyPrimaryMass(updated, trailer.Mass);
         }
 
         if (trailer.HasGameData)
@@ -421,30 +437,30 @@ public static class TrailerTuningService
         double fuelMultiplier,
         double repairsMultiplier,
         double wheelsMultiplier,
-        double priceMultiplier)
+        double priceMultiplier,
+        double massMultiplier)
     {
         var match = TruckDataOpenRegex.Match(baselineText);
-        if (!match.Success)
-        {
-            return baselineText;
-        }
-
-        var attrs = VehicleGameDataXml.ParseAttributes(match.Groups["attrs"].Value);
         var updated = baselineText;
 
-        if (TryParsePresentInt(attrs, "FuelCapacity", out var fuel) && fuel > 0)
+        if (match.Success)
         {
-            updated = VehicleGameDataXml.ApplyExistingTruckDataInt(updated, "FuelCapacity", Scale(fuel, fuelMultiplier, 1, 10_000));
-        }
+            var attrs = VehicleGameDataXml.ParseAttributes(match.Groups["attrs"].Value);
 
-        if (TryParsePresentInt(attrs, "RepairsCapacity", out var repairs) && repairs > 0)
-        {
-            updated = VehicleGameDataXml.ApplyExistingTruckDataInt(updated, "RepairsCapacity", Scale(repairs, repairsMultiplier, 0, 10_000));
-        }
+            if (TryParsePresentInt(attrs, "FuelCapacity", out var fuel) && fuel > 0)
+            {
+                updated = VehicleGameDataXml.ApplyExistingTruckDataInt(updated, "FuelCapacity", Scale(fuel, fuelMultiplier, 1, 10_000));
+            }
 
-        if (TryParsePresentInt(attrs, "WheelRepairsCapacity", out var wheels) && wheels > 0)
-        {
-            updated = VehicleGameDataXml.ApplyExistingTruckDataInt(updated, "WheelRepairsCapacity", Scale(wheels, wheelsMultiplier, 0, 99));
+            if (TryParsePresentInt(attrs, "RepairsCapacity", out var repairs) && repairs > 0)
+            {
+                updated = VehicleGameDataXml.ApplyExistingTruckDataInt(updated, "RepairsCapacity", Scale(repairs, repairsMultiplier, 0, 10_000));
+            }
+
+            if (TryParsePresentInt(attrs, "WheelRepairsCapacity", out var wheels) && wheels > 0)
+            {
+                updated = VehicleGameDataXml.ApplyExistingTruckDataInt(updated, "WheelRepairsCapacity", Scale(wheels, wheelsMultiplier, 0, 99));
+            }
         }
 
         if (GameDataOpenRegex.IsMatch(updated))
@@ -457,6 +473,11 @@ public static class TrailerTuningService
                     "Price",
                     Scale(baselinePrice, priceMultiplier, 0, 9_999_999).ToString(CultureInfo.InvariantCulture));
             }
+        }
+
+        if (!TuningMultiplierPresets.IsBaselineMultiplier(massMultiplier))
+        {
+            updated = VehiclePhysicsMassXml.ScaleAllMasses(updated, massMultiplier);
         }
 
         return updated;

@@ -63,6 +63,16 @@
                     <views:TireTuningView x:Name="TireTuningView"/>
                 </Border>
             </TabItem>
+            <TabItem x:Name="AddonsTab" Header="{x:Static loc:UiText+Parts.Addons}">
+                <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                        BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="12"
+                        Margin="0,12,0,0">
+                    <views:AddonCapacityTuningView x:Name="AddonCapacityTuningView"/>
+                </Border>
+            </TabItem>
             <TabItem x:Name="CranesTab" Header="{x:Static loc:UiText+Parts.Cranes}">
                 <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
                         BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"

@@ -10,7 +10,7 @@
                 Margin="0,0,0,12"
                 HorizontalAlignment="Stretch"
                 Width="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}}">
-        <Grid ColumnDefinitions="*,*,*,Auto" RowDefinitions="Auto,Auto,Auto">
+        <Grid ColumnDefinitions="*,*,*,Auto" RowDefinitions="Auto,Auto,Auto,Auto">
           <TextBlock x:Name="GlobalMultipliersHintText"
                      Grid.Row="0"
                      Grid.ColumnSpan="4"
@@ -48,7 +48,7 @@
 
           <Button x:Name="ApplyGlobalMultipliersButton"
                   Grid.Row="1"
-                  Grid.RowSpan="2"
+                  Grid.RowSpan="3"
                   Grid.Column="3"
                   Padding="14,8"
                   VerticalAlignment="Center"
@@ -77,6 +77,15 @@
                     VerticalAlignment="Center"
                     Margin="12,12,12,0"
                     IsEnabled="False"/>
+
+          <StackPanel Grid.Row="3" Grid.Column="0" Margin="0,12,12,0">
+            <TextBlock x:Name="MassMultiplierLabel"/>
+            <Slider x:Name="MassMultiplierSlider"
+                    Minimum="0" Maximum="7" Value="6"
+                    TickFrequency="1" IsSnapToTickEnabled="True"
+                    IsEnabled="False"
+                    PropertyChanged="GlobalMultiplierSlider_PropertyChanged"/>
+          </StackPanel>
         </Grid>
       </Expander>
 
@@ -372,6 +381,28 @@
                   </Grid>
                 </Grid>
                 <TextBlock x:Name="FuelSafeRangeHint"
+                           Margin="140,0,0,14"
+                           FontSize="11"
+                           TextWrapping="Wrap"
+                           Foreground="{DynamicResource AppMutedBrush}"/>
+
+                <Grid x:Name="MassRow" ColumnDefinitions="140,*" Margin="0,0,0,6">
+                  <TextBlock x:Name="MassLabelText"
+                             VerticalAlignment="Center"
+                             Foreground="{DynamicResource AppMutedBrush}"/>
+                  <TextBox x:Name="MassTextBox"
+                           Grid.Column="1"
+                           MaxWidth="140"
+                           HorizontalAlignment="Left"
+                           Padding="10,7"
+                           TextChanged="TuningNumericTextBox_TextChanged"/>
+                </Grid>
+                <TextBlock x:Name="MassHintText"
+                           Margin="140,0,0,4"
+                           TextWrapping="Wrap"
+                           FontSize="11"
+                           Foreground="{DynamicResource AppMutedBrush}"/>
+                <TextBlock x:Name="MassSafeRangeHint"
                            Margin="140,0,0,14"
                            FontSize="11"
                            TextWrapping="Wrap"

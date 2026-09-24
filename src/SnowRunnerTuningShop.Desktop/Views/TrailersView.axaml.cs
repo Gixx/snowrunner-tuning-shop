@@ -11,6 +11,7 @@ using SnowRunnerTuningShop.Core.Backup;
 using SnowRunnerTuningShop.Core.Diagnostics;
 using SnowRunnerTuningShop.Core.Models;
 using SnowRunnerTuningShop.Core.Trailers;
+using SnowRunnerTuningShop.Core.Trucks;
 using SnowRunnerTuningShop.Core.Tuning;
 using SnowRunnerTuningShop.Desktop.Trailers;
 using SnowRunnerTuningShop.Desktop.Vehicles;
@@ -70,6 +71,7 @@ public partial class TrailersView : UserControl
         RepairsMultiplierLabel.Text = UiText.Trailers.RepairsMultiplierDefault;
         WheelsMultiplierLabel.Text = UiText.Trailers.WheelsMultiplierDefault;
         PriceMultiplierLabel.Text = UiText.Trailers.PriceMultiplierDefault;
+        MassMultiplierLabel.Text = UiText.Trailers.MassMultiplierDefault;
 
         StoreUnlocksExpander.Header = UiText.Trailers.StoreUnlocksTitle;
         StoreUnlocksHintText.Text = UiText.Trailers.StoreUnlocksHint;
@@ -92,6 +94,8 @@ public partial class TrailersView : UserControl
         TuningTitleText.Text = UiText.Trailers.TuningTitle;
         FuelTankLabelText.Text = UiText.Trailers.FuelTankLabel;
         FuelUnitText.Text = UiText.Trailers.FuelUnit;
+        MassLabelText.Text = UiText.Trailers.MassLabel;
+        MassHintText.Text = UiText.Trailers.MassHint;
         WaterTankLabelText.Text = UiText.Trailers.WaterTankLabel;
         WaterUnitText.Text = UiText.Trailers.FuelUnit;
         RepairPartsLabelText.Text = UiText.Trailers.RepairPartsLabel;
@@ -146,6 +150,7 @@ public partial class TrailersView : UserControl
         RepairsMultiplierSlider.IsEnabled = canApply;
         WheelsMultiplierSlider.IsEnabled = canApply;
         PriceMultiplierSlider.IsEnabled = canApply;
+        MassMultiplierSlider.IsEnabled = canApply;
         RestoreAllTrailersButton.IsEnabled = canApply;
         MakeMissionTrailersPurchasableButton.IsEnabled = canApply;
 
@@ -163,6 +168,7 @@ public partial class TrailersView : UserControl
         RepairsMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
         WheelsMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
         PriceMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
+        MassMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
     }
 
     private void GlobalMultiplierSlider_PropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
@@ -189,13 +195,22 @@ public partial class TrailersView : UserControl
         PriceMultiplierLabel.Text = UiText.Slider.Caption(
             UiText.Slider.StorePrice,
             GetMultiplierIndex(PriceMultiplierSlider));
+        MassMultiplierLabel.Text = UiText.Slider.Caption(
+            UiText.Slider.Mass,
+            GetMassMultiplierIndex(MassMultiplierSlider));
     }
 
     private static int GetMultiplierIndex(Slider slider) =>
         TuningMultiplierPresets.ClampIndex((int)Math.Round(slider.Value, MidpointRounding.AwayFromZero));
 
+    private static int GetMassMultiplierIndex(Slider slider) =>
+        TuningMultiplierPresets.ClampMassIndex((int)Math.Round(slider.Value, MidpointRounding.AwayFromZero));
+
     private static double GetMultiplier(Slider slider) =>
         TuningMultiplierPresets.GetValue(GetMultiplierIndex(slider));
+
+    private static double GetMassMultiplier(Slider slider) =>
+        TuningMultiplierPresets.GetValue(GetMassMultiplierIndex(slider));
 
     private async void ApplyGlobalMultipliersButton_Click(object? sender, RoutedEventArgs e)
     {
@@ -237,13 +252,15 @@ public partial class TrailersView : UserControl
                 var repairs = GetMultiplier(RepairsMultiplierSlider);
                 var wheels = GetMultiplier(WheelsMultiplierSlider);
                 var price = GetMultiplier(PriceMultiplierSlider);
+                var mass = GetMassMultiplier(MassMultiplierSlider);
 
                 var result = await Task.Run(() => TrailerTuningService.ApplyGlobalMultipliers(
                     pakPath,
                     fuel,
                     repairs,
                     wheels,
-                    price));
+                    price,
+                    mass));
 
                 _trailersPakPath = null;
                 if (_currentCard is not null && DetailPanel.IsVisible)
@@ -572,6 +589,11 @@ public partial class TrailersView : UserControl
             BindCapacityField(RepairsRow, RepairsCapacityTextBox, trailer.HasRepairs, trailer.RepairsCapacity);
             BindCapacityField(WheelsRow, WheelRepairsTextBox, trailer.HasWheels, trailer.WheelRepairsCapacity);
 
+            MassRow.IsVisible = trailer.HasMass;
+            MassHintText.IsVisible = trailer.HasMass;
+            MassSafeRangeHint.IsVisible = trailer.HasMass;
+            MassTextBox.Text = trailer.HasMass ? TruckTuningService.FormatMass(trailer.Mass) : "";
+
             FuelSafeRangeHint.IsVisible = trailer.HasFuel;
             WaterSafeRangeHint.IsVisible = trailer.HasWater;
             RepairsSafeRangeHint.IsVisible = trailer.HasRepairs;
@@ -593,7 +615,7 @@ public partial class TrailersView : UserControl
                 _suppressUnlockRankSync = false;
             }
 
-            if (!trailer.HasFuel && !trailer.HasWater && !trailer.HasRepairs && !trailer.HasWheels && !trailer.HasGameData)
+            if (!trailer.HasFuel && !trailer.HasWater && !trailer.HasRepairs && !trailer.HasWheels && !trailer.HasGameData && !trailer.HasMass)
             {
                 ShowTuningHint(UiText.Trailers.NoTunableFields);
                 return;
@@ -671,7 +693,7 @@ public partial class TrailersView : UserControl
             return;
         }
 
-        if (!TryReadForm(out var fuel, out var water, out var repairs, out var wheels, out var price, out var unlockRank))
+        if (!TryReadForm(out var fuel, out var water, out var repairs, out var wheels, out var price, out var unlockRank, out var mass))
         {
             return;
         }
@@ -694,6 +716,11 @@ public partial class TrailersView : UserControl
         if (_currentTrailer.HasWheels)
         {
             _currentTrailer.WheelRepairsCapacity = wheels;
+        }
+
+        if (_currentTrailer.HasMass)
+        {
+            _currentTrailer.Mass = mass;
         }
 
         if (_currentTrailer.HasGameData)
@@ -778,7 +805,8 @@ public partial class TrailersView : UserControl
         out int repairs,
         out int wheels,
         out int price,
-        out int unlockRank)
+        out int unlockRank,
+        out double mass)
     {
         fuel = 0;
         water = 0;
@@ -786,6 +814,7 @@ public partial class TrailersView : UserControl
         wheels = 0;
         price = 0;
         unlockRank = 0;
+        mass = 0;
 
         if (_currentTrailer?.HasFuel == true
             && (!int.TryParse(FuelCapacityTextBox.Text?.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out fuel)
@@ -817,6 +846,22 @@ public partial class TrailersView : UserControl
         {
             TuningStatusText.Text = UiText.Trailers.InvalidWheels;
             return false;
+        }
+
+        if (_currentTrailer?.HasMass == true)
+        {
+            if (!double.TryParse(
+                    MassTextBox.Text?.Trim(),
+                    NumberStyles.Float,
+                    CultureInfo.InvariantCulture,
+                    out mass)
+                || mass is < 0.01 or > 200_000)
+            {
+                TuningStatusText.Text = UiText.Trailers.InvalidMass;
+                return false;
+            }
+
+            MassTextBox.Text = TruckTuningService.FormatMass(mass);
         }
 
         if (_currentTrailer?.HasGameData == true)
@@ -907,6 +952,14 @@ public partial class TrailersView : UserControl
                 FuelSafeRangeHint,
                 FuelCapacityTextBox,
                 TuningFieldRange.FuelLiters(_currentTrailer.BaselineFuelCapacity));
+        }
+
+        if (_currentTrailer.HasMass)
+        {
+            SafeRangeHintPresenter.Refresh(
+                MassSafeRangeHint,
+                MassTextBox,
+                TuningFieldRange.PhysicsMass(_currentTrailer.BaselineMass));
         }
 
         if (_currentTrailer.HasWater)

@@ -72,6 +72,13 @@ public sealed class TruckTuningDefinition
 
     public double BaselineResponsiveness { get; init; }
 
+    /// <summary>Primary chassis <c>PhysicsModel</c>/<c>Body Mass</c> (ImpactType=Truck when present).</summary>
+    public bool HasMass { get; init; }
+
+    public double Mass { get; set; }
+
+    public double BaselineMass { get; init; }
+
     /// <summary>Front steering angle in degrees (0–90), or null when the truck has no front steer wheels.</summary>
     public double? FrontSteerAngle { get; set; }
 

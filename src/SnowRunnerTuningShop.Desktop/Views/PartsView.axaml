@@ -66,6 +66,18 @@
           <views:TireTuningView x:Name="TireTuningView" HorizontalAlignment="Stretch"/>
         </Border>
       </TabItem>
+      <TabItem x:Name="AddonsTab">
+        <Border Background="{DynamicResource AppCardBrush}"
+                BorderBrush="{DynamicResource AppCardStrokeBrush}"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="12"
+                Margin="0,12,0,0"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch">
+          <views:AddonCapacityTuningView x:Name="AddonCapacityTuningView" HorizontalAlignment="Stretch"/>
+        </Border>
+      </TabItem>
       <TabItem x:Name="CranesTab">
         <Border Background="{DynamicResource AppCardBrush}"
                 BorderBrush="{DynamicResource AppCardStrokeBrush}"

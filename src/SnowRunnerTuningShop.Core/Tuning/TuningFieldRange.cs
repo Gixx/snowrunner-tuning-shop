@@ -63,4 +63,11 @@ public sealed class TuningFieldRange
     };
 
     public static TuningFieldRange WaterLiters(double? baseline) => FuelLiters(baseline);
+
+    public static TuningFieldRange PhysicsMass(double? baseline) => new()
+    {
+        Min = Xml.VehiclePhysicsMassXml.MinMass,
+        Max = Xml.VehiclePhysicsMassXml.MaxMass,
+        Baseline = baseline,
+    };
 }

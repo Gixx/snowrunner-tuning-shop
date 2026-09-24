@@ -1,0 +1,194 @@
+<UserControl x:Class="SnowRunnerTuningShop.Views.AddonCapacityTuningView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:loc="clr-namespace:SnowRunnerTuningShop.Localization"
+             mc:Ignorable="d"
+             d:DesignHeight="560"
+             d:DesignWidth="900">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Expander Grid.Row="0"
+                  Style="{StaticResource CollapsibleCardExpanderStyle}"
+                  Header="{x:Static loc:UiText+AddonCapacity.GlobalMultipliersTitle}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,12,8">
+                    <TextBlock x:Name="FuelMultiplierLabel"
+                               Text="{x:Static loc:UiText+AddonCapacity.FuelMultiplierDefault}"
+                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                    <Slider x:Name="FuelMultiplierSlider"
+                            Minimum="0"
+                            Maximum="10"
+                            Value="6"
+                            TickFrequency="1"
+                            IsSnapToTickEnabled="True"
+                            ValueChanged="MultiplierSlider_ValueChanged"/>
+                </StackPanel>
+
+                <StackPanel Grid.Row="0" Grid.Column="1" Margin="12,0,12,8">
+                    <TextBlock x:Name="WaterMultiplierLabel"
+                               Text="{x:Static loc:UiText+AddonCapacity.WaterMultiplierDefault}"
+                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                    <Slider x:Name="WaterMultiplierSlider"
+                            Minimum="0"
+                            Maximum="10"
+                            Value="6"
+                            TickFrequency="1"
+                            IsSnapToTickEnabled="True"
+                            ValueChanged="MultiplierSlider_ValueChanged"/>
+                </StackPanel>
+
+                <StackPanel Grid.Row="0" Grid.Column="2" Margin="12,0,12,8">
+                    <TextBlock x:Name="RepairsMultiplierLabel"
+                               Text="{x:Static loc:UiText+AddonCapacity.RepairsMultiplierDefault}"
+                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                    <Slider x:Name="RepairsMultiplierSlider"
+                            Minimum="0"
+                            Maximum="10"
+                            Value="6"
+                            TickFrequency="1"
+                            IsSnapToTickEnabled="True"
+                            ValueChanged="MultiplierSlider_ValueChanged"/>
+                </StackPanel>
+
+                <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,12,0">
+                    <TextBlock x:Name="WheelsMultiplierLabel"
+                               Text="{x:Static loc:UiText+AddonCapacity.WheelsMultiplierDefault}"
+                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                    <Slider x:Name="WheelsMultiplierSlider"
+                            Minimum="0"
+                            Maximum="10"
+                            Value="6"
+                            TickFrequency="1"
+                            IsSnapToTickEnabled="True"
+                            ValueChanged="MultiplierSlider_ValueChanged"/>
+                </StackPanel>
+
+                <StackPanel Grid.Row="1" Grid.Column="1" Margin="12,0,12,0">
+                    <TextBlock x:Name="PriceMultiplierLabel"
+                               Text="{x:Static loc:UiText+AddonCapacity.PriceMultiplierDefault}"
+                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                    <Slider x:Name="PriceMultiplierSlider"
+                            Minimum="0"
+                            Maximum="10"
+                            Value="6"
+                            TickFrequency="1"
+                            IsSnapToTickEnabled="True"
+                            ValueChanged="MultiplierSlider_ValueChanged"/>
+                </StackPanel>
+
+                <StackPanel Grid.Row="0"
+                            Grid.RowSpan="2"
+                            Grid.Column="3"
+                            VerticalAlignment="Center">
+                    <Button x:Name="ApplyMultipliersButton"
+                            Content="{x:Static loc:UiText+AddonCapacity.Apply}"
+                            Padding="14,8"
+                            Click="ApplyMultipliersButton_Click"/>
+                </StackPanel>
+            </Grid>
+        </Expander>
+
+        <Border Grid.Row="1"
+                Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="12"
+                Margin="0,0,0,12">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="280" MinWidth="180"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button x:Name="SaveIndividualButton"
+                            Content="{x:Static loc:UiText+AddonCapacity.SaveIndividualChanges}"
+                            Padding="14,8"
+                            Margin="0,0,8,0"
+                            Click="SaveIndividualButton_Click"/>
+                    <Button x:Name="RestoreAddonsButton"
+                            Content="{x:Static loc:UiText+AddonCapacity.RestoreAddonsToBaseline}"
+                            Padding="14,8"
+                            Margin="0,0,8,0"
+                            Click="RestoreAddonsButton_Click"/>
+                    <Button Content="{x:Static loc:UiText+AddonCapacity.RefreshList}"
+                            Padding="14,8"
+                            Click="ReloadButton_Click"/>
+                </StackPanel>
+
+                <Grid Grid.Column="1" Margin="16,0,0,0" VerticalAlignment="Center">
+                    <TextBox x:Name="FilterTextBox"
+                             Padding="10,7"
+                             VerticalContentAlignment="Center"
+                             TextChanged="FilterTextBox_TextChanged"/>
+                    <TextBlock x:Name="FilterPlaceholder"
+                               Text="{x:Static loc:UiText+AddonCapacity.FilterPlaceholder}"
+                               Margin="14,0,0,0"
+                               VerticalAlignment="Center"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                               IsHitTestVisible="False"/>
+                </Grid>
+            </Grid>
+        </Border>
+
+        <DataGrid x:Name="AddonsGrid"
+                  Grid.Row="2"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="False"
+                  CanUserDeleteRows="False"
+                  IsReadOnly="False"
+                  HeadersVisibility="Column"
+                  GridLinesVisibility="Horizontal">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="{x:Static loc:UiText+AddonCapacity.NameColumn}" Binding="{Binding DisplayName}" Width="220" IsReadOnly="True"
+                                    ElementStyle="{StaticResource TuningGridTextElementStyle}"/>
+                <DataGridTextColumn Header="{x:Static loc:UiText+AddonCapacity.CategoryColumn}" Binding="{Binding Category}" Width="110" IsReadOnly="True"
+                                    ElementStyle="{StaticResource TuningGridTextElementStyle}"/>
+                <DataGridTextColumn Header="{x:Static loc:UiText+AddonCapacity.PriceColumn}"
+                                    Binding="{Binding Price, Converter={StaticResource InvariantIntConverter}, UpdateSourceTrigger=LostFocus}"
+                                    Width="90"
+                                    ElementStyle="{StaticResource TuningGridTextElementStyle}"
+                                    EditingElementStyle="{StaticResource TuningGridTextEditingStyle}"/>
+                <DataGridTextColumn Header="{x:Static loc:UiText+AddonCapacity.FuelColumn}"
+                                    Binding="{Binding FuelCapacity, Converter={StaticResource InvariantIntConverter}, UpdateSourceTrigger=LostFocus}"
+                                    Width="80"
+                                    ElementStyle="{StaticResource TuningGridTextElementStyle}"
+                                    EditingElementStyle="{StaticResource TuningGridTextEditingStyle}"/>
+                <DataGridTextColumn Header="{x:Static loc:UiText+AddonCapacity.WaterColumn}"
+                                    Binding="{Binding WaterCapacity, Converter={StaticResource InvariantIntConverter}, UpdateSourceTrigger=LostFocus}"
+                                    Width="80"
+                                    ElementStyle="{StaticResource TuningGridTextElementStyle}"
+                                    EditingElementStyle="{StaticResource TuningGridTextEditingStyle}"/>
+                <DataGridTextColumn Header="{x:Static loc:UiText+AddonCapacity.RepairsColumn}"
+                                    Binding="{Binding RepairsCapacity, Converter={StaticResource InvariantIntConverter}, UpdateSourceTrigger=LostFocus}"
+                                    Width="80"
+                                    ElementStyle="{StaticResource TuningGridTextElementStyle}"
+                                    EditingElementStyle="{StaticResource TuningGridTextEditingStyle}"/>
+                <DataGridTextColumn Header="{x:Static loc:UiText+AddonCapacity.WheelsColumn}"
+                                    Binding="{Binding WheelRepairsCapacity, Converter={StaticResource InvariantIntConverter}, UpdateSourceTrigger=LostFocus}"
+                                    Width="100"
+                                    ElementStyle="{StaticResource TuningGridTextElementStyle}"
+                                    EditingElementStyle="{StaticResource TuningGridTextEditingStyle}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>

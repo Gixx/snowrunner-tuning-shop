@@ -94,12 +94,14 @@ public static class TruckTuningService
         TruckFrontSteerGlobalMode frontSteerMode,
         double responsivenessMultiplier,
         double priceMultiplier,
+        double massMultiplier,
         bool alwaysOnDiffLock = false,
         bool alwaysOnAwd = false)
     {
         PartPakPipeline.ValidateMultiplier(fuelMultiplier, nameof(fuelMultiplier));
         PartPakPipeline.ValidateMultiplier(responsivenessMultiplier, nameof(responsivenessMultiplier));
         PartPakPipeline.ValidateMultiplier(priceMultiplier, nameof(priceMultiplier));
+        PartPakPipeline.ValidateMultiplier(massMultiplier, nameof(massMultiplier));
         if (!Enum.IsDefined(frontSteerMode))
         {
             throw new ArgumentOutOfRangeException(nameof(frontSteerMode), "Unsupported front steer preset.");
@@ -115,6 +117,7 @@ public static class TruckTuningService
                 frontSteerMode,
                 responsivenessMultiplier,
                 priceMultiplier,
+                massMultiplier,
                 alwaysOnDiffLock,
                 alwaysOnAwd));
     }
@@ -373,6 +376,11 @@ public static class TruckTuningService
             : TruckDiffLockXml.HasNativeDiffLockInfrastructure(archive, text, truckId);
 
         var sounds = TruckSoundsService.ReadAssignment(text);
+        var hasMass = VehiclePhysicsMassXml.TryReadPrimaryMass(text, out var mass);
+        var baselineMass = baselineText is not null
+            && VehiclePhysicsMassXml.TryReadPrimaryMass(baselineText, out var parsedBaselineMass)
+            ? parsedBaselineMass
+            : mass;
 
         truck = new TruckTuningDefinition
         {
@@ -398,6 +406,9 @@ public static class TruckTuningService
             DriveLayout = InferDriveLayout(text),
             Responsiveness = ParseDouble(responsivenessRaw, DefaultTruckResponsiveness),
             BaselineResponsiveness = ReadBaselineDouble(baselineText, text, "Responsiveness", 0.4),
+            HasMass = hasMass,
+            Mass = hasMass ? mass : 0,
+            BaselineMass = hasMass ? baselineMass : 0,
             FrontSteerAngle = frontSteerAngle,
             BaselineFrontSteerAngle = baselineSteer.Front,
             RearSteerAngle = rearSteerAngle,
@@ -420,6 +431,11 @@ public static class TruckTuningService
         updated = ApplyGameDataCountry(updated, truck.StoreCountries);
         updated = ApplyGameDataUnlockByRank(updated, truck.UnlockByRank);
         updated = ApplySteering(updated, truck);
+        if (truck.HasMass)
+        {
+            updated = VehiclePhysicsMassXml.ApplyPrimaryMass(updated, truck.Mass);
+        }
+
         updated = TruckDiffLockXml.ApplyDiffLock(archive, updated, truck);
         updated = ApplyDriveLayout(updated, truck.DriveLayout);
         if (!string.IsNullOrWhiteSpace(truck.HornSoundSetId) || !string.IsNullOrWhiteSpace(truck.EngineSoundSetId))
@@ -441,7 +457,8 @@ public static class TruckTuningService
         double fuelMultiplier,
         TruckFrontSteerGlobalMode frontSteerMode,
         double responsivenessMultiplier,
-        double priceMultiplier) =>
+        double priceMultiplier,
+        double massMultiplier = 1.0) =>
         ApplyGlobalMultipliersToText(
             workingArchive: null,
             truckId: "test",
@@ -450,6 +467,7 @@ public static class TruckTuningService
             frontSteerMode,
             responsivenessMultiplier,
             priceMultiplier,
+            massMultiplier,
             alwaysOnDiffLock: false,
             alwaysOnAwd: false);
 
@@ -461,17 +479,20 @@ public static class TruckTuningService
         TruckFrontSteerGlobalMode frontSteerMode,
         double responsivenessMultiplier,
         double priceMultiplier,
+        double massMultiplier,
         bool alwaysOnDiffLock,
         bool alwaysOnAwd)
     {
         var fuelBaseline = TuningMultiplierPresets.IsBaselineMultiplier(fuelMultiplier);
         var responsivenessBaseline = TuningMultiplierPresets.IsBaselineMultiplier(responsivenessMultiplier);
         var priceBaseline = TuningMultiplierPresets.IsBaselineMultiplier(priceMultiplier);
+        var massBaseline = TuningMultiplierPresets.IsBaselineMultiplier(massMultiplier);
         var steerBaseline = frontSteerMode == TruckFrontSteerGlobalMode.Baseline;
 
         if (fuelBaseline
             && responsivenessBaseline
             && priceBaseline
+            && massBaseline
             && steerBaseline
             && !alwaysOnDiffLock
             && !alwaysOnAwd)
@@ -482,7 +503,10 @@ public static class TruckTuningService
         var truckData = TruckDataOpenRegex.Match(baselineText);
         if (!truckData.Success)
         {
-            return ApplyGlobalDriveFlags(workingArchive, truckId, baselineText, alwaysOnDiffLock, alwaysOnAwd);
+            var withoutTruckData = massBaseline
+                ? baselineText
+                : VehiclePhysicsMassXml.ScaleAllMasses(baselineText, massMultiplier);
+            return ApplyGlobalDriveFlags(workingArchive, truckId, withoutTruckData, alwaysOnDiffLock, alwaysOnAwd);
         }
 
         var attrs = VehicleGameDataXml.ParseAttributes(truckData.Groups["attrs"].Value);
@@ -525,6 +549,11 @@ public static class TruckTuningService
                     9_999_999);
                 updated = ApplyGameDataPrice(updated, scaledPrice);
             }
+        }
+
+        if (!massBaseline)
+        {
+            updated = VehiclePhysicsMassXml.ScaleAllMasses(updated, massMultiplier);
         }
 
         if (!steerBaseline)
@@ -896,6 +925,9 @@ public static class TruckTuningService
     /// </summary>
     public static string FormatResponsiveness(double value) =>
         XmlNumericFormatting.Format(value, preferInteger: false, keepTrailingDotZero: true);
+
+    public static string FormatMass(double value) =>
+        VehiclePhysicsMassXml.FormatMass(value);
 
     private static byte[] ReadEntryBytes(ZipArchiveEntry entry)
     {

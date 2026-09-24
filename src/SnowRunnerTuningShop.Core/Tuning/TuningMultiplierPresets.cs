@@ -36,8 +36,14 @@ public static class TuningMultiplierPresets
     public const int MinimumIndex = 0;
     public const int MaximumIndex = 10;
 
+    /// <summary>Index of 2x — upper bound for Mass sliders (1/5 … 2x).</summary>
+    public const int TwoTimesIndex = 7;
+
     public static int ClampIndex(int index) =>
         Math.Clamp(index, MinimumIndex, MaximumIndex);
+
+    public static int ClampMassIndex(int index) =>
+        Math.Clamp(index, MinimumIndex, TwoTimesIndex);
 
     public static double GetValue(int index) =>
         Values[ClampIndex(index)];

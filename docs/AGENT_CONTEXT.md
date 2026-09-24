@@ -55,7 +55,7 @@ Shared session: `AppSession`. Shell: `MainWindow.*`.
 |------|-------------|------|
 | Home | `Views/HomeView.*` | Baseline, install location, restore, refresh after game update, reapply profile, workspace health, updates |
 | General | `Views/GeneralView.*`, `Core/General/GeneralService.cs` | Camera clip; trail rock scale (mod assets in `assets/general/no-stones`) |
-| Parts | `Views/PartsView.*` + Winch/Engine/Gearbox/Suspension/Tire/Crane tabs | Global multipliers + per-row edits; Used-by; restore category |
+| Parts | `Views/PartsView.*` + Winch/Engine/Gearbox/Suspension/Tire/Add-ons/Crane tabs | Global multipliers + per-row edits; Used-by; restore category |
 | Vehicles | `Views/VehiclesView.*`, `Core/Trucks/TruckTuningService.cs` | Catalog + per-truck edit + global vehicle multipliers / unlocks |
 | Trailers | `Views/TrailersView.*`, `Core/Trailers/TrailerTuningService.cs` | Catalog + capacities/price/quest; global multipliers |
 | Photo Mode | `Views/PhotoModeView.*`, `Core/PhotoMode/*` | Defaults in `initial.cache_block`; Time from sslbundle is **read-only** (Apply must not write sslbundle) |
@@ -166,7 +166,7 @@ Tracked work notes may also live under gitignored `docs/plan/Linux-Avalonia-plan
 | Baseline / health | `Core/Backup/PakBaselineService.cs`, `Core/Profile/WorkspaceHealthService.cs`, `TuningProfile*.cs` |
 | Pak I/O | `Core/Pak/InitialPakReader.cs`, `InitialPakWriter.cs`, `PakFileId.cs`, `PakInPlaceZipPatcher.cs`, `PakVanillaText.cs`, `PakCacheBlockLayoutGuard.cs` |
 | Vehicles / trailers | `Core/Trucks/TruckTuningService.cs`, `Core/Trailers/TrailerTuningService.cs`; UI `Vehicles/VehicleCatalog.cs`, `Trailers/TrailerCatalog.cs` |
-| Parts | `Core/{Winch,Engine,Gearbox,Suspension,Tires}/*Service.cs`, `Core/Models/*Definition.cs` |
+| Parts | `Core/{Winch,Engine,Gearbox,Suspension,Tires,AddonCapacity,Crane}/*Service.cs`, `Core/Models/*Definition.cs` |
 | General / Photo | `Core/General/GeneralService.cs`, `Core/PhotoMode/*` |
 | Strings | `Core/Strings/GameStringsReader.cs`; UI `Localization/StringResources.cs`, `UiText.cs`, `LanguageService.cs` |
 | Crash | `Core/Diagnostics/CrashReport*.cs`, `Views/CrashReportWindow.*`, `GlobalExceptionHandler.cs` |

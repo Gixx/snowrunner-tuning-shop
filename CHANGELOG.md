@@ -11,6 +11,10 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ## [Unreleased]
 
+### Added
+- **Vehicle / trailer Mass:** detail pages edit primary chassis `PhysicsModel` `Body Mass` (nested masses scale with it). List pages gain a Mass global multiplier from 1/5 to 2x using the usual preset steps; scaled values use two-decimal XML formatting so 1/3-style fractions stay finite.
+- **Parts → Add-ons:** lists truck addons that already have Fuel / Water / Repairs / Spare wheels on `TruckData` (~60+). Editable capacities + store price; empty cells where an attribute is absent (never invents XML). Global multipliers for each field.
+
 ---
 
 ## [1.4.0] — 2026-09-19
