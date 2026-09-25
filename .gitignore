@@ -42,3 +42,4 @@ packaging/flatpak/*.flatpak
 
 # Mailtrap API token for in-app bug reports (never commit)
 src/SnowRunnerTuningShop.Core/Diagnostics/BugReportSecrets.Local.cs
+docs/integration-test/
