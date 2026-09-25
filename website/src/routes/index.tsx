@@ -11,7 +11,7 @@ import {
   Layers,
   ArrowRight,
   Wrench,
-  GaugeCircle,
+  CircleAlert,
 } from "lucide-react";
 
 import { Snowfall } from "@/components/Snowfall";
@@ -113,29 +113,19 @@ export const Route = createFileRoute("/")({
 
 const whatsNew = [
   {
-    icon: Gauge,
-    title: "Per-axle steering",
-    body: "Every XML wheel/axle template gets its own angle — frontmost first, numbered clearly. Shared rear templates stay honest; no fake camera axles.",
+    icon: CircleAlert,
+    title: "Trucks stay visible",
+    body: "Adding rear counter-steer no longer writes a broken `/ SteeringAngle` tag. Trucks like the White Western Star stay in garage and store; re-save repairs already-broken XML.",
   },
   {
-    icon: GaugeCircle,
-    title: "Steer tempo, three knobs",
-    body: "Steer speed, back-steer speed, and responsiveness — turn-in, recenter, and input feel, each editable on the vehicle detail page.",
-  },
-  {
-    icon: Layers,
-    title: "Mass you can scale",
-    body: "Primary chassis mass for trucks and trailers, with a global multiplier from featherweight to double. Nested bodies scale with it.",
-  },
-  {
-    icon: Fuel,
-    title: "Add-on capacities",
-    body: "A new Parts → Add-ons tab for fuel, water, repairs, and spare wheels on truck addons that already carry them — edit one row or scale the class.",
+    icon: ShieldCheck,
+    title: "Rewrite safety in CI",
+    body: "A fixture matrix now round-trips multipliers and edge values through every major rewrite path and fails the build if a self-close slash lands before an attribute.",
   },
   {
     icon: Wrench,
-    title: "Detail page, clearer cards",
-    body: "Vehicle tuning is split into cards: store & unlock, axle steer, steer speeds, diff lock & drive, then engines and sounds — Save stays on the darker strip below.",
+    title: "Local pak smoke",
+    body: "Optional console runner walks your real baseline pak with a progress bar — structural checks only, not run by CI.",
   },
 ];
 
@@ -329,7 +319,7 @@ function PlatformShowcase({
             WHAT&apos;S NEW IN VERSION {APP_VERSION_STABLE}
           </h2>
           <p className="mt-4 max-w-2xl text-muted-foreground">
-            Finer steering, real chassis mass, and add-on capacities — still without opening a single XML file.
+            Safer axle writes so trucks stay in the garage — plus stricter rewrite checks before a bad slash can ship.
           </p>
         </Reveal>
         <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">

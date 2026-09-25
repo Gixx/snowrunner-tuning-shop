@@ -38,8 +38,12 @@ Build (Release, Windows WPF):
 Build (Avalonia Desktop):  
 `dotnet build src/SnowRunnerTuningShop.Desktop/SnowRunnerTuningShop.Desktop.csproj -c Release`
 
-Tests: `tests/SnowRunnerTuningShop.Tests` — `dotnet test tests/SnowRunnerTuningShop.Tests/SnowRunnerTuningShop.Tests.csproj`  
-(locale keys vs `en.json`, `PakFileId`, trailer store hitch rules).
+Tests (Level A, CI): `tests/SnowRunnerTuningShop.Tests` — includes `XmlRewriteMatrixTests` (structural rewrite safety).  
+`dotnet test tests/SnowRunnerTuningShop.Tests/SnowRunnerTuningShop.Tests.csproj`
+
+Pak smoke (Level B, local only — not CI): rewrite every truck/part XML from baseline/working pak with progress bar.  
+`dotnet run --project tests/SnowRunnerTuningShop.PakSmoke -- [optionalPakPath]`  
+(Uses active workspace baseline when no path is passed.)
 
 Senior review snapshot (prioritized debt): `docs/CODE_REVIEW.md`.
 

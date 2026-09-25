@@ -2,7 +2,7 @@ namespace SnowRunnerTuningShop.Core;
 
 public static class AppInfo
 {
-    public const string Version = "1.4.1";
+    public const string Version = "1.4.2";
 
     public const string GitHubOwner = "Gixx";
     public const string GitHubRepo = "snowrunner-tuning-shop";

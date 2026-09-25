@@ -13,6 +13,17 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ---
 
+## [1.4.2] — 2026-09-25
+
+### Added
+- **XML rewrite safety (Level A):** CI matrix tests (`XmlRewriteMatrixTests`) that round-trip multipliers / edge values through engine, gearbox, suspension, tires, winch, crane, truck, and addon rewrites and fail on misplaced `/` before attributes.
+- **Pak smoke (Level B, local):** console runner `SnowRunnerTuningShop.PakSmoke` walks a real baseline/working pak with a progress bar; not run by CI.
+
+### Fixed
+- **Added rear SteeringAngle:** writing counter-steer onto a self-closing wheel/axle tag no longer places the attribute after `/` (invalid XML that made trucks like White Western Star vanish from garage/store). Re-saving repairs already-broken tags.
+
+---
+
 ## [1.4.1] — 2026-09-24
 
 ### Added
@@ -386,7 +397,8 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ---
 
-[Unreleased]: https://github.com/Gixx/snowrunner-tuning-shop/compare/v1.4.1...HEAD
+[Unreleased]: https://github.com/Gixx/snowrunner-tuning-shop/compare/v1.4.2...HEAD
+[1.4.2]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.4.2
 [1.4.1]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.4.1
 [1.4.0]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.4.0
 [1.4.0-beta.3]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.4.0-beta.3

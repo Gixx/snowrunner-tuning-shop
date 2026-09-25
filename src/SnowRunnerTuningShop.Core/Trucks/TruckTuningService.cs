@@ -40,7 +40,7 @@ public static class TruckTuningService
         RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
     private static readonly Regex TorqueTagRegex = new(
-        @"<(?<tag>FrontWheel|RearWheel|FirstAxle|SecondAxle|ThirdAxle|FourthAxle|FrontAxle|RearAxle|MiddleAxle|MiddleWheel|Front|Rear)\b(?<attrs>[^<>]*\bTorque\s*=\s*""[^""]*""[^<>]*)(?<self>/?)>",
+        @"<(?<tag>FrontWheel|RearWheel|FirstAxle|SecondAxle|ThirdAxle|FourthAxle|FrontAxle|RearAxle|MiddleAxle|MiddleWheel|Front|Rear)\b(?<attrs>[^<>]*?\bTorque\s*=\s*""[^""]*""[^<>]*?)\s*(?<self>/?)>",
         RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
     public static IReadOnlyList<TruckTuningDefinition> LoadTrucks(string pakPath, string language = "english")
@@ -709,7 +709,19 @@ public static class TruckTuningService
             }
 
             VehicleGameDataXml.SetOrReplaceAttribute(ref attrs, "Torque", next);
-            return $"<{tag}{attrs}{match.Groups["self"].Value}>";
+            TruckSteerXml.SplitAttrsAndSelf(attrs, match.Groups["self"].Value, out attrs, out var selfClosing);
+            attrs = attrs.TrimEnd();
+            if (selfClosing)
+            {
+                if (attrs.Length > 0 && !char.IsWhiteSpace(attrs[^1]))
+                {
+                    attrs += " ";
+                }
+
+                return $"<{tag}{attrs}/>";
+            }
+
+            return $"<{tag}{attrs}>";
         });
 
     private static string TargetFrontTorque(TruckDriveLayout layout, string current) =>

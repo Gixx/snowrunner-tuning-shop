@@ -28,4 +28,5 @@ WPF / .NET 10 desktop app that tunes SnowRunner `initial.pak`. UI in `src/SnowRu
 | Vehicle match | `assets/vehicles/catalog.json` (`pakId`), `Core/Pak/PakFileId.cs` |
 | Parts | `Core/{Engine,Winch,Gearbox,Suspension,Tires,Crane}/*Service.cs`, `PartPakPipeline` |
 | UI / game strings | `Localization/UiText.cs`, `Core/Strings/GameStringsReader.cs` |
+| Rewrite safety | Level A CI: `XmlRewriteMatrixTests` + `XmlRewriteSafety`; Level B local: `tests/.../PakSmoke` |
 | AppData | `%LocalAppData%\SnowRunnerTuningShop\` |

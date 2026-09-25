@@ -166,6 +166,59 @@ public class TruckSteerXmlTests
     }
 
     [Fact]
+    public void Inject_rear_steer_keeps_slash_after_steering_angle()
+    {
+        const string westernStarLike =
+            """
+            <Truck>
+              <TruckData>
+                <RearWheel ConnectedToHandbrake="true" Location="rear" Torque="default" />
+                <FrontWheel Location="front" SteeringAngle="40" Torque="connectable" />
+              </TruckData>
+            </Truck>
+            """;
+
+        var axles = TruckSteerXml.ParseSteerAxles(westernStarLike, westernStarLike);
+        axles.Single(a => a.Tag == "RearWheel").Angle = -40;
+        var updated = TruckSteerXml.ApplySteerAxles(westernStarLike, axles);
+
+        Assert.DoesNotContain("/ SteeringAngle", updated, StringComparison.Ordinal);
+        Assert.Matches(@"<RearWheel\b[^>]*SteeringAngle=""-40""\s*/>", updated);
+    }
+
+    [Fact]
+    public void Repair_broken_slash_before_steering_angle_on_resave()
+    {
+        const string broken =
+            """
+            <Truck>
+              <TruckData>
+                <RearWheel ConnectedToHandbrake="true" Location="rear" Torque="default" / SteeringAngle="-40">
+                <FrontWheel Location="front" SteeringAngle="40" Torque="connectable" />
+              </TruckData>
+            </Truck>
+            """;
+        const string baseline =
+            """
+            <Truck>
+              <TruckData>
+                <RearWheel ConnectedToHandbrake="true" Location="rear" Torque="default" />
+                <FrontWheel Location="front" SteeringAngle="40" Torque="connectable" />
+              </TruckData>
+            </Truck>
+            """;
+
+        var axles = TruckSteerXml.ParseSteerAxles(broken, baseline);
+        var rear = axles.Single(a => a.Tag == "RearWheel");
+        Assert.False(rear.HadSteerInBaseline);
+        Assert.Equal(-40, rear.Angle);
+        var updated = TruckSteerXml.ApplySteerAxles(broken, axles);
+
+        Assert.DoesNotContain("/ SteeringAngle", updated, StringComparison.Ordinal);
+        Assert.Matches(@"<RearWheel\b[^>]*SteeringAngle=""-40""\s*/>", updated);
+    }
+
+    [Fact]
     public void Global_rear_min_only_touches_baseline_negative_axles()
     {
         var updated = TruckSteerXml.ApplyGlobalSteerPresets(

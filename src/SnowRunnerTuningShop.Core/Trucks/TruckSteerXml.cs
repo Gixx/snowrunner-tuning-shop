@@ -24,8 +24,8 @@ public static class TruckSteerXml
     public const double AddedRearMaxDegrees = 0;
 
     private static readonly Regex AxleWheelOpenTagRegex = new(
-        @"<(?<tag>FrontWheel|RearWheel|FirstAxle|SecondAxle|ThirdAxle|FourthAxle|FrontAxle|RearAxle|MiddleAxle|MiddleWheel)\b(?<attrs>[^>]*)(?<self>/?)>"
-        + @"|<(?<tag>Front|Rear)\b(?<attrs>[^>]*\bTorque\s*=\s*""[^""]*""[^>]*)(?<self>/?)>",
+        @"<(?<tag>FrontWheel|RearWheel|FirstAxle|SecondAxle|ThirdAxle|FourthAxle|FrontAxle|RearAxle|MiddleAxle|MiddleWheel)\b(?<attrs>[^<>]*?)\s*(?<self>/?)>"
+        + @"|<(?<tag>Front|Rear)\b(?<attrs>[^<>]*?\bTorque\s*=\s*""[^""]*""[^<>]*?)\s*(?<self>/?)>",
         RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
     private static readonly Regex SteeringAngleAttributeRegex = new(
@@ -261,21 +261,15 @@ public static class TruckSteerXml
 
     private static string ApplyAxleMatch(Match match, TruckSteerAxle axle)
     {
-        var attrs = match.Groups["attrs"].Value;
+        var tag = match.Groups["tag"].Value;
+        SplitAttrsAndSelf(match.Groups["attrs"].Value, match.Groups["self"].Value, out var attrs, out var selfClosing);
         var hasAttr = TryReadSteeringAngle(attrs, out _);
 
         if (axle.HadSteerInBaseline)
         {
             var target = ResolveVanillaTarget(axle);
             var formatted = FormatSteerAngle(target);
-            if (hasAttr)
-            {
-                attrs = ReplaceSteeringAngle(attrs, formatted);
-            }
-            else
-            {
-                attrs = AppendSteeringAngle(attrs, formatted);
-            }
+            attrs = hasAttr ? ReplaceSteeringAngle(attrs, formatted) : AppendSteeringAngle(attrs, formatted);
         }
         else
         {
@@ -309,7 +303,57 @@ public static class TruckSteerXml
             }
         }
 
-        return $"<{match.Groups["tag"].Value}{attrs}{match.Groups["self"].Value}>";
+        return BuildOpenTag(tag, attrs, selfClosing);
+    }
+
+    /// <summary>
+    /// Keep attributes before the self-closing slash. A greedy <c>[^>]*</c> match can swallow
+    /// <c>/</c>, which previously produced broken tags like <c>... / SteeringAngle="-40"></c>
+    /// and made trucks vanish from the garage/store.
+    /// </summary>
+    internal static void SplitAttrsAndSelf(string attrsGroup, string selfGroup, out string attrs, out bool selfClosing)
+    {
+        attrs = attrsGroup;
+        selfClosing = selfGroup.Contains('/');
+
+        // Repair already-broken writes: "... / SteeringAngle=..." → "... SteeringAngle=..."
+        var repaired = SlashBeforeAttributeRegex.Replace(attrs, " ");
+        if (!string.Equals(repaired, attrs, StringComparison.Ordinal))
+        {
+            // The slash before the attribute was a misplaced self-closer.
+            selfClosing = true;
+            attrs = repaired;
+        }
+
+        if (!selfClosing)
+        {
+            var trimmed = attrs.TrimEnd();
+            if (trimmed.EndsWith('/'))
+            {
+                attrs = trimmed[..^1];
+                selfClosing = true;
+            }
+        }
+    }
+
+    private static readonly Regex SlashBeforeAttributeRegex = new(
+        @"/\s+(?=[A-Za-z_][A-Za-z0-9_]*\s*=)",
+        RegexOptions.Compiled | RegexOptions.CultureInvariant);
+
+    private static string BuildOpenTag(string tag, string attrs, bool selfClosing)
+    {
+        attrs = attrs.TrimEnd();
+        if (selfClosing)
+        {
+            if (attrs.Length > 0 && !char.IsWhiteSpace(attrs[^1]))
+            {
+                attrs += " ";
+            }
+
+            return $"<{tag}{attrs}/>";
+        }
+
+        return $"<{tag}{attrs}>";
     }
 
     private static double ResolveVanillaTarget(TruckSteerAxle axle)
@@ -341,7 +385,7 @@ public static class TruckSteerXml
         var list = new List<AxleMeta>();
         foreach (Match match in AxleWheelOpenTagRegex.Matches(text))
         {
-            var attrs = match.Groups["attrs"].Value;
+            SplitAttrsAndSelf(match.Groups["attrs"].Value, match.Groups["self"].Value, out var attrs, out _);
             double? angle = null;
             if (TryReadSteeringAngle(attrs, out var parsed))
             {

@@ -17,6 +17,7 @@
   <ItemGroup>
     <InternalsVisibleTo Include="PhotoModeLoadTest" />
     <InternalsVisibleTo Include="SnowRunnerTuningShop.Tests" />
+    <InternalsVisibleTo Include="SnowRunnerTuningShop.PakSmoke" />
   </ItemGroup>
 
 </Project>
