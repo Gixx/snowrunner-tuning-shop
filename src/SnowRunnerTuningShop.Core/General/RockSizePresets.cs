@@ -1,58 +1,39 @@
 namespace SnowRunnerTuningShop.Core.General;
 
+/// <summary>
+/// Rock physics scale as 0–100% (slider percent → scale 0.0–1.0).
+/// </summary>
 public static class RockSizePresets
 {
-    public static readonly double[] Values =
-    [
-        0.0,
-        0.25,
-        0.5,
-        0.75,
-        1.0,
-    ];
+    public const int MinimumPercent = 0;
+    public const int MaximumPercent = 100;
+    public const int BaselinePercent = 100;
 
-    public static readonly string[] Labels =
-    [
-        "No collision",
-        "25%",
-        "50%",
-        "75%",
-        "Vanilla (baseline)",
-    ];
+    public static int ClampPercent(int percent) =>
+        Math.Clamp(percent, MinimumPercent, MaximumPercent);
 
-    public const int BaselineIndex = 4;
-    public const int MinimumIndex = 0;
-    public const int MaximumIndex = 4;
+    public static double PercentToScale(int percent) =>
+        ClampPercent(percent) / 100.0;
 
-    public static int ClampIndex(int index) =>
-        Math.Clamp(index, MinimumIndex, MaximumIndex);
-
-    public static double GetValue(int index) =>
-        Values[ClampIndex(index)];
-
-    public static string GetLabel(int index) =>
-        Labels[ClampIndex(index)];
-
-    public static string FormatSliderCaption(int index) =>
-        $"Rock physics: {GetLabel(index)}";
+    public static int ScaleToPercent(double scale) =>
+        ClampPercent((int)Math.Round(Math.Clamp(scale, 0.0, 1.0) * 100.0, MidpointRounding.AwayFromZero));
 
     public static bool IsBaselineScale(double scale) =>
         Math.Abs(scale - 1.0) < 1e-9;
 
-    public static int FindNearestIndex(double scale)
+    public static string FormatPercentLabel(int percent)
     {
-        var bestIndex = BaselineIndex;
-        var bestDistance = double.MaxValue;
-        for (var index = MinimumIndex; index <= MaximumIndex; index++)
+        percent = ClampPercent(percent);
+        if (percent == MinimumPercent)
         {
-            var distance = Math.Abs(Values[index] - scale);
-            if (distance < bestDistance)
-            {
-                bestDistance = distance;
-                bestIndex = index;
-            }
+            return "No collision";
         }
 
-        return bestIndex;
+        if (percent == BaselinePercent)
+        {
+            return "Vanilla (baseline)";
+        }
+
+        return $"{percent}%";
     }
 }

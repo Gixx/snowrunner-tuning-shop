@@ -120,7 +120,8 @@ public partial class TireTuningView : UserControl
                     GetMultiplier(OnRoadFrictionMultiplierSlider),
                     GetMultiplier(OffRoadFrictionMultiplierSlider),
                     GetMultiplier(MudFrictionMultiplierSlider),
-                    GlobalIgnoreIceCheckBox.IsChecked == true ? true : null);
+                    GlobalIgnoreIceCheckBox.IsChecked == true ? true : null,
+                    GetMultiplier(PriceMultiplierSlider));
 
                 ReloadTires();
                 GlobalIgnoreIceCheckBox.IsChecked = false;
@@ -290,6 +291,7 @@ public partial class TireTuningView : UserControl
         OnRoadFrictionMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
         OffRoadFrictionMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
         MudFrictionMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
+        PriceMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
         UpdateMultiplierLabels();
     }
 
@@ -297,7 +299,8 @@ public partial class TireTuningView : UserControl
     {
         if (OnRoadFrictionMultiplierLabel is null
             || OffRoadFrictionMultiplierLabel is null
-            || MudFrictionMultiplierLabel is null)
+            || MudFrictionMultiplierLabel is null
+            || PriceMultiplierLabel is null)
         {
             return;
         }
@@ -311,6 +314,9 @@ public partial class TireTuningView : UserControl
         MudFrictionMultiplierLabel.Text = UiText.Slider.Caption(
             UiText.Slider.Mud,
             GetMultiplierIndex(MudFrictionMultiplierSlider));
+        PriceMultiplierLabel.Text = UiText.Slider.Caption(
+            UiText.Slider.StorePrice,
+            GetMultiplierIndex(PriceMultiplierSlider));
     }
 
     private static int GetMultiplierIndex(Slider slider) =>

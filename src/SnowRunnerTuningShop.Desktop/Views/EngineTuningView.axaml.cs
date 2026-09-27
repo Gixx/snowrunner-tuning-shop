@@ -147,8 +147,9 @@ public partial class EngineTuningView : UserControl
                 var fuel = GetMultiplier(FuelMultiplierSlider);
                 var damage = GetMultiplier(DamageMultiplierSlider);
                 var responsiveness = GetMultiplier(ResponsivenessMultiplierSlider);
+                var price = GetMultiplier(PriceMultiplierSlider);
                 var result = await Task.Run(() => EngineService.ApplyGlobalMultipliers(
-                    path, torque, fuel, damage, responsiveness));
+                    path, torque, fuel, damage, responsiveness, price));
 
                 ReloadEngines();
                 ReportStatus(UiText.Engine.MultipliersAppliedStatus(
@@ -291,6 +292,7 @@ public partial class EngineTuningView : UserControl
         FuelMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
         DamageMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
         ResponsivenessMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
+        PriceMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
         UpdateMultiplierLabels();
     }
 
@@ -299,7 +301,8 @@ public partial class EngineTuningView : UserControl
         if (TorqueMultiplierLabel is null
             || FuelMultiplierLabel is null
             || DamageMultiplierLabel is null
-            || ResponsivenessMultiplierLabel is null)
+            || ResponsivenessMultiplierLabel is null
+            || PriceMultiplierLabel is null)
         {
             return;
         }
@@ -312,6 +315,8 @@ public partial class EngineTuningView : UserControl
             UiText.Slider.DamageCapacity, GetMultiplierIndex(DamageMultiplierSlider));
         ResponsivenessMultiplierLabel.Text = UiText.Slider.Caption(
             UiText.Slider.Responsiveness, GetMultiplierIndex(ResponsivenessMultiplierSlider));
+        PriceMultiplierLabel.Text = UiText.Slider.Caption(
+            UiText.Slider.StorePrice, GetMultiplierIndex(PriceMultiplierSlider));
     }
 
     private static int GetMultiplierIndex(Slider slider) =>

@@ -65,12 +65,14 @@ public static class SuspensionService
         double heightMultiplier,
         double strengthMultiplier,
         double dampingMultiplier,
-        double damageCapacityMultiplier)
+        double damageCapacityMultiplier,
+        double priceMultiplier = 1.0)
     {
         PartPakPipeline.ValidateMultiplier(heightMultiplier, nameof(heightMultiplier));
         PartPakPipeline.ValidateMultiplier(strengthMultiplier, nameof(strengthMultiplier));
         PartPakPipeline.ValidateMultiplier(dampingMultiplier, nameof(dampingMultiplier));
         PartPakPipeline.ValidateMultiplier(damageCapacityMultiplier, nameof(damageCapacityMultiplier));
+        PartPakPipeline.ValidateMultiplier(priceMultiplier, nameof(priceMultiplier));
 
         var result = PartPakPipeline.BuildBaselineReplacements(
             pakPath,
@@ -80,7 +82,8 @@ public static class SuspensionService
                 heightMultiplier,
                 strengthMultiplier,
                 dampingMultiplier,
-                damageCapacityMultiplier),
+                damageCapacityMultiplier,
+                priceMultiplier),
             (_, currentText, updatedText) => CountNamedDifferences(currentText, updatedText));
 
         var updatedFiles = PartPakPipeline.CommitReplacements(pakPath, result.Replacements);
@@ -88,7 +91,7 @@ public static class SuspensionService
     }
 
     public static SuspensionSaveResult RestoreSuspensionsFromBaseline(string pakPath) =>
-        ApplyGlobalMultipliers(pakPath, 1.0, 1.0, 1.0, 1.0);
+        ApplyGlobalMultipliers(pakPath, 1.0, 1.0, 1.0, 1.0, 1.0);
 
     public static SuspensionSaveResult SaveSuspensionChanges(
         string pakPath,
@@ -341,84 +344,96 @@ public static class SuspensionService
         double heightMultiplier,
         double strengthMultiplier,
         double dampingMultiplier,
-        double damageCapacityMultiplier) =>
+        double damageCapacityMultiplier,
+        double priceMultiplier = 1.0) =>
         ApplyMultipliersToText(
             baselineText,
             heightMultiplier,
             strengthMultiplier,
             dampingMultiplier,
-            damageCapacityMultiplier);
+            damageCapacityMultiplier,
+            priceMultiplier);
 
     private static string ApplyMultipliersToText(
         string baselineText,
         double heightMultiplier,
         double strengthMultiplier,
         double dampingMultiplier,
-        double damageCapacityMultiplier)
+        double damageCapacityMultiplier,
+        double priceMultiplier = 1.0)
     {
         var heightBaseline = TuningMultiplierPresets.IsBaselineMultiplier(heightMultiplier);
         var strengthBaseline = TuningMultiplierPresets.IsBaselineMultiplier(strengthMultiplier);
         var dampingBaseline = TuningMultiplierPresets.IsBaselineMultiplier(dampingMultiplier);
         var damageBaseline = TuningMultiplierPresets.IsBaselineMultiplier(damageCapacityMultiplier);
+        var priceBaseline = TuningMultiplierPresets.IsBaselineMultiplier(priceMultiplier);
 
-        if (heightBaseline && strengthBaseline && dampingBaseline && damageBaseline)
+        if (heightBaseline && strengthBaseline && dampingBaseline && damageBaseline && priceBaseline)
         {
             return baselineText;
         }
 
-        var withSets = SuspensionSetOpenTagRegex.Replace(baselineText, match =>
+        var updated = baselineText;
+        if (!(heightBaseline && strengthBaseline && dampingBaseline && damageBaseline))
         {
-            var attrs = match.Groups["attrs"].Value;
-            var self = match.Groups["self"].Value;
-            var parsed = ParseAttributes(attrs);
-            if (!parsed.ContainsKey("Name") || damageBaseline)
+            var withSets = SuspensionSetOpenTagRegex.Replace(baselineText, match =>
             {
-                return match.Value;
-            }
+                var attrs = match.Groups["attrs"].Value;
+                var self = match.Groups["self"].Value;
+                var parsed = ParseAttributes(attrs);
+                if (!parsed.ContainsKey("Name") || damageBaseline)
+                {
+                    return match.Value;
+                }
 
-            var updatedAttrs = attrs;
-            if (!TryScaleAttribute(ref updatedAttrs, "DamageCapacity", damageCapacityMultiplier))
+                var updatedAttrs = attrs;
+                if (!TryScaleAttribute(ref updatedAttrs, "DamageCapacity", damageCapacityMultiplier))
+                {
+                    return match.Value;
+                }
+
+                return $"<SuspensionSet{updatedAttrs}{self}>";
+            });
+
+            if (heightBaseline && strengthBaseline && dampingBaseline)
             {
-                return match.Value;
+                updated = withSets;
             }
+            else
+            {
+                updated = SuspensionOpenTagRegex.Replace(withSets, match =>
+                {
+                    var attrs = match.Groups["attrs"].Value;
+                    var self = match.Groups["self"].Value;
+                    var updatedAttrs = attrs;
+                    var changed = false;
 
-            return $"<SuspensionSet{updatedAttrs}{self}>";
-        });
+                    if (!heightBaseline)
+                    {
+                        changed |= TryScaleAttribute(ref updatedAttrs, "Height", heightMultiplier);
+                    }
 
-        if (heightBaseline && strengthBaseline && dampingBaseline)
-        {
-            return withSets;
+                    if (!strengthBaseline)
+                    {
+                        changed |= TryScaleAttribute(ref updatedAttrs, "Strength", strengthMultiplier);
+                    }
+
+                    if (!dampingBaseline)
+                    {
+                        changed |= TryScaleAttribute(ref updatedAttrs, "Damping", dampingMultiplier);
+                    }
+
+                    if (!changed)
+                    {
+                        return match.Value;
+                    }
+
+                    return $"<Suspension{updatedAttrs}{self}>";
+                });
+            }
         }
 
-        return SuspensionOpenTagRegex.Replace(withSets, match =>
-        {
-            var attrs = match.Groups["attrs"].Value;
-            var self = match.Groups["self"].Value;
-            var updatedAttrs = attrs;
-            var changed = false;
-
-            if (!heightBaseline)
-            {
-                changed |= TryScaleAttribute(ref updatedAttrs, "Height", heightMultiplier);
-            }
-
-            if (!strengthBaseline)
-            {
-                changed |= TryScaleAttribute(ref updatedAttrs, "Strength", strengthMultiplier);
-            }
-
-            if (!dampingBaseline)
-            {
-                changed |= TryScaleAttribute(ref updatedAttrs, "Damping", dampingMultiplier);
-            }
-
-            if (!changed)
-            {
-                return match.Value;
-            }
-
-            return $"<Suspension{updatedAttrs}{self}>";
-        });
+        return PartXmlHelpers.ApplyPriceMultiplier(updated, priceMultiplier);
     }
 
     private static bool TryApplyUpdatesToText(

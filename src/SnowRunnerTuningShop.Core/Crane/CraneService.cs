@@ -63,10 +63,12 @@ public static class CraneService
     public static CraneSaveResult ApplyGlobalMultipliers(
         string pakPath,
         double armForceMultiplier,
-        double movementSpeedMultiplier)
+        double movementSpeedMultiplier,
+        double priceMultiplier = 1.0)
     {
         PartPakPipeline.ValidateMultiplier(armForceMultiplier, nameof(armForceMultiplier));
         PartPakPipeline.ValidateMultiplier(movementSpeedMultiplier, nameof(movementSpeedMultiplier));
+        PartPakPipeline.ValidateMultiplier(priceMultiplier, nameof(priceMultiplier));
 
         var result = PartPakPipeline.BuildBaselineReplacements(
             pakPath,
@@ -78,6 +80,7 @@ public static class CraneService
                     source,
                     armForceMultiplier,
                     movementSpeedMultiplier,
+                    priceMultiplier,
                     out int _);
             },
             includeCurrentEntry: (_, currentText) => IsCraneAddonText(currentText));
@@ -87,7 +90,7 @@ public static class CraneService
     }
 
     public static CraneSaveResult RestoreCranesFromBaseline(string pakPath) =>
-        ApplyGlobalMultipliers(pakPath, 1.0, 1.0);
+        ApplyGlobalMultipliers(pakPath, 1.0, 1.0, 1.0);
 
     public static CraneSaveResult SaveCraneChanges(string pakPath, IReadOnlyList<CraneDefinition> cranes)
     {
@@ -136,13 +139,15 @@ public static class CraneService
     public static string ApplyMultipliersToTextForTests(
         string backupText,
         double armForceMultiplier,
-        double movementSpeedMultiplier) =>
-        ApplyMultipliersToText(backupText, armForceMultiplier, movementSpeedMultiplier, out _);
+        double movementSpeedMultiplier,
+        double priceMultiplier = 1.0) =>
+        ApplyMultipliersToText(backupText, armForceMultiplier, movementSpeedMultiplier, priceMultiplier, out _);
 
     private static string ApplyMultipliersToText(
         string backupText,
         double armForceMultiplier,
         double movementSpeedMultiplier,
+        double priceMultiplier,
         out int changedCount)
     {
         changedCount = 0;
@@ -153,41 +158,52 @@ public static class CraneService
 
         var forceIsBaseline = TuningMultiplierPresets.IsBaselineMultiplier(armForceMultiplier);
         var speedIsBaseline = TuningMultiplierPresets.IsBaselineMultiplier(movementSpeedMultiplier);
-        if (forceIsBaseline && speedIsBaseline)
+        var priceIsBaseline = TuningMultiplierPresets.IsBaselineMultiplier(priceMultiplier);
+        if (forceIsBaseline && speedIsBaseline && priceIsBaseline)
         {
             return backupText;
         }
 
-        try
+        var updated = backupText;
+        if (!(forceIsBaseline && speedIsBaseline))
         {
-            var document = ParseCraneDocument(backupText);
-            var anyChanges = false;
-
-            if (!forceIsBaseline)
+            try
             {
-                anyChanges |= ScaleArmMotorForces(document, armForceMultiplier);
-            }
+                var document = ParseCraneDocument(backupText);
+                var anyChanges = false;
 
-            if (!speedIsBaseline)
+                if (!forceIsBaseline)
+                {
+                    anyChanges |= ScaleArmMotorForces(document, armForceMultiplier);
+                }
+
+                if (!speedIsBaseline)
+                {
+                    anyChanges |= ScaleIkSpeeds(document, movementSpeedMultiplier);
+                }
+
+                if (anyChanges)
+                {
+                    changedCount = 1;
+                    updated = SerializeCraneDocument(document);
+                }
+            }
+            catch (Exception ex)
             {
-                anyChanges |= ScaleIkSpeeds(document, movementSpeedMultiplier);
+                throw new InvalidOperationException(
+                    "Crane addon XML is invalid or corrupted in the pak. " +
+                    "Use \"Restore entire pak...\" from the baseline panel, then apply multipliers again.",
+                    ex);
             }
+        }
 
-            if (!anyChanges)
-            {
-                return backupText;
-            }
-
+        var priced = PartXmlHelpers.ApplyPriceMultiplier(updated, priceMultiplier);
+        if (!string.Equals(priced, updated, StringComparison.Ordinal) && changedCount == 0)
+        {
             changedCount = 1;
-            return SerializeCraneDocument(document);
         }
-        catch (Exception ex)
-        {
-            throw new InvalidOperationException(
-                "Crane addon XML is invalid or corrupted in the pak. " +
-                "Use \"Restore entire pak...\" from the baseline panel, then apply multipliers again.",
-                ex);
-        }
+
+        return priced;
     }
 
     private static bool TryApplyCraneUpdatesToText(

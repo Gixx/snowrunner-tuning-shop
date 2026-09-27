@@ -118,7 +118,8 @@ public partial class WinchTuningView : UserControl
                     PakPath,
                     GetLengthMultiplier(),
                     GetStrengthMultiplier(),
-                    AutonomousAllCheckBox.IsChecked == true);
+                    AutonomousAllCheckBox.IsChecked == true,
+                    GetPriceMultiplier());
 
                 ReloadWinches();
                 ReportStatus(UiText.Winch.MultipliersAppliedStatus(
@@ -246,12 +247,15 @@ public partial class WinchTuningView : UserControl
     {
         LengthMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
         StrengthMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
+        PriceMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
         UpdateMultiplierLabels();
     }
 
     private void UpdateMultiplierLabels()
     {
-        if (LengthMultiplierLabel is null || StrengthMultiplierLabel is null)
+        if (LengthMultiplierLabel is null
+            || StrengthMultiplierLabel is null
+            || PriceMultiplierLabel is null)
         {
             return;
         }
@@ -262,6 +266,9 @@ public partial class WinchTuningView : UserControl
         StrengthMultiplierLabel.Text = UiText.Slider.Caption(
             UiText.Slider.StrengthMultiplier,
             GetStrengthMultiplierIndex());
+        PriceMultiplierLabel.Text = UiText.Slider.Caption(
+            UiText.Slider.StorePrice,
+            GetPriceMultiplierIndex());
     }
 
     private int GetLengthMultiplierIndex() =>
@@ -270,11 +277,17 @@ public partial class WinchTuningView : UserControl
     private int GetStrengthMultiplierIndex() =>
         TuningMultiplierPresets.ClampIndex((int)Math.Round(StrengthMultiplierSlider.Value));
 
+    private int GetPriceMultiplierIndex() =>
+        TuningMultiplierPresets.ClampIndex((int)Math.Round(PriceMultiplierSlider.Value));
+
     private double GetLengthMultiplier() =>
         TuningMultiplierPresets.GetValue(GetLengthMultiplierIndex());
 
     private double GetStrengthMultiplier() =>
         TuningMultiplierPresets.GetValue(GetStrengthMultiplierIndex());
+
+    private double GetPriceMultiplier() =>
+        TuningMultiplierPresets.GetValue(GetPriceMultiplierIndex());
 
     private void ReportStatus(string message) =>
         StatusChanged?.Invoke(this, message);

@@ -148,7 +148,8 @@ public partial class GearboxTuningView : UserControl
                 var fuel = GetMultiplier(FuelMultiplierSlider);
                 var idle = GetMultiplier(IdleMultiplierSlider);
                 var awd = GetMultiplier(AwdMultiplierSlider);
-                var result = await Task.Run(() => GearboxService.ApplyGlobalMultipliers(path, fuel, idle, awd));
+                var price = GetMultiplier(PriceMultiplierSlider);
+                var result = await Task.Run(() => GearboxService.ApplyGlobalMultipliers(path, fuel, idle, awd, price));
 
                 ReloadGearboxes();
                 ReportStatus(UiText.Gearbox.MultipliersAppliedStatus(
@@ -290,12 +291,16 @@ public partial class GearboxTuningView : UserControl
         FuelMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
         IdleMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
         AwdMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
+        PriceMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
         UpdateMultiplierLabels();
     }
 
     private void UpdateMultiplierLabels()
     {
-        if (FuelMultiplierLabel is null || IdleMultiplierLabel is null || AwdMultiplierLabel is null)
+        if (FuelMultiplierLabel is null
+            || IdleMultiplierLabel is null
+            || AwdMultiplierLabel is null
+            || PriceMultiplierLabel is null)
         {
             return;
         }
@@ -306,6 +311,8 @@ public partial class GearboxTuningView : UserControl
             UiText.Slider.IdleFuelModifier, GetMultiplierIndex(IdleMultiplierSlider));
         AwdMultiplierLabel.Text = UiText.Slider.Caption(
             UiText.Slider.AwdFuelPenalty, GetMultiplierIndex(AwdMultiplierSlider));
+        PriceMultiplierLabel.Text = UiText.Slider.Caption(
+            UiText.Slider.StorePrice, GetMultiplierIndex(PriceMultiplierSlider));
     }
 
     private static int GetMultiplierIndex(Slider slider) =>

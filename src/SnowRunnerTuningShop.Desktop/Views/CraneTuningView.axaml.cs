@@ -144,8 +144,9 @@ public partial class CraneTuningView : UserControl
                 var path = PakPath!;
                 var armForce = GetArmForceMultiplier();
                 var movementSpeed = GetMovementSpeedMultiplier();
+                var price = GetPriceMultiplier();
                 var result = await Task.Run(() => CraneService.ApplyGlobalMultipliers(
-                    path, armForce, movementSpeed));
+                    path, armForce, movementSpeed, price));
 
                 ReloadCranes();
                 ReportStatus(UiText.Crane.MultipliersAppliedStatus(
@@ -283,12 +284,15 @@ public partial class CraneTuningView : UserControl
     {
         ArmForceMultiplierSlider.Value = CraneMultiplierPresets.BaselineIndex;
         MovementSpeedMultiplierSlider.Value = CraneMultiplierPresets.BaselineIndex;
+        PriceMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
         UpdateMultiplierLabels();
     }
 
     private void UpdateMultiplierLabels()
     {
-        if (ArmForceMultiplierLabel is null || MovementSpeedMultiplierLabel is null)
+        if (ArmForceMultiplierLabel is null
+            || MovementSpeedMultiplierLabel is null
+            || PriceMultiplierLabel is null)
         {
             return;
         }
@@ -299,6 +303,9 @@ public partial class CraneTuningView : UserControl
         MovementSpeedMultiplierLabel.Text = UiText.Slider.Caption(
             UiText.Slider.MovementSpeedMultiplier,
             GetMovementSpeedMultiplierLabel());
+        PriceMultiplierLabel.Text = UiText.Slider.Caption(
+            UiText.Slider.StorePrice,
+            GetPriceMultiplierIndex());
     }
 
     private int GetArmForceMultiplierIndex() =>
@@ -307,11 +314,17 @@ public partial class CraneTuningView : UserControl
     private int GetMovementSpeedMultiplierIndex() =>
         CraneMultiplierPresets.ClampMovementSpeedIndex((int)Math.Round(MovementSpeedMultiplierSlider.Value));
 
+    private int GetPriceMultiplierIndex() =>
+        TuningMultiplierPresets.ClampIndex((int)Math.Round(PriceMultiplierSlider.Value));
+
     private double GetArmForceMultiplier() =>
         CraneMultiplierPresets.GetArmForceValue(GetArmForceMultiplierIndex());
 
     private double GetMovementSpeedMultiplier() =>
         CraneMultiplierPresets.GetMovementSpeedValue(GetMovementSpeedMultiplierIndex());
+
+    private double GetPriceMultiplier() =>
+        TuningMultiplierPresets.GetValue(GetPriceMultiplierIndex());
 
     private string GetArmForceMultiplierLabel()
     {

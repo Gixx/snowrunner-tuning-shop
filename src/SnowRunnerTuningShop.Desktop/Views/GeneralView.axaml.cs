@@ -86,7 +86,7 @@ public partial class GeneralView : UserControl
                 ?? CameraModeCombo.Items.OfType<LabeledCameraMode>().FirstOrDefault();
 
             _suppressRockSlider = true;
-            RockSizeSlider.Value = RockSizePresets.FindNearestIndex(settings.RockSizeScale);
+            RockSizeSlider.Value = RockSizePresets.ScaleToPercent(settings.RockSizeScale);
             _suppressRockSlider = false;
             RefreshRockSizeLabel();
             StatusText.Text = UiText.General.LoadedStatus(settings.CameraEligibleModels, settings.RockSizeScale);
@@ -172,7 +172,7 @@ public partial class GeneralView : UserControl
     }
 
     private async void ApplyRockSizeButton_Click(object? sender, RoutedEventArgs e) =>
-        await ApplyRockSizeAsync(RockSizePresets.GetValue((int)Math.Round(RockSizeSlider.Value)));
+        await ApplyRockSizeAsync(RockSizePresets.PercentToScale((int)Math.Round(RockSizeSlider.Value)));
 
     private async void RestoreRockSizeButton_Click(object? sender, RoutedEventArgs e) =>
         await ApplyRockSizeAsync(1.0);
@@ -239,8 +239,8 @@ public partial class GeneralView : UserControl
 
     private void RefreshRockSizeLabel()
     {
-        var index = RockSizePresets.ClampIndex((int)Math.Round(RockSizeSlider.Value));
-        RockSizeLabel.Text = UiText.General.RockPhysicsCaption(index);
+        var percent = RockSizePresets.ClampPercent((int)Math.Round(RockSizeSlider.Value));
+        RockSizeLabel.Text = UiText.General.RockPhysicsCaption(percent);
     }
 
     public sealed record LabeledCameraMode(string Label, CameraCollisionMode Value)

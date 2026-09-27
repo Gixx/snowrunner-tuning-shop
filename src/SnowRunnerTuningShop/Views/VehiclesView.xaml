@@ -79,7 +79,6 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
                     <TextBlock Grid.Row="0"
@@ -105,20 +104,6 @@
                     </StackPanel>
 
                     <StackPanel Grid.Row="1" Grid.Column="1" Margin="12,0,12,0">
-                        <TextBlock x:Name="FrontSteerGlobalLabel"
-                                   Text="{x:Static loc:UiText+Vehicles.FrontSteerGlobalDefault}"
-                                   Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
-                        <Slider x:Name="FrontSteerGlobalSlider"
-                                Minimum="0"
-                                Maximum="2"
-                                Value="1"
-                                TickFrequency="1"
-                                IsSnapToTickEnabled="True"
-                                IsEnabled="False"
-                                ValueChanged="GlobalMultiplierSlider_ValueChanged"/>
-                    </StackPanel>
-
-                    <StackPanel Grid.Row="1" Grid.Column="2" Margin="12,0,12,0">
                         <TextBlock x:Name="ResponsivenessMultiplierLabel"
                                    Text="{x:Static loc:UiText+Vehicles.ResponsivenessMultiplierDefault}"
                                    Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
@@ -132,9 +117,23 @@
                                 ValueChanged="GlobalMultiplierSlider_ValueChanged"/>
                     </StackPanel>
 
+                    <StackPanel Grid.Row="1" Grid.Column="2" Margin="12,0,12,0">
+                        <TextBlock x:Name="PriceMultiplierLabel"
+                                   Text="{x:Static loc:UiText+Vehicles.PriceMultiplierDefault}"
+                                   Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                        <Slider x:Name="PriceMultiplierSlider"
+                                Minimum="0"
+                                Maximum="10"
+                                Value="6"
+                                TickFrequency="1"
+                                IsSnapToTickEnabled="True"
+                                IsEnabled="False"
+                                ValueChanged="GlobalMultiplierSlider_ValueChanged"/>
+                    </StackPanel>
+
                     <Button x:Name="ApplyGlobalMultipliersButton"
                             Grid.Row="1"
-                            Grid.RowSpan="3"
+                            Grid.RowSpan="2"
                             Grid.Column="3"
                             Content="{x:Static loc:UiText+Vehicles.ApplyGlobalMultipliers}"
                             Padding="14,8"
@@ -143,12 +142,12 @@
                             Click="ApplyGlobalMultipliersButton_Click"/>
 
                     <StackPanel Grid.Row="2" Grid.Column="0" Margin="0,12,12,0">
-                        <TextBlock x:Name="PriceMultiplierLabel"
-                                   Text="{x:Static loc:UiText+Vehicles.PriceMultiplierDefault}"
+                        <TextBlock x:Name="MassMultiplierLabel"
+                                   Text="{x:Static loc:UiText+Vehicles.MassMultiplierDefault}"
                                    Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
-                        <Slider x:Name="PriceMultiplierSlider"
+                        <Slider x:Name="MassMultiplierSlider"
                                 Minimum="0"
-                                Maximum="10"
+                                Maximum="7"
                                 Value="6"
                                 TickFrequency="1"
                                 IsSnapToTickEnabled="True"
@@ -171,34 +170,6 @@
                               VerticalAlignment="Center"
                               Margin="12,12,12,0"
                               IsEnabled="False"/>
-
-                    <StackPanel Grid.Row="3" Grid.Column="0" Margin="0,12,12,0">
-                        <TextBlock x:Name="MassMultiplierLabel"
-                                   Text="{x:Static loc:UiText+Vehicles.MassMultiplierDefault}"
-                                   Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
-                        <Slider x:Name="MassMultiplierSlider"
-                                Minimum="0"
-                                Maximum="7"
-                                Value="6"
-                                TickFrequency="1"
-                                IsSnapToTickEnabled="True"
-                                IsEnabled="False"
-                                ValueChanged="GlobalMultiplierSlider_ValueChanged"/>
-                    </StackPanel>
-
-                    <StackPanel Grid.Row="3" Grid.Column="1" Margin="12,12,12,0">
-                        <TextBlock x:Name="RearSteerGlobalLabel"
-                                   Text="{x:Static loc:UiText+Vehicles.RearSteerGlobalDefault}"
-                                   Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
-                        <Slider x:Name="RearSteerGlobalSlider"
-                                Minimum="0"
-                                Maximum="2"
-                                Value="1"
-                                TickFrequency="1"
-                                IsSnapToTickEnabled="True"
-                                IsEnabled="False"
-                                ValueChanged="GlobalMultiplierSlider_ValueChanged"/>
-                    </StackPanel>
                 </Grid>
             </Expander>
 

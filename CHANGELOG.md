@@ -11,6 +11,11 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ## [Unreleased]
 
+### Changed
+- **General → Rock size:** slider is continuous 0–100% in 1% steps (was five presets).
+- **Vehicles → Global multipliers:** removed Front / Rear steer preset sliders (per-axle steering on the detail page remains).
+- **Parts → Global multipliers:** Engine, Gearbox, Suspension, Tires, Winch, and Crane gain a Store price slider (Add-ons already had one).
+
 ---
 
 ## [1.4.2] — 2026-09-25

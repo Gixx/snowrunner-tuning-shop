@@ -149,8 +149,9 @@ public partial class SuspensionTuningView : UserControl
                 var strength = GetMultiplier(StrengthMultiplierSlider);
                 var damping = GetMultiplier(DampingMultiplierSlider);
                 var damage = GetMultiplier(DamageMultiplierSlider);
+                var price = GetMultiplier(PriceMultiplierSlider);
                 var result = await Task.Run(() => SuspensionService.ApplyGlobalMultipliers(
-                    path, height, strength, damping, damage));
+                    path, height, strength, damping, damage, price));
 
                 ReloadSuspensions();
                 ReportStatus(UiText.Suspension.MultipliersAppliedStatus(
@@ -293,6 +294,7 @@ public partial class SuspensionTuningView : UserControl
         StrengthMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
         DampingMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
         DamageMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
+        PriceMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
         UpdateMultiplierLabels();
     }
 
@@ -301,7 +303,8 @@ public partial class SuspensionTuningView : UserControl
         if (HeightMultiplierLabel is null
             || StrengthMultiplierLabel is null
             || DampingMultiplierLabel is null
-            || DamageMultiplierLabel is null)
+            || DamageMultiplierLabel is null
+            || PriceMultiplierLabel is null)
         {
             return;
         }
@@ -314,6 +317,8 @@ public partial class SuspensionTuningView : UserControl
             UiText.Slider.Damping, GetMultiplierIndex(DampingMultiplierSlider));
         DamageMultiplierLabel.Text = UiText.Slider.Caption(
             UiText.Slider.DamageCapacity, GetMultiplierIndex(DamageMultiplierSlider));
+        PriceMultiplierLabel.Text = UiText.Slider.Caption(
+            UiText.Slider.StorePrice, GetMultiplierIndex(PriceMultiplierSlider));
     }
 
     private static int GetMultiplierIndex(Slider slider) =>

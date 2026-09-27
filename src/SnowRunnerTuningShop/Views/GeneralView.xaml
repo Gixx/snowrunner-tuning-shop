@@ -81,8 +81,8 @@
                                Margin="0,0,0,6"/>
                     <Slider x:Name="RockSizeSlider"
                             Minimum="0"
-                            Maximum="4"
-                            Value="4"
+                            Maximum="100"
+                            Value="100"
                             TickFrequency="1"
                             IsSnapToTickEnabled="True"
                             ValueChanged="RockSizeSlider_ValueChanged"/>

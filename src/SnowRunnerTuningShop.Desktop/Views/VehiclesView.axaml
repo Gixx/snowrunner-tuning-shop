@@ -10,7 +10,7 @@
                 Margin="0,0,0,12"
                 HorizontalAlignment="Stretch"
                 Width="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}}">
-        <Grid ColumnDefinitions="*,*,*,Auto" RowDefinitions="Auto,Auto,Auto,Auto">
+        <Grid ColumnDefinitions="*,*,*,Auto" RowDefinitions="Auto,Auto,Auto">
           <TextBlock x:Name="GlobalMultipliersHintText"
                      Grid.Row="0"
                      Grid.ColumnSpan="4"
@@ -29,15 +29,6 @@
           </StackPanel>
 
           <StackPanel Grid.Row="1" Grid.Column="1" Margin="12,0,12,0">
-            <TextBlock x:Name="FrontSteerGlobalLabel"/>
-            <Slider x:Name="FrontSteerGlobalSlider"
-                    Minimum="0" Maximum="2" Value="1"
-                    TickFrequency="1" IsSnapToTickEnabled="True"
-                    IsEnabled="False"
-                    PropertyChanged="GlobalMultiplierSlider_PropertyChanged"/>
-          </StackPanel>
-
-          <StackPanel Grid.Row="1" Grid.Column="2" Margin="12,0,12,0">
             <TextBlock x:Name="ResponsivenessMultiplierLabel"/>
             <Slider x:Name="ResponsivenessMultiplierSlider"
                     Minimum="0" Maximum="10" Value="6"
@@ -46,9 +37,18 @@
                     PropertyChanged="GlobalMultiplierSlider_PropertyChanged"/>
           </StackPanel>
 
+          <StackPanel Grid.Row="1" Grid.Column="2" Margin="12,0,12,0">
+            <TextBlock x:Name="PriceMultiplierLabel"/>
+            <Slider x:Name="PriceMultiplierSlider"
+                    Minimum="0" Maximum="10" Value="6"
+                    TickFrequency="1" IsSnapToTickEnabled="True"
+                    IsEnabled="False"
+                    PropertyChanged="GlobalMultiplierSlider_PropertyChanged"/>
+          </StackPanel>
+
           <Button x:Name="ApplyGlobalMultipliersButton"
                   Grid.Row="1"
-                  Grid.RowSpan="3"
+                  Grid.RowSpan="2"
                   Grid.Column="3"
                   Padding="14,8"
                   VerticalAlignment="Center"
@@ -56,9 +56,9 @@
                   Click="ApplyGlobalMultipliersButton_Click"/>
 
           <StackPanel Grid.Row="2" Grid.Column="0" Margin="0,12,12,0">
-            <TextBlock x:Name="PriceMultiplierLabel"/>
-            <Slider x:Name="PriceMultiplierSlider"
-                    Minimum="0" Maximum="10" Value="6"
+            <TextBlock x:Name="MassMultiplierLabel"/>
+            <Slider x:Name="MassMultiplierSlider"
+                    Minimum="0" Maximum="7" Value="6"
                     TickFrequency="1" IsSnapToTickEnabled="True"
                     IsEnabled="False"
                     PropertyChanged="GlobalMultiplierSlider_PropertyChanged"/>
@@ -77,24 +77,6 @@
                     VerticalAlignment="Center"
                     Margin="12,12,12,0"
                     IsEnabled="False"/>
-
-          <StackPanel Grid.Row="3" Grid.Column="0" Margin="0,12,12,0">
-            <TextBlock x:Name="MassMultiplierLabel"/>
-            <Slider x:Name="MassMultiplierSlider"
-                    Minimum="0" Maximum="7" Value="6"
-                    TickFrequency="1" IsSnapToTickEnabled="True"
-                    IsEnabled="False"
-                    PropertyChanged="GlobalMultiplierSlider_PropertyChanged"/>
-          </StackPanel>
-
-          <StackPanel Grid.Row="3" Grid.Column="1" Margin="12,12,12,0">
-            <TextBlock x:Name="RearSteerGlobalLabel"/>
-            <Slider x:Name="RearSteerGlobalSlider"
-                    Minimum="0" Maximum="2" Value="1"
-                    TickFrequency="1" IsSnapToTickEnabled="True"
-                    IsEnabled="False"
-                    PropertyChanged="GlobalMultiplierSlider_PropertyChanged"/>
-          </StackPanel>
         </Grid>
       </Expander>
 

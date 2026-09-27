@@ -23,8 +23,12 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
 
-                <StackPanel Grid.Column="0" Margin="0,0,12,0">
+                <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,12,8">
                     <TextBlock x:Name="ArmForceMultiplierLabel"
                                Text="{x:Static loc:UiText+Crane.ArmForceMultiplierDefault}"
                                Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
@@ -37,7 +41,7 @@
                             ValueChanged="ArmForceMultiplierSlider_ValueChanged"/>
                 </StackPanel>
 
-                <StackPanel Grid.Column="1" Margin="12,0,12,0">
+                <StackPanel Grid.Row="0" Grid.Column="1" Margin="12,0,12,8">
                     <TextBlock x:Name="MovementSpeedMultiplierLabel"
                                Text="{x:Static loc:UiText+Crane.MovementSpeedMultiplierDefault}"
                                Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
@@ -50,7 +54,23 @@
                             ValueChanged="MovementSpeedMultiplierSlider_ValueChanged"/>
                 </StackPanel>
 
-                <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,12,0">
+                    <TextBlock x:Name="PriceMultiplierLabel"
+                               Text="{x:Static loc:UiText+AddonCapacity.PriceMultiplierDefault}"
+                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                    <Slider x:Name="PriceMultiplierSlider"
+                            Minimum="0"
+                            Maximum="10"
+                            Value="6"
+                            TickFrequency="1"
+                            IsSnapToTickEnabled="True"
+                            ValueChanged="ArmForceMultiplierSlider_ValueChanged"/>
+                </StackPanel>
+
+                <StackPanel Grid.Row="0"
+                            Grid.RowSpan="2"
+                            Grid.Column="2"
+                            VerticalAlignment="Center">
                     <Button x:Name="ApplyMultipliersButton"
                             Content="{x:Static loc:UiText+Crane.Apply}"
                             Padding="14,8"

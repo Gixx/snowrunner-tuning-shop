@@ -74,11 +74,13 @@ public static class TireService
         double onRoadMultiplier,
         double offRoadMultiplier,
         double mudMultiplier,
-        bool? ignoreIceForAll = null)
+        bool? ignoreIceForAll = null,
+        double priceMultiplier = 1.0)
     {
         PartPakPipeline.ValidateMultiplier(onRoadMultiplier, nameof(onRoadMultiplier));
         PartPakPipeline.ValidateMultiplier(offRoadMultiplier, nameof(offRoadMultiplier));
         PartPakPipeline.ValidateMultiplier(mudMultiplier, nameof(mudMultiplier));
+        PartPakPipeline.ValidateMultiplier(priceMultiplier, nameof(priceMultiplier));
 
         var baselinePath = PakBaselineService.RequireBaseline(pakPath);
         var templates = WheelFrictionTemplates.LoadFromPak(baselinePath);
@@ -92,7 +94,8 @@ public static class TireService
                 onRoadMultiplier,
                 offRoadMultiplier,
                 mudMultiplier,
-                ignoreIceForAll),
+                ignoreIceForAll,
+                priceMultiplier),
             (_, currentText, updatedText) => CountNamedDifferences(currentText, updatedText, templates));
 
         var updatedFiles = PartPakPipeline.CommitReplacements(pakPath, result.Replacements);
@@ -100,7 +103,7 @@ public static class TireService
     }
 
     public static TireSaveResult RestoreTiresFromBaseline(string pakPath) =>
-        ApplyGlobalMultipliers(pakPath, 1.0, 1.0, 1.0);
+        ApplyGlobalMultipliers(pakPath, 1.0, 1.0, 1.0, priceMultiplier: 1.0);
 
     public static TireSaveResult SaveTireChanges(string pakPath, IReadOnlyList<TireDefinition> tires)
     {
@@ -352,14 +355,16 @@ public static class TireService
         double onRoadMultiplier,
         double offRoadMultiplier,
         double mudMultiplier,
-        bool? ignoreIceForAll = null) =>
+        bool? ignoreIceForAll = null,
+        double priceMultiplier = 1.0) =>
         ApplyMultipliersToText(
             baselineText,
             new Dictionary<string, WheelFrictionTemplates.FrictionValues>(StringComparer.OrdinalIgnoreCase),
             onRoadMultiplier,
             offRoadMultiplier,
             mudMultiplier,
-            ignoreIceForAll);
+            ignoreIceForAll,
+            priceMultiplier);
 
     private static string ApplyMultipliersToText(
         string baselineText,
@@ -367,55 +372,63 @@ public static class TireService
         double onRoadMultiplier,
         double offRoadMultiplier,
         double mudMultiplier,
-        bool? ignoreIceForAll)
+        bool? ignoreIceForAll,
+        double priceMultiplier = 1.0)
     {
         var onRoadBaseline = TuningMultiplierPresets.IsBaselineMultiplier(onRoadMultiplier);
         var offRoadBaseline = TuningMultiplierPresets.IsBaselineMultiplier(offRoadMultiplier);
         var mudBaseline = TuningMultiplierPresets.IsBaselineMultiplier(mudMultiplier);
+        var priceBaseline = TuningMultiplierPresets.IsBaselineMultiplier(priceMultiplier);
 
-        if (onRoadBaseline && offRoadBaseline && mudBaseline && ignoreIceForAll is null)
+        if (onRoadBaseline && offRoadBaseline && mudBaseline && ignoreIceForAll is null && priceBaseline)
         {
             return baselineText;
         }
 
-        var matches = TruckTireOpenTagRegex.Matches(baselineText);
-        if (matches.Count == 0)
+        var updated = baselineText;
+        if (!(onRoadBaseline && offRoadBaseline && mudBaseline && ignoreIceForAll is null))
         {
-            return baselineText;
-        }
-
-        var builder = new StringBuilder(baselineText.Length);
-        var lastIndex = 0;
-        for (var i = 0; i < matches.Count; i++)
-        {
-            var match = matches[i];
-            var blockEnd = i + 1 < matches.Count ? matches[i + 1].Index : baselineText.Length;
-            var block = baselineText[match.Index..blockEnd];
-            builder.Append(baselineText, lastIndex, match.Index - lastIndex);
-
-            if (IsInsideTemplatesSection(baselineText, match.Index))
+            var matches = TruckTireOpenTagRegex.Matches(baselineText);
+            if (matches.Count == 0)
             {
-                builder.Append(block);
-            }
-            else
-            {
-                builder.Append(ApplyMultipliersToTireBlock(
-                    block,
-                    templates,
-                    onRoadMultiplier,
-                    offRoadMultiplier,
-                    mudMultiplier,
-                    ignoreIceForAll,
-                    onRoadBaseline,
-                    offRoadBaseline,
-                    mudBaseline));
+                return PartXmlHelpers.ApplyPriceMultiplier(baselineText, priceMultiplier);
             }
 
-            lastIndex = blockEnd;
+            var builder = new StringBuilder(baselineText.Length);
+            var lastIndex = 0;
+            for (var i = 0; i < matches.Count; i++)
+            {
+                var match = matches[i];
+                var blockEnd = i + 1 < matches.Count ? matches[i + 1].Index : baselineText.Length;
+                var block = baselineText[match.Index..blockEnd];
+                builder.Append(baselineText, lastIndex, match.Index - lastIndex);
+
+                if (IsInsideTemplatesSection(baselineText, match.Index))
+                {
+                    builder.Append(block);
+                }
+                else
+                {
+                    builder.Append(ApplyMultipliersToTireBlock(
+                        block,
+                        templates,
+                        onRoadMultiplier,
+                        offRoadMultiplier,
+                        mudMultiplier,
+                        ignoreIceForAll,
+                        onRoadBaseline,
+                        offRoadBaseline,
+                        mudBaseline));
+                }
+
+                lastIndex = blockEnd;
+            }
+
+            builder.Append(baselineText, lastIndex, baselineText.Length - lastIndex);
+            updated = builder.ToString();
         }
 
-        builder.Append(baselineText, lastIndex, baselineText.Length - lastIndex);
-        return builder.ToString();
+        return PartXmlHelpers.ApplyPriceMultiplier(updated, priceMultiplier);
     }
 
     private static string ApplyMultipliersToTireBlock(

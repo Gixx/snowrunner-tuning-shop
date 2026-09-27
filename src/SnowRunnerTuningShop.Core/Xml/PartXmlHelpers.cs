@@ -2,6 +2,7 @@ using System.Globalization;
 using System.IO.Compression;
 using System.Text;
 using System.Text.RegularExpressions;
+using SnowRunnerTuningShop.Core.Tuning;
 
 namespace SnowRunnerTuningShop.Core.Xml;
 
@@ -22,6 +23,40 @@ public static class PartXmlHelpers
         return int.TryParse(match.Groups["value"].Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var price)
             ? price
             : 0;
+    }
+
+    /// <summary>
+    /// Scales every existing <c>Price="…"</c> attribute from baseline by <paramref name="priceMultiplier"/>.
+    /// Skips missing/zero prices; does not invent Price attributes.
+    /// </summary>
+    public static string ApplyPriceMultiplier(string text, double priceMultiplier)
+    {
+        if (TuningMultiplierPresets.IsBaselineMultiplier(priceMultiplier))
+        {
+            return text;
+        }
+
+        return PriceRegex.Replace(text, match =>
+        {
+            if (!int.TryParse(
+                    match.Groups["value"].Value,
+                    NumberStyles.Integer,
+                    CultureInfo.InvariantCulture,
+                    out var price)
+                || price <= 0)
+            {
+                return match.Value;
+            }
+
+            var scaled = (int)Math.Clamp(
+                Math.Round(price * priceMultiplier, MidpointRounding.AwayFromZero),
+                0,
+                9_999_999);
+            return string.Concat(
+                match.Value.AsSpan(0, match.Groups["value"].Index - match.Index),
+                scaled.ToString(CultureInfo.InvariantCulture),
+                match.Value.AsSpan(match.Groups["value"].Index - match.Index + match.Groups["value"].Length));
+        });
     }
 
     /// <summary>

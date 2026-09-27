@@ -90,8 +90,6 @@ public partial class VehiclesView : UserControl
         AlwaysOnDiffLockCheckBox.Content = UiText.Vehicles.AlwaysOnDiffLock;
         AlwaysOnAwdCheckBox.Content = UiText.Vehicles.AlwaysOnAwd;
         FuelMultiplierLabel.Text = UiText.Vehicles.FuelMultiplierDefault;
-        FrontSteerGlobalLabel.Text = UiText.Vehicles.FrontSteerGlobalDefault;
-        RearSteerGlobalLabel.Text = UiText.Vehicles.RearSteerGlobalDefault;
         ResponsivenessMultiplierLabel.Text = UiText.Vehicles.ResponsivenessMultiplierDefault;
         PriceMultiplierLabel.Text = UiText.Vehicles.PriceMultiplierDefault;
         MassMultiplierLabel.Text = UiText.Vehicles.MassMultiplierDefault;
@@ -196,8 +194,6 @@ public partial class VehiclesView : UserControl
 
         ApplyGlobalMultipliersButton.IsEnabled = canApply;
         FuelMultiplierSlider.IsEnabled = canApply;
-        FrontSteerGlobalSlider.IsEnabled = canApply;
-        RearSteerGlobalSlider.IsEnabled = canApply;
         ResponsivenessMultiplierSlider.IsEnabled = canApply;
         PriceMultiplierSlider.IsEnabled = canApply;
         MassMultiplierSlider.IsEnabled = canApply;
@@ -216,14 +212,9 @@ public partial class VehiclesView : UserControl
         UpdateGlobalMultiplierLabels();
     }
 
-    private const int FrontSteerGlobalBaselineIndex = 1;
-    private const int RearSteerGlobalBaselineIndex = 1;
-
     private void ResetGlobalMultiplierSlidersToBaseline()
     {
         FuelMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
-        FrontSteerGlobalSlider.Value = FrontSteerGlobalBaselineIndex;
-        RearSteerGlobalSlider.Value = RearSteerGlobalBaselineIndex;
         ResponsivenessMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
         PriceMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
         MassMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
@@ -244,8 +235,6 @@ public partial class VehiclesView : UserControl
         FuelMultiplierLabel.Text = UiText.Slider.Caption(
             UiText.Slider.FuelTank,
             GetMultiplierIndex(FuelMultiplierSlider));
-        FrontSteerGlobalLabel.Text = GetFrontSteerGlobalLabel(GetFrontSteerGlobalIndex(FrontSteerGlobalSlider));
-        RearSteerGlobalLabel.Text = GetRearSteerGlobalLabel(GetRearSteerGlobalIndex(RearSteerGlobalSlider));
         ResponsivenessMultiplierLabel.Text = UiText.Slider.Caption(
             UiText.Slider.Responsiveness,
             GetMultiplierIndex(ResponsivenessMultiplierSlider));
@@ -256,34 +245,6 @@ public partial class VehiclesView : UserControl
             UiText.Slider.Mass,
             GetMassMultiplierIndex(MassMultiplierSlider));
     }
-
-    private static int GetFrontSteerGlobalIndex(Slider slider) =>
-        Math.Clamp((int)Math.Round(slider.Value, MidpointRounding.AwayFromZero), 0, 2);
-
-    private static TruckFrontSteerGlobalMode GetFrontSteerGlobalMode(Slider slider) =>
-        (TruckFrontSteerGlobalMode)GetFrontSteerGlobalIndex(slider);
-
-    private static string GetFrontSteerGlobalLabel(int index) =>
-        index switch
-        {
-            0 => UiText.Vehicles.FrontSteerGlobalMin,
-            2 => UiText.Vehicles.FrontSteerGlobalMax,
-            _ => UiText.Vehicles.FrontSteerGlobalDefault,
-        };
-
-    private static int GetRearSteerGlobalIndex(Slider slider) =>
-        Math.Clamp((int)Math.Round(slider.Value, MidpointRounding.AwayFromZero), 0, 2);
-
-    private static TruckRearSteerGlobalMode GetRearSteerGlobalMode(Slider slider) =>
-        (TruckRearSteerGlobalMode)GetRearSteerGlobalIndex(slider);
-
-    private static string GetRearSteerGlobalLabel(int index) =>
-        index switch
-        {
-            0 => UiText.Vehicles.RearSteerGlobalMin,
-            2 => UiText.Vehicles.RearSteerGlobalMax,
-            _ => UiText.Vehicles.RearSteerGlobalDefault,
-        };
 
     private static int GetMultiplierIndex(Slider slider) =>
         TuningMultiplierPresets.ClampIndex((int)Math.Round(slider.Value, MidpointRounding.AwayFromZero));
@@ -334,8 +295,6 @@ public partial class VehiclesView : UserControl
                 var pakPath = _session!.PakPath!;
                 // Capture UI control values on the UI thread before Task.Run.
                 var fuel = GetMultiplier(FuelMultiplierSlider);
-                var frontSteer = GetFrontSteerGlobalMode(FrontSteerGlobalSlider);
-                var rearSteer = GetRearSteerGlobalMode(RearSteerGlobalSlider);
                 var responsiveness = GetMultiplier(ResponsivenessMultiplierSlider);
                 var price = GetMultiplier(PriceMultiplierSlider);
                 var mass = GetMassMultiplier(MassMultiplierSlider);
@@ -345,8 +304,8 @@ public partial class VehiclesView : UserControl
                 var result = await Task.Run(() => TruckTuningService.ApplyGlobalMultipliers(
                     pakPath,
                     fuel,
-                    frontSteer,
-                    rearSteer,
+                    TruckFrontSteerGlobalMode.Baseline,
+                    TruckRearSteerGlobalMode.Baseline,
                     responsiveness,
                     price,
                     mass,

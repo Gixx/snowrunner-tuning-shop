@@ -261,7 +261,9 @@ public static class UiText
         public static string ApplyCamera => StringResources.Get("General.ApplyCamera", "Apply camera setting");
         public static string RestoreCameraBaseline => StringResources.Get("General.RestoreCameraBaseline", "Restore camera baseline");
         public static string RockTitle => StringResources.Get("General.RockTitle", "Trail rock size");
-        public static string RockHint => StringResources.Get("General.RockHint", "Adjusts trail pebbles (SmallRock plants: small_rock, small_forest_rock, burnt_small_rock — base game and DLC). Left = no collision; right = vanilla baseline.");
+        public static string RockHint => StringResources.Get(
+            "General.RockHint",
+            "Adjusts trail pebbles (SmallRock plants: small_rock, small_forest_rock, burnt_small_rock — base game and DLC). 0% = no collision; 100% = vanilla baseline. Adjustable in 1% steps.");
         public static string RockSizeDefault => StringResources.Get("General.RockSizeDefault", "Rock physics: Vanilla (baseline)");
         public static string ApplyRockSize => StringResources.Get("General.ApplyRockSize", "Apply rock size");
         public static string RestoreRockBaseline => StringResources.Get("General.RestoreRockBaseline", "Restore rock baseline");
@@ -279,14 +281,14 @@ public static class UiText
                 cameraModels,
                 rockScale);
 
-        public static string RockPhysicsCaption(int index)
+        public static string RockPhysicsCaption(int percent)
         {
-            var clamped = RockSizePresets.ClampIndex(index);
+            var clamped = RockSizePresets.ClampPercent(percent);
             var value = clamped switch
             {
-                0 => StringResources.Get("General.RockNoCollision", "No collision"),
-                4 => StringResources.Get("General.RockVanillaBaseline", "Vanilla (baseline)"),
-                _ => RockSizePresets.GetLabel(clamped),
+                RockSizePresets.MinimumPercent => StringResources.Get("General.RockNoCollision", "No collision"),
+                RockSizePresets.BaselinePercent => StringResources.Get("General.RockVanillaBaseline", "Vanilla (baseline)"),
+                _ => StringResources.Format("General.RockPercent", "{0}%", clamped),
             };
             return StringResources.Format("General.RockPhysicsCaption", "Rock physics: {0}", value);
         }
@@ -427,7 +429,7 @@ public static class UiText
         public static string PriceMultiplierDefault => StringResources.Get("Vehicles.PriceMultiplierDefault", "Store price: 1 (baseline)");
         public static string MassMultiplierDefault => StringResources.Get("Vehicles.MassMultiplierDefault", "Mass: 1 (baseline)");
         public static string ApplyGlobalMultipliers => StringResources.Get("Vehicles.ApplyGlobalMultipliers", "Apply to all vehicles");
-        public static string GlobalMultipliersHint => StringResources.Get("Vehicles.GlobalMultipliersHint", "Fuel tank, store price, responsiveness, and mass scale from baseline. Front steer and rear counter-steer each use three presets — Min, Default (baseline per truck), Max — and only change axles that already steer in the baseline files. Always-on diff lock and AWD, when checked, are forced on every truck. Independent of the category filter below.");
+        public static string GlobalMultipliersHint => StringResources.Get("Vehicles.GlobalMultipliersHint", "Fuel tank, store price, responsiveness, and mass scale from baseline. Always-on diff lock and AWD, when checked, are forced on every truck. Independent of the category filter below.");
         public static string AlwaysOnDiffLock => StringResources.Get("Vehicles.AlwaysOnDiffLock", "Always on diff lock");
         public static string AlwaysOnAwd => StringResources.Get("Vehicles.AlwaysOnAwd", "Always on AWD");
         public static string StoreUnlocksTitle => StringResources.Get("Vehicles.StoreUnlocksTitle", "Store unlocks (all vehicles)");

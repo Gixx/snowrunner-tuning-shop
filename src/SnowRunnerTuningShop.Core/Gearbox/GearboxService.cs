@@ -71,11 +71,13 @@ public static class GearboxService
         string pakPath,
         double fuelConsumptionMultiplier,
         double idleFuelModifierMultiplier,
-        double awdConsumptionMultiplier)
+        double awdConsumptionMultiplier,
+        double priceMultiplier = 1.0)
     {
         PartPakPipeline.ValidateMultiplier(fuelConsumptionMultiplier, nameof(fuelConsumptionMultiplier));
         PartPakPipeline.ValidateMultiplier(idleFuelModifierMultiplier, nameof(idleFuelModifierMultiplier));
         PartPakPipeline.ValidateMultiplier(awdConsumptionMultiplier, nameof(awdConsumptionMultiplier));
+        PartPakPipeline.ValidateMultiplier(priceMultiplier, nameof(priceMultiplier));
 
         var result = PartPakPipeline.BuildBaselineReplacements(
             pakPath,
@@ -84,7 +86,8 @@ public static class GearboxService
                 baselineText,
                 fuelConsumptionMultiplier,
                 idleFuelModifierMultiplier,
-                awdConsumptionMultiplier),
+                awdConsumptionMultiplier,
+                priceMultiplier),
             (_, currentText, updatedText) => CountNamedDifferences(currentText, updatedText));
 
         var updatedFiles = PartPakPipeline.CommitReplacements(pakPath, result.Replacements);
@@ -92,7 +95,7 @@ public static class GearboxService
     }
 
     public static GearboxSaveResult RestoreGearboxesFromBaseline(string pakPath) =>
-        ApplyGlobalMultipliers(pakPath, 1.0, 1.0, 1.0);
+        ApplyGlobalMultipliers(pakPath, 1.0, 1.0, 1.0, 1.0);
 
     public static GearboxSaveResult SaveGearboxChanges(string pakPath, IReadOnlyList<GearboxDefinition> gearboxes)
     {
@@ -358,63 +361,73 @@ public static class GearboxService
         string baselineText,
         double fuelConsumptionMultiplier,
         double idleFuelModifierMultiplier,
-        double awdConsumptionMultiplier) =>
+        double awdConsumptionMultiplier,
+        double priceMultiplier = 1.0) =>
         ApplyMultipliersToText(
             baselineText,
             fuelConsumptionMultiplier,
             idleFuelModifierMultiplier,
-            awdConsumptionMultiplier);
+            awdConsumptionMultiplier,
+            priceMultiplier);
 
     private static string ApplyMultipliersToText(
         string baselineText,
         double fuelConsumptionMultiplier,
         double idleFuelModifierMultiplier,
-        double awdConsumptionMultiplier)
+        double awdConsumptionMultiplier,
+        double priceMultiplier = 1.0)
     {
         var fuelBaseline = TuningMultiplierPresets.IsBaselineMultiplier(fuelConsumptionMultiplier);
         var idleBaseline = TuningMultiplierPresets.IsBaselineMultiplier(idleFuelModifierMultiplier);
         var awdBaseline = TuningMultiplierPresets.IsBaselineMultiplier(awdConsumptionMultiplier);
+        var priceBaseline = TuningMultiplierPresets.IsBaselineMultiplier(priceMultiplier);
 
-        if (fuelBaseline && idleBaseline && awdBaseline)
+        if (fuelBaseline && idleBaseline && awdBaseline && priceBaseline)
         {
             return baselineText;
         }
 
-        return GearboxOpenTagRegex.Replace(baselineText, match =>
+        var updated = baselineText;
+        if (!(fuelBaseline && idleBaseline && awdBaseline))
         {
-            var attrs = match.Groups["attrs"].Value;
-            var self = match.Groups["self"].Value;
-            var parsed = ParseAttributes(attrs);
-            if (!parsed.ContainsKey("Name"))
+            updated = GearboxOpenTagRegex.Replace(baselineText, match =>
             {
-                return match.Value;
-            }
+                var attrs = match.Groups["attrs"].Value;
+                var self = match.Groups["self"].Value;
+                var parsed = ParseAttributes(attrs);
+                if (!parsed.ContainsKey("Name"))
+                {
+                    return match.Value;
+                }
 
-            var updatedAttrs = attrs;
-            var changed = false;
+                var updatedAttrs = attrs;
+                var changed = false;
 
-            if (!fuelBaseline)
-            {
-                changed |= TryScaleAttribute(ref updatedAttrs, "FuelConsumption", fuelConsumptionMultiplier);
-            }
+                if (!fuelBaseline)
+                {
+                    changed |= TryScaleAttribute(ref updatedAttrs, "FuelConsumption", fuelConsumptionMultiplier);
+                }
 
-            if (!idleBaseline)
-            {
-                changed |= TryScaleAttribute(ref updatedAttrs, "IdleFuelModifier", idleFuelModifierMultiplier);
-            }
+                if (!idleBaseline)
+                {
+                    changed |= TryScaleAttribute(ref updatedAttrs, "IdleFuelModifier", idleFuelModifierMultiplier);
+                }
 
-            if (!awdBaseline)
-            {
-                changed |= TryScaleAttribute(ref updatedAttrs, "AWDConsumptionModifier", awdConsumptionMultiplier);
-            }
+                if (!awdBaseline)
+                {
+                    changed |= TryScaleAttribute(ref updatedAttrs, "AWDConsumptionModifier", awdConsumptionMultiplier);
+                }
 
-            if (!changed)
-            {
-                return match.Value;
-            }
+                if (!changed)
+                {
+                    return match.Value;
+                }
 
-            return $"<Gearbox{updatedAttrs}{self}>";
-        });
+                return $"<Gearbox{updatedAttrs}{self}>";
+            });
+        }
+
+        return PartXmlHelpers.ApplyPriceMultiplier(updated, priceMultiplier);
     }
 
     private static bool TryApplyUpdatesToText(

@@ -49,10 +49,12 @@ public static class WinchService
         string pakPath,
         double lengthMultiplier,
         double strengthMultiplier,
-        bool forceAutonomousAll = false)
+        bool forceAutonomousAll = false,
+        double priceMultiplier = 1.0)
     {
         PartPakPipeline.ValidateMultiplier(lengthMultiplier, nameof(lengthMultiplier));
         PartPakPipeline.ValidateMultiplier(strengthMultiplier, nameof(strengthMultiplier));
+        PartPakPipeline.ValidateMultiplier(priceMultiplier, nameof(priceMultiplier));
 
         var result = PartPakPipeline.BuildBaselineReplacements(
             pakPath,
@@ -62,6 +64,7 @@ public static class WinchService
                 lengthMultiplier,
                 strengthMultiplier,
                 forceAutonomousAll,
+                priceMultiplier,
                 out _),
             (_, currentText, updatedText) => CountWinchAttributeDifferences(currentText, updatedText));
 
@@ -70,7 +73,7 @@ public static class WinchService
     }
 
     public static WinchSaveResult RestoreWinchesFromBaseline(string pakPath) =>
-        ApplyGlobalMultipliers(pakPath, 1.0, 1.0, forceAutonomousAll: false);
+        ApplyGlobalMultipliers(pakPath, 1.0, 1.0, forceAutonomousAll: false, priceMultiplier: 1.0);
 
     public static WinchSaveResult SaveWinchChanges(string pakPath, IReadOnlyList<WinchDefinition> winches)
     {
@@ -268,12 +271,14 @@ public static class WinchService
         string backupText,
         double lengthMultiplier,
         double strengthMultiplier,
-        bool forceAutonomousAll = false) =>
+        bool forceAutonomousAll = false,
+        double priceMultiplier = 1.0) =>
         ApplyMultipliersToText(
             backupText,
             lengthMultiplier,
             strengthMultiplier,
             forceAutonomousAll,
+            priceMultiplier,
             out _);
 
     private static string ApplyMultipliersToText(
@@ -281,88 +286,100 @@ public static class WinchService
         double lengthMultiplier,
         double strengthMultiplier,
         bool forceAutonomousAll,
+        double priceMultiplier,
         out int changedCount)
     {
         changedCount = 0;
 
-        if (!backupText.Contains("<Winch", StringComparison.OrdinalIgnoreCase))
-        {
-            return backupText;
-        }
-
         var lengthIsBaseline = TuningMultiplierPresets.IsBaselineMultiplier(lengthMultiplier);
         var strengthIsBaseline = TuningMultiplierPresets.IsBaselineMultiplier(strengthMultiplier);
-        if (lengthIsBaseline && strengthIsBaseline && !forceAutonomousAll)
+        var priceIsBaseline = TuningMultiplierPresets.IsBaselineMultiplier(priceMultiplier);
+        if (lengthIsBaseline && strengthIsBaseline && !forceAutonomousAll && priceIsBaseline)
         {
             return backupText;
         }
 
-        try
+        var updated = backupText;
+        if (!(lengthIsBaseline && strengthIsBaseline && !forceAutonomousAll))
         {
-            var document = XDocument.Parse(backupText, LoadOptions.PreserveWhitespace);
-            var anyChanges = false;
-
-            foreach (var element in document.Descendants().Where(node =>
-                node.Name.LocalName.Equals("Winch", StringComparison.OrdinalIgnoreCase)))
+            if (!backupText.Contains("<Winch", StringComparison.OrdinalIgnoreCase))
             {
-                if (string.IsNullOrWhiteSpace(element.Attribute("Name")?.Value))
-                {
-                    continue;
-                }
-
-                var lengthAttr = element.Attribute("Length");
-                var strengthAttr = element.Attribute("StrengthMult");
-                var engineAttr = element.Attribute("IsEngineIgnitionRequired");
-
-                var targetLength = ScaleWinchAttributeValue(
-                    lengthAttr?.Value,
-                    lengthMultiplier,
-                    isStrengthMult: false);
-                var targetStrength = ScaleWinchAttributeValue(
-                    strengthAttr?.Value,
-                    strengthMultiplier,
-                    isStrengthMult: true);
-                var targetEngine = forceAutonomousAll
-                    ? "false"
-                    : engineAttr?.Value ?? "true";
-
-                var changed = false;
-                if (!lengthIsBaseline)
-                {
-                    changed |= SetWinchAttribute(element, "Length", targetLength);
-                }
-
-                if (!strengthIsBaseline)
-                {
-                    changed |= SetWinchAttribute(element, "StrengthMult", targetStrength);
-                }
-
-                if (forceAutonomousAll)
-                {
-                    changed |= SetWinchAttribute(element, "IsEngineIgnitionRequired", targetEngine);
-                }
-
-                if (changed)
-                {
-                    changedCount++;
-                    anyChanges = true;
-                }
+                return PartXmlHelpers.ApplyPriceMultiplier(backupText, priceMultiplier);
             }
 
-            if (!anyChanges)
+            try
             {
-                return backupText;
-            }
+                var document = XDocument.Parse(backupText, LoadOptions.PreserveWhitespace);
+                var anyChanges = false;
 
-            return document.ToString(SaveOptions.DisableFormatting);
+                foreach (var element in document.Descendants().Where(node =>
+                    node.Name.LocalName.Equals("Winch", StringComparison.OrdinalIgnoreCase)))
+                {
+                    if (string.IsNullOrWhiteSpace(element.Attribute("Name")?.Value))
+                    {
+                        continue;
+                    }
+
+                    var lengthAttr = element.Attribute("Length");
+                    var strengthAttr = element.Attribute("StrengthMult");
+                    var engineAttr = element.Attribute("IsEngineIgnitionRequired");
+
+                    var targetLength = ScaleWinchAttributeValue(
+                        lengthAttr?.Value,
+                        lengthMultiplier,
+                        isStrengthMult: false);
+                    var targetStrength = ScaleWinchAttributeValue(
+                        strengthAttr?.Value,
+                        strengthMultiplier,
+                        isStrengthMult: true);
+                    var targetEngine = forceAutonomousAll
+                        ? "false"
+                        : engineAttr?.Value ?? "true";
+
+                    var changed = false;
+                    if (!lengthIsBaseline)
+                    {
+                        changed |= SetWinchAttribute(element, "Length", targetLength);
+                    }
+
+                    if (!strengthIsBaseline)
+                    {
+                        changed |= SetWinchAttribute(element, "StrengthMult", targetStrength);
+                    }
+
+                    if (forceAutonomousAll)
+                    {
+                        changed |= SetWinchAttribute(element, "IsEngineIgnitionRequired", targetEngine);
+                    }
+
+                    if (changed)
+                    {
+                        changedCount++;
+                        anyChanges = true;
+                    }
+                }
+
+                if (anyChanges)
+                {
+                    updated = document.ToString(SaveOptions.DisableFormatting);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException(
+                    "Winch XML is invalid or corrupted in the pak. " +
+                    "Use \"Restore entire pak...\" from the baseline panel, then apply multipliers again.",
+                    ex);
+            }
         }
-        catch (Exception ex)
+
+        var priced = PartXmlHelpers.ApplyPriceMultiplier(updated, priceMultiplier);
+        if (!string.Equals(priced, updated, StringComparison.Ordinal) && changedCount == 0)
         {
-            throw new InvalidOperationException(
-                "Winch XML is invalid or corrupted in the pak. " +
-                "Use \"Restore entire pak...\" from the baseline panel, then apply multipliers again.",
-                ex);
+            changedCount = 1;
         }
+
+        return priced;
     }
 
     private static string ScaleWinchAttributeValue(string? rawValue, double multiplier, bool isStrengthMult)

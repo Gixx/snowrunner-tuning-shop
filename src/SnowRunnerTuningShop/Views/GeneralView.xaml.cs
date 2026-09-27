@@ -67,7 +67,7 @@ public partial class GeneralView : UserControl
             };
 
             _suppressRockSlider = true;
-            RockSizeSlider.Value = RockSizePresets.FindNearestIndex(settings.RockSizeScale);
+            RockSizeSlider.Value = RockSizePresets.ScaleToPercent(settings.RockSizeScale);
             _suppressRockSlider = false;
             RefreshRockSizeLabel();
             StatusText.Text = UiText.General.LoadedStatus(settings.CameraEligibleModels, settings.RockSizeScale);
@@ -151,7 +151,7 @@ public partial class GeneralView : UserControl
     }
 
     private void ApplyRockSizeButton_Click(object sender, RoutedEventArgs e) =>
-        ApplyRockSize(RockSizePresets.GetValue((int)Math.Round(RockSizeSlider.Value)));
+        ApplyRockSize(RockSizePresets.PercentToScale((int)Math.Round(RockSizeSlider.Value)));
 
     private void RestoreRockSizeButton_Click(object sender, RoutedEventArgs e) =>
         ApplyRockSize(1.0);
@@ -216,7 +216,7 @@ public partial class GeneralView : UserControl
 
     private void RefreshRockSizeLabel()
     {
-        var index = RockSizePresets.ClampIndex((int)Math.Round(RockSizeSlider.Value));
-        RockSizeLabel.Text = UiText.General.RockPhysicsCaption(index);
+        var percent = RockSizePresets.ClampPercent((int)Math.Round(RockSizeSlider.Value));
+        RockSizeLabel.Text = UiText.General.RockPhysicsCaption(percent);
     }
 }

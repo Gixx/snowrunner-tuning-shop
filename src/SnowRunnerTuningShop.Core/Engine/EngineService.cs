@@ -88,12 +88,14 @@ public static class EngineService
         double torqueMultiplier,
         double fuelConsumptionMultiplier,
         double damageCapacityMultiplier,
-        double engineResponsivenessMultiplier)
+        double engineResponsivenessMultiplier,
+        double priceMultiplier = 1.0)
     {
         PartPakPipeline.ValidateMultiplier(torqueMultiplier, nameof(torqueMultiplier));
         PartPakPipeline.ValidateMultiplier(fuelConsumptionMultiplier, nameof(fuelConsumptionMultiplier));
         PartPakPipeline.ValidateMultiplier(damageCapacityMultiplier, nameof(damageCapacityMultiplier));
         PartPakPipeline.ValidateMultiplier(engineResponsivenessMultiplier, nameof(engineResponsivenessMultiplier));
+        PartPakPipeline.ValidateMultiplier(priceMultiplier, nameof(priceMultiplier));
 
         var result = PartPakPipeline.BuildBaselineReplacements(
             pakPath,
@@ -103,7 +105,8 @@ public static class EngineService
                 torqueMultiplier,
                 fuelConsumptionMultiplier,
                 damageCapacityMultiplier,
-                engineResponsivenessMultiplier),
+                engineResponsivenessMultiplier,
+                priceMultiplier),
             (_, currentText, updatedText) => CountNamedEngineDifferences(currentText, updatedText));
 
         var updatedFiles = PartPakPipeline.CommitReplacements(pakPath, result.Replacements);
@@ -111,7 +114,7 @@ public static class EngineService
     }
 
     public static EngineSaveResult RestoreEnginesFromBaseline(string pakPath) =>
-        ApplyGlobalMultipliers(pakPath, 1.0, 1.0, 1.0, 1.0);
+        ApplyGlobalMultipliers(pakPath, 1.0, 1.0, 1.0, 1.0, 1.0);
 
     public static EngineSaveResult SaveEngineChanges(string pakPath, IReadOnlyList<EngineDefinition> engines)
     {
@@ -328,84 +331,94 @@ public static class EngineService
         double torqueMultiplier,
         double fuelConsumptionMultiplier,
         double damageCapacityMultiplier,
-        double engineResponsivenessMultiplier) =>
+        double engineResponsivenessMultiplier,
+        double priceMultiplier = 1.0) =>
         ApplyMultipliersToText(
             baselineText,
             torqueMultiplier,
             fuelConsumptionMultiplier,
             damageCapacityMultiplier,
-            engineResponsivenessMultiplier);
+            engineResponsivenessMultiplier,
+            priceMultiplier);
 
     private static string ApplyMultipliersToText(
         string baselineText,
         double torqueMultiplier,
         double fuelConsumptionMultiplier,
         double damageCapacityMultiplier,
-        double engineResponsivenessMultiplier)
+        double engineResponsivenessMultiplier,
+        double priceMultiplier = 1.0)
     {
         var torqueBaseline = TuningMultiplierPresets.IsBaselineMultiplier(torqueMultiplier);
         var fuelBaseline = TuningMultiplierPresets.IsBaselineMultiplier(fuelConsumptionMultiplier);
         var damageBaseline = TuningMultiplierPresets.IsBaselineMultiplier(damageCapacityMultiplier);
         var responsivenessBaseline = TuningMultiplierPresets.IsBaselineMultiplier(engineResponsivenessMultiplier);
+        var priceBaseline = TuningMultiplierPresets.IsBaselineMultiplier(priceMultiplier);
 
-        if (torqueBaseline && fuelBaseline && damageBaseline && responsivenessBaseline)
+        if (torqueBaseline && fuelBaseline && damageBaseline && responsivenessBaseline && priceBaseline)
         {
             return baselineText;
         }
 
-        return ScalableOpenTagRegex.Replace(baselineText, match =>
+        var updated = baselineText;
+        if (!(torqueBaseline && fuelBaseline && damageBaseline && responsivenessBaseline))
         {
-            var tag = match.Groups["tag"].Value;
-            var attrs = match.Groups["attrs"].Value;
-            var self = match.Groups["self"].Value;
-            var isEngineTag = tag.Equals("Engine", StringComparison.OrdinalIgnoreCase);
-            var updatedAttrs = attrs;
-            var changed = false;
-
-            if (isEngineTag && !torqueBaseline)
+            updated = ScalableOpenTagRegex.Replace(baselineText, match =>
             {
-                changed |= TryScaleAttribute(ref updatedAttrs, "Torque", torqueMultiplier, preferInteger: true);
-            }
+                var tag = match.Groups["tag"].Value;
+                var attrs = match.Groups["attrs"].Value;
+                var self = match.Groups["self"].Value;
+                var isEngineTag = tag.Equals("Engine", StringComparison.OrdinalIgnoreCase);
+                var updatedAttrs = attrs;
+                var changed = false;
 
-            if (isEngineTag && !fuelBaseline)
-            {
-                changed |= TryScaleAttribute(ref updatedAttrs, "FuelConsumption", fuelConsumptionMultiplier, preferInteger: false);
-            }
-
-            if (!damageBaseline && IsDamageOrResponsivenessTag(tag))
-            {
-                changed |= TryScaleAttribute(ref updatedAttrs, "DamageCapacity", damageCapacityMultiplier, preferInteger: true);
-            }
-
-            if (!responsivenessBaseline && IsDamageOrResponsivenessTag(tag))
-            {
-                if (TryScaleAttribute(
-                        ref updatedAttrs,
-                        "EngineResponsiveness",
-                        engineResponsivenessMultiplier,
-                        preferInteger: false,
-                        keepTrailingDotZero: true))
+                if (isEngineTag && !torqueBaseline)
                 {
-                    changed = true;
+                    changed |= TryScaleAttribute(ref updatedAttrs, "Torque", torqueMultiplier, preferInteger: true);
                 }
-                else if (!AttributeExists(updatedAttrs, "EngineResponsiveness"))
+
+                if (isEngineTag && !fuelBaseline)
                 {
-                    var scaledDefault = XmlNumericFormatting.Round(
-                        DefaultEngineResponsiveness * engineResponsivenessMultiplier);
-                    changed |= SetOrReplaceAttribute(
-                        ref updatedAttrs,
-                        "EngineResponsiveness",
-                        FormatEngineResponsiveness(scaledDefault));
+                    changed |= TryScaleAttribute(ref updatedAttrs, "FuelConsumption", fuelConsumptionMultiplier, preferInteger: false);
                 }
-            }
 
-            if (!changed)
-            {
-                return match.Value;
-            }
+                if (!damageBaseline && IsDamageOrResponsivenessTag(tag))
+                {
+                    changed |= TryScaleAttribute(ref updatedAttrs, "DamageCapacity", damageCapacityMultiplier, preferInteger: true);
+                }
 
-            return $"<{tag}{updatedAttrs}{self}>";
-        });
+                if (!responsivenessBaseline && IsDamageOrResponsivenessTag(tag))
+                {
+                    if (TryScaleAttribute(
+                            ref updatedAttrs,
+                            "EngineResponsiveness",
+                            engineResponsivenessMultiplier,
+                            preferInteger: false,
+                            keepTrailingDotZero: true))
+                    {
+                        changed = true;
+                    }
+                    else if (!AttributeExists(updatedAttrs, "EngineResponsiveness"))
+                    {
+                        var scaledDefault = XmlNumericFormatting.Round(
+                            DefaultEngineResponsiveness * engineResponsivenessMultiplier);
+                        changed |= SetOrReplaceAttribute(
+                            ref updatedAttrs,
+                            "EngineResponsiveness",
+                            FormatEngineResponsiveness(scaledDefault));
+                    }
+                }
+
+                if (!changed)
+                {
+                    return match.Value;
+                }
+
+                return $"<{tag}{updatedAttrs}{self}>";
+            });
+        }
+
+        return PartXmlHelpers.ApplyPriceMultiplier(updated, priceMultiplier);
     }
 
     private static bool TryApplyEngineUpdatesToText(

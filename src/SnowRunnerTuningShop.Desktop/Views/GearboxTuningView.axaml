@@ -8,26 +8,32 @@
               Margin="0,0,0,12"
               HorizontalAlignment="Stretch"
               Width="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}}">
-      <Grid ColumnDefinitions="*,*,*,Auto" HorizontalAlignment="Stretch">
-        <StackPanel Grid.Column="0" Margin="0,0,12,0">
+      <Grid ColumnDefinitions="*,*,*,Auto" RowDefinitions="Auto,Auto" HorizontalAlignment="Stretch">
+        <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,12,8">
           <TextBlock x:Name="FuelMultiplierLabel"/>
           <Slider x:Name="FuelMultiplierSlider"
                   Minimum="0" Maximum="10" Value="6" TickFrequency="1" IsSnapToTickEnabled="True"
                   PropertyChanged="MultiplierSlider_PropertyChanged"/>
         </StackPanel>
-        <StackPanel Grid.Column="1" Margin="12,0,12,0">
+        <StackPanel Grid.Row="0" Grid.Column="1" Margin="12,0,12,8">
           <TextBlock x:Name="IdleMultiplierLabel"/>
           <Slider x:Name="IdleMultiplierSlider"
                   Minimum="0" Maximum="10" Value="6" TickFrequency="1" IsSnapToTickEnabled="True"
                   PropertyChanged="MultiplierSlider_PropertyChanged"/>
         </StackPanel>
-        <StackPanel Grid.Column="2" Margin="12,0,12,0">
+        <StackPanel Grid.Row="0" Grid.Column="2" Margin="12,0,12,8">
           <TextBlock x:Name="AwdMultiplierLabel"/>
           <Slider x:Name="AwdMultiplierSlider"
                   Minimum="0" Maximum="10" Value="6" TickFrequency="1" IsSnapToTickEnabled="True"
                   PropertyChanged="MultiplierSlider_PropertyChanged"/>
         </StackPanel>
-        <StackPanel Grid.Column="3" VerticalAlignment="Center">
+        <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,12,0">
+          <TextBlock x:Name="PriceMultiplierLabel"/>
+          <Slider x:Name="PriceMultiplierSlider"
+                  Minimum="0" Maximum="10" Value="6" TickFrequency="1" IsSnapToTickEnabled="True"
+                  PropertyChanged="MultiplierSlider_PropertyChanged"/>
+        </StackPanel>
+        <StackPanel Grid.Row="0" Grid.RowSpan="2" Grid.Column="3" VerticalAlignment="Center">
           <Button x:Name="ApplyMultipliersButton" Padding="14,8" Click="ApplyMultipliersButton_Click"/>
         </StackPanel>
       </Grid>
