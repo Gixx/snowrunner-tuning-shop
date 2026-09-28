@@ -659,5 +659,8 @@
   "Workspace.StatusReadyToReapply": "Mentett profil készen áll az újraalkalmazásra ({0} fájl).",
   "Workspace.StatusUnknownChange": "A munka-pak eltér az alapvonaltól (nincs Tuning Shop jelölő).",
   "Workspace.UnknownChangeMessage": "A munka-initial.pak eltér az alapvonaltól, és nincs Tuning Shop jelölője. Ha a játék frissült, frissítsd az alapvonalat. Ha máshol szerkesztetted a fájlt, inkább állíts új alapvonalat egy eredeti pakból.",
-  "Workspace.UnknownChangeTitle": "A munka-pak megváltozott"
+  "Workspace.UnknownChangeTitle": "A munka-pak megváltozott",
+  "Vehicles.WheelSetNoteColumn": "Megjegyzés",
+  "Vehicles.WheelSetNoteDualRear": "Dual hátsó: elöl szimpla, hátul ikerkerék (WidthRear).",
+  "Vehicles.WheelSetNoteSingleWidthDual": "A(z) {0} szimpla szélességű változata — ha a trucknak nem kell hátsó dual."
 }

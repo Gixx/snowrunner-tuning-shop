@@ -610,5 +610,8 @@
   "Workspace.StatusReadyToReapply": "已保存配置可重新应用（{0} 个文件）。",
   "Workspace.StatusUnknownChange": "工作 pak 与基准不同（没有 Tuning Shop 标记）。",
   "Workspace.UnknownChangeMessage": "工作用 initial.pak 与基准不同，且没有 Tuning Shop 标记。若游戏已更新，请刷新基准。若你在别处编辑过该文件，请改从原版 pak 设置新基准。",
-  "Workspace.UnknownChangeTitle": "工作 pak 已更改"
+  "Workspace.UnknownChangeTitle": "工作 pak 已更改",
+  "Vehicles.WheelSetNoteColumn": "说明",
+  "Vehicles.WheelSetNoteDualRear": "后双轮：前单后双（WidthRear）。",
+  "Vehicles.WheelSetNoteSingleWidthDual": "{0} 的单宽变体——用于不应装后双轮的车辆。"
 }

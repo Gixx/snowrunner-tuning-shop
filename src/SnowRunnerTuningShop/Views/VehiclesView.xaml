@@ -841,6 +841,105 @@
                                     CornerRadius="8"
                                     Padding="16"
                                     Margin="0,0,0,12">
+                              <StackPanel>
+                                <TextBlock Text="{x:Static loc:UiText+Vehicles.WheelSizesTitle}"
+                                           FontSize="14"
+                                           FontWeight="SemiBold"
+                                           Margin="0,0,0,10"/>
+
+                                <TextBlock Text="{x:Static loc:UiText+Vehicles.WheelSizesLabel}"
+                                           Margin="0,0,0,6"
+                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                <ItemsControl x:Name="WheelSizesPanel"
+                                              Margin="0,0,0,8">
+                                  <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                      <WrapPanel Orientation="Horizontal"/>
+                                    </ItemsPanelTemplate>
+                                  </ItemsControl.ItemsPanel>
+                                  <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                      <CheckBox Content="{Binding InchesLabel}"
+                                                IsChecked="{Binding IsEnabled, Mode=TwoWay}"
+                                                IsEnabled="{Binding CanToggle}"
+                                                Margin="0,0,14,6"
+                                                Checked="WheelSizeCheckBox_Changed"
+                                                Unchecked="WheelSizeCheckBox_Changed"/>
+                                    </DataTemplate>
+                                  </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+
+                                <TextBlock Text="{x:Static loc:UiText+Vehicles.WheelSizesWarning}"
+                                           TextWrapping="Wrap"
+                                           FontSize="11"
+                                           Margin="0,0,0,6"
+                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                <TextBlock Text="{x:Static loc:UiText+Vehicles.WheelSizesHint}"
+                                           TextWrapping="Wrap"
+                                           FontSize="11"
+                                           Margin="0,0,0,14"
+                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+
+                                <Grid Margin="0,0,0,6">
+                                  <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="140"/>
+                                    <ColumnDefinition Width="*"/>
+                                  </Grid.ColumnDefinitions>
+                                  <TextBlock Text="{x:Static loc:UiText+Vehicles.WheelSetsLabel}"
+                                             VerticalAlignment="Center"
+                                             Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                  <Button x:Name="WheelSetsButton"
+                                          Grid.Column="1"
+                                          MaxWidth="280"
+                                          HorizontalAlignment="Left"
+                                          Padding="12,7"
+                                          Click="WheelSetsButton_Click"/>
+                                </Grid>
+                                <TextBlock Text="{x:Static loc:UiText+Vehicles.WheelSetsHint}"
+                                           Margin="140,0,0,12"
+                                           TextWrapping="Wrap"
+                                           FontSize="11"
+                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+
+                                <Expander x:Name="WheelOffsetsExpander"
+                                          Header="{x:Static loc:UiText+Vehicles.WheelOffsetsAccordion}"
+                                          IsExpanded="False"
+                                          Margin="0,4,0,0">
+                                  <DataGrid x:Name="WheelOffsetsGrid"
+                                            Margin="0,8,0,0"
+                                            AutoGenerateColumns="False"
+                                            CanUserAddRows="False"
+                                            CanUserDeleteRows="False"
+                                            CanUserReorderColumns="False"
+                                            HeadersVisibility="Column"
+                                            SelectionMode="Single"
+                                            GridLinesVisibility="Horizontal"
+                                            RowHeaderWidth="0"
+                                            MaxHeight="220">
+                                    <DataGrid.Columns>
+                                      <DataGridTextColumn Header="{x:Static loc:UiText+Vehicles.WheelOffsetSizeColumn}"
+                                                          Binding="{Binding InchesLabel}"
+                                                          IsReadOnly="True"
+                                                          Width="80"/>
+                                      <DataGridTextColumn Header="{x:Static loc:UiText+Vehicles.WheelOffsetSetColumn}"
+                                                          Binding="{Binding Type}"
+                                                          IsReadOnly="True"
+                                                          Width="*"/>
+                                      <DataGridTextColumn Header="{x:Static loc:UiText+Vehicles.WheelOffsetZColumn}"
+                                                          Binding="{Binding OffsetZText, UpdateSourceTrigger=PropertyChanged}"
+                                                          Width="100"/>
+                                    </DataGrid.Columns>
+                                  </DataGrid>
+                                </Expander>
+                              </StackPanel>
+                            </Border>
+
+                            <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                                    BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="8"
+                                    Padding="16"
+                                    Margin="0,0,0,12">
                                 <StackPanel>
                             <Grid Margin="0,0,0,6">
                                 <Grid.ColumnDefinitions>

@@ -610,5 +610,8 @@
   "Workspace.StatusReadyToReapply": "Profilo salvato pronto da riapplicare ({0} file).",
   "Workspace.StatusUnknownChange": "Il pak di lavoro differisce dal valore di base (nessun marcatore Tuning Shop).",
   "Workspace.UnknownChangeMessage": "L'initial.pak di lavoro differisce dal valore di base e non ha un marcatore Tuning Shop. Se il gioco si è aggiornato, aggiorna il valore di base. Se hai modificato il file altrove, imposta un nuovo valore di base da un pak originale.",
-  "Workspace.UnknownChangeTitle": "Pak di lavoro modificato"
+  "Workspace.UnknownChangeTitle": "Pak di lavoro modificato",
+  "Vehicles.WheelSetNoteColumn": "Nota",
+  "Vehicles.WheelSetNoteDualRear": "Posteriore dual: singoli davanti, gemelli dietro (WidthRear).",
+  "Vehicles.WheelSetNoteSingleWidthDual": "Variante a larghezza singola di {0}: usala se il truck non deve avere dual posteriori."
 }

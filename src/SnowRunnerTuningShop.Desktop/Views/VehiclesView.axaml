@@ -634,6 +634,91 @@
                         Padding="16"
                         Margin="0,0,0,12">
                   <StackPanel>
+                    <TextBlock x:Name="WheelSizesTitleText"
+                               FontSize="14"
+                               FontWeight="SemiBold"
+                               Margin="0,0,0,10"/>
+                    <TextBlock x:Name="WheelSizesLabelText"
+                               Margin="0,0,0,6"
+                               Foreground="{DynamicResource AppMutedBrush}"/>
+                    <ItemsControl x:Name="WheelSizesPanel" Margin="0,0,0,8">
+                      <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                          <WrapPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                      </ItemsControl.ItemsPanel>
+                      <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                          <CheckBox Content="{Binding InchesLabel}"
+                                    IsChecked="{Binding IsEnabled}"
+                                    IsEnabled="{Binding CanToggle}"
+                                    Margin="0,0,14,6"
+                                    IsCheckedChanged="WheelSizeCheckBox_Changed"/>
+                        </DataTemplate>
+                      </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <TextBlock x:Name="WheelSizesWarningText"
+                               TextWrapping="Wrap"
+                               FontSize="11"
+                               Margin="0,0,0,6"
+                               Foreground="{DynamicResource AppMutedBrush}"/>
+                    <TextBlock x:Name="WheelSizesHintText"
+                               TextWrapping="Wrap"
+                               FontSize="11"
+                               Margin="0,0,0,14"
+                               Foreground="{DynamicResource AppMutedBrush}"/>
+
+                    <Grid ColumnDefinitions="140,*" Margin="0,0,0,6">
+                      <TextBlock x:Name="WheelSetsLabelText"
+                                 VerticalAlignment="Center"
+                                 Foreground="{DynamicResource AppMutedBrush}"/>
+                      <Button x:Name="WheelSetsButton"
+                              Grid.Column="1"
+                              MaxWidth="280"
+                              HorizontalAlignment="Left"
+                              Padding="12,7"
+                              Click="WheelSetsButton_Click"/>
+                    </Grid>
+                    <TextBlock x:Name="WheelSetsHintText"
+                               Margin="140,0,0,12"
+                               TextWrapping="Wrap"
+                               FontSize="11"
+                               Foreground="{DynamicResource AppMutedBrush}"/>
+
+                    <Expander x:Name="WheelOffsetsExpander" Margin="0,4,0,0">
+                      <DataGrid x:Name="WheelOffsetsGrid"
+                                Margin="0,8,0,0"
+                                AutoGenerateColumns="False"
+                                CanUserReorderColumns="False"
+                                CanUserResizeColumns="True"
+                                CanUserSortColumns="False"
+                                HeadersVisibility="Column"
+                                SelectionMode="Single"
+                                GridLinesVisibility="Horizontal"
+                                MaxHeight="220"
+                                IsReadOnly="False">
+                        <DataGrid.Columns>
+                          <DataGridTextColumn Width="80"
+                                              IsReadOnly="True"
+                                              Binding="{Binding InchesLabel}"/>
+                          <DataGridTextColumn Width="*"
+                                              IsReadOnly="True"
+                                              Binding="{Binding Type}"/>
+                          <DataGridTextColumn Width="100"
+                                              Binding="{Binding OffsetZText}"/>
+                        </DataGrid.Columns>
+                      </DataGrid>
+                    </Expander>
+                  </StackPanel>
+                </Border>
+
+                <Border Background="{DynamicResource AppCardBrush}"
+                        BorderBrush="{DynamicResource AppCardStrokeBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="16"
+                        Margin="0,0,0,12">
+                  <StackPanel>
                 <Grid ColumnDefinitions="140,*" Margin="0,0,0,6">
                   <TextBlock x:Name="EngineSetsLabelText"
                              VerticalAlignment="Center"

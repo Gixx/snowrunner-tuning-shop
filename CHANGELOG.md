@@ -11,6 +11,15 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ## [Unreleased]
 
+---
+
+## [1.5.0-beta.1] — 2026-09-28
+
+### Added
+- **Vehicles → Wheels:** per-truck box for optional larger CompatibleWheels sizes (up to +2 steps from baseline, capped at Scale 0.99) with a size warning, OffsetZ accordion for extras (pre-filled from the type’s largest existing offset), and a Wheel sets dialog (like Engine sets) to assign/unassign `classes/wheels` Types (WPF + Avalonia).
+- **Wheel set labels:** tire column and search use game `UiName` strings (UOD II, OHD I, JAT OMS, …) instead of raw XML `Name` (`offroad_2`).
+- **Wheel set Note column:** dual-rear (`WidthRear`) and `_front` single-width sibling hints, localized in all shipped UI languages.
+
 ### Changed
 - **General → Rock size:** slider is continuous 0–100% in 1% steps (was five presets).
 - **Vehicles → Global multipliers:** removed Front / Rear steer preset sliders (per-axle steering on the detail page remains).
@@ -402,7 +411,8 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ---
 
-[Unreleased]: https://github.com/Gixx/snowrunner-tuning-shop/compare/v1.4.2...HEAD
+[Unreleased]: https://github.com/Gixx/snowrunner-tuning-shop/compare/v1.5.0-beta.1...HEAD
+[1.5.0-beta.1]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.5.0-beta.1
 [1.4.2]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.4.2
 [1.4.1]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.4.1
 [1.4.0]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.4.0

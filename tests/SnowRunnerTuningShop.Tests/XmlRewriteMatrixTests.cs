@@ -346,6 +346,36 @@ public sealed class XmlRewriteMatrixTests
     }
 
     [Fact]
+    public void Compatible_wheels_extras_and_sets_stay_structurally_safe()
+    {
+        const string baseline =
+            """
+            <Truck>
+              <TruckData>
+                <CompatibleWheels Scale="0.5" Type="wheels_scout1" />
+                <CompatibleWheels OffsetZ="0.1" Scale="0.55" Type="wheels_scout_mudtires" />
+                <CompatibleWheels Scale="0.5" Type="wheels_scout_mudtires" />
+                <CompatibleWheels Scale="0.55" Type="wheels_scout1" />
+              </TruckData>
+            </Truck>
+            """;
+
+        var withSizes = TruckCompatibleWheelsService.ApplySizesToTextForTests(
+            baseline,
+            baseline,
+            [0.6, 0.65],
+            [new TruckWheelOffsetEdit(0.6, "wheels_scout_mudtires", 0.12)]);
+        AssertSafe(withSizes, "wheel extras");
+
+        var withSets = TruckCompatibleWheelsService.ApplySetsToTextForTests(
+            withSizes,
+            ["wheels_scout1", "wheels_scout_mudtires", "wheels_scout_highway"]);
+        AssertSafe(withSets, "wheel sets with extras");
+        Assert.Contains("wheels_scout_highway", withSets, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("""Scale="0.65" """, withSets, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void Safety_helper_rejects_slash_before_attribute()
     {
         const string broken =

@@ -4,6 +4,7 @@ using SnowRunnerTuningShop.Core;
 using SnowRunnerTuningShop.Core.General;
 using SnowRunnerTuningShop.Core.Localization;
 using SnowRunnerTuningShop.Core.Profile;
+using SnowRunnerTuningShop.Core.Trucks;
 using SnowRunnerTuningShop.Core.Tuning;
 
 public static class UiText
@@ -553,6 +554,59 @@ public static class UiText
         public static string EngineSetsSavedStatus => StringResources.Get(
             "Vehicles.EngineSetsSavedStatus",
             "Engine sets updated for this vehicle.");
+        public static string WheelSizesTitle => StringResources.Get("Vehicles.WheelSizesTitle", "Wheels");
+        public static string WheelSizesLabel => StringResources.Get("Vehicles.WheelSizesLabel", "Wheel sizes");
+        public static string WheelSizesWarning => StringResources.Get(
+            "Vehicles.WheelSizesWarning",
+            "Larger wheels can clip into the body, suspension, or ground and may look wrong in-game. Extra sizes stay at or below Scale 0.99.");
+        public static string WheelSizesHint => StringResources.Get(
+            "Vehicles.WheelSizesHint",
+            "Baseline sizes stay assigned. Optional larger sizes (if offered) are saved with Save changes.");
+        public static string WheelOffsetsAccordion => StringResources.Get(
+            "Vehicles.WheelOffsetsAccordion",
+            "OffsetZ for extra sizes");
+        public static string WheelOffsetSizeColumn => StringResources.Get("Vehicles.WheelOffsetSizeColumn", "Size");
+        public static string WheelOffsetSetColumn => StringResources.Get("Vehicles.WheelOffsetSetColumn", "Set");
+        public static string WheelOffsetZColumn => StringResources.Get("Vehicles.WheelOffsetZColumn", "OffsetZ");
+        public static string WheelSetsLabel => StringResources.Get("Vehicles.WheelSetsLabel", "Wheel sets");
+        public static string WheelSetsHint => StringResources.Get(
+            "Vehicles.WheelSetsHint",
+            "Choose which wheel set files (classes/wheels) this truck can use. Shared sets affect every truck that references them.");
+        public static string WheelSetsButton(int count) =>
+            count == 1
+                ? StringResources.Format("Vehicles.WheelSetsButtonOne", "{0} assigned set", count)
+                : StringResources.Format("Vehicles.WheelSetsButtonMany", "{0} assigned sets", count);
+        public static string WheelSetsTitle => StringResources.Get("Vehicles.WheelSetsTitle", "Wheel sets");
+        public static string WheelSetColumn => StringResources.Get("Vehicles.WheelSetColumn", "Set");
+        public static string WheelTireNamesColumn => StringResources.Get("Vehicles.WheelTireNamesColumn", "Tires");
+        public static string WheelSetNoteColumn => StringResources.Get("Vehicles.WheelSetNoteColumn", "Note");
+        public static string FormatWheelSetNote(TruckWheelSetNoteKind kind, string? relatedSetId) =>
+            kind switch
+            {
+                TruckWheelSetNoteKind.DualRear => StringResources.Get(
+                    "Vehicles.WheelSetNoteDualRear",
+                    "Dual rear: single front tires, twin rears (WidthRear)."),
+                TruckWheelSetNoteKind.SingleWidthDualVariant => StringResources.Format(
+                    "Vehicles.WheelSetNoteSingleWidthDual",
+                    "Single-width variant of {0} — use when the truck should not get dual rears.",
+                    relatedSetId ?? ""),
+                _ => "",
+            };
+        public static string WheelSetsSearchPlaceholder => StringResources.Get(
+            "Vehicles.WheelSetsSearchPlaceholder",
+            "Filter by tire or set name…");
+        public static string WheelSetsApply => StringResources.Get("Vehicles.WheelSetsApply", "Apply");
+        public static string WheelSetsCancel => StringResources.Get("Vehicles.WheelSetsCancel", "Cancel");
+        public static string WheelSetsNeedOne => StringResources.Get("Vehicles.WheelSetsNeedOne", "Select at least one wheel set.");
+        public static string WheelSetsMissing => StringResources.Get(
+            "Vehicles.WheelSetsMissing",
+            "This truck has no CompatibleWheels in its XML.");
+        public static string WheelSetsSavedStatus => StringResources.Get(
+            "Vehicles.WheelSetsSavedStatus",
+            "Wheel sets updated for this vehicle.");
+        public static string InvalidWheelOffset => StringResources.Get(
+            "Vehicles.InvalidWheelOffset",
+            "OffsetZ must be a number (or empty to omit).");
         public static string HornSoundLabel => StringResources.Get("Vehicles.HornSoundLabel", "Horn sound");
         public static string HornSoundHint => StringResources.Get(
             "Vehicles.HornSoundHint",

@@ -610,5 +610,8 @@
   "Workspace.StatusReadyToReapply": "Zapisany profil gotowy do ponownego zastosowania ({0} plik(ów)).",
   "Workspace.StatusUnknownChange": "Roboczy pak różni się od wartości bazowej (brak znacznika Tuning Shop).",
   "Workspace.UnknownChangeMessage": "Działający plik początkowy różni się od wersji bazowej i nie ma znacznika Sklepu Tuningowego. Jeśli gra została zaktualizowana, odśwież linię bazową. Jeśli edytowałeś plik w innym miejscu, zamiast tego ustaw nową linię bazową z oryginalnego pakietu.",
-  "Workspace.UnknownChangeTitle": "Pakiet roboczy uległ zmianie"
+  "Workspace.UnknownChangeTitle": "Pakiet roboczy uległ zmianie",
+  "Vehicles.WheelSetNoteColumn": "Uwaga",
+  "Vehicles.WheelSetNoteDualRear": "Podwójny tył: pojedyncze z przodu, bliźniaki z tyłu (WidthRear).",
+  "Vehicles.WheelSetNoteSingleWidthDual": "Wersja pojedynczej szerokości {0} — gdy ciężarówka nie powinna mieć bliźniaków z tyłu."
 }

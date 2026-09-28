@@ -610,5 +610,8 @@
   "Workspace.StatusReadyToReapply": "Tallennettu profiili valmis uudelleenkäyttöön ({0} tiedostoa).",
   "Workspace.StatusUnknownChange": "Työpak poikkeaa perusarvosta (ei Tuning Shop -merkkiä).",
   "Workspace.UnknownChangeMessage": "Työ-initial.pak poikkeaa perusarvosta eikä siinä ole Tuning Shop -merkkiä. Jos peli päivittyi, päivitä perusarvo. Jos muokkasit tiedostoa muualla, aseta uusi perusarvo alkuperäisestä pakista.",
-  "Workspace.UnknownChangeTitle": "Työpak muuttui"
+  "Workspace.UnknownChangeTitle": "Työpak muuttui",
+  "Vehicles.WheelSetNoteColumn": "Huom",
+  "Vehicles.WheelSetNoteDualRear": "Kaksois-taka: yksittäiset edessä, kaksoiset takana (WidthRear).",
+  "Vehicles.WheelSetNoteSingleWidthDual": "Yksittäislevyinen variantti: {0} — kun kuorma-auton ei pidä saada kaksoistakarenkaita."
 }

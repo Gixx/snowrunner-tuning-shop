@@ -610,5 +610,8 @@
   "Workspace.StatusReadyToReapply": "Gespeichertes Profil bereit zum erneuten Anwenden ({0} Datei(en)).",
   "Workspace.StatusUnknownChange": "Arbeits-pak weicht vom Basiswert ab (keine Tuning Shop-Markierung).",
   "Workspace.UnknownChangeMessage": "Das funktionierende initial.pak unterscheidet sich von der Grundlinie und hat keine Tuning-Shop-Markierung. Wenn das Spiel aktualisiert wurde, aktualisieren Sie die Grundlinie. Wenn Sie die Datei an anderer Stelle bearbeitet haben, legen Sie stattdessen eine neue Baseline aus einem Originalpaket fest.",
-  "Workspace.UnknownChangeTitle": "Arbeitspaket geändert"
+  "Workspace.UnknownChangeTitle": "Arbeitspaket geändert",
+  "Vehicles.WheelSetNoteColumn": "Hinweis",
+  "Vehicles.WheelSetNoteDualRear": "Doppelte Hinterräder: vorne einzeln, hinten Zwillinge (WidthRear).",
+  "Vehicles.WheelSetNoteSingleWidthDual": "Einspurige Variante von {0} — wenn der LKW keine Doppelhinterräder bekommen soll."
 }

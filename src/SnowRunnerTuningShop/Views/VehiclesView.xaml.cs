@@ -26,6 +26,12 @@ public partial class VehiclesView : UserControl
     private readonly List<VehicleCard> _all = [];
     private readonly ObservableCollection<VehicleCard> _visible = [];
     private readonly ObservableCollection<SteerAxleRowViewModel> _steerAxleRows = [];
+    private readonly ObservableCollection<WheelSizeRowVm> _wheelSizeRows = [];
+    private readonly ObservableCollection<WheelOffsetRowVm> _wheelOffsetRows = [];
+    private IReadOnlyList<string> _wheelAssignedTypes = [];
+    private IReadOnlyDictionary<string, double?> _wheelDefaultOffsetByType =
+        new Dictionary<string, double?>(StringComparer.OrdinalIgnoreCase);
+    private bool _suppressWheelSizeSync;
     private IReadOnlyDictionary<string, VehicleMetaInfo> _metadata =
         new Dictionary<string, VehicleMetaInfo>(StringComparer.OrdinalIgnoreCase);
     private IReadOnlyList<TruckTuningDefinition> _trucks = [];
@@ -50,6 +56,8 @@ public partial class VehiclesView : UserControl
         InitializeComponent();
         VehiclesItems.ItemsSource = _visible;
         SteerAxlesItems.ItemsSource = _steerAxleRows;
+        WheelSizesPanel.ItemsSource = _wheelSizeRows;
+        WheelOffsetsGrid.ItemsSource = _wheelOffsetRows;
         Loaded += VehiclesView_Loaded;
         Unloaded += (_, _) => _soundPreview.Dispose();
         _soundPreview.PlayingChanged += (_, _) => Dispatcher.Invoke(RefreshSoundPlayButtons);
@@ -669,6 +677,7 @@ public partial class VehiclesView : UserControl
             BindDiffLockOptions(truck);
             DriveCombo.SelectedValue = truck.DriveLayout;
             RefreshEngineSetsButton(truck);
+            await BindWheelSizesAsync(truck);
             await BindSoundCombosAsync(truck);
             RefreshSafeRangeHints();
             TuningHintText.Visibility = Visibility.Collapsed;
@@ -842,6 +851,10 @@ public partial class VehiclesView : UserControl
         TuningHintText.Visibility = Visibility.Visible;
         RestoreVehicleButton.IsEnabled = false;
         _steerAxleRows.Clear();
+        _wheelSizeRows.Clear();
+        _wheelOffsetRows.Clear();
+        _wheelAssignedTypes = [];
+        _wheelDefaultOffsetByType = new Dictionary<string, double?>(StringComparer.OrdinalIgnoreCase);
     }
 
     private void BindDiffLockOptions(TruckTuningDefinition truck)
@@ -889,6 +902,7 @@ public partial class VehiclesView : UserControl
             && canWrite;
         SaveTuningButton.IsEnabled = _currentTruck is not null && canWrite;
         EngineSetsButton.IsEnabled = _currentTruck is not null && canWrite;
+        WheelSetsButton.IsEnabled = _currentTruck is not null && canWrite;
     }
 
     private void RefreshEngineSetsButton(TruckTuningDefinition truck)
@@ -911,6 +925,143 @@ public partial class VehiclesView : UserControl
             TuningStatusText.Text = ex.Message;
             EngineSetsButton.IsEnabled = false;
         }
+    }
+
+    private async Task BindWheelSizesAsync(TruckTuningDefinition truck)
+    {
+        _suppressWheelSizeSync = true;
+        try
+        {
+            _wheelSizeRows.Clear();
+            _wheelOffsetRows.Clear();
+            _wheelAssignedTypes = [];
+            _wheelDefaultOffsetByType = new Dictionary<string, double?>(StringComparer.OrdinalIgnoreCase);
+            WheelSetsButton.Content = UiText.Vehicles.WheelSetsButton(0);
+            WheelOffsetsExpander.IsEnabled = false;
+
+            if (string.IsNullOrWhiteSpace(_session?.PakPath))
+            {
+                return;
+            }
+
+            var pakPath = _session.PakPath;
+            var entryPath = truck.EntryPath;
+            TruckWheelSizesSnapshot snapshot;
+            try
+            {
+                snapshot = await Task.Run(() => TruckCompatibleWheelsService.LoadSizes(pakPath, entryPath));
+            }
+            catch (Exception ex)
+            {
+                TuningStatusText.Text = ex.Message;
+                WheelSetsButton.IsEnabled = false;
+                return;
+            }
+
+            foreach (var size in snapshot.Sizes)
+            {
+                _wheelSizeRows.Add(new WheelSizeRowVm(size));
+            }
+
+            _wheelAssignedTypes = TruckCompatibleWheelsService.GetAssignedSetIds(pakPath, entryPath);
+            _wheelDefaultOffsetByType = snapshot.DefaultOffsetByType;
+            foreach (var row in snapshot.OffsetRows)
+            {
+                _wheelOffsetRows.Add(new WheelOffsetRowVm(row));
+            }
+
+            WheelSetsButton.Content = UiText.Vehicles.WheelSetsButton(snapshot.AssignedSetCount);
+            WheelSetsButton.IsEnabled = snapshot.HasCompatibleWheels && PakWriteUi.CanWrite(_session);
+            WheelOffsetsExpander.IsEnabled = _wheelOffsetRows.Count > 0;
+        }
+        finally
+        {
+            _suppressWheelSizeSync = false;
+        }
+    }
+
+    private void WheelSizeCheckBox_Changed(object sender, RoutedEventArgs e)
+    {
+        if (_suppressWheelSizeSync)
+        {
+            return;
+        }
+
+        RebuildWheelOffsetRowsFromUi();
+    }
+
+    private void RebuildWheelOffsetRowsFromUi()
+    {
+        var enabledExtras = _wheelSizeRows
+            .Where(row => !row.IsLocked && row.IsEnabled)
+            .Select(row => row.Scale)
+            .ToArray();
+
+        var previous = _wheelOffsetRows.ToDictionary(
+            row => OffsetKey(row.Scale, row.Type),
+            row => row.OffsetZText,
+            StringComparer.OrdinalIgnoreCase);
+
+        _wheelOffsetRows.Clear();
+        foreach (var scale in enabledExtras)
+        {
+            var inches = TruckCompatibleWheelsService.FormatInchesLabel(scale);
+            foreach (var type in _wheelAssignedTypes)
+            {
+                var key = OffsetKey(scale, type);
+                string? text;
+                if (previous.TryGetValue(key, out var existingText))
+                {
+                    text = existingText;
+                }
+                else
+                {
+                    _wheelDefaultOffsetByType.TryGetValue(type, out var suggested);
+                    text = FormatSuggestedOffset(suggested);
+                }
+
+                _wheelOffsetRows.Add(new WheelOffsetRowVm(scale, inches, type, text));
+            }
+        }
+
+        WheelOffsetsExpander.IsEnabled = _wheelOffsetRows.Count > 0;
+        if (_wheelOffsetRows.Count == 0)
+        {
+            WheelOffsetsExpander.IsExpanded = false;
+        }
+    }
+
+    private static string FormatSuggestedOffset(double? offsetZ) =>
+        offsetZ is double value
+            ? value.ToString("0.###", CultureInfo.InvariantCulture)
+            : "0";
+
+    private static string OffsetKey(double scale, string type) =>
+        string.Create(CultureInfo.InvariantCulture, $"{scale:0.###}|{type}");
+
+    private bool TryCollectWheelSizeEdits(
+        out IReadOnlyList<double> enabledExtras,
+        out IReadOnlyList<TruckWheelOffsetEdit> offsets)
+    {
+        enabledExtras = _wheelSizeRows
+            .Where(row => !row.IsLocked && row.IsEnabled)
+            .Select(row => row.Scale)
+            .ToArray();
+
+        var edits = new List<TruckWheelOffsetEdit>();
+        foreach (var row in _wheelOffsetRows)
+        {
+            if (!row.TryGetOffsetZ(out var offsetZ))
+            {
+                offsets = [];
+                return false;
+            }
+
+            edits.Add(new TruckWheelOffsetEdit(row.Scale, row.Type, offsetZ));
+        }
+
+        offsets = edits;
+        return true;
     }
 
     private async void EngineSetsButton_Click(object sender, RoutedEventArgs e)
@@ -949,13 +1100,70 @@ public partial class VehiclesView : UserControl
 
         try
         {
-            using (PakWriteUi.BeginBusyWrite(SaveTuningButton, RestoreVehicleButton, EngineSetsButton))
+            using (PakWriteUi.BeginBusyWrite(SaveTuningButton, RestoreVehicleButton, EngineSetsButton, WheelSetsButton))
             {
                 await Task.Run(() =>
                     TruckEngineSetsService.Apply(_session.PakPath, _currentTruck.EntryPath, dialog.SelectedSetIds));
             }
 
             TuningStatusText.Text = UiText.Vehicles.EngineSetsSavedStatus;
+            await LoadTuningAsync(_currentCard);
+        }
+        catch (Exception ex)
+        {
+            TuningStatusText.Text = ex.Message;
+        }
+    }
+
+    private async void WheelSetsButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (_currentTruck is null || string.IsNullOrWhiteSpace(_session?.PakPath) || _currentCard is null)
+        {
+            return;
+        }
+
+        if (!PakWriteUi.TryProceed(_session))
+        {
+            return;
+        }
+
+        TruckWheelSetsSnapshot snapshot;
+        try
+        {
+            snapshot = await Task.Run(() =>
+                TruckCompatibleWheelsService.LoadSets(
+                    _session.PakPath,
+                    _currentTruck.EntryPath,
+                    AppLanguage.Current));
+        }
+        catch (Exception ex)
+        {
+            TuningStatusText.Text = ex.Message;
+            return;
+        }
+
+        var dialog = new TruckWheelSetsWindow(snapshot)
+        {
+            Owner = Window.GetWindow(this),
+        };
+
+        if (dialog.ShowDialog() != true)
+        {
+            return;
+        }
+
+        try
+        {
+            using (PakWriteUi.BeginBusyWrite(SaveTuningButton, RestoreVehicleButton, EngineSetsButton, WheelSetsButton))
+            {
+                await Task.Run(() =>
+                    TruckCompatibleWheelsService.ApplySets(
+                        _session.PakPath,
+                        _currentTruck.EntryPath,
+                        dialog.SelectedSetIds));
+            }
+
+            TuningStatusText.Text = UiText.Vehicles.WheelSetsSavedStatus;
             await LoadTuningAsync(_currentCard);
         }
         catch (Exception ex)
@@ -998,6 +1206,12 @@ public partial class VehiclesView : UserControl
             return;
         }
 
+        if (!TryCollectWheelSizeEdits(out var enabledExtras, out var wheelOffsets))
+        {
+            TuningStatusText.Text = UiText.Vehicles.InvalidWheelOffset;
+            return;
+        }
+
         _currentTruck.FuelCapacity = fuel;
         _currentTruck.Price = price;
         _currentTruck.StoreCountries = storeCountries;
@@ -1015,14 +1229,20 @@ public partial class VehiclesView : UserControl
         _currentTruck.HornSoundSetId = HornSoundCombo.SelectedItem as string;
         _currentTruck.EngineSoundSetId = EngineSoundCombo.SelectedItem as string;
 
-        using (PakWriteUi.BeginBusyWrite(SaveTuningButton, RestoreVehicleButton))
+        using (PakWriteUi.BeginBusyWrite(SaveTuningButton, RestoreVehicleButton, EngineSetsButton, WheelSetsButton))
         {
             try
             {
                 var result = TruckTuningService.SaveTruckChanges(_session.PakPath, _currentTruck);
+                var wheelsResult = TruckCompatibleWheelsService.ApplySizes(
+                    _session.PakPath,
+                    _currentTruck.EntryPath,
+                    enabledExtras,
+                    wheelOffsets);
                 _trucksPakPath = null;
                 await LoadTuningAsync(_currentCard);
-                TuningStatusText.Text = result.UpdatedFiles <= 0
+                var updated = result.UpdatedFiles + wheelsResult.UpdatedFiles;
+                TuningStatusText.Text = updated <= 0
                     ? UiText.Vehicles.NoChangesToSave
                     : UiText.Vehicles.SavedMessage();
             }
@@ -1509,5 +1729,108 @@ public partial class VehiclesView : UserControl
             string.IsNullOrWhiteSpace(OvalCode) ? Visibility.Collapsed : Visibility.Visible;
         public Visibility FlagVisibility =>
             Flag is null ? Visibility.Collapsed : Visibility.Visible;
+    }
+
+    internal sealed class WheelSizeRowVm : System.ComponentModel.INotifyPropertyChanged
+    {
+        private bool _isEnabled;
+
+        public WheelSizeRowVm(TruckWheelSizeOption option)
+        {
+            Scale = option.Scale;
+            InchesLabel = option.InchesLabel;
+            IsLocked = option.IsLocked;
+            _isEnabled = option.IsEnabled;
+        }
+
+        public double Scale { get; }
+
+        public string InchesLabel { get; }
+
+        public bool IsLocked { get; }
+
+        public bool CanToggle => !IsLocked;
+
+        public bool IsEnabled
+        {
+            get => _isEnabled;
+            set
+            {
+                if (IsLocked || _isEnabled == value)
+                {
+                    return;
+                }
+
+                _isEnabled = value;
+                PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(nameof(IsEnabled)));
+            }
+        }
+
+        public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
+    }
+
+    internal sealed class WheelOffsetRowVm : System.ComponentModel.INotifyPropertyChanged
+    {
+        private string _offsetZText;
+
+        public WheelOffsetRowVm(TruckWheelOffsetRow row)
+            : this(row.Scale, row.InchesLabel, row.Type, FormatOffset(row.OffsetZ))
+        {
+        }
+
+        public WheelOffsetRowVm(double scale, string inchesLabel, string type, string? offsetZText)
+        {
+            Scale = scale;
+            InchesLabel = inchesLabel;
+            Type = type;
+            _offsetZText = offsetZText ?? "";
+        }
+
+        public double Scale { get; }
+
+        public string InchesLabel { get; }
+
+        public string Type { get; }
+
+        public string OffsetZText
+        {
+            get => _offsetZText;
+            set
+            {
+                var next = value ?? "";
+                if (_offsetZText == next)
+                {
+                    return;
+                }
+
+                _offsetZText = next;
+                PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(nameof(OffsetZText)));
+            }
+        }
+
+        public bool TryGetOffsetZ(out double? offsetZ)
+        {
+            offsetZ = null;
+            var raw = OffsetZText.Trim();
+            if (raw.Length == 0)
+            {
+                return true;
+            }
+
+            if (!double.TryParse(raw, NumberStyles.Float, CultureInfo.InvariantCulture, out var parsed))
+            {
+                return false;
+            }
+
+            offsetZ = parsed;
+            return true;
+        }
+
+        private static string FormatOffset(double? offsetZ) =>
+            offsetZ is double value
+                ? value.ToString("0.###", CultureInfo.InvariantCulture)
+                : "0";
+
+        public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
     }
 }

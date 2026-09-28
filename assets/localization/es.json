@@ -610,5 +610,8 @@
   "Workspace.StatusReadyToReapply": "Perfil guardado listo para volver a aplicar ({0} archivo(s)).",
   "Workspace.StatusUnknownChange": "El pak de trabajo difiere de la línea de base (sin marcador Tuning Shop).",
   "Workspace.UnknownChangeMessage": "El paquete inicial de trabajo difiere de la línea base y no tiene marcador de Tuning Shop. Si el juego se actualizó, actualice la línea de base. Si editó el archivo en otro lugar, establezca una nueva línea base a partir de un paquete original.",
-  "Workspace.UnknownChangeTitle": "Paquete de trabajo cambiado"
+  "Workspace.UnknownChangeTitle": "Paquete de trabajo cambiado",
+  "Vehicles.WheelSetNoteColumn": "Nota",
+  "Vehicles.WheelSetNoteDualRear": "Trasero dual: simples delante, gemelos detrás (WidthRear).",
+  "Vehicles.WheelSetNoteSingleWidthDual": "Variante de ancho simple de {0}: úsala si el camión no debe llevar duales traseras."
 }

@@ -610,5 +610,8 @@
   "Workspace.StatusReadyToReapply": "Сохранённый профиль готов к повторному применению ({0} файл(ов)).",
   "Workspace.StatusUnknownChange": "Рабочий pak отличается от базового уровня (нет маркера Tuning Shop).",
   "Workspace.UnknownChangeMessage": "Рабочий начальный.пак отличается от базового и не имеет маркера Tuning Shop. Если игра обновлена, обновите базовую версию. Если вы редактировали файл где-то еще, вместо этого установите новую базовую линию из исходного пакета.",
-  "Workspace.UnknownChangeTitle": "Рабочий пак изменен"
+  "Workspace.UnknownChangeTitle": "Рабочий пак изменен",
+  "Vehicles.WheelSetNoteColumn": "Заметка",
+  "Vehicles.WheelSetNoteDualRear": "Сдвоенный зад: одинарные спереди, сдвоенные сзади (WidthRear).",
+  "Vehicles.WheelSetNoteSingleWidthDual": "Одинарная по ширине версия {0} — если грузовику не нужны сдвоенные задние."
 }
