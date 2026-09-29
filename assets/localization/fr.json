@@ -614,5 +614,13 @@
   "Vehicles.WheelSetNoteColumn": "Note",
   "Vehicles.WheelSetNoteDualRear": "Essieu arrière jumelé : simples à l’avant, jumelés à l’arrière (WidthRear).",
   "Vehicles.WheelSetNoteSingleWidthDual": "Variante simple de {0} — à utiliser si le camion ne doit pas avoir de jumelés arrière.",
-  "Vehicles.DisableSuspensionRestriction": "Désactiver la restriction de suspension"
+  "Vehicles.DisableSuspensionRestriction": "Désactiver la restriction de suspension",
+  "Vehicles.CenterOfMassTitle": "Centre de masse",
+  "Vehicles.CenterOfMassLow": "Bas",
+  "Vehicles.CenterOfMassHigh": "Haut",
+  "Vehicles.CenterOfMassHint": "Hauteur du centre de masse de la cabine. Bas = plus stable ; Haut = plus facilement renversable.",
+  "Vehicles.WeightBalanceLabel": "Répartition du poids",
+  "Vehicles.WeightBalanceFront": "Avant",
+  "Vehicles.WeightBalanceRear": "Arrière",
+  "Vehicles.WeightBalanceHint": "Décale ensemble le centre de masse cabine et châssis vers l'avant ou l'arrière. Le centre est l'équilibre d'origine."
 }

@@ -614,5 +614,13 @@
   "Vehicles.WheelSetNoteColumn": "Заметка",
   "Vehicles.WheelSetNoteDualRear": "Сдвоенный зад: одинарные спереди, сдвоенные сзади (WidthRear).",
   "Vehicles.WheelSetNoteSingleWidthDual": "Одинарная по ширине версия {0} — если грузовику не нужны сдвоенные задние.",
-  "Vehicles.DisableSuspensionRestriction": "Отключить ограничение подвески"
+  "Vehicles.DisableSuspensionRestriction": "Отключить ограничение подвески",
+  "Vehicles.CenterOfMassTitle": "Центр масс",
+  "Vehicles.CenterOfMassLow": "Низко",
+  "Vehicles.CenterOfMassHigh": "Высоко",
+  "Vehicles.CenterOfMassHint": "Высота центра масс кабины. Низко = устойчивее; Высоко = легче опрокидывается.",
+  "Vehicles.WeightBalanceLabel": "Баланс веса",
+  "Vehicles.WeightBalanceFront": "Передок",
+  "Vehicles.WeightBalanceRear": "Задок",
+  "Vehicles.WeightBalanceHint": "Сдвигает центр масс кабины и рамы вперёд или назад вместе. Центр — заводской баланс."
 }

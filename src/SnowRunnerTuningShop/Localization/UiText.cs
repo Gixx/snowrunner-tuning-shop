@@ -465,6 +465,22 @@ public static class UiText
         public static string MassHint => StringResources.Get(
             "Vehicles.MassHint",
             "Primary chassis weight (PhysicsModel Body Mass). Nested body masses scale with it. Lower = easier to accelerate and tow.");
+        public static string CenterOfMassTitle => StringResources.Get(
+            "Vehicles.CenterOfMassTitle",
+            "Center of mass");
+        public static string CenterOfMassLow => StringResources.Get("Vehicles.CenterOfMassLow", "Low");
+        public static string CenterOfMassHigh => StringResources.Get("Vehicles.CenterOfMassHigh", "High");
+        public static string CenterOfMassHint => StringResources.Get(
+            "Vehicles.CenterOfMassHint",
+            "Cabin height of the center of mass. Low is more stable; High is tippier.");
+        public static string WeightBalanceLabel => StringResources.Get(
+            "Vehicles.WeightBalanceLabel",
+            "Weight balance");
+        public static string WeightBalanceFront => StringResources.Get("Vehicles.WeightBalanceFront", "Front");
+        public static string WeightBalanceRear => StringResources.Get("Vehicles.WeightBalanceRear", "Rear");
+        public static string WeightBalanceHint => StringResources.Get(
+            "Vehicles.WeightBalanceHint",
+            "Shifts cabin and chassis center of mass forward or rearward together. Center is the stock balance.");
         public static string InvalidMass => StringResources.Get(
             "Vehicles.InvalidMass",
             "Mass must be a number from 0.01 to 200000.");

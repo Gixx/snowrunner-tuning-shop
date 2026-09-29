@@ -663,5 +663,13 @@
   "Vehicles.WheelSetNoteColumn": "Megjegyzés",
   "Vehicles.WheelSetNoteDualRear": "Dual hátsó: elöl szimpla, hátul ikerkerék (WidthRear).",
   "Vehicles.WheelSetNoteSingleWidthDual": "A(z) {0} szimpla szélességű változata — ha a trucknak nem kell hátsó dual.",
-  "Vehicles.DisableSuspensionRestriction": "Futómű-korlátozás kikapcsolása"
+  "Vehicles.DisableSuspensionRestriction": "Futómű-korlátozás kikapcsolása",
+  "Vehicles.CenterOfMassTitle": "Tömegközéppont",
+  "Vehicles.CenterOfMassLow": "Low",
+  "Vehicles.CenterOfMassHigh": "High",
+  "Vehicles.CenterOfMassHint": "A kabin tömegközéppontjának magassága. Low = stabilabb; High = borulékonyabb.",
+  "Vehicles.WeightBalanceLabel": "Súlyelosztás",
+  "Vehicles.WeightBalanceFront": "Front",
+  "Vehicles.WeightBalanceRear": "Rear",
+  "Vehicles.WeightBalanceHint": "A kabin és a váz tömegközéppontját együtt tolja előre vagy hátra. Közép = gyári egyensúly."
 }

@@ -16,6 +16,7 @@ using SnowRunnerTuningShop.Core.Diagnostics;
 using SnowRunnerTuningShop.Core.Models;
 using SnowRunnerTuningShop.Core.Trucks;
 using SnowRunnerTuningShop.Core.Tuning;
+using SnowRunnerTuningShop.Core.Xml;
 using SnowRunnerTuningShop.Localization;
 using SnowRunnerTuningShop.Vehicles;
 
@@ -42,6 +43,8 @@ public partial class VehiclesView : UserControl
     private string _filter = "All";
     private bool _ready;
     private bool _suppressUnlockRankSync;
+    private bool _suppressCabinComYSync;
+    private bool _suppressWeightBalanceSync;
     private bool _suppressRegionFreeSync;
     private int _loadVersion;
     private CancellationTokenSource? _loadCts;
@@ -667,6 +670,7 @@ public partial class VehiclesView : UserControl
             MassHintText.Visibility = truck.HasMass ? Visibility.Visible : Visibility.Collapsed;
             MassSafeRangeHint.Visibility = truck.HasMass ? Visibility.Visible : Visibility.Collapsed;
             MassTextBox.Text = truck.HasMass ? TruckTuningService.FormatMass(truck.Mass) : "";
+            BindCabinCenterOfMass(truck);
             BindStoreUnlockFields(truck);
             _steerAxleRows.Clear();
             foreach (var axle in truck.SteerAxles)
@@ -857,6 +861,7 @@ public partial class VehiclesView : UserControl
         _wheelDefaultOffsetByType = new Dictionary<string, double?>(StringComparer.OrdinalIgnoreCase);
         DisableSuspensionRestrictionCheckBox.Visibility = Visibility.Collapsed;
         DisableSuspensionRestrictionCheckBox.IsChecked = false;
+        CenterOfMassBox.Visibility = Visibility.Collapsed;
     }
 
     private void BindDiffLockOptions(TruckTuningDefinition truck)
@@ -1236,6 +1241,17 @@ public partial class VehiclesView : UserControl
         {
             _currentTruck.Mass = mass;
         }
+
+        if (_currentTruck.HasCabinCenterOfMassY)
+        {
+            _currentTruck.CabinCenterOfMassY = CabinCenterOfMassYSlider.Value;
+        }
+
+        if (_currentTruck.HasLongitudinalBalance)
+        {
+            _currentTruck.LongitudinalBalanceDelta = WeightBalanceSlider.Value;
+        }
+
         _currentTruck.SteerAxles = _steerAxleRows.Select(row => row.Axle).ToList();
         _currentTruck.HornSoundSetId = HornSoundCombo.SelectedItem as string;
         _currentTruck.EngineSoundSetId = EngineSoundCombo.SelectedItem as string;
@@ -1515,6 +1531,67 @@ public partial class VehiclesView : UserControl
         UnlockRankSlider.Value = truck.UnlockByRank;
         UnlockRankTextBox.Text = truck.UnlockByRank.ToString(CultureInfo.InvariantCulture);
         _suppressUnlockRankSync = false;
+    }
+
+    private void BindCabinCenterOfMass(TruckTuningDefinition truck)
+    {
+        _suppressCabinComYSync = true;
+        _suppressWeightBalanceSync = true;
+        try
+        {
+            CabinCenterOfMassYSlider.Minimum = VehicleCabinCenterOfMassXml.MinY;
+            CabinCenterOfMassYSlider.Maximum = VehicleCabinCenterOfMassXml.MaxY;
+            WeightBalanceSlider.Minimum = VehicleLongitudinalBalanceXml.MinDelta;
+            WeightBalanceSlider.Maximum = VehicleLongitudinalBalanceXml.MaxDelta;
+
+            var showY = truck.HasCabinCenterOfMassY;
+            var showBalance = truck.HasLongitudinalBalance;
+            CenterOfMassBox.Visibility = showY || showBalance ? Visibility.Visible : Visibility.Collapsed;
+
+            CabinCenterOfMassYRow.Visibility = showY ? Visibility.Visible : Visibility.Collapsed;
+            CenterOfMassHintText.Visibility = showY ? Visibility.Visible : Visibility.Collapsed;
+            CabinCenterOfMassYSlider.Value = showY
+                ? Math.Clamp(
+                    truck.CabinCenterOfMassY,
+                    VehicleCabinCenterOfMassXml.MinY,
+                    VehicleCabinCenterOfMassXml.MaxY)
+                : 0;
+
+            WeightBalanceLabelText.Visibility = showBalance ? Visibility.Visible : Visibility.Collapsed;
+            WeightBalanceRow.Visibility = showBalance ? Visibility.Visible : Visibility.Collapsed;
+            WeightBalanceHintText.Visibility = showBalance ? Visibility.Visible : Visibility.Collapsed;
+            WeightBalanceSlider.Value = showBalance
+                ? Math.Clamp(
+                    truck.LongitudinalBalanceDelta,
+                    VehicleLongitudinalBalanceXml.MinDelta,
+                    VehicleLongitudinalBalanceXml.MaxDelta)
+                : 0;
+        }
+        finally
+        {
+            _suppressCabinComYSync = false;
+            _suppressWeightBalanceSync = false;
+        }
+    }
+
+    private void CabinCenterOfMassYSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (_suppressCabinComYSync || !_ready || _currentTruck is null || !_currentTruck.HasCabinCenterOfMassY)
+        {
+            return;
+        }
+
+        _currentTruck.CabinCenterOfMassY = e.NewValue;
+    }
+
+    private void WeightBalanceSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (_suppressWeightBalanceSync || !_ready || _currentTruck is null || !_currentTruck.HasLongitudinalBalance)
+        {
+            return;
+        }
+
+        _currentTruck.LongitudinalBalanceDelta = e.NewValue;
     }
 
     private void RefreshStoreRegionsLabel(TruckTuningDefinition truck)

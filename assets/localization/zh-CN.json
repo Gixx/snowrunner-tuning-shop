@@ -614,5 +614,13 @@
   "Vehicles.WheelSetNoteColumn": "说明",
   "Vehicles.WheelSetNoteDualRear": "后双轮：前单后双（WidthRear）。",
   "Vehicles.WheelSetNoteSingleWidthDual": "{0} 的单宽变体——用于不应装后双轮的车辆。",
-  "Vehicles.DisableSuspensionRestriction": "禁用悬挂限制"
+  "Vehicles.DisableSuspensionRestriction": "禁用悬挂限制",
+  "Vehicles.CenterOfMassTitle": "重心",
+  "Vehicles.CenterOfMassLow": "低",
+  "Vehicles.CenterOfMassHigh": "高",
+  "Vehicles.CenterOfMassHint": "驾驶室重心高度。低更稳；高更容易翻车。",
+  "Vehicles.WeightBalanceLabel": "前后配重",
+  "Vehicles.WeightBalanceFront": "前",
+  "Vehicles.WeightBalanceRear": "后",
+  "Vehicles.WeightBalanceHint": "同时前后移动驾驶室与底盘重心。中间为原厂配重。"
 }

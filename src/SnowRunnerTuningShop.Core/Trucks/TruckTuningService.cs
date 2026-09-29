@@ -301,8 +301,16 @@ public static class TruckTuningService
                 ?? throw new FileNotFoundException("Truck XML was not found in the pak.", truck.EntryPath);
 
             var text = PartXmlHelpers.ReadEntryUtf8(entry);
+            string? baselineText = null;
+            if (truck.HasLongitudinalBalance)
+            {
+                var baselinePath = PakBaselineService.RequireBaseline(pakPath);
+                using var baselineArchive = ZipFile.OpenRead(baselinePath);
+                baselineText = TryReadTruckText(baselineArchive, truck.EntryPath);
+            }
+
             replacements = new Dictionary<string, byte[]>(StringComparer.Ordinal);
-            var updated = ApplyTuning(archive, text, truck);
+            var updated = ApplyTuning(archive, text, truck, baselineText);
             var truckKey = entry.FullName.Replace('\\', '/');
             if (!string.Equals(text, updated, StringComparison.Ordinal))
             {
@@ -391,6 +399,18 @@ public static class TruckTuningService
             && VehiclePhysicsMassXml.TryReadPrimaryMass(baselineText, out var parsedBaselineMass)
             ? parsedBaselineMass
             : mass;
+        var hasCabinComY = VehicleCabinCenterOfMassXml.TryReadCabinY(text, out var cabinComY);
+        var baselineCabinComY = baselineText is not null
+            && VehicleCabinCenterOfMassXml.TryReadCabinY(baselineText, out var parsedBaselineCabinComY)
+            ? parsedBaselineCabinComY
+            : cabinComY;
+        var hasLongitudinalBalance = baselineText is not null
+            && VehicleLongitudinalBalanceXml.HasEditableBodies(baselineText);
+        var longitudinalDelta = 0.0;
+        if (hasLongitudinalBalance && baselineText is not null)
+        {
+            VehicleLongitudinalBalanceXml.TryReadDelta(text, baselineText, out longitudinalDelta);
+        }
 
         truck = new TruckTuningDefinition
         {
@@ -423,6 +443,11 @@ public static class TruckTuningService
             HasMass = hasMass,
             Mass = hasMass ? mass : 0,
             BaselineMass = hasMass ? baselineMass : 0,
+            HasCabinCenterOfMassY = hasCabinComY,
+            CabinCenterOfMassY = hasCabinComY ? cabinComY : 0,
+            BaselineCabinCenterOfMassY = hasCabinComY ? baselineCabinComY : 0,
+            HasLongitudinalBalance = hasLongitudinalBalance,
+            LongitudinalBalanceDelta = longitudinalDelta,
             SteerAxles = steerAxles,
             HornSoundSetId = sounds.HornSoundSetId,
             EngineSoundSetId = sounds.EngineSoundSetId,
@@ -433,7 +458,8 @@ public static class TruckTuningService
     private static string ApplyTuning(
         ZipArchive archive,
         string text,
-        TruckTuningDefinition truck)
+        TruckTuningDefinition truck,
+        string? baselineText = null)
     {
         var updated = ApplyFuelCapacity(text, truck.FuelCapacity);
         updated = ApplyGameDataPrice(updated, truck.Price);
@@ -443,6 +469,19 @@ public static class TruckTuningService
         if (truck.HasMass)
         {
             updated = VehiclePhysicsMassXml.ApplyPrimaryMass(updated, truck.Mass);
+        }
+
+        if (truck.HasCabinCenterOfMassY)
+        {
+            updated = VehicleCabinCenterOfMassXml.ApplyCabinY(updated, truck.CabinCenterOfMassY);
+        }
+
+        if (truck.HasLongitudinalBalance && !string.IsNullOrEmpty(baselineText))
+        {
+            updated = VehicleLongitudinalBalanceXml.ApplyDelta(
+                updated,
+                baselineText,
+                truck.LongitudinalBalanceDelta);
         }
 
         updated = TruckDiffLockXml.ApplyDiffLock(archive, updated, truck);

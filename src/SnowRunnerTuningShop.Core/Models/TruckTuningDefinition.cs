@@ -97,6 +97,24 @@ public sealed class TruckTuningDefinition
 
     public double BaselineMass { get; init; }
 
+    /// <summary>
+    /// Cabin body <c>CenterOfMassOffset</c> Y (preferred <c>BoneCabin_cdt</c>).
+    /// Lower = more stable, higher = tippier.
+    /// </summary>
+    public bool HasCabinCenterOfMassY { get; init; }
+
+    public double CabinCenterOfMassY { get; set; }
+
+    public double BaselineCabinCenterOfMassY { get; init; }
+
+    /// <summary>
+    /// Shared longitudinal CoM X delta vs baseline on significant physics bodies.
+    /// Negative = Front (nose-heavy), positive = Rear. 0 = baseline balance.
+    /// </summary>
+    public bool HasLongitudinalBalance { get; init; }
+
+    public double LongitudinalBalanceDelta { get; set; }
+
     /// <summary>Per axle/wheel <c>SteeringAngle</c> editors (file order).</summary>
     public List<TruckSteerAxle> SteerAxles { get; set; } = [];
 

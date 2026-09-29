@@ -466,6 +466,68 @@
                   </StackPanel>
                 </Border>
 
+                <Border x:Name="CenterOfMassBox"
+                        Background="{DynamicResource AppCardBrush}"
+                        BorderBrush="{DynamicResource AppCardStrokeBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="16"
+                        Margin="0,0,0,12"
+                        IsVisible="False">
+                  <StackPanel>
+                    <TextBlock x:Name="CenterOfMassTitleText"
+                               FontSize="14"
+                               FontWeight="SemiBold"
+                               Margin="0,0,0,10"/>
+                    <Grid x:Name="CabinCenterOfMassYRow" ColumnDefinitions="Auto,*,Auto" Margin="0,0,0,6">
+                      <TextBlock x:Name="CenterOfMassLowText"
+                                 VerticalAlignment="Center"
+                                 Margin="0,0,10,0"
+                                 Foreground="{DynamicResource AppMutedBrush}"/>
+                      <Slider x:Name="CabinCenterOfMassYSlider"
+                              Grid.Column="1"
+                              Minimum="-1.5"
+                              Maximum="1"
+                              VerticalAlignment="Center"
+                              PropertyChanged="CabinCenterOfMassYSlider_PropertyChanged"/>
+                      <TextBlock x:Name="CenterOfMassHighText"
+                                 Grid.Column="2"
+                                 VerticalAlignment="Center"
+                                 Margin="10,0,0,0"
+                                 Foreground="{DynamicResource AppMutedBrush}"/>
+                    </Grid>
+                    <TextBlock x:Name="CenterOfMassHintText"
+                               TextWrapping="Wrap"
+                               FontSize="11"
+                               Margin="0,0,0,12"
+                               Foreground="{DynamicResource AppMutedBrush}"/>
+                    <TextBlock x:Name="WeightBalanceLabelText"
+                               Margin="0,0,0,6"
+                               Foreground="{DynamicResource AppMutedBrush}"/>
+                    <Grid x:Name="WeightBalanceRow" ColumnDefinitions="Auto,*,Auto" Margin="0,0,0,6">
+                      <TextBlock x:Name="WeightBalanceFrontText"
+                                 VerticalAlignment="Center"
+                                 Margin="0,0,10,0"
+                                 Foreground="{DynamicResource AppMutedBrush}"/>
+                      <Slider x:Name="WeightBalanceSlider"
+                              Grid.Column="1"
+                              Minimum="-1"
+                              Maximum="1"
+                              VerticalAlignment="Center"
+                              PropertyChanged="WeightBalanceSlider_PropertyChanged"/>
+                      <TextBlock x:Name="WeightBalanceRearText"
+                                 Grid.Column="2"
+                                 VerticalAlignment="Center"
+                                 Margin="10,0,0,0"
+                                 Foreground="{DynamicResource AppMutedBrush}"/>
+                    </Grid>
+                    <TextBlock x:Name="WeightBalanceHintText"
+                               TextWrapping="Wrap"
+                               FontSize="11"
+                               Foreground="{DynamicResource AppMutedBrush}"/>
+                  </StackPanel>
+                </Border>
+
                 <Border Background="{DynamicResource AppCardBrush}"
                         BorderBrush="{DynamicResource AppCardStrokeBrush}"
                         BorderThickness="1"

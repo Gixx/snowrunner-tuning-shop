@@ -614,5 +614,13 @@
   "Vehicles.WheelSetNoteColumn": "Hinweis",
   "Vehicles.WheelSetNoteDualRear": "Doppelte Hinterräder: vorne einzeln, hinten Zwillinge (WidthRear).",
   "Vehicles.WheelSetNoteSingleWidthDual": "Einspurige Variante von {0} — wenn der LKW keine Doppelhinterräder bekommen soll.",
-  "Vehicles.DisableSuspensionRestriction": "Federungsbeschränkung deaktivieren"
+  "Vehicles.DisableSuspensionRestriction": "Federungsbeschränkung deaktivieren",
+  "Vehicles.CenterOfMassTitle": "Schwerpunkt",
+  "Vehicles.CenterOfMassLow": "Niedrig",
+  "Vehicles.CenterOfMassHigh": "Hoch",
+  "Vehicles.CenterOfMassHint": "Kabinen-Höhe des Schwerpunkts. Niedrig = stabiler; Hoch = kippanfälliger.",
+  "Vehicles.WeightBalanceLabel": "Gewichtsverteilung",
+  "Vehicles.WeightBalanceFront": "Vorne",
+  "Vehicles.WeightBalanceRear": "Hinten",
+  "Vehicles.WeightBalanceHint": "Verschiebt Kabinen- und Chassis-Schwerpunkt gemeinsam nach vorne oder hinten. Mitte = Serienbalance."
 }

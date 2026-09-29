@@ -614,5 +614,13 @@
   "Vehicles.WheelSetNoteColumn": "Примітка",
   "Vehicles.WheelSetNoteDualRear": "Здвоєний зад: одинарні спереду, здвоєні ззаду (WidthRear).",
   "Vehicles.WheelSetNoteSingleWidthDual": "Одинарна за шириною версія {0} — якщо вантажівці не потрібні здвоєні задні.",
-  "Vehicles.DisableSuspensionRestriction": "Вимкнути обмеження підвіски"
+  "Vehicles.DisableSuspensionRestriction": "Вимкнути обмеження підвіски",
+  "Vehicles.CenterOfMassTitle": "Центр мас",
+  "Vehicles.CenterOfMassLow": "Низько",
+  "Vehicles.CenterOfMassHigh": "Високо",
+  "Vehicles.CenterOfMassHint": "Висота центру мас кабіни. Низько = стійкіше; Високо = легше перекидається.",
+  "Vehicles.WeightBalanceLabel": "Баланс ваги",
+  "Vehicles.WeightBalanceFront": "Передок",
+  "Vehicles.WeightBalanceRear": "Задок",
+  "Vehicles.WeightBalanceHint": "Зсуває центр мас кабіни й рами вперед або назад разом. Центр — заводський баланс."
 }

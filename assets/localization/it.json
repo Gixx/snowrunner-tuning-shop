@@ -614,5 +614,13 @@
   "Vehicles.WheelSetNoteColumn": "Nota",
   "Vehicles.WheelSetNoteDualRear": "Posteriore dual: singoli davanti, gemelli dietro (WidthRear).",
   "Vehicles.WheelSetNoteSingleWidthDual": "Variante a larghezza singola di {0}: usala se il truck non deve avere dual posteriori.",
-  "Vehicles.DisableSuspensionRestriction": "Disattiva limitazione sospensione"
+  "Vehicles.DisableSuspensionRestriction": "Disattiva limitazione sospensione",
+  "Vehicles.CenterOfMassTitle": "Baricentro",
+  "Vehicles.CenterOfMassLow": "Basso",
+  "Vehicles.CenterOfMassHigh": "Alto",
+  "Vehicles.CenterOfMassHint": "Altezza del baricentro della cabina. Basso = più stabile; Alto = più ribaltabile.",
+  "Vehicles.WeightBalanceLabel": "Bilanciamento peso",
+  "Vehicles.WeightBalanceFront": "Davanti",
+  "Vehicles.WeightBalanceRear": "Dietro",
+  "Vehicles.WeightBalanceHint": "Sposta insieme il baricentro di cabina e telaio in avanti o indietro. Il centro è l'equilibrio di serie."
 }

@@ -614,5 +614,13 @@
   "Vehicles.WheelSetNoteColumn": "Nota",
   "Vehicles.WheelSetNoteDualRear": "Trasero dual: simples delante, gemelos detrás (WidthRear).",
   "Vehicles.WheelSetNoteSingleWidthDual": "Variante de ancho simple de {0}: úsala si el camión no debe llevar duales traseras.",
-  "Vehicles.DisableSuspensionRestriction": "Desactivar restricción de suspensión"
+  "Vehicles.DisableSuspensionRestriction": "Desactivar restricción de suspensión",
+  "Vehicles.CenterOfMassTitle": "Centro de masa",
+  "Vehicles.CenterOfMassLow": "Bajo",
+  "Vehicles.CenterOfMassHigh": "Alto",
+  "Vehicles.CenterOfMassHint": "Altura del centro de masa de la cabina. Bajo = más estable; Alto = más volcable.",
+  "Vehicles.WeightBalanceLabel": "Equilibrio de peso",
+  "Vehicles.WeightBalanceFront": "Delante",
+  "Vehicles.WeightBalanceRear": "Detrás",
+  "Vehicles.WeightBalanceHint": "Desplaza juntos el centro de masa de cabina y chasis hacia delante o atrás. El centro es el equilibrio de serie."
 }

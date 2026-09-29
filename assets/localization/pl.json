@@ -614,5 +614,13 @@
   "Vehicles.WheelSetNoteColumn": "Uwaga",
   "Vehicles.WheelSetNoteDualRear": "Podwójny tył: pojedyncze z przodu, bliźniaki z tyłu (WidthRear).",
   "Vehicles.WheelSetNoteSingleWidthDual": "Wersja pojedynczej szerokości {0} — gdy ciężarówka nie powinna mieć bliźniaków z tyłu.",
-  "Vehicles.DisableSuspensionRestriction": "Wyłącz ograniczenie zawieszenia"
+  "Vehicles.DisableSuspensionRestriction": "Wyłącz ograniczenie zawieszenia",
+  "Vehicles.CenterOfMassTitle": "Środek ciężkości",
+  "Vehicles.CenterOfMassLow": "Nisko",
+  "Vehicles.CenterOfMassHigh": "Wysoko",
+  "Vehicles.CenterOfMassHint": "Wysokość środka ciężkości kabiny. Nisko = stabilniej; Wysoko = łatwiej się wywraca.",
+  "Vehicles.WeightBalanceLabel": "Rozkład masy",
+  "Vehicles.WeightBalanceFront": "Przód",
+  "Vehicles.WeightBalanceRear": "Tył",
+  "Vehicles.WeightBalanceHint": "Przesuwa razem środek ciężkości kabiny i podwozia do przodu lub tyłu. Środek = fabryczna równowaga."
 }

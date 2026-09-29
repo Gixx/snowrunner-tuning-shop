@@ -614,5 +614,13 @@
   "Vehicles.WheelSetNoteColumn": "Huom",
   "Vehicles.WheelSetNoteDualRear": "Kaksois-taka: yksittäiset edessä, kaksoiset takana (WidthRear).",
   "Vehicles.WheelSetNoteSingleWidthDual": "Yksittäislevyinen variantti: {0} — kun kuorma-auton ei pidä saada kaksoistakarenkaita.",
-  "Vehicles.DisableSuspensionRestriction": "Poista jousituksen rajoitus"
+  "Vehicles.DisableSuspensionRestriction": "Poista jousituksen rajoitus",
+  "Vehicles.CenterOfMassTitle": "Painopiste",
+  "Vehicles.CenterOfMassLow": "Matala",
+  "Vehicles.CenterOfMassHigh": "Korkea",
+  "Vehicles.CenterOfMassHint": "Hytin painopisteen korkeus. Matala = vakaampi; Korkea = kaatuu herkemmin.",
+  "Vehicles.WeightBalanceLabel": "Painonjako",
+  "Vehicles.WeightBalanceFront": "Etu",
+  "Vehicles.WeightBalanceRear": "Taka",
+  "Vehicles.WeightBalanceHint": "Siirtää hytin ja rungon painopistettä yhdessä eteen tai taakse. Keskellä on vakiotasapaino."
 }
