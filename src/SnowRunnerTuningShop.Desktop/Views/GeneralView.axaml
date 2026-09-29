@@ -58,6 +58,26 @@
       </StackPanel>
     </Border>
 
+    <Border Background="{DynamicResource AppCardBrush}"
+            BorderBrush="{DynamicResource AppCardStrokeBrush}"
+            BorderThickness="1"
+            CornerRadius="8"
+            Padding="16">
+      <StackPanel Spacing="8">
+        <TextBlock x:Name="WeakPlantWinchTitleText" FontWeight="SemiBold"/>
+        <TextBlock x:Name="WeakPlantWinchHintText" TextWrapping="Wrap" FontSize="11" Opacity="0.8"/>
+        <CheckBox x:Name="WeakPlantWinchCheckBox"/>
+        <StackPanel Orientation="Horizontal" Spacing="8">
+          <Button x:Name="ApplyWeakPlantWinchButton"
+                  Padding="14,8"
+                  Click="ApplyWeakPlantWinchButton_Click"/>
+          <Button x:Name="RestoreWeakPlantWinchButton"
+                  Padding="14,8"
+                  Click="RestoreWeakPlantWinchButton_Click"/>
+        </StackPanel>
+      </StackPanel>
+    </Border>
+
     <TextBlock x:Name="StatusText" Opacity="0.8" TextWrapping="Wrap"/>
     <TextBlock x:Name="HintText" Opacity="0.8" TextWrapping="Wrap" IsVisible="False"/>
   </StackPanel>

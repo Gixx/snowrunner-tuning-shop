@@ -76,6 +76,7 @@ public static class GeneralService
         using var archive = ZipFile.OpenRead(pakPath);
         var camera = AnalyzeCameraCollisions(archive);
         var rockScale = EstimateRockSizeScale(pakPath, noStonesAssetsDirectory);
+        var weakWinch = AnalyzeWeakPlantWinchSockets(pakPath);
 
         return new GeneralSettings
         {
@@ -83,6 +84,9 @@ public static class GeneralService
             CameraEligibleModels = camera.EligibleModels,
             RockSizeScale = rockScale,
             RockPlantFiles = ListTrailRockPlantPaths(archive).Count(),
+            WeakPlantWinchSocketsRemoved = weakWinch.Removed,
+            WeakPlantWinchBaselineCount = weakWinch.BaselineWithWinch,
+            WeakPlantWinchCurrentCount = weakWinch.CurrentWithWinch,
         };
     }
 
@@ -135,6 +139,128 @@ public static class GeneralService
 
     public static GeneralSaveResult RestoreRockSizeFromBaseline(string pakPath, string noStonesAssetsDirectory) =>
         ApplyRockSize(pakPath, 1.0, noStonesAssetsDirectory);
+
+    /// <summary>
+    /// Removes or restores <c>WinchSocket</c> on weak/breakable plants (SmallTree, bushes, …).
+    /// Big trees and lying trunks are left unchanged.
+    /// </summary>
+    public static GeneralSaveResult ApplyWeakPlantWinchSockets(string pakPath, bool removeSockets)
+    {
+        var baselinePath = PakBaselineService.RequireBaseline(pakPath);
+        Dictionary<string, byte[]> replacements;
+
+        using (var currentArchive = ZipFile.OpenRead(pakPath))
+        using (var baselineArchive = ZipFile.OpenRead(baselinePath))
+        {
+            replacements = BuildWeakPlantWinchReplacements(currentArchive, baselineArchive, removeSockets);
+        }
+
+        var updatedFiles = replacements.Count == 0
+            ? 0
+            : InitialPakWriter.ReplaceEntries(pakPath, replacements);
+        return new GeneralSaveResult(updatedFiles);
+    }
+
+    public static GeneralSaveResult RestoreWeakPlantWinchSocketsFromBaseline(string pakPath) =>
+        ApplyWeakPlantWinchSockets(pakPath, removeSockets: false);
+
+    private static Dictionary<string, byte[]> BuildWeakPlantWinchReplacements(
+        ZipArchive currentArchive,
+        ZipArchive baselineArchive,
+        bool removeSockets)
+    {
+        var replacements = new Dictionary<string, byte[]>(StringComparer.Ordinal);
+        foreach (var entryPath in ListPlantEntryPaths(currentArchive))
+        {
+            var baselineEntry = PakEntryLocator.FindEntry(baselineArchive, entryPath);
+            if (baselineEntry is null)
+            {
+                continue;
+            }
+
+            var baselineText = ReadEntryText(baselineEntry);
+            if (!PlantWinchSocketXml.IsWeakPlant(baselineText)
+                || !PlantWinchSocketXml.HasWinchSocket(baselineText))
+            {
+                continue;
+            }
+
+            var currentEntry = PakEntryLocator.FindEntry(currentArchive, entryPath);
+            if (currentEntry is null)
+            {
+                continue;
+            }
+
+            var currentText = ReadEntryText(currentEntry);
+            var updatedText = removeSockets
+                ? PlantWinchSocketXml.StripWinchSockets(currentText)
+                : PlantWinchSocketXml.RestoreWinchSockets(currentText, baselineText);
+
+            if (!string.Equals(currentText, updatedText, StringComparison.Ordinal))
+            {
+                replacements[entryPath] = Encoding.UTF8.GetBytes(updatedText);
+            }
+        }
+
+        return replacements;
+    }
+
+    private static (bool Removed, int BaselineWithWinch, int CurrentWithWinch) AnalyzeWeakPlantWinchSockets(
+        string pakPath)
+    {
+        if (!PakBaselineService.HasBaseline(pakPath))
+        {
+            return (false, 0, 0);
+        }
+
+        var baselinePath = PakBaselineService.RequireBaseline(pakPath);
+        using var currentArchive = ZipFile.OpenRead(pakPath);
+        using var baselineArchive = ZipFile.OpenRead(baselinePath);
+
+        var baselineWithWinch = 0;
+        var currentWithWinch = 0;
+        foreach (var entryPath in ListPlantEntryPaths(baselineArchive))
+        {
+            var baselineEntry = PakEntryLocator.FindEntry(baselineArchive, entryPath);
+            if (baselineEntry is null)
+            {
+                continue;
+            }
+
+            var baselineText = ReadEntryText(baselineEntry);
+            if (!PlantWinchSocketXml.IsWeakPlant(baselineText)
+                || !PlantWinchSocketXml.HasWinchSocket(baselineText))
+            {
+                continue;
+            }
+
+            baselineWithWinch++;
+            var currentEntry = PakEntryLocator.FindEntry(currentArchive, entryPath);
+            if (currentEntry is not null
+                && PlantWinchSocketXml.HasWinchSocket(ReadEntryText(currentEntry)))
+            {
+                currentWithWinch++;
+            }
+        }
+
+        var removed = baselineWithWinch > 0 && currentWithWinch == 0;
+        return (removed, baselineWithWinch, currentWithWinch);
+    }
+
+    private static IEnumerable<string> ListPlantEntryPaths(ZipArchive archive)
+    {
+        foreach (var entry in archive.Entries)
+        {
+            var entryPath = PartPakPipeline.NormalizeEntryPath(entry.FullName);
+            if (!entryPath.EndsWith(".xml", StringComparison.OrdinalIgnoreCase)
+                || !entryPath.Contains("/classes/plants/", StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            yield return entryPath;
+        }
+    }
 
     private static Dictionary<string, byte[]> BuildCameraCollisionReplacements(
         ZipArchive currentArchive,

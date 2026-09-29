@@ -45,6 +45,11 @@ public partial class GeneralView : UserControl
         RockHintText.Text = UiText.General.RockHint;
         ApplyRockSizeButton.Content = UiText.General.ApplyRockSize;
         RestoreRockSizeButton.Content = UiText.General.RestoreRockBaseline;
+        WeakPlantWinchTitleText.Text = UiText.General.WeakPlantWinchTitle;
+        WeakPlantWinchHintText.Text = UiText.General.WeakPlantWinchHint;
+        WeakPlantWinchCheckBox.Content = UiText.General.WeakPlantWinchCheckbox;
+        ApplyWeakPlantWinchButton.Content = UiText.General.ApplyWeakPlantWinch;
+        RestoreWeakPlantWinchButton.Content = UiText.General.RestoreWeakPlantWinchBaseline;
     }
 
     private void BindCameraModes()
@@ -66,8 +71,10 @@ public partial class GeneralView : UserControl
             StatusText.Text = "";
             ApplyCameraButton.IsEnabled = false;
             ApplyRockSizeButton.IsEnabled = false;
+            ApplyWeakPlantWinchButton.IsEnabled = false;
             RestoreCameraButton.IsEnabled = false;
             RestoreRockSizeButton.IsEnabled = false;
+            RestoreWeakPlantWinchButton.IsEnabled = false;
             return;
         }
 
@@ -89,7 +96,11 @@ public partial class GeneralView : UserControl
             RockSizeSlider.Value = RockSizePresets.ScaleToPercent(settings.RockSizeScale);
             _suppressRockSlider = false;
             RefreshRockSizeLabel();
-            StatusText.Text = UiText.General.LoadedStatus(settings.CameraEligibleModels, settings.RockSizeScale);
+            WeakPlantWinchCheckBox.IsChecked = settings.WeakPlantWinchSocketsRemoved;
+            StatusText.Text = UiText.General.LoadedStatus(
+                settings.CameraEligibleModels,
+                settings.RockSizeScale,
+                settings.WeakPlantWinchSocketsRemoved);
         }
         catch (Exception ex)
         {
@@ -105,8 +116,10 @@ public partial class GeneralView : UserControl
         {
             ApplyCameraButton.IsEnabled = false;
             ApplyRockSizeButton.IsEnabled = false;
+            ApplyWeakPlantWinchButton.IsEnabled = false;
             RestoreCameraButton.IsEnabled = false;
             RestoreRockSizeButton.IsEnabled = false;
+            RestoreWeakPlantWinchButton.IsEnabled = false;
             return;
         }
 
@@ -114,8 +127,10 @@ public partial class GeneralView : UserControl
         var hasBaseline = PakBaselineService.HasBaseline(_session.PakPath);
         ApplyCameraButton.IsEnabled = canWrite;
         ApplyRockSizeButton.IsEnabled = canWrite;
+        ApplyWeakPlantWinchButton.IsEnabled = canWrite;
         RestoreCameraButton.IsEnabled = hasBaseline && canWrite;
         RestoreRockSizeButton.IsEnabled = hasBaseline && canWrite;
+        RestoreWeakPlantWinchButton.IsEnabled = hasBaseline && canWrite;
     }
 
     private async void ApplyCameraButton_Click(object? sender, RoutedEventArgs e) =>
@@ -218,6 +233,59 @@ public partial class GeneralView : UserControl
                 StatusText.Text = result.UpdatedFiles <= 0
                     ? UiText.General.NoChangesToSave
                     : UiText.General.RockSaved(result.UpdatedFiles);
+            }
+            catch (Exception ex)
+            {
+                StatusText.Text = UiText.Main.ErrorStatus(ex.Message);
+                await AppDialogs.ShowError(owner, ex.Message, UiText.General.SaveErrorTitle);
+            }
+        }
+    }
+
+    private async void ApplyWeakPlantWinchButton_Click(object? sender, RoutedEventArgs e) =>
+        await ApplyWeakPlantWinchAsync(removeSockets: WeakPlantWinchCheckBox.IsChecked == true);
+
+    private async void RestoreWeakPlantWinchButton_Click(object? sender, RoutedEventArgs e)
+    {
+        WeakPlantWinchCheckBox.IsChecked = false;
+        await ApplyWeakPlantWinchAsync(removeSockets: false);
+    }
+
+    private async Task ApplyWeakPlantWinchAsync(bool removeSockets)
+    {
+        if (OwnerWindow is not { } owner)
+        {
+            return;
+        }
+
+        if (!await PakWriteUi.TryProceed(owner, _session))
+        {
+            return;
+        }
+
+        if (_session is null || string.IsNullOrWhiteSpace(_session.PakPath))
+        {
+            StatusText.Text = UiText.General.LoadPakHint;
+            return;
+        }
+
+        if (!PakBaselineService.HasBaseline(_session.PakPath))
+        {
+            await AppDialogs.ShowWarning(owner, UiText.Main.BaselineMissingShort, UiText.Main.BaselineTitle);
+            return;
+        }
+
+        using (PakWriteUi.BeginBusyWrite(owner, ApplyWeakPlantWinchButton, RestoreWeakPlantWinchButton))
+        {
+            try
+            {
+                var pakPath = _session.PakPath;
+                var result = await Task.Run(() =>
+                    GeneralService.ApplyWeakPlantWinchSockets(pakPath, removeSockets));
+                ReloadFromPak();
+                StatusText.Text = result.UpdatedFiles <= 0
+                    ? UiText.General.NoChangesToSave
+                    : UiText.General.WeakPlantWinchSaved(result.UpdatedFiles);
             }
             catch (Exception ex)
             {

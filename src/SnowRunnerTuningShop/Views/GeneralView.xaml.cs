@@ -50,8 +50,10 @@ public partial class GeneralView : UserControl
             StatusText.Text = "";
             ApplyCameraButton.IsEnabled = false;
             ApplyRockSizeButton.IsEnabled = false;
+            ApplyWeakPlantWinchButton.IsEnabled = false;
             RestoreCameraButton.IsEnabled = false;
             RestoreRockSizeButton.IsEnabled = false;
+            RestoreWeakPlantWinchButton.IsEnabled = false;
             return;
         }
 
@@ -70,7 +72,11 @@ public partial class GeneralView : UserControl
             RockSizeSlider.Value = RockSizePresets.ScaleToPercent(settings.RockSizeScale);
             _suppressRockSlider = false;
             RefreshRockSizeLabel();
-            StatusText.Text = UiText.General.LoadedStatus(settings.CameraEligibleModels, settings.RockSizeScale);
+            WeakPlantWinchCheckBox.IsChecked = settings.WeakPlantWinchSocketsRemoved;
+            StatusText.Text = UiText.General.LoadedStatus(
+                settings.CameraEligibleModels,
+                settings.RockSizeScale,
+                settings.WeakPlantWinchSocketsRemoved);
         }
         catch (Exception ex)
         {
@@ -86,8 +92,10 @@ public partial class GeneralView : UserControl
         {
             ApplyCameraButton.IsEnabled = false;
             ApplyRockSizeButton.IsEnabled = false;
+            ApplyWeakPlantWinchButton.IsEnabled = false;
             RestoreCameraButton.IsEnabled = false;
             RestoreRockSizeButton.IsEnabled = false;
+            RestoreWeakPlantWinchButton.IsEnabled = false;
             return;
         }
 
@@ -95,8 +103,10 @@ public partial class GeneralView : UserControl
         var hasBaseline = PakBaselineService.HasBaseline(_session.PakPath);
         ApplyCameraButton.IsEnabled = canWrite;
         ApplyRockSizeButton.IsEnabled = canWrite;
+        ApplyWeakPlantWinchButton.IsEnabled = canWrite;
         RestoreCameraButton.IsEnabled = hasBaseline && canWrite;
         RestoreRockSizeButton.IsEnabled = hasBaseline && canWrite;
+        RestoreWeakPlantWinchButton.IsEnabled = hasBaseline && canWrite;
     }
 
     private void ApplyCameraButton_Click(object sender, RoutedEventArgs e) =>
@@ -195,6 +205,56 @@ public partial class GeneralView : UserControl
                 StatusText.Text = result.UpdatedFiles <= 0
                     ? UiText.General.NoChangesToSave
                     : UiText.General.RockSaved(result.UpdatedFiles);
+            }
+            catch (Exception ex)
+            {
+                StatusText.Text = UiText.Main.ErrorStatus(ex.Message);
+                MessageBox.Show(ex.Message, UiText.General.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+    }
+
+    private void ApplyWeakPlantWinchButton_Click(object sender, RoutedEventArgs e) =>
+        ApplyWeakPlantWinch(removeSockets: WeakPlantWinchCheckBox.IsChecked == true);
+
+    private void RestoreWeakPlantWinchButton_Click(object sender, RoutedEventArgs e)
+    {
+        WeakPlantWinchCheckBox.IsChecked = false;
+        ApplyWeakPlantWinch(removeSockets: false);
+    }
+
+    private void ApplyWeakPlantWinch(bool removeSockets)
+    {
+        if (!PakWriteUi.TryProceed(_session))
+        {
+            return;
+        }
+
+        if (_session is null || string.IsNullOrWhiteSpace(_session.PakPath))
+        {
+            StatusText.Text = UiText.General.LoadPakHint;
+            return;
+        }
+
+        if (!PakBaselineService.HasBaseline(_session.PakPath))
+        {
+            MessageBox.Show(
+                UiText.Main.BaselineMissingShort,
+                UiText.Main.BaselineTitle,
+                MessageBoxButton.OK,
+                MessageBoxImage.Warning);
+            return;
+        }
+
+        using (PakWriteUi.BeginBusyWrite(ApplyWeakPlantWinchButton, RestoreWeakPlantWinchButton))
+        {
+            try
+            {
+                var result = GeneralService.ApplyWeakPlantWinchSockets(_session.PakPath, removeSockets);
+                ReloadFromPak();
+                StatusText.Text = result.UpdatedFiles <= 0
+                    ? UiText.General.NoChangesToSave
+                    : UiText.General.WeakPlantWinchSaved(result.UpdatedFiles);
             }
             catch (Exception ex)
             {

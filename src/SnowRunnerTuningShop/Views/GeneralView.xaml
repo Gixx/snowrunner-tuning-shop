@@ -100,6 +100,39 @@
                 </StackPanel>
             </Border>
 
+            <Border Background="{DynamicResource CardBackgroundFillColorSecondaryBrush}"
+                    BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="16"
+                    Margin="0,0,0,12">
+                <StackPanel>
+                    <TextBlock Text="{x:Static loc:UiText+General.WeakPlantWinchTitle}"
+                               FontWeight="SemiBold"
+                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                               Margin="0,0,0,8"/>
+                    <TextBlock Text="{x:Static loc:UiText+General.WeakPlantWinchHint}"
+                               TextWrapping="Wrap"
+                               FontSize="11"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                               Margin="0,0,0,12"/>
+                    <CheckBox x:Name="WeakPlantWinchCheckBox"
+                              Content="{x:Static loc:UiText+General.WeakPlantWinchCheckbox}"
+                              Margin="0,0,0,12"/>
+                    <StackPanel Orientation="Horizontal">
+                        <Button x:Name="ApplyWeakPlantWinchButton"
+                                Content="{x:Static loc:UiText+General.ApplyWeakPlantWinch}"
+                                Padding="14,8"
+                                Margin="0,0,8,0"
+                                Click="ApplyWeakPlantWinchButton_Click"/>
+                        <Button x:Name="RestoreWeakPlantWinchButton"
+                                Content="{x:Static loc:UiText+General.RestoreWeakPlantWinchBaseline}"
+                                Padding="14,8"
+                                Click="RestoreWeakPlantWinchButton_Click"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
             <TextBlock x:Name="StatusText"
                        Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                        TextWrapping="Wrap"/>

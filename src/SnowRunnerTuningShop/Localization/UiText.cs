@@ -268,6 +268,26 @@ public static class UiText
         public static string RockSizeDefault => StringResources.Get("General.RockSizeDefault", "Rock physics: Vanilla (baseline)");
         public static string ApplyRockSize => StringResources.Get("General.ApplyRockSize", "Apply rock size");
         public static string RestoreRockBaseline => StringResources.Get("General.RestoreRockBaseline", "Restore rock baseline");
+        public static string WeakPlantWinchTitle => StringResources.Get(
+            "General.WeakPlantWinchTitle",
+            "Weak plant winch points");
+        public static string WeakPlantWinchHint => StringResources.Get(
+            "General.WeakPlantWinchHint",
+            "Small trees, bushes, and similar breakable plants have WinchSocket entries that snap under load and clutter quick-winch. Removing them leaves big trees and lying trunks winchable.");
+        public static string WeakPlantWinchCheckbox => StringResources.Get(
+            "General.WeakPlantWinchCheckbox",
+            "Remove winch points from weak trees and bushes");
+        public static string ApplyWeakPlantWinch => StringResources.Get(
+            "General.ApplyWeakPlantWinch",
+            "Apply plant winch setting");
+        public static string RestoreWeakPlantWinchBaseline => StringResources.Get(
+            "General.RestoreWeakPlantWinchBaseline",
+            "Restore plant winch baseline");
+        public static string WeakPlantWinchSaved(int files) =>
+            StringResources.Format(
+                "General.WeakPlantWinchSaved",
+                "Weak plant winch points updated in {0} pak file(s). Reload the game to test.",
+                files);
         public static string NoChangesToSave => StringResources.Get("General.NoChangesToSave", "No general changes were detected to save.");
         public static string SaveSuccessTitle => StringResources.Get("General.SaveSuccessTitle", "Saved successfully");
         public static string SaveErrorTitle => StringResources.Get("General.SaveErrorTitle", "Save error");
@@ -275,12 +295,15 @@ public static class UiText
             StringResources.Format("General.CameraSaved", "Camera collisions updated in {0} model file(s). Reload the game to test.", files);
         public static string RockSaved(int files) =>
             StringResources.Format("General.RockSaved", "Trail rock settings updated in {0} pak file(s). Reload the game to test.", files);
-        public static string LoadedStatus(int cameraModels, double rockScale) =>
+        public static string LoadedStatus(int cameraModels, double rockScale, bool weakPlantWinchRemoved) =>
             StringResources.Format(
                 "General.LoadedStatus",
-                "Detected {0} camera-eligible models; reference rock scale {1:0%}.",
+                "Detected {0} camera-eligible models; reference rock scale {1:0%}; weak plant winch points {2}.",
                 cameraModels,
-                rockScale);
+                rockScale,
+                weakPlantWinchRemoved
+                    ? StringResources.Get("General.WeakPlantWinchStatusRemoved", "removed")
+                    : StringResources.Get("General.WeakPlantWinchStatusPresent", "present"));
 
         public static string RockPhysicsCaption(int percent)
         {
