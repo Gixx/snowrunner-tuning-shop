@@ -18,6 +18,11 @@ public static class TruckCompatibleWheelsService
 {
     public const double MaxExtraScale = 0.99;
     public const double InchesPerScale = 79.0;
+    /// <summary>
+    /// Raised MaxWheelRadiusWithoutSuspension so stock/low suspension allows any practical wheel scale
+    /// (allowed radius ≈ this value + suspension Height).
+    /// </summary>
+    public const double SuspensionRestrictionDisabledValue = 2.0;
     private const double ScaleEpsilon = 0.0005;
     private const double MinStep = 0.03;
     private const double MaxStep = 0.05;
@@ -25,6 +30,10 @@ public static class TruckCompatibleWheelsService
 
     private static readonly Regex CompatibleWheelsRegex = new(
         @"<CompatibleWheels\b(?<attrs>[^<>]*)/?>",
+        RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+
+    private static readonly Regex SuspensionSocketRegex = new(
+        @"<SuspensionSocket\b(?<attrs>[^<>]*?)\s*/?>",
         RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
     private static readonly Regex TruckTireOpenTagRegex = new(
@@ -159,7 +168,8 @@ public static class TruckCompatibleWheelsService
         string pakPath,
         string truckEntryPath,
         IReadOnlyList<double> enabledExtraScales,
-        IReadOnlyList<TruckWheelOffsetEdit> offsets)
+        IReadOnlyList<TruckWheelOffsetEdit> offsets,
+        bool disableSuspensionRestriction = false)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(pakPath);
         ArgumentException.ThrowIfNullOrWhiteSpace(truckEntryPath);
@@ -178,7 +188,12 @@ public static class TruckCompatibleWheelsService
 
             var workingText = PartXmlHelpers.ReadEntryUtf8(workingEntry);
             var baselineText = PartXmlHelpers.ReadEntryUtf8(baselineEntry);
-            var updated = ApplySizesToText(workingText, baselineText, enabledExtraScales, offsets);
+            var updated = ApplySizesToText(
+                workingText,
+                baselineText,
+                enabledExtraScales,
+                offsets,
+                disableSuspensionRestriction);
             var key = workingEntry.FullName.Replace('\\', '/');
             replacements = new Dictionary<string, byte[]>(StringComparer.Ordinal);
             if (!string.Equals(workingText, updated, StringComparison.Ordinal))
@@ -244,8 +259,9 @@ public static class TruckCompatibleWheelsService
         string workingXml,
         string baselineXml,
         IReadOnlyList<double> enabledExtraScales,
-        IReadOnlyList<TruckWheelOffsetEdit> offsets) =>
-        ApplySizesToText(workingXml, baselineXml, enabledExtraScales, offsets);
+        IReadOnlyList<TruckWheelOffsetEdit> offsets,
+        bool disableSuspensionRestriction = false) =>
+        ApplySizesToText(workingXml, baselineXml, enabledExtraScales, offsets, disableSuspensionRestriction);
 
     /// <summary>Test hook: set assign/unassign rewrite.</summary>
     internal static string ApplySetsToTextForTests(
@@ -338,14 +354,20 @@ public static class TruckCompatibleWheelsService
             offsetRows,
             defaultOffsetByType,
             assignedTypes.Length,
-            CompatibleWheelsRegex.IsMatch(workingXml));
+            CompatibleWheelsRegex.IsMatch(workingXml),
+            TryGetMaxWheelRadiusWithoutSuspension(workingXml, out var currentMax),
+            TryGetMaxWheelRadiusWithoutSuspension(baselineXml, out var baselineMax),
+            currentMax,
+            baselineMax,
+            IsSuspensionRestrictionDisabled(currentMax, baselineMax));
     }
 
     private static string ApplySizesToText(
         string workingXml,
         string baselineXml,
         IReadOnlyList<double> enabledExtraScales,
-        IReadOnlyList<TruckWheelOffsetEdit> offsets)
+        IReadOnlyList<TruckWheelOffsetEdit> offsets,
+        bool disableSuspensionRestriction)
     {
         var baselineEntries = ParseEntries(baselineXml);
         if (baselineEntries.Count == 0)
@@ -396,10 +418,13 @@ public static class TruckCompatibleWheelsService
             }
         }
 
-        return RewriteCompatibleWheels(
-            workingXml,
-            keep: e => vanillaScales.Any(v => ScalesEqual(v, e.Scale)),
-            extrasToEnsure: desiredExtras);
+        return ApplySuspensionRestriction(
+            RewriteCompatibleWheels(
+                workingXml,
+                keep: e => vanillaScales.Any(v => ScalesEqual(v, e.Scale)),
+                extrasToEnsure: desiredExtras),
+            baselineXml,
+            disableSuspensionRestriction);
     }
 
     private static string ApplySetsToText(string truckXml, IReadOnlyList<string> selectedSetIds)
@@ -761,6 +786,88 @@ public static class TruckCompatibleWheelsService
         return new WheelEntry(type?.Trim() ?? "", scale, offset);
     }
 
+    private static string ApplySuspensionRestriction(
+        string workingXml,
+        string baselineXml,
+        bool disable)
+    {
+        var hasBaseline = TryGetMaxWheelRadiusAttribute(baselineXml, out var baselineRaw, out var baselineMax);
+        if (!TryGetMaxWheelRadiusAttribute(workingXml, out _, out _) && !hasBaseline)
+        {
+            return workingXml;
+        }
+
+        if (!SuspensionSocketRegex.IsMatch(workingXml))
+        {
+            return workingXml;
+        }
+
+        if (disable)
+        {
+            var target = hasBaseline
+                ? Math.Max(SuspensionRestrictionDisabledValue, baselineMax)
+                : SuspensionRestrictionDisabledValue;
+            return SetMaxWheelRadiusWithoutSuspension(
+                workingXml,
+                XmlNumericFormatting.Format(target, preferInteger: false, keepTrailingDotZero: true));
+        }
+
+        if (!hasBaseline || string.IsNullOrWhiteSpace(baselineRaw))
+        {
+            return workingXml;
+        }
+
+        return SetMaxWheelRadiusWithoutSuspension(workingXml, baselineRaw);
+    }
+
+    private static bool IsSuspensionRestrictionDisabled(double currentMax, double baselineMax) =>
+        currentMax > baselineMax + ScaleEpsilon
+        || currentMax >= SuspensionRestrictionDisabledValue - ScaleEpsilon;
+
+    private static bool TryGetMaxWheelRadiusWithoutSuspension(string truckXml, out double value) =>
+        TryGetMaxWheelRadiusAttribute(truckXml, out _, out value);
+
+    private static bool TryGetMaxWheelRadiusAttribute(string truckXml, out string raw, out double value)
+    {
+        raw = "";
+        value = 0;
+        var match = SuspensionSocketRegex.Match(truckXml);
+        if (!match.Success)
+        {
+            return false;
+        }
+
+        var attrs = ParseAttributes(match.Groups["attrs"].Value);
+        if (!attrs.TryGetValue("MaxWheelRadiusWithoutSuspension", out var attrRaw)
+            || string.IsNullOrWhiteSpace(attrRaw))
+        {
+            return false;
+        }
+
+        raw = attrRaw;
+        return TryParseDouble(attrRaw, out value);
+    }
+
+    private static string SetMaxWheelRadiusWithoutSuspension(string truckXml, string value)
+    {
+        var match = SuspensionSocketRegex.Match(truckXml);
+        if (!match.Success)
+        {
+            return truckXml;
+        }
+
+        var attrs = match.Groups["attrs"].Value;
+        if (!VehicleGameDataXml.SetOrReplaceAttribute(ref attrs, "MaxWheelRadiusWithoutSuspension", value))
+        {
+            return truckXml;
+        }
+
+        return string.Concat(
+            truckXml.AsSpan(0, match.Groups["attrs"].Index),
+            attrs,
+            truckXml.AsSpan(match.Groups["attrs"].Index + match.Groups["attrs"].Length));
+    }
+
     internal static IReadOnlyList<string> ExtractTireLabelsForTests(
         string content,
         IReadOnlyDictionary<string, string>? strings) =>
@@ -980,7 +1087,12 @@ public sealed record TruckWheelSizesSnapshot(
     IReadOnlyList<TruckWheelOffsetRow> OffsetRows,
     IReadOnlyDictionary<string, double?> DefaultOffsetByType,
     int AssignedSetCount,
-    bool HasCompatibleWheels);
+    bool HasCompatibleWheels,
+    bool HasSuspensionWheelRestriction = false,
+    bool HasBaselineSuspensionWheelRestriction = false,
+    double CurrentMaxWheelRadiusWithoutSuspension = 0,
+    double BaselineMaxWheelRadiusWithoutSuspension = 0,
+    bool SuspensionRestrictionDisabled = false);
 
 public enum TruckWheelSetNoteKind
 {

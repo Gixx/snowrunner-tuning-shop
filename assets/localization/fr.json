@@ -613,5 +613,6 @@
   "Workspace.UnknownChangeTitle": "Le pack de travail a changé",
   "Vehicles.WheelSetNoteColumn": "Note",
   "Vehicles.WheelSetNoteDualRear": "Essieu arrière jumelé : simples à l’avant, jumelés à l’arrière (WidthRear).",
-  "Vehicles.WheelSetNoteSingleWidthDual": "Variante simple de {0} — à utiliser si le camion ne doit pas avoir de jumelés arrière."
+  "Vehicles.WheelSetNoteSingleWidthDual": "Variante simple de {0} — à utiliser si le camion ne doit pas avoir de jumelés arrière.",
+  "Vehicles.DisableSuspensionRestriction": "Désactiver la restriction de suspension"
 }

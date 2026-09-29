@@ -179,6 +179,66 @@ public sealed class TruckCompatibleWheelsServiceTests
         Assert.Contains("""Scale="0.62" Type="wheels_medium_highway_double" """, updated, StringComparison.Ordinal);
     }
 
+    [Fact]
+    public void Snapshot_reports_suspension_wheel_restriction()
+    {
+        const string withRestriction =
+            """
+            <Truck>
+              <TruckData>
+                <SuspensionSocket MaxWheelRadiusWithoutSuspension="0.105" Type="suspensions_scout" />
+                <CompatibleWheels Scale="0.4" Type="wheels_scout1" />
+                <CompatibleWheels Scale="0.45" Type="wheels_scout1" />
+              </TruckData>
+            </Truck>
+            """;
+
+        var snapshot = TruckCompatibleWheelsService.BuildSizesSnapshotForTests(withRestriction, withRestriction);
+        Assert.True(snapshot.HasSuspensionWheelRestriction);
+        Assert.True(snapshot.HasBaselineSuspensionWheelRestriction);
+        Assert.Equal(0.105, snapshot.BaselineMaxWheelRadiusWithoutSuspension);
+        Assert.False(snapshot.SuspensionRestrictionDisabled);
+    }
+
+    [Fact]
+    public void Apply_sizes_can_disable_and_restore_suspension_restriction()
+    {
+        const string baseline =
+            """
+            <Truck>
+              <TruckData>
+                <SuspensionSocket MaxWheelRadiusWithoutSuspension="0.105" Type="suspensions_scout" />
+                <CompatibleWheels Scale="0.4" Type="wheels_scout1" />
+                <CompatibleWheels Scale="0.45" Type="wheels_scout1" />
+              </TruckData>
+            </Truck>
+            """;
+
+        var disabled = TruckCompatibleWheelsService.ApplySizesToTextForTests(
+            baseline,
+            baseline,
+            enabledExtraScales: [],
+            offsets: [],
+            disableSuspensionRestriction: true);
+
+        AssertSafe(disabled, "disable suspension restriction");
+        Assert.Contains("""MaxWheelRadiusWithoutSuspension="2.0" """, disabled, StringComparison.Ordinal);
+
+        var disabledSnapshot = TruckCompatibleWheelsService.BuildSizesSnapshotForTests(disabled, baseline);
+        Assert.True(disabledSnapshot.SuspensionRestrictionDisabled);
+
+        var restored = TruckCompatibleWheelsService.ApplySizesToTextForTests(
+            disabled,
+            baseline,
+            enabledExtraScales: [],
+            offsets: [],
+            disableSuspensionRestriction: false);
+
+        AssertSafe(restored, "restore suspension restriction");
+        Assert.Contains("""MaxWheelRadiusWithoutSuspension="0.105" """, restored, StringComparison.Ordinal);
+        Assert.False(TruckCompatibleWheelsService.BuildSizesSnapshotForTests(restored, baseline).SuspensionRestrictionDisabled);
+    }
+
     private static void AssertSafe(string xml, string context)
     {
         Assert.True(

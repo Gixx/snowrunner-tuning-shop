@@ -148,6 +148,7 @@ public partial class VehiclesView : UserControl
         WheelSizesLabelText.Text = UiText.Vehicles.WheelSizesLabel;
         WheelSizesWarningText.Text = UiText.Vehicles.WheelSizesWarning;
         WheelSizesHintText.Text = UiText.Vehicles.WheelSizesHint;
+        DisableSuspensionRestrictionCheckBox.Content = UiText.Vehicles.DisableSuspensionRestriction;
         WheelSetsLabelText.Text = UiText.Vehicles.WheelSetsLabel;
         WheelSetsHintText.Text = UiText.Vehicles.WheelSetsHint;
         WheelSetsButton.Content = UiText.Vehicles.WheelSetsButton(0);
@@ -804,6 +805,8 @@ public partial class VehiclesView : UserControl
         _wheelOffsetRows.Clear();
         _wheelAssignedTypes = [];
         _wheelDefaultOffsetByType = new Dictionary<string, double?>(StringComparer.OrdinalIgnoreCase);
+        DisableSuspensionRestrictionCheckBox.IsVisible = false;
+        DisableSuspensionRestrictionCheckBox.IsChecked = false;
     }
 
     private void BindDiffLockOptions(TruckTuningDefinition truck)
@@ -895,6 +898,8 @@ public partial class VehiclesView : UserControl
             _wheelDefaultOffsetByType = new Dictionary<string, double?>(StringComparer.OrdinalIgnoreCase);
             WheelSetsButton.Content = UiText.Vehicles.WheelSetsButton(0);
             WheelOffsetsExpander.IsEnabled = false;
+            DisableSuspensionRestrictionCheckBox.IsVisible = false;
+            DisableSuspensionRestrictionCheckBox.IsChecked = false;
 
             if (string.IsNullOrWhiteSpace(_session?.PakPath))
             {
@@ -930,6 +935,11 @@ public partial class VehiclesView : UserControl
             WheelSetsButton.Content = UiText.Vehicles.WheelSetsButton(snapshot.AssignedSetCount);
             WheelSetsButton.IsEnabled = snapshot.HasCompatibleWheels && PakWriteUi.CanWrite(_session);
             WheelOffsetsExpander.IsEnabled = _wheelOffsetRows.Count > 0;
+            var showRestriction = snapshot.HasBaselineSuspensionWheelRestriction
+                || snapshot.HasSuspensionWheelRestriction;
+            DisableSuspensionRestrictionCheckBox.IsVisible = showRestriction;
+            DisableSuspensionRestrictionCheckBox.IsChecked = snapshot.SuspensionRestrictionDisabled;
+            DisableSuspensionRestrictionCheckBox.IsEnabled = PakWriteUi.CanWrite(_session);
         }
         finally
         {
@@ -1314,7 +1324,12 @@ public partial class VehiclesView : UserControl
                 var offsets = wheelOffsets;
                 var result = await Task.Run(() => TruckTuningService.SaveTruckChanges(pakPath, truck));
                 var wheelsResult = await Task.Run(() =>
-                    TruckCompatibleWheelsService.ApplySizes(pakPath, truck.EntryPath, extras, offsets));
+                    TruckCompatibleWheelsService.ApplySizes(
+                        pakPath,
+                        truck.EntryPath,
+                        extras,
+                        offsets,
+                        disableSuspensionRestriction: DisableSuspensionRestrictionCheckBox.IsChecked == true));
                 _trucksPakPath = null;
                 await LoadTuningAsync(_currentCard);
                 var updated = result.UpdatedFiles + wheelsResult.UpdatedFiles;

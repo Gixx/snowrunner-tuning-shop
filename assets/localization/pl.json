@@ -613,5 +613,6 @@
   "Workspace.UnknownChangeTitle": "Pakiet roboczy uległ zmianie",
   "Vehicles.WheelSetNoteColumn": "Uwaga",
   "Vehicles.WheelSetNoteDualRear": "Podwójny tył: pojedyncze z przodu, bliźniaki z tyłu (WidthRear).",
-  "Vehicles.WheelSetNoteSingleWidthDual": "Wersja pojedynczej szerokości {0} — gdy ciężarówka nie powinna mieć bliźniaków z tyłu."
+  "Vehicles.WheelSetNoteSingleWidthDual": "Wersja pojedynczej szerokości {0} — gdy ciężarówka nie powinna mieć bliźniaków z tyłu.",
+  "Vehicles.DisableSuspensionRestriction": "Wyłącz ograniczenie zawieszenia"
 }

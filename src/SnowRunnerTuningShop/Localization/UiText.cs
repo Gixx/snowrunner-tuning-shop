@@ -562,6 +562,9 @@ public static class UiText
         public static string WheelSizesHint => StringResources.Get(
             "Vehicles.WheelSizesHint",
             "Baseline sizes stay assigned. Optional larger sizes (if offered) are saved with Save changes.");
+        public static string DisableSuspensionRestriction => StringResources.Get(
+            "Vehicles.DisableSuspensionRestriction",
+            "Disable suspension restriction");
         public static string WheelOffsetsAccordion => StringResources.Get(
             "Vehicles.WheelOffsetsAccordion",
             "OffsetZ for extra sizes");

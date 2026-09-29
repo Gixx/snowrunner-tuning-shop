@@ -613,5 +613,6 @@
   "Workspace.UnknownChangeTitle": "Pacote de trabalho alterado",
   "Vehicles.WheelSetNoteColumn": "Nota",
   "Vehicles.WheelSetNoteDualRear": "Traseira dual: simples à frente, gémeas atrás (WidthRear).",
-  "Vehicles.WheelSetNoteSingleWidthDual": "Variante de largura simples de {0} — use quando o camião não deve ter gémeas traseiras."
+  "Vehicles.WheelSetNoteSingleWidthDual": "Variante de largura simples de {0} — use quando o camião não deve ter gémeas traseiras.",
+  "Vehicles.DisableSuspensionRestriction": "Desativar restrição da suspensão"
 }

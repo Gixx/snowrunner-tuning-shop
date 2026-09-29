@@ -657,6 +657,9 @@
                         </DataTemplate>
                       </ItemsControl.ItemTemplate>
                     </ItemsControl>
+                    <CheckBox x:Name="DisableSuspensionRestrictionCheckBox"
+                              Margin="0,0,0,8"
+                              IsVisible="False"/>
                     <TextBlock x:Name="WheelSizesWarningText"
                                TextWrapping="Wrap"
                                FontSize="11"

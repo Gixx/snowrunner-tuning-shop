@@ -613,5 +613,6 @@
   "Workspace.UnknownChangeTitle": "Рабочий пак изменен",
   "Vehicles.WheelSetNoteColumn": "Заметка",
   "Vehicles.WheelSetNoteDualRear": "Сдвоенный зад: одинарные спереди, сдвоенные сзади (WidthRear).",
-  "Vehicles.WheelSetNoteSingleWidthDual": "Одинарная по ширине версия {0} — если грузовику не нужны сдвоенные задние."
+  "Vehicles.WheelSetNoteSingleWidthDual": "Одинарная по ширине версия {0} — если грузовику не нужны сдвоенные задние.",
+  "Vehicles.DisableSuspensionRestriction": "Отключить ограничение подвески"
 }

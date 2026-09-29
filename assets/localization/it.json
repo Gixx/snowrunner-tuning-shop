@@ -613,5 +613,6 @@
   "Workspace.UnknownChangeTitle": "Pak di lavoro modificato",
   "Vehicles.WheelSetNoteColumn": "Nota",
   "Vehicles.WheelSetNoteDualRear": "Posteriore dual: singoli davanti, gemelli dietro (WidthRear).",
-  "Vehicles.WheelSetNoteSingleWidthDual": "Variante a larghezza singola di {0}: usala se il truck non deve avere dual posteriori."
+  "Vehicles.WheelSetNoteSingleWidthDual": "Variante a larghezza singola di {0}: usala se il truck non deve avere dual posteriori.",
+  "Vehicles.DisableSuspensionRestriction": "Disattiva limitazione sospensione"
 }

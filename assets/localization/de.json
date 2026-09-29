@@ -613,5 +613,6 @@
   "Workspace.UnknownChangeTitle": "Arbeitspaket geändert",
   "Vehicles.WheelSetNoteColumn": "Hinweis",
   "Vehicles.WheelSetNoteDualRear": "Doppelte Hinterräder: vorne einzeln, hinten Zwillinge (WidthRear).",
-  "Vehicles.WheelSetNoteSingleWidthDual": "Einspurige Variante von {0} — wenn der LKW keine Doppelhinterräder bekommen soll."
+  "Vehicles.WheelSetNoteSingleWidthDual": "Einspurige Variante von {0} — wenn der LKW keine Doppelhinterräder bekommen soll.",
+  "Vehicles.DisableSuspensionRestriction": "Federungsbeschränkung deaktivieren"
 }

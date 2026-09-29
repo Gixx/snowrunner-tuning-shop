@@ -613,5 +613,6 @@
   "Workspace.UnknownChangeTitle": "Työpak muuttui",
   "Vehicles.WheelSetNoteColumn": "Huom",
   "Vehicles.WheelSetNoteDualRear": "Kaksois-taka: yksittäiset edessä, kaksoiset takana (WidthRear).",
-  "Vehicles.WheelSetNoteSingleWidthDual": "Yksittäislevyinen variantti: {0} — kun kuorma-auton ei pidä saada kaksoistakarenkaita."
+  "Vehicles.WheelSetNoteSingleWidthDual": "Yksittäislevyinen variantti: {0} — kun kuorma-auton ei pidä saada kaksoistakarenkaita.",
+  "Vehicles.DisableSuspensionRestriction": "Poista jousituksen rajoitus"
 }

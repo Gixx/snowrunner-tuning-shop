@@ -662,5 +662,6 @@
   "Workspace.UnknownChangeTitle": "A munka-pak megváltozott",
   "Vehicles.WheelSetNoteColumn": "Megjegyzés",
   "Vehicles.WheelSetNoteDualRear": "Dual hátsó: elöl szimpla, hátul ikerkerék (WidthRear).",
-  "Vehicles.WheelSetNoteSingleWidthDual": "A(z) {0} szimpla szélességű változata — ha a trucknak nem kell hátsó dual."
+  "Vehicles.WheelSetNoteSingleWidthDual": "A(z) {0} szimpla szélességű változata — ha a trucknak nem kell hátsó dual.",
+  "Vehicles.DisableSuspensionRestriction": "Futómű-korlátozás kikapcsolása"
 }

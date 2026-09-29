@@ -573,6 +573,7 @@
   "Vehicles.WheelSizesLabel": "Wheel sizes",
   "Vehicles.WheelSizesWarning": "Larger wheels can clip into the body, suspension, or ground and may look wrong in-game. Extra sizes stay at or below Scale 0.99.",
   "Vehicles.WheelSizesHint": "Baseline sizes stay assigned. Optional larger sizes (if offered) are saved with Save changes.",
+  "Vehicles.DisableSuspensionRestriction": "Disable suspension restriction",
   "Vehicles.WheelOffsetsAccordion": "OffsetZ for extra sizes",
   "Vehicles.WheelOffsetSizeColumn": "Size",
   "Vehicles.WheelOffsetSetColumn": "Set",

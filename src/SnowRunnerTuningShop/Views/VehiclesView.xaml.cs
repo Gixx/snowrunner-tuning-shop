@@ -855,6 +855,8 @@ public partial class VehiclesView : UserControl
         _wheelOffsetRows.Clear();
         _wheelAssignedTypes = [];
         _wheelDefaultOffsetByType = new Dictionary<string, double?>(StringComparer.OrdinalIgnoreCase);
+        DisableSuspensionRestrictionCheckBox.Visibility = Visibility.Collapsed;
+        DisableSuspensionRestrictionCheckBox.IsChecked = false;
     }
 
     private void BindDiffLockOptions(TruckTuningDefinition truck)
@@ -938,6 +940,8 @@ public partial class VehiclesView : UserControl
             _wheelDefaultOffsetByType = new Dictionary<string, double?>(StringComparer.OrdinalIgnoreCase);
             WheelSetsButton.Content = UiText.Vehicles.WheelSetsButton(0);
             WheelOffsetsExpander.IsEnabled = false;
+            DisableSuspensionRestrictionCheckBox.Visibility = Visibility.Collapsed;
+            DisableSuspensionRestrictionCheckBox.IsChecked = false;
 
             if (string.IsNullOrWhiteSpace(_session?.PakPath))
             {
@@ -973,6 +977,13 @@ public partial class VehiclesView : UserControl
             WheelSetsButton.Content = UiText.Vehicles.WheelSetsButton(snapshot.AssignedSetCount);
             WheelSetsButton.IsEnabled = snapshot.HasCompatibleWheels && PakWriteUi.CanWrite(_session);
             WheelOffsetsExpander.IsEnabled = _wheelOffsetRows.Count > 0;
+            var showRestriction = snapshot.HasBaselineSuspensionWheelRestriction
+                || snapshot.HasSuspensionWheelRestriction;
+            DisableSuspensionRestrictionCheckBox.Visibility = showRestriction
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+            DisableSuspensionRestrictionCheckBox.IsChecked = snapshot.SuspensionRestrictionDisabled;
+            DisableSuspensionRestrictionCheckBox.IsEnabled = PakWriteUi.CanWrite(_session);
         }
         finally
         {
@@ -1238,7 +1249,8 @@ public partial class VehiclesView : UserControl
                     _session.PakPath,
                     _currentTruck.EntryPath,
                     enabledExtras,
-                    wheelOffsets);
+                    wheelOffsets,
+                    disableSuspensionRestriction: DisableSuspensionRestrictionCheckBox.IsChecked == true);
                 _trucksPakPath = null;
                 await LoadTuningAsync(_currentCard);
                 var updated = result.UpdatedFiles + wheelsResult.UpdatedFiles;

@@ -613,5 +613,6 @@
   "Workspace.UnknownChangeTitle": "工作 pak 已變更",
   "Vehicles.WheelSetNoteColumn": "說明",
   "Vehicles.WheelSetNoteDualRear": "後雙輪：前單後雙（WidthRear）。",
-  "Vehicles.WheelSetNoteSingleWidthDual": "{0} 的單寬變體——用於不應裝後雙輪的車輛。"
+  "Vehicles.WheelSetNoteSingleWidthDual": "{0} 的單寬變體——用於不應裝後雙輪的車輛。",
+  "Vehicles.DisableSuspensionRestriction": "停用懸吊限制"
 }

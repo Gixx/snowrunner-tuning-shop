@@ -869,6 +869,11 @@
                                   </ItemsControl.ItemTemplate>
                                 </ItemsControl>
 
+                                <CheckBox x:Name="DisableSuspensionRestrictionCheckBox"
+                                          Content="{x:Static loc:UiText+Vehicles.DisableSuspensionRestriction}"
+                                          Margin="0,0,0,8"
+                                          Visibility="Collapsed"/>
+
                                 <TextBlock Text="{x:Static loc:UiText+Vehicles.WheelSizesWarning}"
                                            TextWrapping="Wrap"
                                            FontSize="11"
