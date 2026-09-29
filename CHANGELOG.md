@@ -13,6 +13,18 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ---
 
+## [1.5.0-beta.2] — 2026-09-29
+
+### Added
+- **Vehicles → Center of mass:** cabin height Low–High slider (`CenterOfMassOffset` Y) for tippiness.
+- **Vehicles → Weight balance:** Front–Rear slider that shifts cabin and chassis center of mass together along X.
+- **General → Weak plant winch points:** option to remove `WinchSocket` from weak trees/bushes so quick-winch prefers big trees and lying trunks.
+
+### Changed
+- **Localization:** filled missing UI strings across all shipped languages vs `en.json`.
+
+---
+
 ## [1.5.0-beta.1] — 2026-09-28
 
 ### Added
@@ -411,7 +423,8 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ---
 
-[Unreleased]: https://github.com/Gixx/snowrunner-tuning-shop/compare/v1.5.0-beta.1...HEAD
+[Unreleased]: https://github.com/Gixx/snowrunner-tuning-shop/compare/v1.5.0-beta.2...HEAD
+[1.5.0-beta.2]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.5.0-beta.2
 [1.5.0-beta.1]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.5.0-beta.1
 [1.4.2]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.4.2
 [1.4.1]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.4.1
