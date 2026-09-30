@@ -115,6 +115,147 @@ public static class UiText
         public static string ItemsColumn => StringResources.Get("Main.ItemsColumn", "Items");
         public static string FilesColumn => StringResources.Get("Main.FilesColumn", "Files");
         public static string SampleFileColumn => StringResources.Get("Main.SampleFileColumn", "Sample file");
+        public static string PresetsTitle => StringResources.Get("Main.PresetsTitle", "Presets");
+        public static string PresetDetailTitle => StringResources.Get("Main.PresetDetailTitle", "Selected preset");
+        public static string PresetDetailNoDescription => StringResources.Get(
+            "Main.PresetDetailNoDescription",
+            "No description.");
+        public static string PresetDetailSelectHint => StringResources.Get(
+            "Main.PresetDetailSelectHint",
+            "Select a preset to see its details.");
+        public static string PresetDetailAuthorLabel(string author) =>
+            StringResources.Format("Main.PresetDetailAuthorLabel", "Author: {0}", author);
+        public static string PresetDetailVersionLabel(string version) =>
+            StringResources.Format("Main.PresetDetailVersionLabel", "Version: {0}", version);
+        public static string PresetNameColumn => StringResources.Get("Main.PresetNameColumn", "Name");
+        public static string PresetVersionColumn => StringResources.Get("Main.PresetVersionColumn", "Version");
+        public static string PresetLockColumn => StringResources.Get("Main.PresetLockColumn", "Lock");
+        public static string PresetStatusColumn => StringResources.Get("Main.PresetStatusColumn", "Status");
+        public static string PresetExport => StringResources.Get("Main.PresetExport", "Export…");
+        public static string PresetImport => StringResources.Get("Main.PresetImport", "Import…");
+        public static string PresetNew => StringResources.Get("Main.PresetNew", "New");
+        public static string PresetNewConfirmTitle => StringResources.Get(
+            "Main.PresetNewConfirmTitle",
+            "Start a new preset?");
+        public static string PresetNewConfirmMessage => StringResources.Get(
+            "Main.PresetNewConfirmMessage",
+            "This restores the working initial.pak to the baseline and clears the active preset. All tuning in the pak will be lost.\n\nContinue?");
+        public static string PresetNewSuccessTitle => StringResources.Get(
+            "Main.PresetNewSuccessTitle",
+            "New preset");
+        public static string PresetNewSuccessMessage => StringResources.Get(
+            "Main.PresetNewSuccessMessage",
+            "Working pak restored to baseline. You can tune from scratch or apply another preset.");
+        public static string PresetApply => StringResources.Get("Main.PresetApply", "Apply");
+        public static string PresetSaveAsNew => StringResources.Get("Main.PresetSaveAsNew", "Save as new…");
+        public static string PresetDelete => StringResources.Get("Main.PresetDelete", "Delete…");
+        public static string PresetDeleteTitle => StringResources.Get("Main.PresetDeleteTitle", "Delete preset?");
+        public static string PresetDeleteKeepSettingsTitle => StringResources.Get(
+            "Main.PresetDeleteKeepSettingsTitle",
+            "Keep current settings?");
+        public static string PresetDeleteKeepSettings => StringResources.Get(
+            "Main.PresetDeleteKeepSettings",
+            "Keep your current tuning in the working pak?\n\nYes — keep settings\nNo — restore the baseline");
+        public static string PresetDeleteSuccessTitle => StringResources.Get(
+            "Main.PresetDeleteSuccessTitle",
+            "Preset deleted");
+        public static string PresetUnnamed => StringResources.Get("Main.PresetUnnamed", "[unnamed]");
+        public static string PresetStatusActive => StringResources.Get("Main.PresetStatusActive", "Active");
+        public static string PresetStatusChanged => StringResources.Get("Main.PresetStatusChanged", "Active · changed");
+        public static string PresetLockedGlyph => StringResources.Get("Main.PresetLockedGlyph", "🔒");
+        public static string PresetImportTitle => StringResources.Get("Main.PresetImportTitle", "Import preset");
+        public static string PresetExportTitle => StringResources.Get("Main.PresetExportTitle", "Export preset");
+        public static string PresetFileFilter => StringResources.Get(
+            "Main.PresetFileFilter",
+            "Tuning Shop archive (*.tsa)|*.tsa|All files (*.*)|*.*");
+        public static string PresetImportOverwriteTitle => StringResources.Get(
+            "Main.PresetImportOverwriteTitle",
+            "Replace preset?");
+        public static string PresetApplyConfirmTitle => StringResources.Get(
+            "Main.PresetApplyConfirmTitle",
+            "Apply preset?");
+        public static string PresetApplySuccessTitle => StringResources.Get(
+            "Main.PresetApplySuccessTitle",
+            "Preset applied");
+        public static string PresetExportSuccessTitle => StringResources.Get(
+            "Main.PresetExportSuccessTitle",
+            "Export complete");
+        public static string PresetSaveAsTitle => StringResources.Get("Main.PresetSaveAsTitle", "Save as new preset");
+        public static string PresetSaveAsNameLabel => StringResources.Get("Main.PresetSaveAsNameLabel", "Name");
+        public static string PresetSaveAsVersionLabel => StringResources.Get("Main.PresetSaveAsVersionLabel", "Version");
+        public static string PresetSaveAsAuthorLabel => StringResources.Get("Main.PresetSaveAsAuthorLabel", "Author");
+        public static string PresetSaveAsDescriptionLabel => StringResources.Get(
+            "Main.PresetSaveAsDescriptionLabel",
+            "Description");
+        public static string PresetSaveAsLockedLabel => StringResources.Get(
+            "Main.PresetSaveAsLockedLabel",
+            "Lock this preset");
+        public static string PresetSaveAsLockedHint => StringResources.Get(
+            "Main.PresetSaveAsLockedHint",
+            "Locked presets cannot be exported, and deleting them restores the baseline without offering to keep current settings.");
+        public static string PresetSaveAsSave => StringResources.Get("Main.PresetSaveAsSave", "Save");
+        public static string PresetAuthorColumn => StringResources.Get("Main.PresetAuthorColumn", "Author");
+        public static string PresetSaveAsCancel => StringResources.Get("Main.PresetSaveAsCancel", "Cancel");
+        public static string PresetSaveAsNameRequired => StringResources.Get(
+            "Main.PresetSaveAsNameRequired",
+            "Enter a preset name.");
+        public static string PresetNothingToExport => StringResources.Get(
+            "Main.PresetNothingToExport",
+            "There are no saved tuning changes to export yet.");
+        public static string PresetCannotExportLocked => StringResources.Get(
+            "Main.PresetCannotExportLocked",
+            "Locked presets cannot be exported.");
+        public static string PresetCannotExportUnnamed => StringResources.Get(
+            "Main.PresetCannotExportUnnamed",
+            "Save the current tuning as a named preset before exporting.");
+        public static string PresetCannotApplyUnnamed => StringResources.Get(
+            "Main.PresetCannotApplyUnnamed",
+            "Select an imported or bundled preset to apply.");
+        public static string PresetImportSuccess(string name) =>
+            StringResources.Format("Main.PresetImportSuccess", "Preset “{0}” was imported.", name);
+        public static string PresetImportOverwriteConfirm(string id) =>
+            StringResources.Format(
+                "Main.PresetImportOverwriteConfirm",
+                "A user preset with id “{0}” already exists. Replace it?",
+                id);
+        public static string PresetApplyConfirm(string name) =>
+            StringResources.Format(
+                "Main.PresetApplyConfirm",
+                "Apply preset “{0}” to the working initial.pak?\n\nThe working pak must match the baseline (refresh from game first if needed).",
+                name);
+        public static string PresetApplySuccess(string name, int count) =>
+            StringResources.Format(
+                "Main.PresetApplySuccess",
+                "Preset “{0}” applied.\n\nUpdated entries: {1}",
+                name,
+                count);
+        public static string PresetExportSuccess(string path) =>
+            StringResources.Format("Main.PresetExportSuccess", "Preset exported to:\n{0}", path);
+        public static string PresetSaveAsSuccess(string name) =>
+            StringResources.Format(
+                "Main.PresetSaveAsSuccess",
+                "Preset “{0}” saved to your library.",
+                name);
+        public static string PresetDeleteConfirm(string name) =>
+            StringResources.Format(
+                "Main.PresetDeleteConfirm",
+                "Delete preset “{0}” from your library?",
+                name);
+        public static string PresetDeleteConfirmLocked(string name) =>
+            StringResources.Format(
+                "Main.PresetDeleteConfirmLocked",
+                "Remove preset “{0}” from the active selection?\n\nThe working pak will be restored to the baseline.",
+                name);
+        public static string PresetDeleteSuccessKept(string name) =>
+            StringResources.Format(
+                "Main.PresetDeleteSuccessKept",
+                "Preset “{0}” was removed. Current tuning was kept.",
+                name);
+        public static string PresetDeleteSuccessBaseline(string name) =>
+            StringResources.Format(
+                "Main.PresetDeleteSuccessBaseline",
+                "Preset “{0}” was removed and the working pak was restored to the baseline.",
+                name);
         public static string BrowseDialogFilter => StringResources.Get("Main.BrowseDialogFilter", "SnowRunner pak (*.pak)|*.pak|All files (*.*)|*.*");
         public static string LoadingPakStatus => StringResources.Get("Main.LoadingPakStatus", "Loading pak...");
         public static string LoadErrorTitle => StringResources.Get("Main.LoadErrorTitle", "Load error");

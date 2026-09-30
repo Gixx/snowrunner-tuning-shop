@@ -28,6 +28,12 @@ public sealed class WorkspaceConfig
     /// </summary>
     public string? UpdateChannel { get; set; }
 
+    /// <summary>Active Home preset id (bundled or user library), if any.</summary>
+    public string? ActivePresetId { get; set; }
+
+    /// <summary><c>bundled</c> or <c>user</c>; null when no preset is active.</summary>
+    public string? ActivePresetSource { get; set; }
+
     public Dictionary<string, EditionConfig> Editions { get; set; } =
         new(StringComparer.OrdinalIgnoreCase);
 }
@@ -270,6 +276,32 @@ public static class WorkspaceConfigStore
             var config = LoadUnlocked();
             // Always persist an explicit Stable/Beta once the user (or caller) chooses.
             config.UpdateChannel = AppUpdateChannels.Normalize(channel);
+            SaveUnlocked(config);
+        }
+    }
+
+    public static (string? Id, string? Source) GetActivePreset()
+    {
+        var config = Load();
+        return (config.ActivePresetId, config.ActivePresetSource);
+    }
+
+    public static void SetActivePreset(string? presetId, string? source)
+    {
+        lock (Gate)
+        {
+            var config = LoadUnlocked();
+            if (string.IsNullOrWhiteSpace(presetId) || string.IsNullOrWhiteSpace(source))
+            {
+                config.ActivePresetId = null;
+                config.ActivePresetSource = null;
+            }
+            else
+            {
+                config.ActivePresetId = presetId.Trim();
+                config.ActivePresetSource = source.Trim().ToLowerInvariant();
+            }
+
             SaveUnlocked(config);
         }
     }

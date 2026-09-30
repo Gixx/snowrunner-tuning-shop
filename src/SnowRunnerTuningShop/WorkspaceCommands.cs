@@ -1,7 +1,9 @@
 using System.Windows;
 using System.Windows.Input;
 using SnowRunnerTuningShop.Core.Backup;
+using SnowRunnerTuningShop.Core.Config;
 using SnowRunnerTuningShop.Core.Pak;
+using SnowRunnerTuningShop.Core.Presets;
 using SnowRunnerTuningShop.Core.Profile;
 using SnowRunnerTuningShop.Localization;
 using SnowRunnerTuningShop.Views;
@@ -10,6 +12,67 @@ namespace SnowRunnerTuningShop;
 
 internal static class WorkspaceCommands
 {
+    public static bool TryStartNewPreset(AppSession session)
+    {
+        if (!PakWriteUi.TryProceed(session))
+        {
+            return false;
+        }
+
+        if (session is null || string.IsNullOrWhiteSpace(session.PakPath))
+        {
+            MessageBox.Show(
+                UiText.Main.BaselineMissingShort,
+                UiText.Main.BaselineTitle,
+                MessageBoxButton.OK,
+                MessageBoxImage.Warning);
+            return false;
+        }
+
+        var pakPath = session.PakPath;
+        if (!PakBaselineService.HasBaseline(pakPath))
+        {
+            MessageBox.Show(
+                UiText.Main.BaselineMissingShort,
+                UiText.Main.BaselineTitle,
+                MessageBoxButton.OK,
+                MessageBoxImage.Warning);
+            return false;
+        }
+
+        var confirm = MessageBox.Show(
+            UiText.Main.PresetNewConfirmMessage,
+            UiText.Main.PresetNewConfirmTitle,
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Warning);
+        if (confirm != MessageBoxResult.Yes)
+        {
+            return false;
+        }
+
+        try
+        {
+            using (OverrideCursor(Cursors.Wait))
+            {
+                PakBaselineService.RestorePakFromBaseline(pakPath);
+                TuningPresetLibrary.ClearToUntitledWorkspace(WorkspaceConfigStore.Load().ActiveEditionId);
+                ReloadPak(session, pakPath);
+            }
+
+            MessageBox.Show(
+                UiText.Main.PresetNewSuccessMessage,
+                UiText.Main.PresetNewSuccessTitle,
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message, UiText.Main.PresetNewConfirmTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+            return false;
+        }
+    }
+
     public static bool TryRestoreFullBaseline(AppSession session)
     {
         if (!PakWriteUi.TryProceed(session))

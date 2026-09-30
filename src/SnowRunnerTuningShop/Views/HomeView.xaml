@@ -144,8 +144,8 @@
 
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2*"/>
-                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
             <Border Grid.Column="0"
@@ -157,16 +157,70 @@
                     Margin="0,0,8,0">
                 <DockPanel LastChildFill="True">
                     <TextBlock DockPanel.Dock="Top"
-                               Text="{x:Static loc:UiText+Main.OverviewTitle}"
+                               Text="{x:Static loc:UiText+Main.PresetsTitle}"
                                FontSize="18"
                                FontWeight="SemiBold"
                                Foreground="{DynamicResource TextFillColorPrimaryBrush}"
                                Margin="0,0,0,12"/>
-                    <TextBlock x:Name="OverviewTextBlock"
-                               Text="{x:Static loc:UiText+Main.OverviewPlaceholder}"
-                               TextWrapping="Wrap"
-                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                               LineHeight="22"/>
+                    <WrapPanel DockPanel.Dock="Top" Margin="0,0,0,12">
+                        <Button x:Name="PresetNewButton"
+                                Content="{x:Static loc:UiText+Main.PresetNew}"
+                                Padding="14,8"
+                                Margin="0,0,8,8"
+                                Click="PresetNewButton_Click"/>
+                        <Button x:Name="PresetExportButton"
+                                Content="{x:Static loc:UiText+Main.PresetExport}"
+                                Padding="14,8"
+                                Margin="0,0,8,8"
+                                Click="PresetExportButton_Click"/>
+                        <Button x:Name="PresetImportButton"
+                                Content="{x:Static loc:UiText+Main.PresetImport}"
+                                Padding="14,8"
+                                Margin="0,0,8,8"
+                                Click="PresetImportButton_Click"/>
+                    </WrapPanel>
+                    <WrapPanel DockPanel.Dock="Bottom" Margin="0,12,0,0">
+                        <Button x:Name="PresetApplyButton"
+                                Content="{x:Static loc:UiText+Main.PresetApply}"
+                                Padding="14,8"
+                                Margin="0,0,8,0"
+                                Click="PresetApplyButton_Click"/>
+                        <Button x:Name="PresetSaveAsNewButton"
+                                Content="{x:Static loc:UiText+Main.PresetSaveAsNew}"
+                                Padding="14,8"
+                                Margin="0,0,8,0"
+                                Click="PresetSaveAsNewButton_Click"/>
+                        <Button x:Name="PresetDeleteButton"
+                                Content="{x:Static loc:UiText+Main.PresetDelete}"
+                                Padding="14,8"
+                                Click="PresetDeleteButton_Click"/>
+                    </WrapPanel>
+                    <ListView x:Name="PresetsListView"
+                              BorderThickness="0"
+                              Background="Transparent"
+                              SelectionMode="Single"
+                              PreviewMouseLeftButtonDown="PresetsListView_PreviewMouseLeftButtonDown"
+                              SelectionChanged="PresetsListView_SelectionChanged">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="{x:Static loc:UiText+Main.PresetNameColumn}"
+                                                Width="140"
+                                                DisplayMemberBinding="{Binding DisplayName}"/>
+                                <GridViewColumn Header="{x:Static loc:UiText+Main.PresetVersionColumn}"
+                                                Width="60"
+                                                DisplayMemberBinding="{Binding Version}"/>
+                                <GridViewColumn Header="{x:Static loc:UiText+Main.PresetAuthorColumn}"
+                                                Width="100"
+                                                DisplayMemberBinding="{Binding Author}"/>
+                                <GridViewColumn Header="{x:Static loc:UiText+Main.PresetLockColumn}"
+                                                Width="40"
+                                                DisplayMemberBinding="{Binding LockGlyph}"/>
+                                <GridViewColumn Header="{x:Static loc:UiText+Main.PresetStatusColumn}"
+                                                Width="110"
+                                                DisplayMemberBinding="{Binding Status}"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
                 </DockPanel>
             </Border>
 
@@ -177,26 +231,62 @@
                     CornerRadius="8"
                     Padding="16"
                     Margin="8,0,0,0">
-                <DockPanel LastChildFill="True">
-                    <TextBlock DockPanel.Dock="Top"
-                               Text="{x:Static loc:UiText+Main.CategoriesTitle}"
-                               FontSize="18"
-                               FontWeight="SemiBold"
-                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-                               Margin="0,0,0,12"/>
-                    <ListView x:Name="CategoriesListView"
-                              BorderThickness="0"
-                              Background="Transparent">
-                        <ListView.View>
-                            <GridView>
-                                <GridViewColumn Header="{x:Static loc:UiText+Main.CategoryColumn}" Width="120" DisplayMemberBinding="{Binding Name}"/>
-                                <GridViewColumn Header="{x:Static loc:UiText+Main.ItemsColumn}" Width="70" DisplayMemberBinding="{Binding ItemCount}"/>
-                                <GridViewColumn Header="{x:Static loc:UiText+Main.FilesColumn}" Width="70" DisplayMemberBinding="{Binding FileCount}"/>
-                                <GridViewColumn Header="{x:Static loc:UiText+Main.SampleFileColumn}" Width="320" DisplayMemberBinding="{Binding SampleFile}"/>
-                            </GridView>
-                        </ListView.View>
-                    </ListView>
-                </DockPanel>
+                <Grid>
+                    <DockPanel x:Name="CategoriesPanel" LastChildFill="True">
+                        <TextBlock DockPanel.Dock="Top"
+                                   Text="{x:Static loc:UiText+Main.CategoriesTitle}"
+                                   FontSize="18"
+                                   FontWeight="SemiBold"
+                                   Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                                   Margin="0,0,0,12"/>
+                        <ListView x:Name="CategoriesListView"
+                                  BorderThickness="0"
+                                  Background="Transparent">
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="{x:Static loc:UiText+Main.CategoryColumn}" Width="120" DisplayMemberBinding="{Binding Name}"/>
+                                    <GridViewColumn Header="{x:Static loc:UiText+Main.ItemsColumn}" Width="70" DisplayMemberBinding="{Binding ItemCount}"/>
+                                    <GridViewColumn Header="{x:Static loc:UiText+Main.FilesColumn}" Width="70" DisplayMemberBinding="{Binding FileCount}"/>
+                                    <GridViewColumn Header="{x:Static loc:UiText+Main.SampleFileColumn}" Width="280" DisplayMemberBinding="{Binding SampleFile}"/>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                    </DockPanel>
+
+                    <DockPanel x:Name="PresetDetailPanel"
+                               LastChildFill="True"
+                               Visibility="Collapsed">
+                        <TextBlock x:Name="PresetDetailTitleText"
+                                   DockPanel.Dock="Top"
+                                   Text="{x:Static loc:UiText+Main.PresetDetailTitle}"
+                                   FontSize="18"
+                                   FontWeight="SemiBold"
+                                   Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                                   Margin="0,0,0,12"/>
+                        <TextBlock x:Name="PresetDetailNameText"
+                                   DockPanel.Dock="Top"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   TextWrapping="Wrap"
+                                   Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                                   Margin="0,0,0,8"/>
+                        <TextBlock x:Name="PresetDetailAuthorText"
+                                   DockPanel.Dock="Top"
+                                   TextWrapping="Wrap"
+                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                   Margin="0,0,0,4"/>
+                        <TextBlock x:Name="PresetDetailVersionText"
+                                   DockPanel.Dock="Top"
+                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                   Margin="0,0,0,12"/>
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <TextBlock x:Name="PresetDetailDescriptionText"
+                                       TextWrapping="Wrap"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                       LineHeight="20"/>
+                        </ScrollViewer>
+                    </DockPanel>
+                </Grid>
             </Border>
         </Grid>
     </Grid>

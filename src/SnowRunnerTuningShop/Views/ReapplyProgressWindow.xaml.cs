@@ -11,7 +11,7 @@ public partial class ReapplyProgressWindow : Window
     private const double StagingSharePercent = 2;
     private const double WritingSharePercent = 94;
 
-    private readonly string _pakPath;
+    private readonly Func<IProgress<TuningProfileReapplyProgress>, TuningProfileReapplyResult> _apply;
     private readonly DispatcherTimer _heartbeatTimer;
     private readonly DateTime _startedUtc;
 
@@ -22,8 +22,16 @@ public partial class ReapplyProgressWindow : Window
     public string? ErrorMessage { get; private set; }
 
     public ReapplyProgressWindow(string pakPath)
+        : this(pakPath, progress => TuningProfileService.ReapplySavedChanges(pakPath, progress))
     {
-        _pakPath = pakPath;
+    }
+
+    public ReapplyProgressWindow(
+        string pakPath,
+        Func<IProgress<TuningProfileReapplyProgress>, TuningProfileReapplyResult> apply)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(pakPath);
+        _apply = apply ?? throw new ArgumentNullException(nameof(apply));
         _startedUtc = DateTime.UtcNow;
         InitializeComponent();
         StatusDetailText.Text = UiText.Workspace.ReapplyProgressStarting;
@@ -68,8 +76,7 @@ public partial class ReapplyProgressWindow : Window
         var progress = new Progress<TuningProfileReapplyProgress>(OnProgress);
         try
         {
-            Result = await Task.Run(() =>
-                TuningProfileService.ReapplySavedChanges(_pakPath, progress));
+            Result = await Task.Run(() => _apply(progress));
             DialogResult = true;
             Close();
         }

@@ -1,7 +1,9 @@
 using Avalonia.Controls;
 using SnowRunnerTuningShop;
 using SnowRunnerTuningShop.Core.Backup;
+using SnowRunnerTuningShop.Core.Config;
 using SnowRunnerTuningShop.Core.Pak;
+using SnowRunnerTuningShop.Core.Presets;
 using SnowRunnerTuningShop.Core.Profile;
 using SnowRunnerTuningShop.Desktop.Views;
 using SnowRunnerTuningShop.Localization;
@@ -10,6 +12,59 @@ namespace SnowRunnerTuningShop.Desktop;
 
 internal static class WorkspaceCommands
 {
+    public static async Task<bool> TryStartNewPreset(Window owner, AppSession session)
+    {
+        if (!await PakWriteUi.TryProceed(owner, session))
+        {
+            return false;
+        }
+
+        if (string.IsNullOrWhiteSpace(session.PakPath))
+        {
+            await AppDialogs.ShowWarning(owner, UiText.Main.BaselineMissingShort, UiText.Main.BaselineTitle);
+            return false;
+        }
+
+        var pakPath = session.PakPath;
+        if (!PakBaselineService.HasBaseline(pakPath))
+        {
+            await AppDialogs.ShowWarning(owner, UiText.Main.BaselineMissingShort, UiText.Main.BaselineTitle);
+            return false;
+        }
+
+        if (!await AppDialogs.Confirm(
+                owner,
+                UiText.Main.PresetNewConfirmMessage,
+                UiText.Main.PresetNewConfirmTitle))
+        {
+            return false;
+        }
+
+        try
+        {
+            using (PakWriteUi.BeginBusyWrite(owner))
+            {
+                await Task.Run(() =>
+                {
+                    PakBaselineService.RestorePakFromBaseline(pakPath);
+                    TuningPresetLibrary.ClearToUntitledWorkspace(WorkspaceConfigStore.Load().ActiveEditionId);
+                });
+                ReloadPak(session, pakPath);
+            }
+
+            await AppDialogs.ShowInfo(
+                owner,
+                UiText.Main.PresetNewSuccessMessage,
+                UiText.Main.PresetNewSuccessTitle);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            await AppDialogs.ShowError(owner, ex.Message, UiText.Main.PresetNewConfirmTitle);
+            return false;
+        }
+    }
+
     public static async Task<bool> TryRestoreFullBaseline(Window owner, AppSession session)
     {
         if (!await PakWriteUi.TryProceed(owner, session))

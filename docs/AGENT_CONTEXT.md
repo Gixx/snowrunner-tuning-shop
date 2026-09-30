@@ -57,7 +57,7 @@ Shared session: `AppSession`. Shell: `MainWindow.*`.
 
 | Page | View / Core | Role |
 |------|-------------|------|
-| Home | `Views/HomeView.*` | Baseline, install location, restore, refresh after game update, reapply profile, workspace health, updates |
+| Home | `Views/HomeView.*` | Baseline, install location, restore, refresh after game update, reapply profile, workspace health, updates, **Presets** (.tsa import/export/apply) |
 | General | `Views/GeneralView.*`, `Core/General/GeneralService.cs`, `PlantWinchSocketXml` | Camera clip; trail rock scale (mod assets in `assets/general/no-stones`); optional strip of `WinchSocket` on weak plants (SmallTree/bush) |
 | Parts | `Views/PartsView.*` + Winch/Engine/Gearbox/Suspension/Tire/Add-ons/Crane tabs | Global multipliers + per-row edits; Used-by; restore category |
 | Vehicles | `Views/VehiclesView.*`, `Core/Trucks/TruckTuningService.cs`, `TruckSteerXml`, `TruckCompatibleWheelsService`, `TruckEngineSetsService`, `VehicleCabinCenterOfMassXml`, `VehicleLongitudinalBalanceXml` | Catalog + per-truck edit (steer, engine/wheel sets, optional larger wheel scales ≤0.99 + OffsetZ, optional disable of `MaxWheelRadiusWithoutSuspension`, cabin CoM Y Low–High, longitudinal weight balance Front–Rear) + global vehicle multipliers / unlocks |
@@ -168,6 +168,7 @@ Tracked work notes may also live under gitignored `docs/plan/Linux-Avalonia-plan
 | Updates | `Core/Updates/AppUpdateService.cs`, `AppSemVersion.cs`, `AppUpdateChannels.cs` (unset channel derives Beta from prerelease `AppInfo.Version`) |
 | Workspace | `Core/Config/WorkspaceConfigStore.cs`, `GameEditionDetector.cs` |
 | Baseline / health | `Core/Backup/PakBaselineService.cs`, `Core/Profile/WorkspaceHealthService.cs`, `TuningProfile*.cs` |
+| Presets (.tsa) | `Core/Presets/*`, `assets/presets/`, Home Presets card; Inno associates `.tsa` |
 | Pak I/O | `Core/Pak/InitialPakReader.cs`, `InitialPakWriter.cs`, `PakFileId.cs`, `PakInPlaceZipPatcher.cs`, `PakVanillaText.cs`, `PakCacheBlockLayoutGuard.cs` |
 | Vehicles / trailers | `Core/Trucks/TruckTuningService.cs`, `Core/Trailers/TrailerTuningService.cs`; UI `Vehicles/VehicleCatalog.cs`, `Trailers/TrailerCatalog.cs` |
 | Parts | `Core/{Winch,Engine,Gearbox,Suspension,Tires,AddonCapacity,Crane}/*Service.cs`, `Core/Models/*Definition.cs` |

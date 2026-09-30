@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using SnowRunnerTuningShop.Core.Config;
 using SnowRunnerTuningShop.Core.Diagnostics;
+using SnowRunnerTuningShop.Core.Profile;
 using SnowRunnerTuningShop.Views;
 
 namespace SnowRunnerTuningShop;
@@ -18,6 +19,8 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+
+        TuningProfileService.ProfileSynced += OnProfileSynced;
 
         HomeView.AttachSession(_session);
         GeneralView.AttachSession(_session);
@@ -65,9 +68,31 @@ public partial class MainWindow : Window
                     MessageBoxButton.OK,
                     MessageBoxImage.Warning);
             }
+
+            if (!string.IsNullOrWhiteSpace(App.PendingTsaPath))
+            {
+                var path = App.PendingTsaPath;
+                App.PendingTsaPath = null;
+                HomeView.TryImportPendingArchive(path);
+            }
         };
 
-        Closed += (_, _) => _gameRunningMonitor.Dispose();
+        Closed += (_, _) =>
+        {
+            TuningProfileService.ProfileSynced -= OnProfileSynced;
+            _gameRunningMonitor.Dispose();
+        };
+    }
+
+    private void OnProfileSynced(object? sender, EventArgs e)
+    {
+        if (!Dispatcher.CheckAccess())
+        {
+            Dispatcher.BeginInvoke(() => _session.NotifyTuningChanged());
+            return;
+        }
+
+        _session.NotifyTuningChanged();
     }
 
     private void UpdateGameRunningBanner()
@@ -211,5 +236,10 @@ public partial class MainWindow : Window
         PhotoModeView.Visibility = Visibility.Collapsed;
         SettingsView.Visibility = Visibility.Collapsed;
         page.Visibility = Visibility.Visible;
+
+        if (ReferenceEquals(page, HomeView))
+        {
+            HomeView.RefreshPresetsFromOutside();
+        }
     }
 }

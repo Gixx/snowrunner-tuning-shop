@@ -63,9 +63,7 @@ public static class InitialPakReader
 
             foreach (var category in PakPaths.TuningCategories)
             {
-                var categoryPrefix = $"{PakPaths.ClassesPrefix}{category}/";
-                if (normalizedPath.StartsWith(categoryPrefix, StringComparison.OrdinalIgnoreCase)
-                    && normalizedPath.EndsWith(".xml", StringComparison.OrdinalIgnoreCase))
+                if (PakPaths.IsCategoryXmlEntry(category, normalizedPath))
                 {
                     categoryFiles[category].Add(normalizedPath);
                 }

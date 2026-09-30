@@ -1,5 +1,7 @@
 ﻿using Avalonia;
 using System;
+using System.IO;
+using System.Linq;
 using SnowRunnerTuningShop.Core.Diagnostics;
 
 namespace SnowRunnerTuningShop.Desktop;
@@ -15,6 +17,11 @@ class Program
         // Register before Avalonia setup so startup failures (e.g. XOpenDisplay) still
         // write a crash log — the UI dialog may be unavailable if the display never opens.
         GlobalExceptionHandler.Register();
+
+        App.PendingTsaPath = args
+            .Select(a => a.Trim('"'))
+            .FirstOrDefault(a =>
+                a.EndsWith(".tsa", StringComparison.OrdinalIgnoreCase) && File.Exists(a));
 
         try
         {

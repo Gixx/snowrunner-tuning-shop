@@ -98,6 +98,7 @@ end;
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
+Name: "associate.tsa"; Description: "Associate .tsa (Tuning Shop archive) files with this app"; GroupDescription: "File associations:"; Flags: checkedonce
 
 [Files]
 Source: "{#MyAppSourceDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
@@ -106,6 +107,12 @@ Source: "{#MyAppSourceDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesub
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
+
+[Registry]
+Root: HKCR; Subkey: ".tsa"; ValueType: string; ValueName: ""; ValueData: "SnowRunnerTuningShop.TSA"; Flags: uninsdeletevalue; Tasks: associate.tsa
+Root: HKCR; Subkey: "SnowRunnerTuningShop.TSA"; ValueType: string; ValueName: ""; ValueData: "SnowRunner Tuning Shop Archive"; Flags: uninsdeletekey; Tasks: associate.tsa
+Root: HKCR; Subkey: "SnowRunnerTuningShop.TSA\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\{#MyAppExeName},0"; Tasks: associate.tsa
+Root: HKCR; Subkey: "SnowRunnerTuningShop.TSA\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#MyAppExeName}"" ""%1"""; Tasks: associate.tsa
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#MyAppName}}"; Flags: nowait postinstall skipifsilent

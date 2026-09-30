@@ -95,7 +95,7 @@
       </Border>
     </StackPanel>
 
-    <Grid Grid.Row="1" ColumnDefinitions="2*,3*">
+    <Grid Grid.Row="1" ColumnDefinitions="*,*">
       <Border Grid.Column="0"
               Background="{DynamicResource AppCardBrush}"
               BorderBrush="{DynamicResource AppCardStrokeBrush}"
@@ -104,15 +104,64 @@
               Padding="16"
               Margin="0,0,8,0">
         <DockPanel LastChildFill="True">
-          <TextBlock x:Name="OverviewTitleText"
+          <TextBlock x:Name="PresetsTitleText"
                      DockPanel.Dock="Top"
                      FontSize="18"
                      FontWeight="SemiBold"
                      Margin="0,0,0,12"/>
-          <TextBlock x:Name="OverviewTextBlock"
-                     TextWrapping="Wrap"
-                     Opacity="0.85"
-                     LineHeight="22"/>
+          <WrapPanel DockPanel.Dock="Top" Margin="0,0,0,12">
+            <Button x:Name="PresetNewButton"
+                    Padding="14,8"
+                    Margin="0,0,8,8"
+                    Click="PresetNewButton_Click"/>
+            <Button x:Name="PresetExportButton"
+                    Padding="14,8"
+                    Margin="0,0,8,8"
+                    Click="PresetExportButton_Click"/>
+            <Button x:Name="PresetImportButton"
+                    Padding="14,8"
+                    Margin="0,0,8,8"
+                    Click="PresetImportButton_Click"/>
+          </WrapPanel>
+          <WrapPanel DockPanel.Dock="Bottom" Margin="0,12,0,0">
+            <Button x:Name="PresetApplyButton"
+                    Padding="14,8"
+                    Margin="0,0,8,0"
+                    Click="PresetApplyButton_Click"/>
+            <Button x:Name="PresetSaveAsNewButton"
+                    Padding="14,8"
+                    Margin="0,0,8,0"
+                    Click="PresetSaveAsNewButton_Click"/>
+            <Button x:Name="PresetDeleteButton"
+                    Padding="14,8"
+                    Click="PresetDeleteButton_Click"/>
+          </WrapPanel>
+          <DockPanel>
+            <Grid DockPanel.Dock="Top" ColumnDefinitions="130,55,90,40,*" Margin="0,0,0,8">
+              <TextBlock x:Name="PresetNameColumnHeader" FontWeight="SemiBold"/>
+              <TextBlock x:Name="PresetVersionColumnHeader" Grid.Column="1" FontWeight="SemiBold"/>
+              <TextBlock x:Name="PresetAuthorColumnHeader" Grid.Column="2" FontWeight="SemiBold"/>
+              <TextBlock x:Name="PresetLockColumnHeader" Grid.Column="3" FontWeight="SemiBold"/>
+              <TextBlock x:Name="PresetStatusColumnHeader" Grid.Column="4" FontWeight="SemiBold"/>
+            </Grid>
+            <ListBox x:Name="PresetsList"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     PointerPressed="PresetsList_PointerPressed"
+                     SelectionChanged="PresetsList_SelectionChanged">
+              <ListBox.ItemTemplate>
+                <DataTemplate>
+                  <Grid ColumnDefinitions="130,55,90,40,*" Margin="0,0,0,6">
+                    <TextBlock Text="{Binding DisplayName}" TextTrimming="CharacterEllipsis"/>
+                    <TextBlock Grid.Column="1" Text="{Binding Version}"/>
+                    <TextBlock Grid.Column="2" Text="{Binding Author}" TextTrimming="CharacterEllipsis"/>
+                    <TextBlock Grid.Column="3" Text="{Binding LockGlyph}"/>
+                    <TextBlock Grid.Column="4" Text="{Binding Status}"/>
+                  </Grid>
+                </DataTemplate>
+              </ListBox.ItemTemplate>
+            </ListBox>
+          </DockPanel>
         </DockPanel>
       </Border>
 
@@ -123,35 +172,68 @@
               CornerRadius="8"
               Padding="16"
               Margin="8,0,0,0">
-        <DockPanel LastChildFill="True">
-          <TextBlock x:Name="CategoriesTitleText"
-                     DockPanel.Dock="Top"
-                     FontSize="18"
-                     FontWeight="SemiBold"
-                     Margin="0,0,0,12"/>
-          <DockPanel>
-            <Grid DockPanel.Dock="Top" ColumnDefinitions="140,70,70,*" Margin="0,0,0,8">
-              <TextBlock x:Name="CategoryColumnHeader" FontWeight="SemiBold"/>
-              <TextBlock x:Name="ItemsColumnHeader" Grid.Column="1" FontWeight="SemiBold"/>
-              <TextBlock x:Name="FilesColumnHeader" Grid.Column="2" FontWeight="SemiBold"/>
-              <TextBlock x:Name="SampleColumnHeader" Grid.Column="3" FontWeight="SemiBold"/>
-            </Grid>
+        <Grid>
+          <DockPanel x:Name="CategoriesPanel" LastChildFill="True">
+            <TextBlock x:Name="CategoriesTitleText"
+                       DockPanel.Dock="Top"
+                       FontSize="18"
+                       FontWeight="SemiBold"
+                       Margin="0,0,0,12"/>
+            <DockPanel>
+              <Grid DockPanel.Dock="Top" ColumnDefinitions="140,70,70,*" Margin="0,0,0,8">
+                <TextBlock x:Name="CategoryColumnHeader" FontWeight="SemiBold"/>
+                <TextBlock x:Name="ItemsColumnHeader" Grid.Column="1" FontWeight="SemiBold"/>
+                <TextBlock x:Name="FilesColumnHeader" Grid.Column="2" FontWeight="SemiBold"/>
+                <TextBlock x:Name="SampleColumnHeader" Grid.Column="3" FontWeight="SemiBold"/>
+              </Grid>
+              <ScrollViewer>
+                <ItemsControl x:Name="CategoriesList">
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                      <Grid ColumnDefinitions="140,70,70,*" Margin="0,0,0,6">
+                        <TextBlock Text="{Binding Name}"/>
+                        <TextBlock Grid.Column="1" Text="{Binding ItemCount}"/>
+                        <TextBlock Grid.Column="2" Text="{Binding FileCount}"/>
+                        <TextBlock Grid.Column="3" Text="{Binding SampleFile}" TextTrimming="CharacterEllipsis"/>
+                      </Grid>
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+              </ScrollViewer>
+            </DockPanel>
+          </DockPanel>
+
+          <DockPanel x:Name="PresetDetailPanel"
+                     LastChildFill="True"
+                     IsVisible="False">
+            <TextBlock x:Name="PresetDetailTitleText"
+                       DockPanel.Dock="Top"
+                       FontSize="18"
+                       FontWeight="SemiBold"
+                       Margin="0,0,0,12"/>
+            <TextBlock x:Name="PresetDetailNameText"
+                       DockPanel.Dock="Top"
+                       FontSize="16"
+                       FontWeight="SemiBold"
+                       TextWrapping="Wrap"
+                       Margin="0,0,0,8"/>
+            <TextBlock x:Name="PresetDetailAuthorText"
+                       DockPanel.Dock="Top"
+                       TextWrapping="Wrap"
+                       Opacity="0.85"
+                       Margin="0,0,0,4"/>
+            <TextBlock x:Name="PresetDetailVersionText"
+                       DockPanel.Dock="Top"
+                       Opacity="0.85"
+                       Margin="0,0,0,12"/>
             <ScrollViewer>
-              <ItemsControl x:Name="CategoriesList">
-                <ItemsControl.ItemTemplate>
-                  <DataTemplate>
-                    <Grid ColumnDefinitions="140,70,70,*" Margin="0,0,0,6">
-                      <TextBlock Text="{Binding Name}"/>
-                      <TextBlock Grid.Column="1" Text="{Binding ItemCount}"/>
-                      <TextBlock Grid.Column="2" Text="{Binding FileCount}"/>
-                      <TextBlock Grid.Column="3" Text="{Binding SampleFile}" TextTrimming="CharacterEllipsis"/>
-                    </Grid>
-                  </DataTemplate>
-                </ItemsControl.ItemTemplate>
-              </ItemsControl>
+              <TextBlock x:Name="PresetDetailDescriptionText"
+                         TextWrapping="Wrap"
+                         Opacity="0.85"
+                         LineHeight="20"/>
             </ScrollViewer>
           </DockPanel>
-        </DockPanel>
+        </Grid>
       </Border>
     </Grid>
   </Grid>

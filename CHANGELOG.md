@@ -13,6 +13,20 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ---
 
+## [1.5.0-beta.3] — 2026-09-30
+
+### Added
+- **Home → Presets:** manage `.tsa` tuning archives (bundled + user library) with Apply, Export, Import, Save as new, Delete, and New (restore working pak to baseline and start an untitled workspace). WPF + Avalonia.
+- **Preset metadata:** Author, description, and optional Lock (locked presets cannot be exported; deleting them restores the baseline).
+- **Preset detail panel:** selecting a list row shows name, author, version, and description on the right; deselecting restores the tuning-categories stats.
+- **Active / changed tracking:** Home marks the applied preset and shows when the saved profile diverges; New clears the active preset and shows an `[unnamed]` row.
+- **Installer:** optional `.tsa` file association so double-click imports a preset into the app.
+
+### Changed
+- **Home Overview** replaced by the Presets workspace (tuning-category coverage still available when no preset is selected).
+
+---
+
 ## [1.5.0-beta.2] — 2026-09-29
 
 ### Added
@@ -423,7 +437,8 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ---
 
-[Unreleased]: https://github.com/Gixx/snowrunner-tuning-shop/compare/v1.5.0-beta.2...HEAD
+[Unreleased]: https://github.com/Gixx/snowrunner-tuning-shop/compare/v1.5.0-beta.3...HEAD
+[1.5.0-beta.3]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.5.0-beta.3
 [1.5.0-beta.2]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.5.0-beta.2
 [1.5.0-beta.1]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.5.0-beta.1
 [1.4.2]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.4.2

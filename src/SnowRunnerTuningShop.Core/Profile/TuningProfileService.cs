@@ -26,6 +26,9 @@ public static class TuningProfileService
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
     };
 
+    /// <summary>Raised after a working-pak write syncs (or clears) the edition tuning profile.</summary>
+    public static event EventHandler? ProfileSynced;
+
     public static string GetProfilesDirectory()
     {
         var directory = Path.Combine(WorkspaceConfigStore.GetAppDataDirectory(), "profiles");
@@ -77,13 +80,13 @@ public static class TuningProfileService
     {
         if (string.IsNullOrWhiteSpace(workingPakPath) || !File.Exists(workingPakPath))
         {
-            return new TuningProfileSyncResult(0, false, false);
+            return NotifySynced(new TuningProfileSyncResult(0, false, false));
         }
 
         var editionId = WorkspaceConfigStore.TryResolveEditionId(workingPakPath);
         if (string.IsNullOrWhiteSpace(editionId))
         {
-            return new TuningProfileSyncResult(0, false, TuningProfileMarker.HasMarker(workingPakPath));
+            return NotifySynced(new TuningProfileSyncResult(0, false, TuningProfileMarker.HasMarker(workingPakPath)));
         }
 
         string baselinePath;
@@ -93,7 +96,7 @@ public static class TuningProfileService
         }
         catch
         {
-            return new TuningProfileSyncResult(0, false, TuningProfileMarker.HasMarker(workingPakPath));
+            return NotifySynced(new TuningProfileSyncResult(0, false, TuningProfileMarker.HasMarker(workingPakPath)));
         }
 
         var baselineFingerprint = PakFingerprintService.ComputeFileFingerprint(baselinePath);
@@ -116,15 +119,15 @@ public static class TuningProfileService
                     baselineFingerprint: baselineFingerprint,
                     workingFingerprint: workingFingerprint);
 
-                return new TuningProfileSyncResult(
+                return NotifySynced(new TuningProfileSyncResult(
                     existingProfile.Entries.Count,
                     ProfileSaved: false,
-                    MarkerPresent: TuningProfileMarker.HasMarker(workingPakPath));
+                    MarkerPresent: TuningProfileMarker.HasMarker(workingPakPath)));
             }
 
             ClearProfile(editionId);
             var markerRemoved = SyncMarker(workingPakPath, editionId, baselineFingerprint.Sha256, profileHasEntries: false);
-            return new TuningProfileSyncResult(0, false, markerRemoved);
+            return NotifySynced(new TuningProfileSyncResult(0, false, markerRemoved));
         }
 
         var profile = new TuningProfileDocument
@@ -144,7 +147,21 @@ public static class TuningProfileService
             workingFingerprint: workingFingerprint);
 
         var markerPresent = SyncMarker(workingPakPath, editionId, baselineFingerprint.Sha256, profileHasEntries: true);
-        return new TuningProfileSyncResult(profile.Entries.Count, ProfileSaved: true, markerPresent);
+        return NotifySynced(new TuningProfileSyncResult(profile.Entries.Count, ProfileSaved: true, markerPresent));
+    }
+
+    private static TuningProfileSyncResult NotifySynced(TuningProfileSyncResult result)
+    {
+        try
+        {
+            ProfileSynced?.Invoke(null, EventArgs.Empty);
+        }
+        catch
+        {
+            // UI listeners must not break pak writes.
+        }
+
+        return result;
     }
 
     public static void RecordWorkingPakOpened(string workingPakPath)
@@ -221,6 +238,33 @@ public static class TuningProfileService
             throw new InvalidOperationException("No saved tuning profile exists for this edition.");
         }
 
+        return ApplyEntries(workingPakPath, profile.Entries, progress);
+    }
+
+    /// <summary>
+    /// Writes Base64 profile entry payloads into the working pak (same rules as reapply).
+    /// Used by both saved-profile reapply and .tsa preset Apply.
+    /// </summary>
+    public static TuningProfileReapplyResult ApplyEntries(
+        string workingPakPath,
+        IReadOnlyDictionary<string, string> entries,
+        IProgress<TuningProfileReapplyProgress>? progress = null)
+    {
+        if (string.IsNullOrWhiteSpace(workingPakPath) || !File.Exists(workingPakPath))
+        {
+            throw new FileNotFoundException("Working initial.pak was not found.", workingPakPath);
+        }
+
+        ArgumentNullException.ThrowIfNull(entries);
+        if (entries.Count == 0)
+        {
+            throw new InvalidOperationException("The preset has no tuning entries to apply.");
+        }
+
+        var editionId = WorkspaceConfigStore.TryResolveEditionId(workingPakPath)
+            ?? throw new InvalidOperationException(
+                "No game edition is configured for this working pak.");
+
         var baselinePath = PakBaselineService.RequireBaseline(workingPakPath);
         var config = WorkspaceConfigStore.Load();
         config.Editions.TryGetValue(editionId, out var edition);
@@ -240,13 +284,13 @@ public static class TuningProfileService
         var replacements = new Dictionary<string, byte[]>(StringComparer.Ordinal);
         var missing = new List<string>();
         var failed = new List<string>();
-        var profileEntryCount = profile.Entries.Count;
+        var profileEntryCount = entries.Count;
         var preparedCount = 0;
         var lastPreparingReport = 0;
 
         using (var archive = ZipFile.OpenRead(workingPakPath))
         {
-            foreach (var (entryPath, base64) in profile.Entries)
+            foreach (var (entryPath, base64) in entries)
             {
                 preparedCount++;
                 ThrottledProgress.Report(

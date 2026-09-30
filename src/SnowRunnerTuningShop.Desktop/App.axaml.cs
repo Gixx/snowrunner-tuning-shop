@@ -8,6 +8,8 @@ namespace SnowRunnerTuningShop.Desktop;
 
 public partial class App : Application
 {
+    public static string? PendingTsaPath { get; set; }
+
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);

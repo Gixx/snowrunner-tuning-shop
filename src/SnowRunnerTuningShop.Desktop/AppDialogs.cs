@@ -20,6 +20,60 @@ internal static class AppDialogs
     public static Task<bool> Confirm(Window owner, string message, string title) =>
         Show(owner, message, title, confirmOnly: false);
 
+    /// <summary>Yes = keep, No = restore baseline, Cancel = abort.</summary>
+    public static async Task<PresetDeleteSettingsChoice> ConfirmKeepOrRestoreBaseline(
+        Window owner,
+        string message,
+        string title)
+    {
+        var dialog = new Window
+        {
+            Title = title,
+            Width = 520,
+            SizeToContent = SizeToContent.Height,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            CanResize = false,
+            ShowInTaskbar = false,
+        };
+
+        var choice = PresetDeleteSettingsChoice.Cancel;
+        var yes = new Button { Content = "Yes", MinWidth = 88 };
+        var no = new Button { Content = "No", MinWidth = 88 };
+        var cancel = new Button { Content = UiText.BugReport.Cancel, MinWidth = 88 };
+
+        yes.Click += (_, _) =>
+        {
+            choice = PresetDeleteSettingsChoice.KeepSettings;
+            dialog.Close();
+        };
+        no.Click += (_, _) =>
+        {
+            choice = PresetDeleteSettingsChoice.RestoreBaseline;
+            dialog.Close();
+        };
+        cancel.Click += (_, _) => dialog.Close();
+
+        dialog.Content = new StackPanel
+        {
+            Margin = new Avalonia.Thickness(20),
+            Spacing = 16,
+            Children =
+            {
+                new TextBlock { Text = message, TextWrapping = TextWrapping.Wrap },
+                new StackPanel
+                {
+                    Orientation = Orientation.Horizontal,
+                    Spacing = 8,
+                    HorizontalAlignment = HorizontalAlignment.Right,
+                    Children = { cancel, no, yes },
+                },
+            },
+        };
+
+        await dialog.ShowDialog(owner);
+        return choice;
+    }
+
     public static async Task OpenUrl(Window owner, string url)
     {
         try
@@ -140,4 +194,11 @@ internal static class AppDialogs
         await dialog.ShowDialog(owner);
         return result;
     }
+}
+
+internal enum PresetDeleteSettingsChoice
+{
+    KeepSettings,
+    RestoreBaseline,
+    Cancel,
 }

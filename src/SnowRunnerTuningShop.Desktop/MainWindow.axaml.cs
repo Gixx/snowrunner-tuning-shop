@@ -6,6 +6,7 @@ using SnowRunnerTuningShop;
 using SnowRunnerTuningShop.Core.Config;
 using SnowRunnerTuningShop.Core.Diagnostics;
 using SnowRunnerTuningShop.Core.Game;
+using SnowRunnerTuningShop.Core.Profile;
 using SnowRunnerTuningShop.Desktop.Views;
 using SnowRunnerTuningShop.Localization;
 
@@ -22,6 +23,8 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+
+        TuningProfileService.ProfileSynced += OnProfileSynced;
 
         ToolTip.SetTip(MenuButton, UiText.Nav.OpenMenu);
         NavHome.Content = UiText.Nav.Home;
@@ -80,7 +83,22 @@ public partial class MainWindow : Window
             }
         };
 
-        Closed += (_, _) => _gameRunningMonitor.Dispose();
+        Closed += (_, _) =>
+        {
+            TuningProfileService.ProfileSynced -= OnProfileSynced;
+            _gameRunningMonitor.Dispose();
+        };
+    }
+
+    private void OnProfileSynced(object? sender, EventArgs e)
+    {
+        if (!Dispatcher.UIThread.CheckAccess())
+        {
+            Dispatcher.UIThread.Post(() => _session.NotifyTuningChanged());
+            return;
+        }
+
+        _session.NotifyTuningChanged();
     }
 
     private void UpdateGameRunningBanner()
@@ -214,6 +232,11 @@ public partial class MainWindow : Window
         TrailersView.IsVisible = false;
         SettingsView.IsVisible = false;
         page.IsVisible = true;
+
+        if (ReferenceEquals(page, HomeView))
+        {
+            HomeView.RefreshPresetsFromOutside();
+        }
     }
 }
 

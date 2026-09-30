@@ -64,7 +64,7 @@ public static class TuningProfilePaths
             return true;
         }
 
-        foreach (var category in PakPaths.TuningCategories)
+        foreach (var category in PakPaths.ClassesFolderCategories)
         {
             if (!normalized.Contains($"/classes/{category}/", StringComparison.OrdinalIgnoreCase))
             {

@@ -20,6 +20,9 @@ public sealed class AppSession
 
     public event EventHandler? GameRunningChanged;
 
+    /// <summary>Raised when the edition tuning profile is synced after a pak write.</summary>
+    public event EventHandler? TuningChanged;
+
     public void SetPak(string pakPath, PakSummary summary)
     {
         PakPath = pakPath;
@@ -36,6 +39,9 @@ public sealed class AppSession
 
     public void NotifyBaselineChanged() =>
         BaselineChanged?.Invoke(this, EventArgs.Empty);
+
+    public void NotifyTuningChanged() =>
+        TuningChanged?.Invoke(this, EventArgs.Empty);
 
     public void SetGameRunning(bool isRunning)
     {
