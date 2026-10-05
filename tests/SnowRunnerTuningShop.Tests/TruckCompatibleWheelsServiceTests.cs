@@ -201,6 +201,44 @@ public sealed class TruckCompatibleWheelsServiceTests
     }
 
     [Fact]
+    public void Apply_sizes_skips_wheel_rewrite_when_working_has_no_types()
+    {
+        const string baseline =
+            """
+            <Truck>
+              <TruckData>
+                <CompatibleWheels Scale="0.73" Type="wheels_heavy_double_p16" />
+                <CompatibleWheels Scale="0.73" Type="wheels_heavy_offroad_double_p16" />
+              </TruckData>
+            </Truck>
+            """;
+        const string working =
+            """
+            <Truck>
+              <TruckData>
+                <ExtraWheels />
+              </TruckData>
+            </Truck>
+            """;
+
+        var updated = TruckCompatibleWheelsService.ApplySizesToTextForTests(
+            working,
+            baseline,
+            enabledExtraScales: [],
+            offsets: []);
+
+        Assert.Equal(working, updated);
+
+        var ex = Assert.Throws<InvalidOperationException>(() =>
+            TruckCompatibleWheelsService.ApplySizesToTextForTests(
+                working,
+                baseline,
+                enabledExtraScales: [0.78],
+                offsets: []));
+        Assert.Contains("no CompatibleWheels types", ex.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void Apply_sizes_can_disable_and_restore_suspension_restriction()
     {
         const string baseline =

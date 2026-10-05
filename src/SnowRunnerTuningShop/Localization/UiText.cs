@@ -270,6 +270,22 @@ public static class UiText
             "SnowRunner is running — Apply, Save, and Restore are disabled until you close the game.");
         public static string BaselineWarning => StringResources.Get("Main.BaselineWarning", "Choose your unmodified original initial.pak (Steam, GOG, Epic, Xbox, etc.). The app saves a read-only baseline for that edition and remembers this file as the one you will edit.");
         public static string BaselineReadyTitle => StringResources.Get("Main.BaselineReadyTitle", "Baseline ready");
+        public static string RealLifeModDetectedTitle => StringResources.Get(
+            "Main.RealLifeModDetectedTitle",
+            "Real Life mod detected");
+        public static string RealLifeModDetectedMessage(string? version)
+        {
+            var suffix = string.IsNullOrWhiteSpace(version)
+                ? ""
+                : StringResources.Format(
+                    "Main.RealLifeModDetectedVersionSuffix",
+                    " (v{0})",
+                    version);
+            return StringResources.Format(
+                "Main.RealLifeModDetectedMessage",
+                "This working initial.pak contains the Real Life community mod{0}. Tuning Shop edits the same files and may conflict (trucks vanishing from the garage, or the game failing to load). Prefer a clean vanilla baseline, or set the baseline from the Real Life pak and avoid mixing restores.",
+                suffix);
+        }
         public static string BaselineReadyNote => StringResources.Get("Main.BaselineReadyNote", "Baseline is healthy and ready. Keep the baseline file read-only.");
         public static string BaselineMissingShort => StringResources.Get("Main.BaselineMissingShort", "Baseline is not set. On Home, use Set baseline from original.");
         public static string ConfigCorruptTitle => StringResources.Get("Main.ConfigCorruptTitle", "Settings reset");

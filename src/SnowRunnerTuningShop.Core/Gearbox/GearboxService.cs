@@ -72,11 +72,13 @@ public static class GearboxService
         double fuelConsumptionMultiplier,
         double idleFuelModifierMultiplier,
         double awdConsumptionMultiplier,
+        double damageCapacityMultiplier = 1.0,
         double priceMultiplier = 1.0)
     {
         PartPakPipeline.ValidateMultiplier(fuelConsumptionMultiplier, nameof(fuelConsumptionMultiplier));
         PartPakPipeline.ValidateMultiplier(idleFuelModifierMultiplier, nameof(idleFuelModifierMultiplier));
         PartPakPipeline.ValidateMultiplier(awdConsumptionMultiplier, nameof(awdConsumptionMultiplier));
+        PartPakPipeline.ValidateMultiplier(damageCapacityMultiplier, nameof(damageCapacityMultiplier));
         PartPakPipeline.ValidateMultiplier(priceMultiplier, nameof(priceMultiplier));
 
         var result = PartPakPipeline.BuildBaselineReplacements(
@@ -87,6 +89,7 @@ public static class GearboxService
                 fuelConsumptionMultiplier,
                 idleFuelModifierMultiplier,
                 awdConsumptionMultiplier,
+                damageCapacityMultiplier,
                 priceMultiplier),
             (_, currentText, updatedText) => CountNamedDifferences(currentText, updatedText));
 
@@ -95,7 +98,7 @@ public static class GearboxService
     }
 
     public static GearboxSaveResult RestoreGearboxesFromBaseline(string pakPath) =>
-        ApplyGlobalMultipliers(pakPath, 1.0, 1.0, 1.0, 1.0);
+        ApplyGlobalMultipliers(pakPath, 1.0, 1.0, 1.0, 1.0, 1.0);
 
     public static GearboxSaveResult SaveGearboxChanges(string pakPath, IReadOnlyList<GearboxDefinition> gearboxes)
     {
@@ -362,12 +365,14 @@ public static class GearboxService
         double fuelConsumptionMultiplier,
         double idleFuelModifierMultiplier,
         double awdConsumptionMultiplier,
+        double damageCapacityMultiplier = 1.0,
         double priceMultiplier = 1.0) =>
         ApplyMultipliersToText(
             baselineText,
             fuelConsumptionMultiplier,
             idleFuelModifierMultiplier,
             awdConsumptionMultiplier,
+            damageCapacityMultiplier,
             priceMultiplier);
 
     private static string ApplyMultipliersToText(
@@ -375,20 +380,22 @@ public static class GearboxService
         double fuelConsumptionMultiplier,
         double idleFuelModifierMultiplier,
         double awdConsumptionMultiplier,
+        double damageCapacityMultiplier = 1.0,
         double priceMultiplier = 1.0)
     {
         var fuelBaseline = TuningMultiplierPresets.IsBaselineMultiplier(fuelConsumptionMultiplier);
         var idleBaseline = TuningMultiplierPresets.IsBaselineMultiplier(idleFuelModifierMultiplier);
         var awdBaseline = TuningMultiplierPresets.IsBaselineMultiplier(awdConsumptionMultiplier);
+        var damageBaseline = TuningMultiplierPresets.IsBaselineMultiplier(damageCapacityMultiplier);
         var priceBaseline = TuningMultiplierPresets.IsBaselineMultiplier(priceMultiplier);
 
-        if (fuelBaseline && idleBaseline && awdBaseline && priceBaseline)
+        if (fuelBaseline && idleBaseline && awdBaseline && damageBaseline && priceBaseline)
         {
             return baselineText;
         }
 
         var updated = baselineText;
-        if (!(fuelBaseline && idleBaseline && awdBaseline))
+        if (!(fuelBaseline && idleBaseline && awdBaseline && damageBaseline))
         {
             updated = GearboxOpenTagRegex.Replace(baselineText, match =>
             {
@@ -416,6 +423,11 @@ public static class GearboxService
                 if (!awdBaseline)
                 {
                     changed |= TryScaleAttribute(ref updatedAttrs, "AWDConsumptionModifier", awdConsumptionMultiplier);
+                }
+
+                if (!damageBaseline)
+                {
+                    changed |= TryScaleAttribute(ref updatedAttrs, "DamageCapacity", damageCapacityMultiplier);
                 }
 
                 if (!changed)

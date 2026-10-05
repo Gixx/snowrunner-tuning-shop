@@ -1,3 +1,4 @@
+using SnowRunnerTuningShop.Core.Backup;
 using SnowRunnerTuningShop.Core.Config;
 using SnowRunnerTuningShop.Core.Profile;
 
@@ -354,7 +355,9 @@ public static class TuningPresetLibrary
             {
                 ActivePresetId = null,
                 ActiveSource = null,
-                IsDirty = HasAnyProfileEntries(editionId),
+                // Untitled row: "changed" means the working pak diverges from baseline,
+                // not merely that a reapply profile still exists on disk.
+                IsDirty = IsWorkingPakDivergedFromBaseline(editionId),
             };
         }
 
@@ -382,6 +385,50 @@ public static class TuningPresetLibrary
             ActiveSource = source,
             IsDirty = dirty,
         };
+    }
+
+    /// <summary>
+    /// True when the working pak is not identical to the edition baseline (marker and/or content).
+    /// </summary>
+    private static bool IsWorkingPakDivergedFromBaseline(string? editionId)
+    {
+        if (string.IsNullOrWhiteSpace(editionId))
+        {
+            return false;
+        }
+
+        var config = WorkspaceConfigStore.Load();
+        if (!config.Editions.TryGetValue(
+                GameEditionDetector.SanitizeEditionId(editionId),
+                out var edition)
+            || string.IsNullOrWhiteSpace(edition.WorkingPakPath)
+            || !File.Exists(edition.WorkingPakPath))
+        {
+            return HasAnyProfileEntries(editionId);
+        }
+
+        var workingPakPath = edition.WorkingPakPath;
+        if (TuningProfileMarker.HasMarker(workingPakPath))
+        {
+            return true;
+        }
+
+        if (!PakBaselineService.HasBaselineForEdition(editionId))
+        {
+            return HasAnyProfileEntries(editionId);
+        }
+
+        try
+        {
+            var baselinePath = PakBaselineService.GetBaselinePathForEdition(editionId);
+            var workingFingerprint = PakFingerprintService.ComputeFileFingerprint(workingPakPath);
+            var baselineFingerprint = PakFingerprintService.ComputeFileFingerprint(baselinePath);
+            return !PakFingerprintService.FingerprintsMatch(workingFingerprint, baselineFingerprint);
+        }
+        catch
+        {
+            return HasAnyProfileEntries(editionId);
+        }
     }
 
     public static bool CanSaveAsNew(TuningPresetDirtyState dirty, TuningPresetInfo? selected)

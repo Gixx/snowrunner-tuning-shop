@@ -75,11 +75,13 @@ public static class TireService
         double offRoadMultiplier,
         double mudMultiplier,
         bool? ignoreIceForAll = null,
+        double damageCapacityMultiplier = 1.0,
         double priceMultiplier = 1.0)
     {
         PartPakPipeline.ValidateMultiplier(onRoadMultiplier, nameof(onRoadMultiplier));
         PartPakPipeline.ValidateMultiplier(offRoadMultiplier, nameof(offRoadMultiplier));
         PartPakPipeline.ValidateMultiplier(mudMultiplier, nameof(mudMultiplier));
+        PartPakPipeline.ValidateMultiplier(damageCapacityMultiplier, nameof(damageCapacityMultiplier));
         PartPakPipeline.ValidateMultiplier(priceMultiplier, nameof(priceMultiplier));
 
         var baselinePath = PakBaselineService.RequireBaseline(pakPath);
@@ -95,6 +97,7 @@ public static class TireService
                 offRoadMultiplier,
                 mudMultiplier,
                 ignoreIceForAll,
+                damageCapacityMultiplier,
                 priceMultiplier),
             (_, currentText, updatedText) => CountNamedDifferences(currentText, updatedText, templates));
 
@@ -103,7 +106,7 @@ public static class TireService
     }
 
     public static TireSaveResult RestoreTiresFromBaseline(string pakPath) =>
-        ApplyGlobalMultipliers(pakPath, 1.0, 1.0, 1.0, priceMultiplier: 1.0);
+        ApplyGlobalMultipliers(pakPath, 1.0, 1.0, 1.0, priceMultiplier: 1.0, damageCapacityMultiplier: 1.0);
 
     public static TireSaveResult SaveTireChanges(string pakPath, IReadOnlyList<TireDefinition> tires)
     {
@@ -356,6 +359,7 @@ public static class TireService
         double offRoadMultiplier,
         double mudMultiplier,
         bool? ignoreIceForAll = null,
+        double damageCapacityMultiplier = 1.0,
         double priceMultiplier = 1.0) =>
         ApplyMultipliersToText(
             baselineText,
@@ -364,6 +368,7 @@ public static class TireService
             offRoadMultiplier,
             mudMultiplier,
             ignoreIceForAll,
+            damageCapacityMultiplier,
             priceMultiplier);
 
     private static string ApplyMultipliersToText(
@@ -373,14 +378,17 @@ public static class TireService
         double offRoadMultiplier,
         double mudMultiplier,
         bool? ignoreIceForAll,
+        double damageCapacityMultiplier = 1.0,
         double priceMultiplier = 1.0)
     {
         var onRoadBaseline = TuningMultiplierPresets.IsBaselineMultiplier(onRoadMultiplier);
         var offRoadBaseline = TuningMultiplierPresets.IsBaselineMultiplier(offRoadMultiplier);
         var mudBaseline = TuningMultiplierPresets.IsBaselineMultiplier(mudMultiplier);
+        var damageBaseline = TuningMultiplierPresets.IsBaselineMultiplier(damageCapacityMultiplier);
         var priceBaseline = TuningMultiplierPresets.IsBaselineMultiplier(priceMultiplier);
 
-        if (onRoadBaseline && offRoadBaseline && mudBaseline && ignoreIceForAll is null && priceBaseline)
+        if (onRoadBaseline && offRoadBaseline && mudBaseline && ignoreIceForAll is null
+            && damageBaseline && priceBaseline)
         {
             return baselineText;
         }
@@ -391,41 +399,52 @@ public static class TireService
             var matches = TruckTireOpenTagRegex.Matches(baselineText);
             if (matches.Count == 0)
             {
-                return PartXmlHelpers.ApplyPriceMultiplier(baselineText, priceMultiplier);
+                updated = baselineText;
             }
-
-            var builder = new StringBuilder(baselineText.Length);
-            var lastIndex = 0;
-            for (var i = 0; i < matches.Count; i++)
+            else
             {
-                var match = matches[i];
-                var blockEnd = i + 1 < matches.Count ? matches[i + 1].Index : baselineText.Length;
-                var block = baselineText[match.Index..blockEnd];
-                builder.Append(baselineText, lastIndex, match.Index - lastIndex);
-
-                if (IsInsideTemplatesSection(baselineText, match.Index))
+                var builder = new StringBuilder(baselineText.Length);
+                var lastIndex = 0;
+                for (var i = 0; i < matches.Count; i++)
                 {
-                    builder.Append(block);
-                }
-                else
-                {
-                    builder.Append(ApplyMultipliersToTireBlock(
-                        block,
-                        templates,
-                        onRoadMultiplier,
-                        offRoadMultiplier,
-                        mudMultiplier,
-                        ignoreIceForAll,
-                        onRoadBaseline,
-                        offRoadBaseline,
-                        mudBaseline));
+                    var match = matches[i];
+                    var blockEnd = i + 1 < matches.Count ? matches[i + 1].Index : baselineText.Length;
+                    var block = baselineText[match.Index..blockEnd];
+                    builder.Append(baselineText, lastIndex, match.Index - lastIndex);
+
+                    if (IsInsideTemplatesSection(baselineText, match.Index))
+                    {
+                        builder.Append(block);
+                    }
+                    else
+                    {
+                        builder.Append(ApplyMultipliersToTireBlock(
+                            block,
+                            templates,
+                            onRoadMultiplier,
+                            offRoadMultiplier,
+                            mudMultiplier,
+                            ignoreIceForAll,
+                            onRoadBaseline,
+                            offRoadBaseline,
+                            mudBaseline));
+                    }
+
+                    lastIndex = blockEnd;
                 }
 
-                lastIndex = blockEnd;
+                builder.Append(baselineText, lastIndex, baselineText.Length - lastIndex);
+                updated = builder.ToString();
             }
+        }
 
-            builder.Append(baselineText, lastIndex, baselineText.Length - lastIndex);
-            updated = builder.ToString();
+        if (!damageBaseline)
+        {
+            var baselineDamage = ExtractTruckWheelsDamageCapacity(updated);
+            if (baselineDamage > 0)
+            {
+                TrySetTruckWheelsDamageCapacity(ref updated, baselineDamage * damageCapacityMultiplier);
+            }
         }
 
         return PartXmlHelpers.ApplyPriceMultiplier(updated, priceMultiplier);

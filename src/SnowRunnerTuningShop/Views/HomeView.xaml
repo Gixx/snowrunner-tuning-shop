@@ -86,6 +86,26 @@
                 </StackPanel>
             </Border>
 
+            <Border x:Name="RealLifeModBanner"
+                    Background="{DynamicResource SystemFillColorCriticalBackgroundBrush}"
+                    BorderBrush="{DynamicResource SystemFillColorCriticalBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="16"
+                    Margin="0,0,0,16"
+                    Visibility="Collapsed">
+                <StackPanel>
+                    <TextBlock x:Name="RealLifeModBannerTitle"
+                               FontWeight="SemiBold"
+                               FontSize="16"
+                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                               Margin="0,0,0,8"/>
+                    <TextBlock x:Name="RealLifeModBannerMessage"
+                               TextWrapping="Wrap"
+                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                </StackPanel>
+            </Border>
+
             <!-- Ready state -->
             <Border x:Name="ReadyPanel"
                     Background="{DynamicResource SystemFillColorSuccessBackgroundBrush}"

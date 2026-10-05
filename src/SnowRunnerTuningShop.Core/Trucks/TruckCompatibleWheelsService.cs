@@ -391,7 +391,16 @@ public static class TruckCompatibleWheelsService
             .ToArray();
         if (types.Length == 0)
         {
-            throw new InvalidOperationException("This truck has no CompatibleWheels types.");
+            // Mods (e.g. Real Life) sometimes strip CompatibleWheels and use ExtraWheels /
+            // inline Wheel defs instead. Allow non-wheel saves to succeed; only fail when
+            // the user actually requested wheel-size / offset edits.
+            if (selectedExtras.Count > 0 || offsets.Count > 0)
+            {
+                throw new InvalidOperationException(
+                    "This truck's working XML has no CompatibleWheels types (often removed by a community mod). Wheel size edits cannot be applied.");
+            }
+
+            return ApplySuspensionRestriction(workingXml, baselineXml, disableSuspensionRestriction);
         }
 
         var offsetLookup = BuildOffsetLookup(offsets);

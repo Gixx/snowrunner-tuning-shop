@@ -655,6 +655,7 @@ public partial class HomeView : UserControl
         if (!isReady || workspace is null)
         {
             HealthBanner.Visibility = Visibility.Collapsed;
+            RealLifeModBanner.Visibility = Visibility.Collapsed;
             RefreshPresetActions();
             return;
         }
@@ -671,8 +672,22 @@ public partial class HomeView : UserControl
             workspace.DisplayName,
             workspace.WorkingPakPath);
 
+        ApplyRealLifeModBanner(workspace.WorkingPakPath);
         ApplyHealthUi(WorkspaceHealthService.Evaluate(workspace.WorkingPakPath));
         RefreshPresetActions();
+    }
+
+    private void ApplyRealLifeModBanner(string workingPakPath)
+    {
+        if (!RealLifeModDetector.TryDetect(workingPakPath, out var version))
+        {
+            RealLifeModBanner.Visibility = Visibility.Collapsed;
+            return;
+        }
+
+        RealLifeModBannerTitle.Text = UiText.Main.RealLifeModDetectedTitle;
+        RealLifeModBannerMessage.Text = UiText.Main.RealLifeModDetectedMessage(version);
+        RealLifeModBanner.Visibility = Visibility.Visible;
     }
 
     private void ApplyHealthUi(WorkspaceHealth health)

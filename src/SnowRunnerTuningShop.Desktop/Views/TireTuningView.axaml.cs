@@ -149,9 +149,10 @@ public partial class TireTuningView : UserControl
                 var offRoad = GetMultiplier(OffRoadFrictionMultiplierSlider);
                 var mud = GetMultiplier(MudFrictionMultiplierSlider);
                 var ignoreIce = GlobalIgnoreIceCheckBox.IsChecked == true ? true : (bool?)null;
+                var damage = GetMultiplier(DamageMultiplierSlider);
                 var price = GetMultiplier(PriceMultiplierSlider);
                 var result = await Task.Run(() => TireService.ApplyGlobalMultipliers(
-                    path, onRoad, offRoad, mud, ignoreIce, price));
+                    path, onRoad, offRoad, mud, ignoreIce, damage, price));
 
                 ReloadTires();
                 GlobalIgnoreIceCheckBox.IsChecked = false;
@@ -334,6 +335,7 @@ public partial class TireTuningView : UserControl
         OnRoadFrictionMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
         OffRoadFrictionMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
         MudFrictionMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
+        DamageMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
         PriceMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
         UpdateMultiplierLabels();
     }
@@ -343,6 +345,7 @@ public partial class TireTuningView : UserControl
         if (OnRoadFrictionMultiplierLabel is null
             || OffRoadFrictionMultiplierLabel is null
             || MudFrictionMultiplierLabel is null
+            || DamageMultiplierLabel is null
             || PriceMultiplierLabel is null)
         {
             return;
@@ -354,6 +357,8 @@ public partial class TireTuningView : UserControl
             UiText.Slider.OffRoad, GetMultiplierIndex(OffRoadFrictionMultiplierSlider));
         MudFrictionMultiplierLabel.Text = UiText.Slider.Caption(
             UiText.Slider.Mud, GetMultiplierIndex(MudFrictionMultiplierSlider));
+        DamageMultiplierLabel.Text = UiText.Slider.Caption(
+            UiText.Slider.DamageCapacity, GetMultiplierIndex(DamageMultiplierSlider));
         PriceMultiplierLabel.Text = UiText.Slider.Caption(
             UiText.Slider.StorePrice, GetMultiplierIndex(PriceMultiplierSlider));
     }

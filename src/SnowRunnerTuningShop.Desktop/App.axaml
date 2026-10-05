@@ -15,6 +15,8 @@
           <SolidColorBrush x:Key="AppNavItemSelectedBrush" Color="#33FFFFFF"/>
           <SolidColorBrush x:Key="AppCautionBrush" Color="#33D29922"/>
           <SolidColorBrush x:Key="AppCautionStrokeBrush" Color="#D29922"/>
+          <SolidColorBrush x:Key="AppDangerBrush" Color="#33C42B1C"/>
+          <SolidColorBrush x:Key="AppDangerStrokeBrush" Color="#C42B1C"/>
           <SolidColorBrush x:Key="AppSuccessBrush" Color="#22107C10"/>
           <SolidColorBrush x:Key="AppSuccessStrokeBrush" Color="#3D9A4A"/>
           <SolidColorBrush x:Key="AppMutedBrush" Color="#99FFFFFF"/>
@@ -30,6 +32,8 @@
           <SolidColorBrush x:Key="AppNavItemSelectedBrush" Color="#33000000"/>
           <SolidColorBrush x:Key="AppCautionBrush" Color="#33D29922"/>
           <SolidColorBrush x:Key="AppCautionStrokeBrush" Color="#D29922"/>
+          <SolidColorBrush x:Key="AppDangerBrush" Color="#33C42B1C"/>
+          <SolidColorBrush x:Key="AppDangerStrokeBrush" Color="#C42B1C"/>
           <SolidColorBrush x:Key="AppSuccessBrush" Color="#22107C10"/>
           <SolidColorBrush x:Key="AppSuccessStrokeBrush" Color="#107C10"/>
           <SolidColorBrush x:Key="AppMutedBrush" Color="#99000000"/>

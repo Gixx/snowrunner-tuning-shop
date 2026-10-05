@@ -62,12 +62,8 @@ public static class WorkspaceHealthService
             var config = WorkspaceConfigStore.Load();
             config.Editions.TryGetValue(editionId, out var edition);
 
-            var workingFingerprint = PakFingerprintService.GetFreshFingerprint(
-                workingPakPath,
-                edition?.LastKnownWorkingFingerprint);
-            var baselineFingerprint = PakFingerprintService.GetFreshFingerprint(
-                baselinePath,
-                edition?.BaselineFingerprint);
+            var workingFingerprint = PakFingerprintService.ComputeFileFingerprint(workingPakPath);
+            var baselineFingerprint = PakFingerprintService.ComputeFileFingerprint(baselinePath);
 
             if (!PakFingerprintService.FingerprintsMatch(workingFingerprint, edition?.LastKnownWorkingFingerprint)
                 || !PakFingerprintService.FingerprintsMatch(baselineFingerprint, edition?.BaselineFingerprint))

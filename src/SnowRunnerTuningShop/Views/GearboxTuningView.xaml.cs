@@ -118,6 +118,7 @@ public partial class GearboxTuningView : UserControl
                     GetMultiplier(FuelMultiplierSlider),
                     GetMultiplier(IdleMultiplierSlider),
                     GetMultiplier(AwdMultiplierSlider),
+                    GetMultiplier(DamageMultiplierSlider),
                     GetMultiplier(PriceMultiplierSlider));
 
                 ReloadGearboxes();
@@ -244,6 +245,7 @@ public partial class GearboxTuningView : UserControl
         FuelMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
         IdleMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
         AwdMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
+        DamageMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
         PriceMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
         UpdateMultiplierLabels();
     }
@@ -253,6 +255,7 @@ public partial class GearboxTuningView : UserControl
         if (FuelMultiplierLabel is null
             || IdleMultiplierLabel is null
             || AwdMultiplierLabel is null
+            || DamageMultiplierLabel is null
             || PriceMultiplierLabel is null)
         {
             return;
@@ -267,6 +270,9 @@ public partial class GearboxTuningView : UserControl
         AwdMultiplierLabel.Text = UiText.Slider.Caption(
             UiText.Slider.AwdFuelPenalty,
             GetMultiplierIndex(AwdMultiplierSlider));
+        DamageMultiplierLabel.Text = UiText.Slider.Caption(
+            UiText.Slider.DamageCapacity,
+            GetMultiplierIndex(DamageMultiplierSlider));
         PriceMultiplierLabel.Text = UiText.Slider.Caption(
             UiText.Slider.StorePrice,
             GetMultiplierIndex(PriceMultiplierSlider));

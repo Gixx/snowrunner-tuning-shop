@@ -59,6 +59,20 @@
         </StackPanel>
       </Border>
 
+      <Border x:Name="RealLifeModBanner"
+              Background="{DynamicResource AppDangerBrush}"
+              BorderBrush="{DynamicResource AppDangerStrokeBrush}"
+              BorderThickness="1"
+              CornerRadius="8"
+              Padding="16"
+              Margin="0,0,0,16"
+              IsVisible="False">
+        <StackPanel Spacing="8">
+          <TextBlock x:Name="RealLifeModBannerTitle" FontWeight="SemiBold" FontSize="16"/>
+          <TextBlock x:Name="RealLifeModBannerMessage" TextWrapping="Wrap"/>
+        </StackPanel>
+      </Border>
+
       <Border x:Name="ReadyPanel"
               Background="{DynamicResource AppSuccessBrush}"
               BorderBrush="{DynamicResource AppSuccessStrokeBrush}"

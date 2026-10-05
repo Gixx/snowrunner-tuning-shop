@@ -100,6 +100,22 @@ public sealed class SoloMultiplierApplyTests
         Assert.Contains(expectedFragment, updated, StringComparison.Ordinal);
     }
 
+    [Fact]
+    public void Gearbox_damage_capacity_multiplier_scales_attribute()
+    {
+        const string xml =
+            """
+            <GearboxVariants>
+              <Gearbox Name="g1" FuelConsumption="1.5" IdleFuelModifier="0.3" AWDConsumptionModifier="1" DamageCapacity="180" />
+            </GearboxVariants>
+            """;
+
+        var updated = GearboxService.ApplyMultipliersToTextForTests(xml, 1, 1, 1, damageCapacityMultiplier: 2);
+
+        Assert.Contains("DamageCapacity=\"360\"", updated, StringComparison.Ordinal);
+        Assert.Contains("FuelConsumption=\"1.5\"", updated, StringComparison.Ordinal);
+    }
+
     [Theory]
     [InlineData(2, 1, 1, 1, "Height=\"0.2\"")]
     [InlineData(1, 2, 1, 1, "Strength=\"1\"")]
@@ -152,6 +168,28 @@ public sealed class SoloMultiplierApplyTests
         var updated = TireService.ApplyMultipliersToTextForTests(xml, onRoad, offRoad, mud);
 
         Assert.Contains(expectedFragment, updated, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Tire_damage_capacity_multiplier_scales_truck_wheels()
+    {
+        const string xml =
+            """
+            <TruckWheels DamageCapacity="40">
+              <TruckTires>
+                <TruckTire Name="tire">
+                  <WheelFriction BodyFrictionAsphalt="2" BodyFriction="1" SubstanceFriction="2" />
+                  <GameData Price="100" />
+                </TruckTire>
+              </TruckTires>
+            </TruckWheels>
+            """;
+
+        var updated = TireService.ApplyMultipliersToTextForTests(
+            xml, 1, 1, 1, damageCapacityMultiplier: 2);
+
+        Assert.Contains("DamageCapacity=\"80\"", updated, StringComparison.Ordinal);
+        Assert.Contains("BodyFrictionAsphalt=\"2\"", updated, StringComparison.Ordinal);
     }
 
     [Fact]

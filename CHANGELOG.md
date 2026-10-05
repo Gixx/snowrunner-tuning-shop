@@ -11,6 +11,12 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ## [Unreleased]
 
+### Added
+- **Home:** red warning banner when the working `initial.pak` contains the Real Life community mod (`Real Life Mod` marker in string tables), so mixed edits are less surprising.
+
+### Fixed
+- **Vehicles save:** trucks whose working XML has no `CompatibleWheels` types (e.g. Real Life Pacific P16) no longer block non-wheel edits such as region-free.
+
 ---
 
 ## [1.5.0-beta.3] — 2026-09-30

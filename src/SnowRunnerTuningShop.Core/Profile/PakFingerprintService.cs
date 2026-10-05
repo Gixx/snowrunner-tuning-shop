@@ -64,7 +64,7 @@ public static class PakFingerprintService
         if (cached is not null
             && !string.IsNullOrWhiteSpace(cached.Sha256)
             && cached.SizeBytes == info.Length
-            && Math.Abs((cached.LastWriteTimeUtc - info.LastWriteTimeUtc).TotalSeconds) < 2)
+            && cached.LastWriteTimeUtc == info.LastWriteTimeUtc)
         {
             return cached;
         }
