@@ -10,8 +10,9 @@ import {
   ShieldCheck,
   Layers,
   ArrowRight,
-  Wrench,
   CircleAlert,
+  Archive,
+  Disc3,
 } from "lucide-react";
 
 import { Snowfall } from "@/components/Snowfall";
@@ -113,19 +114,19 @@ export const Route = createFileRoute("/")({
 
 const whatsNew = [
   {
+    icon: Archive,
+    title: "Home presets (.tsa)",
+    body: "Save, import, and apply tuning archives from Home — bundled starters plus your library. Lock a preset, track what is active, and start fresh with New after a baseline restore.",
+  },
+  {
+    icon: Disc3,
+    title: "Per-truck wheels",
+    body: "Optional larger CompatibleWheels sizes (capped at Scale 0.99), OffsetZ for extras, and a Wheel sets dialog to assign tire types — plus cabin height and front–rear weight balance on the vehicle page.",
+  },
+  {
     icon: CircleAlert,
-    title: "Trucks stay visible",
-    body: "Adding rear counter-steer no longer writes a broken `/ SteeringAngle` tag. Trucks like the White Western Star stay in garage and store; re-save repairs already-broken XML.",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Rewrite safety in CI",
-    body: "A fixture matrix now round-trips multipliers and edge values through every major rewrite path and fails the build if a self-close slash lands before an attribute.",
-  },
-  {
-    icon: Wrench,
-    title: "Local pak smoke",
-    body: "Optional console runner walks your real baseline pak with a progress bar — structural checks only, not run by CI.",
+    title: "Real Life mod warning",
+    body: "Home shows a red banner when your working initial.pak contains the Real Life community mod, so you know Tuning Shop edits the same files and mixed baselines can conflict.",
   },
 ];
 
@@ -319,7 +320,7 @@ function PlatformShowcase({
             WHAT&apos;S NEW IN VERSION {APP_VERSION_STABLE}
           </h2>
           <p className="mt-4 max-w-2xl text-muted-foreground">
-            Safer axle writes so trucks stay in the garage — plus stricter rewrite checks before a bad slash can ship.
+            Presets you can share, deeper per-truck wheel tuning, and a clear heads-up when Real Life is in your pak.
           </p>
         </Reveal>
         <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">

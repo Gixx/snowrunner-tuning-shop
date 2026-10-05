@@ -2,9 +2,9 @@
 export const SITE_URL = "https://gixx.github.io/snowrunner-tuning-shop/";
 export const SITE_NAME = "SnowRunner Tuning Shop";
 /** Latest Stable-channel release (full SemVer). */
-export const APP_VERSION_STABLE = "1.4.2";
+export const APP_VERSION_STABLE = "1.5.0";
 /** Latest Beta-channel release (numbered prerelease). */
-export const APP_VERSION_BETA = "1.5.0-beta.3";
+export const APP_VERSION_BETA = "1.5.0";
 export const SITE_TITLE = "SnowRunner Tuning Shop — Tune the Game's Default Settings";
 export const SITE_DESCRIPTION =
   "Free, open-source desktop tool to fine-tune SnowRunner's initial.pak: engines, gearboxes, suspensions, fuel, steering, AWD and diff lock — with a one-click baseline restore. Windows and Linux.";

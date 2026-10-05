@@ -11,8 +11,31 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ## [Unreleased]
 
+---
+
+## [1.5.0] — 2026-10-05
+
+Stable release of the 1.5 line (Home Presets, vehicle wheels tuning, center of mass / weight balance, and related beta notes below).
+
 ### Added
-- **Home:** red warning banner when the working `initial.pak` contains the Real Life community mod (`Real Life Mod` marker in string tables), so mixed edits are less surprising.
+- **Home → Presets:** manage `.tsa` tuning archives (bundled + user library) with Apply, Export, Import, Save as new, Delete, and New (restore working pak to baseline and start an untitled workspace). WPF + Avalonia.
+- **Preset metadata:** Author, description, and optional Lock (locked presets cannot be exported; deleting them restores the baseline).
+- **Preset detail panel:** selecting a list row shows name, author, version, and description on the right; deselecting restores the tuning-categories stats.
+- **Active / changed tracking:** Home marks the applied preset and shows when the saved profile diverges; New clears the active preset and shows an `[unnamed]` row.
+- **Installer:** optional `.tsa` file association so double-click imports a preset into the app.
+- **Vehicles → Center of mass:** cabin height Low–High slider (`CenterOfMassOffset` Y) for tippiness.
+- **Vehicles → Weight balance:** Front–Rear slider that shifts cabin and chassis center of mass together along X.
+- **General → Weak plant winch points:** option to remove `WinchSocket` from weak trees/bushes so quick-winch prefers big trees and lying trunks.
+- **Vehicles → Wheels:** per-truck optional larger CompatibleWheels sizes (up to +2 steps from baseline, capped at Scale 0.99), OffsetZ accordion for extras, Wheel sets dialog, and optional disable of `MaxWheelRadiusWithoutSuspension` (WPF + Avalonia).
+- **Parts → Gearbox / Tires:** global **Damage Capacity** multipliers (WPF + Avalonia).
+- **Home:** red warning banner when the working `initial.pak` contains the Real Life community mod (`Real Life Mod` marker in string tables), localized in all shipped UI languages.
+
+### Changed
+- **Home Overview** replaced by the Presets workspace (tuning-category coverage still available when no preset is selected).
+- **General → Rock size:** slider is continuous 0–100% in 1% steps (was five presets).
+- **Vehicles → Global multipliers:** removed Front / Rear steer preset sliders (per-axle steering on the detail page remains).
+- **Parts → Global multipliers:** Engine, Gearbox, Suspension, Tires, Winch, and Crane gain a Store price slider (Add-ons already had one).
+- **Localization:** filled missing UI strings across all shipped languages vs `en.json`.
 
 ### Fixed
 - **Vehicles save:** trucks whose working XML has no `CompatibleWheels` types (e.g. Real Life Pacific P16) no longer block non-wheel edits such as region-free.
@@ -443,7 +466,8 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ---
 
-[Unreleased]: https://github.com/Gixx/snowrunner-tuning-shop/compare/v1.5.0-beta.3...HEAD
+[Unreleased]: https://github.com/Gixx/snowrunner-tuning-shop/compare/v1.5.0...HEAD
+[1.5.0]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.5.0
 [1.5.0-beta.3]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.5.0-beta.3
 [1.5.0-beta.2]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.5.0-beta.2
 [1.5.0-beta.1]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.5.0-beta.1
