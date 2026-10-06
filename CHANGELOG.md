@@ -11,6 +11,12 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ## [Unreleased]
 
+### Added
+- **Bundled preset:** MacLeod's Recommendation (locked) ships with the app under Home → Presets.
+
+### Fixed
+- **Home → Presets:** Delete is disabled for bundled presets (they stay shipped with the app).
+
 ---
 
 ## [1.5.0] — 2026-10-05

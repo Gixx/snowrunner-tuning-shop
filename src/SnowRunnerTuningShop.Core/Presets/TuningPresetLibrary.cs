@@ -269,7 +269,7 @@ public static class TuningPresetLibrary
     }
 
     /// <summary>
-    /// Removes a user-library preset archive. Bundled presets cannot be deleted from disk.
+    /// Removes a user-library preset archive. Bundled / synthetic presets cannot be deleted.
     /// Clears active selection when the deleted id was active.
     /// </summary>
     public static void DeleteFromLibrary(TuningPresetInfo info)
@@ -282,9 +282,7 @@ public static class TuningPresetLibrary
 
         if (info.Source == TuningPresetSource.Bundled)
         {
-            // Bundled packs stay on disk; only clear active if this was the selection.
-            ClearActiveIfMatches(info.Id);
-            return;
+            throw new InvalidOperationException("Bundled presets cannot be deleted.");
         }
 
         if (info.Source != TuningPresetSource.User)

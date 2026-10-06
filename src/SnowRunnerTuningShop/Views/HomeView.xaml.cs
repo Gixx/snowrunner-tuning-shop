@@ -511,7 +511,7 @@ public partial class HomeView : UserControl
     private void PresetDeleteButton_Click(object sender, RoutedEventArgs e)
     {
         if (PresetsListView.SelectedItem is not PresetRow row
-            || row.Source == TuningPresetSource.Synthetic)
+            || row.Source != TuningPresetSource.User)
         {
             return;
         }
@@ -817,7 +817,7 @@ public partial class HomeView : UserControl
         PresetSaveAsNewButton.IsEnabled = hasWorkspace
             && TuningPresetLibrary.CanSaveAsNew(dirty, selected?.ToInfo());
         PresetDeleteButton.IsEnabled = selected is not null
-            && selected.Source != TuningPresetSource.Synthetic;
+            && selected.Source == TuningPresetSource.User;
     }
 
     private void RefreshPresetDetail()
