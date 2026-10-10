@@ -1543,6 +1543,19 @@ public static class UiText
     public static class Tires
     {
         public static string GlobalMultipliersTitle => StringResources.Get("Tires.GlobalMultipliersTitle", "Global multipliers (relative to the baseline values)");
+        public static string CategoryFrictionTitle => StringResources.Get("Tires.CategoryFrictionTitle", "Set friction by tire type");
+        public static string CategoryFrictionHint => StringResources.Get(
+            "Tires.CategoryFrictionHint",
+            "Set absolute On-road / Off-road / Mud values on tires whose friction template matches the checked types. Leave a dropdown on No change to keep that field. Ignore ice is not modified.");
+        public static string CategoryFrictionNoChange => StringResources.Get("Tires.CategoryFrictionNoChange", "No change");
+        public static string CategoryFrictionScaleNote => StringResources.Get(
+            "Tires.CategoryFrictionScaleNote",
+            "Most stock tires stay at or below about 3.5; 4.0 is already above typical vanilla. Exception: TUZ 420 \"Tatarin\" mud tires use SubstanceFriction 8.0.");
+        public static string CategoryHighway => StringResources.Get("Tires.CategoryHighway", "Highway");
+        public static string CategoryAllTerrain => StringResources.Get("Tires.CategoryAllTerrain", "All terrain");
+        public static string CategoryOffroad => StringResources.Get("Tires.CategoryOffroad", "Offroad");
+        public static string CategoryMud => StringResources.Get("Tires.CategoryMud", "Mud");
+        public static string CategoryChained => StringResources.Get("Tires.CategoryChained", "Chained");
         public static string OnRoadFrictionMultiplierDefault => StringResources.Get("Tires.OnRoadFrictionMultiplierDefault", "On-road: 1 (baseline)");
         public static string OffRoadFrictionMultiplierDefault => StringResources.Get("Tires.OffRoadFrictionMultiplierDefault", "Off-road: 1 (baseline)");
         public static string MudFrictionMultiplierDefault => StringResources.Get("Tires.MudFrictionMultiplierDefault", "Mud: 1 (baseline)");
@@ -1571,6 +1584,13 @@ public static class UiText
             StringResources.Format(
                 "Tires.MultipliersAppliedStatus",
                 "Multipliers applied. Updated tires: {0}, files: {1}.",
+                changedTires,
+                updatedFiles);
+
+        public static string CategoryFrictionAppliedStatus(int changedTires, int updatedFiles) =>
+            StringResources.Format(
+                "Tires.CategoryFrictionAppliedStatus",
+                "Category friction applied. Updated tires: {0}, files: {1}.",
                 changedTires,
                 updatedFiles);
 

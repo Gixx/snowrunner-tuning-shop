@@ -13,6 +13,7 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ### Added
 - **Bundled preset:** MacLeod's Recommendation (locked) ships with the app under Home → Presets.
+- **Parts → Tires:** accordion to set absolute On-road / Off-road / Mud friction by tire type (Highway, All terrain, Offroad, Mud, Chained), with optional No change per field. Ignore ice is left alone.
 
 ### Fixed
 - **Home → Presets:** Delete is disabled for bundled presets (they stay shipped with the app).

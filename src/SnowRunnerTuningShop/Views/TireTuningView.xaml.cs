@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -25,6 +26,7 @@ public partial class TireTuningView : UserControl
         _tiresView.Filter = MatchesFilter;
         TiresGrid.ItemsSource = _tiresView;
         ResetMultiplierSlidersToBaseline();
+        InitCategoryFrictionCombos();
     }
 
     public event EventHandler<string>? StatusChanged;
@@ -58,9 +60,11 @@ public partial class TireTuningView : UserControl
         PakPath = null;
         _tires.Clear();
         PartsTuningUiHelpers.ClearWriteButtons(ApplyMultipliersButton, SaveIndividualButton, RestoreTiresButton);
+        ApplyCategoryFrictionButton.IsEnabled = false;
     }
 
-    public void RefreshRestoreButton() =>
+    public void RefreshRestoreButton()
+    {
         PartsTuningUiHelpers.SetPartWriteButtonStates(
             _session,
             PakPath,
@@ -68,6 +72,8 @@ public partial class TireTuningView : UserControl
             ApplyMultipliersButton,
             SaveIndividualButton,
             RestoreTiresButton);
+        ApplyCategoryFrictionButton.IsEnabled = ApplyMultipliersButton.IsEnabled;
+    }
 
     private void ReloadButton_Click(object sender, RoutedEventArgs e)
     {
@@ -83,7 +89,11 @@ public partial class TireTuningView : UserControl
             return;
         }
 
-        using (PakWriteUi.BeginBusyWrite(ApplyMultipliersButton, SaveIndividualButton, RestoreTiresButton))
+        using (PakWriteUi.BeginBusyWrite(
+                   ApplyMultipliersButton,
+                   ApplyCategoryFrictionButton,
+                   SaveIndividualButton,
+                   RestoreTiresButton))
         {
             try
             {
@@ -111,7 +121,11 @@ public partial class TireTuningView : UserControl
             return;
         }
 
-        using (PakWriteUi.BeginBusyWrite(ApplyMultipliersButton, SaveIndividualButton, RestoreTiresButton))
+        using (PakWriteUi.BeginBusyWrite(
+                   ApplyMultipliersButton,
+                   ApplyCategoryFrictionButton,
+                   SaveIndividualButton,
+                   RestoreTiresButton))
         {
             try
             {
@@ -138,6 +152,42 @@ public partial class TireTuningView : UserControl
         }
     }
 
+    private void ApplyCategoryFrictionButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (!PakWriteUi.TryBeginWrite(_session, PakPath, _pakWritesAllowed, requireBaseline: true,
+                () => ReportStatus(UiText.Tires.LoadPakFirst)))
+        {
+            return;
+        }
+
+        using (PakWriteUi.BeginBusyWrite(
+                   ApplyMultipliersButton,
+                   ApplyCategoryFrictionButton,
+                   SaveIndividualButton,
+                   RestoreTiresButton))
+        {
+            try
+            {
+                var result = TireService.ApplyCategoryFriction(
+                    PakPath!,
+                    CollectSelectedFrictionKinds(),
+                    ReadFrictionPreset(CategoryOnRoadCombo),
+                    ReadFrictionPreset(CategoryOffRoadCombo),
+                    ReadFrictionPreset(CategoryMudCombo));
+
+                ReloadTires();
+                ReportStatus(UiText.Tires.CategoryFrictionAppliedStatus(
+                    result.ChangedTires,
+                    result.UpdatedFiles));
+            }
+            catch (Exception ex)
+            {
+                ReportStatus(UiText.Main.ErrorStatus(ex.Message));
+                MessageBox.Show(ex.Message, UiText.Tires.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+    }
+
     private void SaveIndividualButton_Click(object sender, RoutedEventArgs e)
     {
         if (!PakWriteUi.TryBeginWrite(_session, PakPath, _pakWritesAllowed, requireBaseline: false,
@@ -146,7 +196,11 @@ public partial class TireTuningView : UserControl
             return;
         }
 
-        using (PakWriteUi.BeginBusyWrite(ApplyMultipliersButton, SaveIndividualButton, RestoreTiresButton))
+        using (PakWriteUi.BeginBusyWrite(
+                   ApplyMultipliersButton,
+                   ApplyCategoryFrictionButton,
+                   SaveIndividualButton,
+                   RestoreTiresButton))
         {
             try
             {
@@ -296,6 +350,69 @@ public partial class TireTuningView : UserControl
         PriceMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
         UpdateMultiplierLabels();
     }
+
+    private void InitCategoryFrictionCombos()
+    {
+        var options = BuildFrictionPresetOptions();
+        CategoryOnRoadCombo.ItemsSource = options;
+        CategoryOffRoadCombo.ItemsSource = options;
+        CategoryMudCombo.ItemsSource = options;
+        CategoryOnRoadCombo.SelectedIndex = 0;
+        CategoryOffRoadCombo.SelectedIndex = 0;
+        CategoryMudCombo.SelectedIndex = 0;
+    }
+
+    private static FrictionPresetOption[] BuildFrictionPresetOptions()
+    {
+        var list = new List<FrictionPresetOption>
+        {
+            new(UiText.Tires.CategoryFrictionNoChange, null),
+        };
+        foreach (var value in TireFrictionKinds.AbsolutePresets)
+        {
+            list.Add(new FrictionPresetOption(
+                value.ToString("0.#", CultureInfo.InvariantCulture),
+                value));
+        }
+
+        return list.ToArray();
+    }
+
+    private TireFrictionKind CollectSelectedFrictionKinds()
+    {
+        var kinds = TireFrictionKind.None;
+        if (CategoryHighwayCheckBox.IsChecked == true)
+        {
+            kinds |= TireFrictionKind.Highway;
+        }
+
+        if (CategoryAllTerrainCheckBox.IsChecked == true)
+        {
+            kinds |= TireFrictionKind.AllTerrain;
+        }
+
+        if (CategoryOffroadCheckBox.IsChecked == true)
+        {
+            kinds |= TireFrictionKind.Offroad;
+        }
+
+        if (CategoryMudCheckBox.IsChecked == true)
+        {
+            kinds |= TireFrictionKind.Mud;
+        }
+
+        if (CategoryChainedCheckBox.IsChecked == true)
+        {
+            kinds |= TireFrictionKind.Chained;
+        }
+
+        return kinds;
+    }
+
+    private static double? ReadFrictionPreset(ComboBox combo) =>
+        combo.SelectedItem is FrictionPresetOption option ? option.Value : null;
+
+    private sealed record FrictionPresetOption(string Label, double? Value);
 
     private void UpdateMultiplierLabels()
     {

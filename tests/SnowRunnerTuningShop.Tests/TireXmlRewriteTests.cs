@@ -59,4 +59,46 @@ public sealed class TireXmlRewriteTests
         Assert.Matches("""<WheelFriction\b[^>]*/>""", updated);
         Assert.Contains("<GameData Price=\"100\" UnlockByRank=\"1\">", updated, StringComparison.Ordinal);
     }
+
+    [Fact]
+    public void Category_friction_sets_absolute_mud_only_and_skips_other_templates()
+    {
+        const string xml =
+            """
+            <TruckWheels>
+              <TruckTires>
+                <TruckTire Name="mud">
+                  <WheelFriction _template="Mudtires" BodyFrictionAsphalt="2" BodyFriction="1" SubstanceFriction="2" IsIgnoreIce="true"/>
+                  <GameData Price="100" UnlockByRank="1"></GameData>
+                </TruckTire>
+                <TruckTire Name="highway">
+                  <WheelFriction _template="Highway" BodyFrictionAsphalt="3" BodyFriction="1" SubstanceFriction="0.2"/>
+                  <GameData Price="100" UnlockByRank="1"></GameData>
+                </TruckTire>
+              </TruckTires>
+            </TruckWheels>
+            """;
+
+        var updated = TireService.ApplyCategoryFrictionToTextForTests(
+            xml,
+            TireFrictionKind.Mud,
+            onRoad: null,
+            offRoad: null,
+            mud: 3.5);
+
+        Assert.Contains("""SubstanceFriction="3.5" """, updated, StringComparison.Ordinal);
+        Assert.Contains("""BodyFrictionAsphalt="2" """, updated, StringComparison.Ordinal);
+        Assert.Contains("""IsIgnoreIce="true" """, updated, StringComparison.Ordinal);
+        Assert.Contains("""_template="Highway" """, updated, StringComparison.Ordinal);
+        Assert.Contains("SubstanceFriction=\"0.2\"", updated, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Category_friction_classifies_scout_and_heavy_templates()
+    {
+        Assert.True(TireFrictionKinds.MatchesTemplate("ScoutHighway", TireFrictionKind.Highway));
+        Assert.True(TireFrictionKinds.MatchesTemplate("HeavyMudtires", TireFrictionKind.Mud));
+        Assert.True(TireFrictionKinds.MatchesTemplate("ScoutChains", TireFrictionKind.Chained));
+        Assert.False(TireFrictionKinds.MatchesTemplate("Highway", TireFrictionKind.Mud));
+    }
 }

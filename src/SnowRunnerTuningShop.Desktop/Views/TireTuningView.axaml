@@ -1,7 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="SnowRunnerTuningShop.Desktop.Views.TireTuningView">
-  <Grid RowDefinitions="Auto,Auto,*">
+  <Grid RowDefinitions="Auto,Auto,Auto,*">
     <Expander x:Name="MultipliersExpander"
               Grid.Row="0"
               IsExpanded="True"
@@ -50,7 +50,45 @@
       </Grid>
     </Expander>
 
-    <Border Grid.Row="1"
+    <Expander x:Name="CategoryFrictionExpander"
+              Grid.Row="1"
+              IsExpanded="False"
+              Margin="0,0,0,12"
+              HorizontalAlignment="Stretch"
+              Width="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}}">
+      <StackPanel Spacing="12">
+        <TextBlock x:Name="CategoryFrictionHintText" TextWrapping="Wrap" Opacity="0.8"/>
+        <WrapPanel>
+          <CheckBox x:Name="CategoryHighwayCheckBox" Margin="0,0,16,8"/>
+          <CheckBox x:Name="CategoryAllTerrainCheckBox" Margin="0,0,16,8"/>
+          <CheckBox x:Name="CategoryOffroadCheckBox" Margin="0,0,16,8"/>
+          <CheckBox x:Name="CategoryMudCheckBox" Margin="0,0,16,8"/>
+          <CheckBox x:Name="CategoryChainedCheckBox" Margin="0,0,16,8"/>
+        </WrapPanel>
+        <Grid ColumnDefinitions="*,*,*,Auto">
+          <StackPanel Grid.Column="0" Margin="0,0,12,0" Spacing="4">
+            <TextBlock x:Name="CategoryOnRoadLabel"/>
+            <ComboBox x:Name="CategoryOnRoadCombo" MinWidth="120"/>
+          </StackPanel>
+          <StackPanel Grid.Column="1" Margin="12,0,12,0" Spacing="4">
+            <TextBlock x:Name="CategoryOffRoadLabel"/>
+            <ComboBox x:Name="CategoryOffRoadCombo" MinWidth="120"/>
+          </StackPanel>
+          <StackPanel Grid.Column="2" Margin="12,0,12,0" Spacing="4">
+            <TextBlock x:Name="CategoryMudLabel"/>
+            <ComboBox x:Name="CategoryMudCombo" MinWidth="120"/>
+          </StackPanel>
+          <Button x:Name="ApplyCategoryFrictionButton"
+                  Grid.Column="3"
+                  Padding="14,8"
+                  VerticalAlignment="Bottom"
+                  Click="ApplyCategoryFrictionButton_Click"/>
+        </Grid>
+        <TextBlock x:Name="CategoryFrictionScaleNoteText" TextWrapping="Wrap" Opacity="0.8"/>
+      </StackPanel>
+    </Expander>
+
+    <Border Grid.Row="2"
             Background="{DynamicResource AppCardBrush}"
             BorderBrush="{DynamicResource AppCardStrokeBrush}"
             BorderThickness="1"
@@ -72,7 +110,7 @@
     </Border>
 
     <DataGrid x:Name="TiresGrid"
-              Grid.Row="2"
+              Grid.Row="3"
               AutoGenerateColumns="False"
               IsReadOnly="False"
               HeadersVisibility="Column"

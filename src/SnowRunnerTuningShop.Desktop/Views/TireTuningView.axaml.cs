@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Globalization;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
@@ -25,6 +26,7 @@ public partial class TireTuningView : UserControl
         ApplyStaticText();
         RefreshFilter();
         ResetMultiplierSlidersToBaseline();
+        InitCategoryFrictionCombos();
     }
 
     public event EventHandler<string>? StatusChanged;
@@ -54,9 +56,11 @@ public partial class TireTuningView : UserControl
         _tires.Clear();
         RefreshFilter();
         PartsTuningUiHelpers.ClearWriteButtons(ApplyMultipliersButton, SaveIndividualButton, RestoreTiresButton);
+        ApplyCategoryFrictionButton.IsEnabled = false;
     }
 
-    public void RefreshRestoreButton() =>
+    public void RefreshRestoreButton()
+    {
         PartsTuningUiHelpers.SetPartWriteButtonStates(
             _session,
             PakPath,
@@ -64,10 +68,24 @@ public partial class TireTuningView : UserControl
             ApplyMultipliersButton,
             SaveIndividualButton,
             RestoreTiresButton);
+        ApplyCategoryFrictionButton.IsEnabled = ApplyMultipliersButton.IsEnabled;
+    }
 
     private void ApplyStaticText()
     {
         MultipliersExpander.Header = UiText.Tires.GlobalMultipliersTitle;
+        CategoryFrictionExpander.Header = UiText.Tires.CategoryFrictionTitle;
+        CategoryFrictionHintText.Text = UiText.Tires.CategoryFrictionHint;
+        CategoryFrictionScaleNoteText.Text = UiText.Tires.CategoryFrictionScaleNote;
+        CategoryHighwayCheckBox.Content = UiText.Tires.CategoryHighway;
+        CategoryAllTerrainCheckBox.Content = UiText.Tires.CategoryAllTerrain;
+        CategoryOffroadCheckBox.Content = UiText.Tires.CategoryOffroad;
+        CategoryMudCheckBox.Content = UiText.Tires.CategoryMud;
+        CategoryChainedCheckBox.Content = UiText.Tires.CategoryChained;
+        CategoryOnRoadLabel.Text = UiText.Tires.OnRoadFrictionColumn;
+        CategoryOffRoadLabel.Text = UiText.Tires.OffRoadFrictionColumn;
+        CategoryMudLabel.Text = UiText.Tires.MudFrictionColumn;
+        ApplyCategoryFrictionButton.Content = UiText.Tires.Apply;
         GlobalIgnoreIceCheckBox.Content = UiText.Tires.IgnoreIceAll;
         ApplyMultipliersButton.Content = UiText.Tires.Apply;
         SaveIndividualButton.Content = UiText.Tires.SaveIndividualChanges;
@@ -106,7 +124,12 @@ public partial class TireTuningView : UserControl
             return;
         }
 
-        using (PakWriteUi.BeginBusyWrite(owner, ApplyMultipliersButton, SaveIndividualButton, RestoreTiresButton))
+        using (PakWriteUi.BeginBusyWrite(
+                   owner,
+                   ApplyMultipliersButton,
+                   ApplyCategoryFrictionButton,
+                   SaveIndividualButton,
+                   RestoreTiresButton))
         {
             try
             {
@@ -140,7 +163,12 @@ public partial class TireTuningView : UserControl
             return;
         }
 
-        using (PakWriteUi.BeginBusyWrite(owner, ApplyMultipliersButton, SaveIndividualButton, RestoreTiresButton))
+        using (PakWriteUi.BeginBusyWrite(
+                   owner,
+                   ApplyMultipliersButton,
+                   ApplyCategoryFrictionButton,
+                   SaveIndividualButton,
+                   RestoreTiresButton))
         {
             try
             {
@@ -168,6 +196,49 @@ public partial class TireTuningView : UserControl
         }
     }
 
+    private async void ApplyCategoryFrictionButton_Click(object? sender, RoutedEventArgs e)
+    {
+        if (OwnerWindow is not { } owner)
+        {
+            return;
+        }
+
+        if (!await PakWriteUi.TryBeginWrite(owner, _session, PakPath, _pakWritesAllowed, requireBaseline: true,
+                () => ReportStatus(UiText.Tires.LoadPakFirst)))
+        {
+            return;
+        }
+
+        using (PakWriteUi.BeginBusyWrite(
+                   owner,
+                   ApplyMultipliersButton,
+                   ApplyCategoryFrictionButton,
+                   SaveIndividualButton,
+                   RestoreTiresButton))
+        {
+            try
+            {
+                var path = PakPath!;
+                var categories = CollectSelectedFrictionKinds();
+                var onRoad = ReadFrictionPreset(CategoryOnRoadCombo);
+                var offRoad = ReadFrictionPreset(CategoryOffRoadCombo);
+                var mud = ReadFrictionPreset(CategoryMudCombo);
+                var result = await Task.Run(() =>
+                    TireService.ApplyCategoryFriction(path, categories, onRoad, offRoad, mud));
+
+                ReloadTires();
+                ReportStatus(UiText.Tires.CategoryFrictionAppliedStatus(
+                    result.ChangedTires,
+                    result.UpdatedFiles));
+            }
+            catch (Exception ex)
+            {
+                ReportStatus(UiText.Main.ErrorStatus(ex.Message));
+                await AppDialogs.ShowError(owner, ex.Message, UiText.Tires.SaveErrorTitle);
+            }
+        }
+    }
+
     private async void SaveIndividualButton_Click(object? sender, RoutedEventArgs e)
     {
         if (OwnerWindow is not { } owner)
@@ -181,7 +252,12 @@ public partial class TireTuningView : UserControl
             return;
         }
 
-        using (PakWriteUi.BeginBusyWrite(owner, ApplyMultipliersButton, SaveIndividualButton, RestoreTiresButton))
+        using (PakWriteUi.BeginBusyWrite(
+                   owner,
+                   ApplyMultipliersButton,
+                   ApplyCategoryFrictionButton,
+                   SaveIndividualButton,
+                   RestoreTiresButton))
         {
             try
             {
@@ -338,6 +414,72 @@ public partial class TireTuningView : UserControl
         DamageMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
         PriceMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
         UpdateMultiplierLabels();
+    }
+
+    private void InitCategoryFrictionCombos()
+    {
+        var options = BuildFrictionPresetOptions();
+        CategoryOnRoadCombo.ItemsSource = options;
+        CategoryOffRoadCombo.ItemsSource = options;
+        CategoryMudCombo.ItemsSource = options;
+        CategoryOnRoadCombo.SelectedIndex = 0;
+        CategoryOffRoadCombo.SelectedIndex = 0;
+        CategoryMudCombo.SelectedIndex = 0;
+    }
+
+    private static FrictionPresetOption[] BuildFrictionPresetOptions()
+    {
+        var list = new List<FrictionPresetOption>
+        {
+            new(UiText.Tires.CategoryFrictionNoChange, null),
+        };
+        foreach (var value in TireFrictionKinds.AbsolutePresets)
+        {
+            list.Add(new FrictionPresetOption(
+                value.ToString("0.#", CultureInfo.InvariantCulture),
+                value));
+        }
+
+        return list.ToArray();
+    }
+
+    private TireFrictionKind CollectSelectedFrictionKinds()
+    {
+        var kinds = TireFrictionKind.None;
+        if (CategoryHighwayCheckBox.IsChecked == true)
+        {
+            kinds |= TireFrictionKind.Highway;
+        }
+
+        if (CategoryAllTerrainCheckBox.IsChecked == true)
+        {
+            kinds |= TireFrictionKind.AllTerrain;
+        }
+
+        if (CategoryOffroadCheckBox.IsChecked == true)
+        {
+            kinds |= TireFrictionKind.Offroad;
+        }
+
+        if (CategoryMudCheckBox.IsChecked == true)
+        {
+            kinds |= TireFrictionKind.Mud;
+        }
+
+        if (CategoryChainedCheckBox.IsChecked == true)
+        {
+            kinds |= TireFrictionKind.Chained;
+        }
+
+        return kinds;
+    }
+
+    private static double? ReadFrictionPreset(ComboBox combo) =>
+        combo.SelectedItem is FrictionPresetOption option ? option.Value : null;
+
+    private sealed record FrictionPresetOption(string Label, double? Value)
+    {
+        public override string ToString() => Label;
     }
 
     private void UpdateMultiplierLabels()

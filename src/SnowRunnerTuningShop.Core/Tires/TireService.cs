@@ -105,6 +105,73 @@ public static class TireService
         return new TireSaveResult(updatedFiles, result.ChangedItems);
     }
 
+    /// <summary>
+    /// Sets absolute On-road / Off-road / Mud friction on working-pak tires whose
+    /// <c>WheelFriction _template</c> matches the selected kinds. Null fields mean no change.
+    /// Does not modify <c>IsIgnoreIce</c>.
+    /// </summary>
+    public static TireSaveResult ApplyCategoryFriction(
+        string pakPath,
+        TireFrictionKind categories,
+        double? onRoad,
+        double? offRoad,
+        double? mud)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(pakPath);
+        if (categories == TireFrictionKind.None)
+        {
+            throw new InvalidOperationException("Select at least one tire type.");
+        }
+
+        if (onRoad is null && offRoad is null && mud is null)
+        {
+            throw new InvalidOperationException("Select at least one friction value to change.");
+        }
+
+        ValidateOptionalAbsolute(onRoad, nameof(onRoad));
+        ValidateOptionalAbsolute(offRoad, nameof(offRoad));
+        ValidateOptionalAbsolute(mud, nameof(mud));
+
+        var templates = WheelFrictionTemplates.LoadFromPak(pakPath);
+        Dictionary<string, byte[]> replacements;
+        var changedTires = 0;
+
+        using (var archive = ZipFile.OpenRead(pakPath))
+        {
+            replacements = new Dictionary<string, byte[]>(StringComparer.Ordinal);
+            foreach (var entry in archive.Entries)
+            {
+                var entryPath = PakEntryLocator.NormalizeEntryPath(entry.FullName);
+                if (!IsWheelEntry(entryPath))
+                {
+                    continue;
+                }
+
+                var text = PartXmlHelpers.ReadEntryUtf8(entry);
+                var updated = ApplyCategoryFrictionToText(
+                    text,
+                    templates,
+                    categories,
+                    onRoad,
+                    offRoad,
+                    mud,
+                    out var fileChanged);
+                if (fileChanged <= 0 || string.Equals(text, updated, StringComparison.Ordinal))
+                {
+                    continue;
+                }
+
+                changedTires += fileChanged;
+                replacements[entryPath] = Encoding.UTF8.GetBytes(updated);
+            }
+        }
+
+        var updatedFiles = replacements.Count == 0
+            ? 0
+            : InitialPakWriter.ReplaceEntries(pakPath, replacements);
+        return new TireSaveResult(updatedFiles, changedTires);
+    }
+
     public static TireSaveResult RestoreTiresFromBaseline(string pakPath) =>
         ApplyGlobalMultipliers(pakPath, 1.0, 1.0, 1.0, priceMultiplier: 1.0, damageCapacityMultiplier: 1.0);
 
@@ -370,6 +437,140 @@ public static class TireService
             ignoreIceForAll,
             damageCapacityMultiplier,
             priceMultiplier);
+
+    internal static string ApplyCategoryFrictionToTextForTests(
+        string workingText,
+        TireFrictionKind categories,
+        double? onRoad,
+        double? offRoad,
+        double? mud,
+        IReadOnlyDictionary<string, WheelFrictionTemplates.FrictionValues>? templates = null) =>
+        ApplyCategoryFrictionToText(
+            workingText,
+            templates ?? new Dictionary<string, WheelFrictionTemplates.FrictionValues>(StringComparer.OrdinalIgnoreCase),
+            categories,
+            onRoad,
+            offRoad,
+            mud,
+            out _);
+
+    private static void ValidateOptionalAbsolute(double? value, string paramName)
+    {
+        if (value is null)
+        {
+            return;
+        }
+
+        if (!TireFrictionKinds.IsAllowedAbsolute(value.Value))
+        {
+            throw new ArgumentOutOfRangeException(
+                paramName,
+                value,
+                "Friction value must be one of: 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4.");
+        }
+    }
+
+    private static string ApplyCategoryFrictionToText(
+        string workingText,
+        IReadOnlyDictionary<string, WheelFrictionTemplates.FrictionValues> templates,
+        TireFrictionKind categories,
+        double? onRoad,
+        double? offRoad,
+        double? mud,
+        out int changedTires)
+    {
+        changedTires = 0;
+        var matches = TruckTireOpenTagRegex.Matches(workingText);
+        if (matches.Count == 0)
+        {
+            return workingText;
+        }
+
+        var builder = new StringBuilder(workingText.Length);
+        var lastIndex = 0;
+
+        for (var i = 0; i < matches.Count; i++)
+        {
+            var match = matches[i];
+            var blockEnd = i + 1 < matches.Count ? matches[i + 1].Index : workingText.Length;
+            var block = workingText[match.Index..blockEnd];
+
+            builder.Append(workingText, lastIndex, match.Index - lastIndex);
+
+            if (!IsInsideTemplatesSection(workingText, match.Index)
+                && TryApplyCategoryFrictionToTireBlock(
+                    block,
+                    templates,
+                    categories,
+                    onRoad,
+                    offRoad,
+                    mud,
+                    out var updatedBlock))
+            {
+                builder.Append(updatedBlock);
+                changedTires++;
+            }
+            else
+            {
+                builder.Append(block);
+            }
+
+            lastIndex = blockEnd;
+        }
+
+        builder.Append(workingText, lastIndex, workingText.Length - lastIndex);
+        return builder.ToString();
+    }
+
+    private static bool TryApplyCategoryFrictionToTireBlock(
+        string block,
+        IReadOnlyDictionary<string, WheelFrictionTemplates.FrictionValues> templates,
+        TireFrictionKind categories,
+        double? onRoad,
+        double? offRoad,
+        double? mud,
+        out string updatedBlock)
+    {
+        updatedBlock = block;
+        var frictionMatch = WheelFrictionTagRegex.Match(block);
+        if (!frictionMatch.Success)
+        {
+            return false;
+        }
+
+        var attrs = frictionMatch.Groups["attrs"].Value;
+        var parsed = ParseAttributes(attrs);
+        parsed.TryGetValue("_template", out var templateName);
+        if (!TireFrictionKinds.MatchesTemplate(templateName, categories))
+        {
+            return false;
+        }
+
+        var resolved = WheelFrictionTemplates.Resolve(templates, templateName, parsed);
+        var nextOnRoad = onRoad ?? resolved.BodyFrictionAsphalt;
+        var nextOffRoad = offRoad ?? resolved.BodyFriction;
+        var nextMud = mud ?? resolved.SubstanceFriction;
+
+        if (Math.Abs(nextOnRoad - resolved.BodyFrictionAsphalt) < 1e-9
+            && Math.Abs(nextOffRoad - resolved.BodyFriction) < 1e-9
+            && Math.Abs(nextMud - resolved.SubstanceFriction) < 1e-9)
+        {
+            return false;
+        }
+
+        var updatedAttrs = attrs;
+        SetOrReplaceAttribute(ref updatedAttrs, "BodyFrictionAsphalt", FormatNumeric(nextOnRoad));
+        SetOrReplaceAttribute(ref updatedAttrs, "BodyFriction", FormatNumeric(nextOffRoad));
+        SetOrReplaceAttribute(ref updatedAttrs, "SubstanceFriction", FormatNumeric(nextMud));
+        // Leave IsIgnoreIce untouched.
+
+        var replacement = $"<WheelFriction{updatedAttrs.TrimEnd()} />";
+        updatedBlock = string.Concat(
+            block.AsSpan(0, frictionMatch.Index),
+            replacement,
+            block.AsSpan(frictionMatch.Index + frictionMatch.Length));
+        return true;
+    }
 
     private static string ApplyMultipliersToText(
         string baselineText,

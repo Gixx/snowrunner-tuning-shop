@@ -11,6 +11,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
@@ -115,7 +116,83 @@
             </Grid>
         </Expander>
 
-        <Border Grid.Row="1"
+        <Expander Grid.Row="1"
+                  Style="{StaticResource CollapsibleCardExpanderStyle}"
+                  Header="{x:Static loc:UiText+Tires.CategoryFrictionTitle}"
+                  IsExpanded="False">
+            <StackPanel>
+                <TextBlock Text="{x:Static loc:UiText+Tires.CategoryFrictionHint}"
+                           TextWrapping="Wrap"
+                           Margin="0,0,0,12"
+                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                <WrapPanel Margin="0,0,0,12">
+                    <CheckBox x:Name="CategoryHighwayCheckBox"
+                              Content="{x:Static loc:UiText+Tires.CategoryHighway}"
+                              Margin="0,0,16,8"
+                              Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                    <CheckBox x:Name="CategoryAllTerrainCheckBox"
+                              Content="{x:Static loc:UiText+Tires.CategoryAllTerrain}"
+                              Margin="0,0,16,8"
+                              Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                    <CheckBox x:Name="CategoryOffroadCheckBox"
+                              Content="{x:Static loc:UiText+Tires.CategoryOffroad}"
+                              Margin="0,0,16,8"
+                              Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                    <CheckBox x:Name="CategoryMudCheckBox"
+                              Content="{x:Static loc:UiText+Tires.CategoryMud}"
+                              Margin="0,0,16,8"
+                              Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                    <CheckBox x:Name="CategoryChainedCheckBox"
+                              Content="{x:Static loc:UiText+Tires.CategoryChained}"
+                              Margin="0,0,16,8"
+                              Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                </WrapPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" Margin="0,0,12,0">
+                        <TextBlock Text="{x:Static loc:UiText+Tires.OnRoadFrictionColumn}"
+                                   Margin="0,0,0,4"
+                                   Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                        <ComboBox x:Name="CategoryOnRoadCombo"
+                                  MinWidth="120"
+                                  DisplayMemberPath="Label"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Margin="12,0,12,0">
+                        <TextBlock Text="{x:Static loc:UiText+Tires.OffRoadFrictionColumn}"
+                                   Margin="0,0,0,4"
+                                   Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                        <ComboBox x:Name="CategoryOffRoadCombo"
+                                  MinWidth="120"
+                                  DisplayMemberPath="Label"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="2" Margin="12,0,12,0">
+                        <TextBlock Text="{x:Static loc:UiText+Tires.MudFrictionColumn}"
+                                   Margin="0,0,0,4"
+                                   Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                        <ComboBox x:Name="CategoryMudCombo"
+                                  MinWidth="120"
+                                  DisplayMemberPath="Label"/>
+                    </StackPanel>
+                    <Button x:Name="ApplyCategoryFrictionButton"
+                            Grid.Column="3"
+                            Content="{x:Static loc:UiText+Tires.Apply}"
+                            Padding="14,8"
+                            VerticalAlignment="Bottom"
+                            Click="ApplyCategoryFrictionButton_Click"/>
+                </Grid>
+                <TextBlock Text="{x:Static loc:UiText+Tires.CategoryFrictionScaleNote}"
+                           TextWrapping="Wrap"
+                           Margin="0,12,0,0"
+                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+            </StackPanel>
+        </Expander>
+
+        <Border Grid.Row="2"
                 Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
                 BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
                 BorderThickness="1"
@@ -160,7 +237,7 @@
         </Border>
 
         <DataGrid x:Name="TiresGrid"
-                  Grid.Row="2"
+                  Grid.Row="3"
                   AutoGenerateColumns="False"
                   CanUserAddRows="False"
                   CanUserDeleteRows="False"
