@@ -10,7 +10,6 @@ import {
   ShieldCheck,
   Layers,
   ArrowRight,
-  CircleAlert,
   Archive,
   Disc3,
 } from "lucide-react";
@@ -115,18 +114,18 @@ export const Route = createFileRoute("/")({
 const whatsNew = [
   {
     icon: Archive,
-    title: "Home presets (.tsa)",
-    body: "Save, import, and apply tuning archives from Home — bundled starters plus your library. Lock a preset, track what is active, and start fresh with New after a baseline restore.",
+    title: "MacLeod's Recommendation",
+    body: "A locked starter preset now ships with the app — anti-stress winch, AWD/diff, and fuel tweaks without turning trucks into OP monsters.",
   },
   {
     icon: Disc3,
-    title: "Per-truck wheels",
-    body: "Optional larger CompatibleWheels sizes (capped at Scale 0.99), OffsetZ for extras, and a Wheel sets dialog to assign tire types — plus cabin height and front–rear weight balance on the vehicle page.",
+    title: "Friction by tire type",
+    body: "Parts → Tires can set absolute On-road, Off-road, and Mud grip for Highway, All terrain, Offroad, Mud, or Chained templates in one apply — with No change per field.",
   },
   {
-    icon: CircleAlert,
-    title: "Real Life mod warning",
-    body: "Home shows a red banner when your working initial.pak contains the Real Life community mod, so you know Tuning Shop edits the same files and mixed baselines can conflict.",
+    icon: ShieldCheck,
+    title: "Bundled presets stay put",
+    body: "Delete is disabled for presets that ship with the app, so a shared starter cannot be removed from the library by accident.",
   },
 ];
 
@@ -320,7 +319,7 @@ function PlatformShowcase({
             WHAT&apos;S NEW IN VERSION {APP_VERSION_STABLE}
           </h2>
           <p className="mt-4 max-w-2xl text-muted-foreground">
-            Presets you can share, deeper per-truck wheel tuning, and a clear heads-up when Real Life is in your pak.
+            A bundled chill-drive preset, bulk tire-type friction edits, and safer handling of shipped packs.
           </p>
         </Reveal>
         <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">

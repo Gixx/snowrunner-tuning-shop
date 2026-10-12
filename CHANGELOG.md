@@ -11,6 +11,10 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ## [Unreleased]
 
+---
+
+## [1.5.1] — 2026-10-12
+
 ### Added
 - **Bundled preset:** MacLeod's Recommendation (locked) ships with the app under Home → Presets.
 - **Parts → Tires:** accordion to set absolute On-road / Off-road / Mud friction by tire type (Highway, All terrain, Offroad, Mud, Chained), with optional No change per field. Ignore ice is left alone.
@@ -473,7 +477,8 @@ Stable release of the 1.5 line (Home Presets, vehicle wheels tuning, center of m
 
 ---
 
-[Unreleased]: https://github.com/Gixx/snowrunner-tuning-shop/compare/v1.5.0...HEAD
+[Unreleased]: https://github.com/Gixx/snowrunner-tuning-shop/compare/v1.5.1...HEAD
+[1.5.1]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.5.1
 [1.5.0]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.5.0
 [1.5.0-beta.3]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.5.0-beta.3
 [1.5.0-beta.2]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.5.0-beta.2
