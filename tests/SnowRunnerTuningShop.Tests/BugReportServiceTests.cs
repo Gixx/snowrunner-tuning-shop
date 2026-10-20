@@ -21,6 +21,17 @@ public sealed class BugReportServiceTests
     }
 
     [Fact]
+    public void BuildMessageBody_includes_working_pak_diagnostics()
+    {
+        var body = BugReportService.BuildMessageBody("Something broke");
+        Assert.Contains("Likely external/other-tool edits:", body, StringComparison.Ordinal);
+        Assert.Contains("Real Life mod:", body, StringComparison.Ordinal);
+        Assert.True(
+            body.Contains("Working pak: (not available)", StringComparison.Ordinal)
+            || body.Contains("Workspace health:", StringComparison.Ordinal));
+    }
+
+    [Fact]
     public void WriteDraftEml_includes_description_destination_and_profile_attachment()
     {
         var tempRoot = Path.Combine(Path.GetTempPath(), "srts-bug-report-" + Guid.NewGuid().ToString("N"));

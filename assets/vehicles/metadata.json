@@ -253,6 +253,11 @@
       "logoFile": "manufacturers/western-star-logo.png"
     },
     {
+      "id": "wortek",
+      "name": "Wortek",
+      "logoFile": null
+    },
+    {
       "id": "yar",
       "name": "YAR",
       "logoFile": "manufacturers/yar-logo.png"
@@ -605,6 +610,14 @@
       "year": 2008
     },
     {
+      "id": "derry_savior",
+      "manufacturerId": "derry-longhorn",
+      "basedOn": "Oshkosh MTVR 8x8",
+      "countryCode": "US",
+      "countryName": "United States",
+      "year": 1998
+    },
+    {
       "id": "femm7at",
       "manufacturerId": "femm",
       "basedOn": "Yamal B-6M",
@@ -779,6 +792,14 @@
       "countryCode": "CA",
       "countryName": "Canada",
       "year": 2005
+    },
+    {
+      "id": "wortek_250t",
+      "manufacturerId": "wortek",
+      "basedOn": "Thornycroft Antar (heavy-duty 6×4)",
+      "countryCode": "GB",
+      "countryName": "United Kingdom",
+      "year": 1951
     },
     {
       "id": "zikz_605r",

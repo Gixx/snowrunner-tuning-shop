@@ -318,24 +318,33 @@ public static class TruckSoundsService
         }
 
         var body = blockMatch.Groups["body"].Value;
+        // Capture optional self-close so open/close pairs are not turned into `<Tag />` + orphan `</Tag>`
+        // (that invalid XML makes trucks vanish from the garage/store — same class of bug as steer slash-before-attr).
         var tagRegex = new Regex(
-            $@"<(?<tag>{Regex.Escape(tagName)})\b(?<attrs>[^<>]*?)\s*/?>",
+            $@"<(?<tag>{Regex.Escape(tagName)})\b(?<attrs>[^<>]*?)(?<self>\s*/\s*)?>",
             RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
         string updatedBody;
         var existing = tagRegex.Match(body);
         if (existing.Success)
         {
-            var attrs = existing.Groups["attrs"].Value;
+            TruckSteerXml.SplitAttrsAndSelf(
+                existing.Groups["attrs"].Value,
+                existing.Groups["self"].Success ? existing.Groups["self"].Value : string.Empty,
+                out var attrs,
+                out var selfClosing);
+
             var newAttrs = SoundAttrRegex.IsMatch(attrs)
                 ? SoundAttrRegex.Replace(attrs, $@"Sound=""{soundPath}""", 1)
                 : attrs.TrimEnd() + $@" Sound=""{soundPath}""";
-            var replacement = $"<{tagName}{newAttrs} />";
+            newAttrs = EnsureIsSound2DAttr(tagName, newAttrs);
+            var replacement = BuildSoundOpenTag(tagName, newAttrs, selfClosing);
             updatedBody = tagRegex.Replace(body, replacement, 1);
         }
         else
         {
-            var insert = $"{Environment.NewLine}\t\t\t<{tagName}\t\tSound=\"{soundPath}\" />";
+            var is2d = NeedsIsSound2D(tagName) ? @" IsSound2D=""true""" : string.Empty;
+            var insert = $"{Environment.NewLine}\t\t\t<{tagName}\t\tSound=\"{soundPath}\"{is2d} />";
             updatedBody = body.TrimEnd() + insert + Environment.NewLine + "\t\t";
         }
 
@@ -343,6 +352,40 @@ public static class TruckSoundsService
             truckXml.AsSpan(0, blockMatch.Groups["body"].Index),
             updatedBody,
             truckXml.AsSpan(blockMatch.Groups["body"].Index + blockMatch.Groups["body"].Length));
+    }
+
+    private static bool NeedsIsSound2D(string tagName) =>
+        tagName.EndsWith("_2d", StringComparison.OrdinalIgnoreCase);
+
+    private static string EnsureIsSound2DAttr(string tagName, string attrs)
+    {
+        if (!NeedsIsSound2D(tagName))
+        {
+            return attrs;
+        }
+
+        if (Regex.IsMatch(attrs, @"\bIsSound2D\s*=", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
+        {
+            return attrs;
+        }
+
+        return attrs.TrimEnd() + @" IsSound2D=""true""";
+    }
+
+    private static string BuildSoundOpenTag(string tagName, string attrs, bool selfClosing)
+    {
+        attrs = attrs.TrimEnd();
+        if (selfClosing)
+        {
+            if (attrs.Length > 0 && !char.IsWhiteSpace(attrs[^1]))
+            {
+                attrs += " ";
+            }
+
+            return $"<{tagName}{attrs}/>";
+        }
+
+        return $"<{tagName}{attrs}>";
     }
 
     private static bool TryGetSoundsBody(string truckXml, out string body)

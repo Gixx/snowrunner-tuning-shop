@@ -15,7 +15,7 @@ public partial class BugReportWindow : Window
         InitializeComponent();
         _profilePath = BugReportService.TryGetActiveProfilePath();
         IncludeProfileCheckBox.IsEnabled = _profilePath is not null;
-        IncludeProfileCheckBox.IsChecked = false;
+        IncludeProfileCheckBox.IsChecked = _profilePath is not null;
         if (_profilePath is null)
         {
             IncludeProfileCheckBox.ToolTip = UiText.BugReport.NoProfileTooltip;

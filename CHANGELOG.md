@@ -13,6 +13,26 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ---
 
+## [1.6.0] — 2026-10-20
+
+Season 19: Research & Restore (`dlc_19`).
+
+### Added
+- **Season 19 vehicles:** Derry "Savior" (`derry_savior`) and Wortek 250T (`wortek_250t`) on the Vehicles list and detail pages (Heavy), with store images and vehicle details (Based on: Oshkosh MTVR 8x8 / Thornycroft Antar).
+- **Season 19 trailer:** Telescope Lens (`semitrailer_telescope_5_dlc19`) on the Trailers list and detail page.
+- **Bundled presets:** Easy Mode and Anti-stress Mode (locked) ship with the app under Home → Presets (Claude MacLeod).
+
+### Fixed
+- **Vehicles → Sounds / Save:** rewriting engine/horn sounds no longer turns open/close `<Sounds>` child tags into a self-closing tag plus an orphan `</…>` (invalid XML that made trucks disappear from the garage and store). Center-of-mass saves could hit the same path because sound assignment is reapplied on every vehicle save. Truck saves are blocked if rewrite safety checks fail.
+
+### Changed
+- **Bug report:** attaching the tuning profile JSON is checked by default when a profile exists; the email body now includes workspace health, Tuning Shop marker, Real Life mod detection, and whether `initial.pak` likely differs due to another tool or game update.
+
+### Removed
+- **Home → Presets:** MacLeod's Recommendation no longer ships as a bundled preset (replaced by Easy Mode and Anti-stress Mode).
+
+---
+
 ## [1.5.1] — 2026-10-12
 
 ### Added
@@ -477,7 +497,8 @@ Stable release of the 1.5 line (Home Presets, vehicle wheels tuning, center of m
 
 ---
 
-[Unreleased]: https://github.com/Gixx/snowrunner-tuning-shop/compare/v1.5.1...HEAD
+[Unreleased]: https://github.com/Gixx/snowrunner-tuning-shop/compare/v1.6.0...HEAD
+[1.6.0]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.6.0
 [1.5.1]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.5.1
 [1.5.0]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.5.0
 [1.5.0-beta.3]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.5.0-beta.3

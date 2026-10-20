@@ -1,0 +1,30 @@
+{
+  "note": "Season 19 catalog applied from initial.pak dlc_19 (2026-10-20). Based-on values remain provisional pending wiki confirmation.",
+  "season": "Season 19: Research & Restore",
+  "status": "applied",
+  "vehicles": [
+    {
+      "catalogId": "derry_savior",
+      "pakId": "derry_savior",
+      "displayName": "Derry \"Savior\"",
+      "manufacturerId": "derry-longhorn",
+      "basedOn": "Oshkosh MTVR 8x8",
+      "imageFile": "Store_derry_savior.png"
+    },
+    {
+      "catalogId": "wortek_250t",
+      "pakId": "wortek_250t",
+      "displayName": "Wortek 250T",
+      "manufacturerId": "wortek",
+      "basedOn": "Thornycroft Antar (heavy-duty 6×4)",
+      "imageFile": "Store_wortek_250t.png"
+    }
+  ],
+  "trailers": [
+    {
+      "catalogId": "semitrailer_telescope_5_dlc19",
+      "displayName": "Telescope Lens",
+      "imageFile": "telescope-lens.jpg"
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Text;
 using SnowRunnerTuningShop.Core.Config;
+using SnowRunnerTuningShop.Core.Pak;
 using SnowRunnerTuningShop.Core.Profile;
 
 namespace SnowRunnerTuningShop.Core.Diagnostics;
@@ -11,7 +12,7 @@ namespace SnowRunnerTuningShop.Core.Diagnostics;
 public static class BugReportService
 {
     public const int MaxDescriptionLength = 600;
-    private const int MaxComposeBodyLength = 1800;
+    private const int MaxComposeBodyLength = 2400;
 
     public static string? TryGetActiveProfilePath()
     {
@@ -113,8 +114,76 @@ public static class BugReportService
                     : "Tuning profile: not attached (user declined)");
         }
 
+        AppendWorkingPakDiagnostics(builder, session?.PakPath);
+
         return builder.ToString().TrimEnd();
     }
+
+    /// <summary>
+    /// English diagnostic lines: workspace health, Tuning Shop marker, Real Life mod,
+    /// and whether the working pak likely differs due to non-Tuning-Shop edits.
+    /// </summary>
+    internal static void AppendWorkingPakDiagnostics(StringBuilder builder, string? sessionPakPath)
+    {
+        var workspace = WorkspaceConfigStore.TryGetActiveWorkspace();
+        var pakPath = !string.IsNullOrWhiteSpace(sessionPakPath)
+            ? sessionPakPath
+            : workspace?.WorkingPakPath;
+
+        if (string.IsNullOrWhiteSpace(pakPath) || !File.Exists(pakPath))
+        {
+            builder.AppendLine("Working pak: (not available)");
+            return;
+        }
+
+        var health = WorkspaceHealthService.Evaluate(pakPath);
+        builder.AppendLine($"Workspace health: {FormatHealthKind(health.Kind)}");
+        builder.AppendLine($"Working matches baseline: {health.WorkingMatchesBaseline}");
+        builder.AppendLine($"Tuning Shop marker present: {health.HasMarker}");
+        builder.AppendLine($"Saved profile entries: {health.ProfileEntryCount}");
+        builder.AppendLine($"Likely external/other-tool edits: {FormatExternalEditLikelihood(health)}");
+
+        if (RealLifeModDetector.TryDetect(pakPath, out var rlVersion))
+        {
+            builder.AppendLine(
+                string.IsNullOrWhiteSpace(rlVersion)
+                    ? "Real Life mod: detected"
+                    : $"Real Life mod: detected (v{rlVersion})");
+        }
+        else
+        {
+            builder.AppendLine("Real Life mod: not detected");
+        }
+    }
+
+    private static string FormatHealthKind(WorkspaceHealthKind kind) => kind switch
+    {
+        WorkspaceHealthKind.NotReady => "not ready",
+        WorkspaceHealthKind.HealthyVanilla => "healthy vanilla (matches baseline, no marker)",
+        WorkspaceHealthKind.HealthyTuned => "healthy tuned (Tuning Shop marker present)",
+        WorkspaceHealthKind.ReadyToReapply => "ready to reapply (matches baseline, profile waiting)",
+        WorkspaceHealthKind.GameUpdateDetected => "possible game update (differs from baseline, no marker, profile present)",
+        WorkspaceHealthKind.UnknownExternalChange => "unknown change (differs from baseline, no marker, no waiting profile)",
+        WorkspaceHealthKind.InconsistentMarker => "inconsistent marker (matches baseline but marker still present)",
+        _ => kind.ToString(),
+    };
+
+    private static string FormatExternalEditLikelihood(WorkspaceHealth health) => health.Kind switch
+    {
+        WorkspaceHealthKind.UnknownExternalChange =>
+            "likely (pak differs from baseline without a Tuning Shop marker; another tool/mod or a game update may have rewritten initial.pak)",
+        WorkspaceHealthKind.GameUpdateDetected =>
+            "possible (pak differs from baseline without a Tuning Shop marker; often a game update — less often another tool)",
+        WorkspaceHealthKind.HealthyTuned =>
+            "unlikely (Tuning Shop marker present — this app has written the pak)",
+        WorkspaceHealthKind.HealthyVanilla =>
+            "no (working pak matches the baseline)",
+        WorkspaceHealthKind.ReadyToReapply =>
+            "no (working pak matches the baseline; saved profile not yet reapplied)",
+        WorkspaceHealthKind.InconsistentMarker =>
+            "unclear (marker left on a baseline-matching pak)",
+        _ => "unknown (workspace not ready)",
+    };
 
     /// <summary>Opens Gmail's web compose UI (no GitHub account required).</summary>
     public static string BuildGmailComposeUrl(string description, bool includeProfileAttachment)

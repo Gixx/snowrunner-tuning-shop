@@ -33,10 +33,10 @@ public static class UiText
             "What went wrong? (max 600 characters)");
         public static string IncludeProfile => StringResources.Get(
             "BugReport.IncludeProfile",
-            "I agree to attach the tuning profile JSON to this bug report");
+            "Attach the tuning profile JSON to this bug report (recommended)");
         public static string ProfilePrivacyNote => StringResources.Get(
             "BugReport.ProfilePrivacyNote",
-            "This file does not contain personal data. It only stores your tuning changes and greatly helps diagnose bugs.");
+            "This file does not contain personal data. It only stores your tuning changes and greatly helps diagnose bugs. It is attached by default when a profile exists.");
         public static string Send => StringResources.Get("BugReport.Send", "Send");
         public static string Sending => StringResources.Get("BugReport.Sending", "Sending…");
         public static string SendSucceeded => StringResources.Get(
@@ -47,7 +47,7 @@ public static class UiText
             "Bug report email is not configured in this build.");
         public static string SubmitHint => StringResources.Get(
             "BugReport.SubmitHint",
-            "Send delivers the report by email. If you agree, the tuning profile JSON is attached automatically.");
+            "Send delivers the report by email. The tuning profile JSON is attached by default when available (uncheck to omit it).");
         public static string Cancel => StringResources.Get("BugReport.Cancel", "Cancel");
         public static string EmptyDescription => StringResources.Get(
             "BugReport.EmptyDescription",

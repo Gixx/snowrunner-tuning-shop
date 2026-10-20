@@ -311,6 +311,7 @@ public static class TruckTuningService
 
             replacements = new Dictionary<string, byte[]>(StringComparer.Ordinal);
             var updated = ApplyTuning(archive, text, truck, baselineText);
+            XmlRewriteSafety.EnsureSafe(updated, $"truck save {truck.TruckId}");
             var truckKey = entry.FullName.Replace('\\', '/');
             if (!string.Equals(text, updated, StringComparison.Ordinal))
             {

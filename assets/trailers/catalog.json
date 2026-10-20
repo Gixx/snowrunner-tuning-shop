@@ -488,6 +488,14 @@
         "imageFile": "superheavy-semi.jpg"
     },
     {
+        "id": "semitrailer_telescope_5_dlc19",
+        "displayName": "Telescope Lens",
+        "hitch": "saddle-high",
+        "function": "mission",
+        "isQuest": true,
+        "imageFile": "telescope-lens.jpg"
+    },
+    {
         "id": "semitrailer_star_dlc_18",
         "displayName": "Trailer Home",
         "hitch": "saddle-low",

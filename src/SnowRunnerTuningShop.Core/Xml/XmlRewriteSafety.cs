@@ -23,6 +23,14 @@ public static class XmlRewriteSafety
         @"<[A-Za-z_][^>]*?/\s+[^>]+>",
         RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
+    /// <summary>
+    /// Self-closing tag immediately followed by a matching close tag
+    /// (e.g. <c>&lt;EngineIdle … /&gt;&lt;/EngineIdle&gt;</c>) — invalid XML that hides trucks in-game.
+    /// </summary>
+    private static readonly Regex OrphanCloseAfterSelfCloseRegex = new(
+        @"<([A-Za-z_][A-Za-z0-9_]*)\b[^>]*/>\s*</\1\s*>",
+        RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+
     public static bool TryValidate(string xml, out string? failure)
     {
         if (string.IsNullOrEmpty(xml))
@@ -42,6 +50,13 @@ public static class XmlRewriteSafety
         if (slashMidTag.Success)
         {
             failure = $"Self-close slash is not at end of open tag near: {Snippet(xml, slashMidTag.Index)}";
+            return false;
+        }
+
+        var orphanClose = OrphanCloseAfterSelfCloseRegex.Match(xml);
+        if (orphanClose.Success)
+        {
+            failure = $"Orphan close tag after self-closing element near: {Snippet(xml, orphanClose.Index)}";
             return false;
         }
 

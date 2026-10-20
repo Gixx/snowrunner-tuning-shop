@@ -11,7 +11,8 @@ import {
   Layers,
   ArrowRight,
   Archive,
-  Disc3,
+  Bug,
+  Volume2,
 } from "lucide-react";
 
 import { Snowfall } from "@/components/Snowfall";
@@ -113,19 +114,19 @@ export const Route = createFileRoute("/")({
 
 const whatsNew = [
   {
+    icon: Volume2,
+    title: "Sound & CoM saves stay valid",
+    body: "Engine/horn sound rewrites no longer leave broken XML that hid trucks from the garage and store — including when you only change center of mass.",
+  },
+  {
+    icon: Bug,
+    title: "Clearer bug reports",
+    body: "The tuning profile attaches by default, and each report notes workspace health, Real Life mod detection, and whether initial.pak looks externally edited.",
+  },
+  {
     icon: Archive,
-    title: "MacLeod's Recommendation",
-    body: "A locked starter preset now ships with the app — anti-stress winch, AWD/diff, and fuel tweaks without turning trucks into OP monsters.",
-  },
-  {
-    icon: Disc3,
-    title: "Friction by tire type",
-    body: "Parts → Tires can set absolute On-road, Off-road, and Mud grip for Highway, All terrain, Offroad, Mud, or Chained templates in one apply — with No change per field.",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Bundled presets stay put",
-    body: "Delete is disabled for presets that ship with the app, so a shared starter cannot be removed from the library by accident.",
+    title: "Season 19 catalogs",
+    body: "Wortek 250T, Derry \"Savior\", and the Telescope Lens semi join Vehicles and Trailers — plus the sound/CoM XML fix so truck saves stay valid.",
   },
 ];
 

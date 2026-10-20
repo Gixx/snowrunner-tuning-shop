@@ -54,6 +54,17 @@
     </Content>
   </ItemGroup>
 
+  <!-- PreserveNewest does not remove deleted Content; drop output .tsa files that are no longer in assets/presets. -->
+  <Target Name="CleanStaleBundledPresets" AfterTargets="CopyFilesToOutputDirectory">
+    <ItemGroup>
+      <_BundledPresetSource Include="..\..\assets\presets\**\*.tsa" />
+      <_BundledPresetOutput Include="$(OutDir)assets\presets\**\*.tsa" />
+      <_StaleBundledPreset Include="@(_BundledPresetOutput)"
+                          Exclude="@(_BundledPresetSource->'$(OutDir)assets\presets\%(RecursiveDir)%(Filename)%(Extension)')" />
+    </ItemGroup>
+    <Delete Files="@(_StaleBundledPreset)" TreatErrorsAsWarnings="true" />
+  </Target>
+
     <ItemGroup>
     <PackageReference Include="Avalonia" Version="12.1.2" />
     <PackageReference Include="Avalonia.Controls.DataGrid" Version="12.1.2" />

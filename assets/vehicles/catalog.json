@@ -224,6 +224,13 @@
         "pakId": "derry_special_15c177"
     },
     {
+        "id": "derry_savior",
+        "displayName": "Derry \"Savior\"",
+        "category": "Heavy",
+        "imageFile": "Store_derry_savior.png",
+        "pakId": "derry_savior"
+    },
+    {
         "id": "femm7at",
         "displayName": "FEMM 37-AT",
         "category": "Heavy",
@@ -376,6 +383,13 @@
         "category": "Heavy",
         "imageFile": "Store_ws6900xd_sr.png",
         "pakId": "western_star_6900xd"
+    },
+    {
+        "id": "wortek_250t",
+        "displayName": "Wortek 250T",
+        "category": "Heavy",
+        "imageFile": "Store_wortek_250t.png",
+        "pakId": "wortek_250t"
     },
     {
         "id": "zikz_605r",

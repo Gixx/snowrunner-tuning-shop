@@ -1,4 +1,6 @@
+using System.Xml.Linq;
 using SnowRunnerTuningShop.Core.Trucks;
+using SnowRunnerTuningShop.Core.Xml;
 
 namespace SnowRunnerTuningShop.Tests;
 
@@ -59,7 +61,62 @@ public sealed class TruckSoundsServiceTests
         Assert.Contains("""EngineHigh Sound="trucks/ford_f750/ford_f750_high" """, updated, StringComparison.Ordinal);
         Assert.Contains("""EngineStart Sound="trucks/ford_f750/ford_f750_start" """, updated, StringComparison.Ordinal);
         Assert.Contains("""EngineTurbo		Sound="trucks/ford_f750/ford_f750_turbo" """, updated, StringComparison.Ordinal);
+        Assert.Contains("""IsSound2D="true" """, updated, StringComparison.Ordinal);
         Assert.Contains("""Gear Sound="trucks/common/truck_gear_shift" """, updated, StringComparison.Ordinal);
         Assert.Contains("""EngineStop Sound="trucks/old_set/old_set_stop" """, updated, StringComparison.Ordinal);
+        Assert.True(XmlRewriteSafety.TryValidate(updated, out var failure), failure);
+    }
+
+    [Fact]
+    public void ApplyAssignment_preserves_open_close_sound_tags_without_orphan_close()
+    {
+        // Pretty-printed / XML-editor style: open tag + close tag (vanilla usually uses />).
+        const string openCloseXml =
+            """
+            <Truck>
+              <TruckData>
+                <Sounds MinDist="8.0">
+                  <Honk Sound="trucks/old_set/old_set_honk">
+                  </Honk>
+                  <EngineIdle Sound="trucks/old_set/old_set_idle">
+                  </EngineIdle>
+                  <EngineHigh Sound="trucks/old_set/old_set_high" />
+                </Sounds>
+              </TruckData>
+            </Truck>
+            """;
+
+        var updated = TruckSoundsService.ApplyAssignmentForTests(
+            openCloseXml,
+            new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["EngineIdle"] = "trucks/ford_f750/ford_f750_idle",
+                ["EngineHigh"] = "trucks/ford_f750/ford_f750_high",
+            },
+            honkPath: "trucks/ford_f750/ford_f750_honk");
+
+        Assert.Contains("""EngineIdle Sound="trucks/ford_f750/ford_f750_idle">""", updated, StringComparison.Ordinal);
+        Assert.Contains("</EngineIdle>", updated, StringComparison.Ordinal);
+        Assert.DoesNotContain("""EngineIdle Sound="trucks/ford_f750/ford_f750_idle" />""", updated, StringComparison.Ordinal);
+        Assert.DoesNotContain("""EngineIdle Sound="trucks/ford_f750/ford_f750_idle"/>""", updated, StringComparison.Ordinal);
+        Assert.Contains("""Honk Sound="trucks/ford_f750/ford_f750_honk">""", updated, StringComparison.Ordinal);
+        Assert.Contains("</Honk>", updated, StringComparison.Ordinal);
+        Assert.True(XmlRewriteSafety.TryValidate(updated, out var failure), failure);
+        Assert.NotNull(XDocument.Parse(updated));
+    }
+
+    [Fact]
+    public void XmlRewriteSafety_rejects_orphan_close_after_self_closing_sound_tag()
+    {
+        const string broken =
+            """
+            <Sounds>
+              <EngineIdle Sound="trucks/x/x_idle" />
+              </EngineIdle>
+            </Sounds>
+            """;
+
+        Assert.False(XmlRewriteSafety.TryValidate(broken, out var failure));
+        Assert.Contains("Orphan close", failure, StringComparison.OrdinalIgnoreCase);
     }
 }
