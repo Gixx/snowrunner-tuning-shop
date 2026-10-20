@@ -24,12 +24,11 @@ public static class XmlRewriteSafety
         RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
     /// <summary>
-    /// Self-closing tag immediately followed by a matching close tag
-    /// (e.g. <c>&lt;EngineIdle … /&gt;&lt;/EngineIdle&gt;</c>) — invalid XML that hides trucks in-game.
+    /// Tag name at the start of an element or close tag.
     /// </summary>
-    private static readonly Regex OrphanCloseAfterSelfCloseRegex = new(
-        @"<([A-Za-z_][A-Za-z0-9_]*)\b[^>]*/>\s*</\1\s*>",
-        RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+    private static readonly Regex TagNameRegex = new(
+        @"^[A-Za-z_][A-Za-z0-9_]*",
+        RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
     public static bool TryValidate(string xml, out string? failure)
     {
@@ -53,10 +52,9 @@ public static class XmlRewriteSafety
             return false;
         }
 
-        var orphanClose = OrphanCloseAfterSelfCloseRegex.Match(xml);
-        if (orphanClose.Success)
+        if (TryFindOrphanCloseAfterSelfClose(xml, out var orphanIndex))
         {
-            failure = $"Orphan close tag after self-closing element near: {Snippet(xml, orphanClose.Index)}";
+            failure = $"Orphan close tag after self-closing element near: {Snippet(xml, orphanIndex)}";
             return false;
         }
 
@@ -70,6 +68,159 @@ public static class XmlRewriteSafety
         {
             throw new InvalidOperationException($"{context}: {failure}");
         }
+    }
+
+    /// <summary>
+    /// Flags <c>&lt;Foo /&gt;&lt;/Foo&gt;</c> only when no unmatched open <c>&lt;Foo&gt;</c> exists
+    /// (true orphan). Allows valid nesting like <c>&lt;Body&gt;…&lt;Body /&gt;&lt;/Body&gt;</c>
+    /// where the close belongs to the parent.
+    /// </summary>
+    private static bool TryFindOrphanCloseAfterSelfClose(string xml, out int index)
+    {
+        var openStack = new Stack<string>(capacity: 64);
+        var i = 0;
+        while (i < xml.Length)
+        {
+            var lt = xml.IndexOf('<', i);
+            if (lt < 0)
+            {
+                break;
+            }
+
+            // Skip comments and processing instructions / declarations.
+            if (lt + 1 < xml.Length && (xml[lt + 1] == '!' || xml[lt + 1] == '?'))
+            {
+                var skipEnd = xml.IndexOf('>', lt + 2);
+                i = skipEnd < 0 ? xml.Length : skipEnd + 1;
+                continue;
+            }
+
+            var gt = xml.IndexOf('>', lt + 1);
+            if (gt < 0)
+            {
+                break;
+            }
+
+            var isClose = lt + 1 < xml.Length && xml[lt + 1] == '/';
+            var nameStart = isClose ? lt + 2 : lt + 1;
+            if (nameStart >= gt)
+            {
+                i = gt + 1;
+                continue;
+            }
+
+            var nameMatch = TagNameRegex.Match(xml, nameStart, gt - nameStart);
+            if (!nameMatch.Success)
+            {
+                i = gt + 1;
+                continue;
+            }
+
+            var name = nameMatch.Value;
+            var selfClosing = !isClose && EndsWithSelfClose(xml, lt, gt);
+
+            if (isClose)
+            {
+                if (openStack.Count > 0 &&
+                    openStack.Peek().Equals(name, StringComparison.OrdinalIgnoreCase))
+                {
+                    // Closes the currently open element (may sit right after a
+                    // same-named self-closing child — that is valid nesting).
+                    openStack.Pop();
+                }
+                else if (IsImmediateSelfCloseBefore(xml, lt, name))
+                {
+                    // <Foo … /> followed by </Foo> with no matching open Foo.
+                    index = FindPrecedingSelfCloseStart(xml, lt);
+                    return true;
+                }
+            }
+            else if (!selfClosing)
+            {
+                openStack.Push(name);
+            }
+
+            i = gt + 1;
+        }
+
+        index = -1;
+        return false;
+    }
+
+    private static bool EndsWithSelfClose(string xml, int lt, int gt)
+    {
+        if (lt < 0)
+        {
+            return false;
+        }
+
+        for (var j = gt - 1; j > lt; j--)
+        {
+            var c = xml[j];
+            if (char.IsWhiteSpace(c))
+            {
+                continue;
+            }
+
+            return c == '/';
+        }
+
+        return false;
+    }
+
+    private static bool IsImmediateSelfCloseBefore(string xml, int closeLt, string name)
+    {
+        var j = closeLt - 1;
+        while (j >= 0 && char.IsWhiteSpace(xml[j]))
+        {
+            j--;
+        }
+
+        if (j < 0 || xml[j] != '>')
+        {
+            return false;
+        }
+
+        var prevGt = j;
+        var prevLt = FindTagStart(xml, prevGt);
+        if (!EndsWithSelfClose(xml, prevLt, prevGt) || prevLt + 1 >= prevGt)
+        {
+            return false;
+        }
+
+        var nameMatch = TagNameRegex.Match(xml, prevLt + 1, prevGt - prevLt - 1);
+        return nameMatch.Success &&
+               nameMatch.Value.Equals(name, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static int FindPrecedingSelfCloseStart(string xml, int closeLt)
+    {
+        var j = closeLt - 1;
+        while (j >= 0 && char.IsWhiteSpace(xml[j]))
+        {
+            j--;
+        }
+
+        if (j < 0 || xml[j] != '>')
+        {
+            return closeLt;
+        }
+
+        var start = FindTagStart(xml, j);
+        return start >= 0 ? start : closeLt;
+    }
+
+    private static int FindTagStart(string xml, int gt)
+    {
+        for (var j = gt; j >= 0; j--)
+        {
+            if (xml[j] == '<')
+            {
+                return j;
+            }
+        }
+
+        return -1;
     }
 
     private static string Snippet(string xml, int index)

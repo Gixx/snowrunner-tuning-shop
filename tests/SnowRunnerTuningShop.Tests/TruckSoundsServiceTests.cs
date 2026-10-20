@@ -119,4 +119,21 @@ public sealed class TruckSoundsServiceTests
         Assert.False(XmlRewriteSafety.TryValidate(broken, out var failure));
         Assert.Contains("Orphan close", failure, StringComparison.OrdinalIgnoreCase);
     }
+
+    [Fact]
+    public void XmlRewriteSafety_allows_parent_close_after_same_named_self_closing_child()
+    {
+        // Mack Terra Pro (and others): self-closing Mudguard Body, then parent </Body>.
+        const string nested =
+            """
+            <PhysicsModel>
+              <Body ModelFrame="BoneChassis_cdt">
+                <Body _template="Mudguard" ModelFrame="BoneMudguardBackLeft_cdt" />
+                <Body _template="Mudguard" ModelFrame="BoneMudguardBackRight_cdt" />
+              </Body>
+            </PhysicsModel>
+            """;
+
+        Assert.True(XmlRewriteSafety.TryValidate(nested, out var failure), failure);
+    }
 }

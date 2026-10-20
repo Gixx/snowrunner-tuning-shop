@@ -13,6 +13,14 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ---
 
+## [1.6.1] — 2026-10-20
+
+### Fixed
+- **Vehicles save:** rewrite safety no longer rejects valid vanilla XML where a self-closing child `<Body … />` is followed by the parent `</Body>` (e.g. Mack Terra Pro mudguards). Saves for those trucks were blocked with a false “Orphan close tag” error.
+- **Bug report / CI:** workspace health diagnostics always emit their labels even when `initial.pak` is missing, so bug-report unit tests pass without a local game install.
+
+---
+
 ## [1.6.0] — 2026-10-20
 
 Season 19: Research & Restore (`dlc_19`).
@@ -497,7 +505,8 @@ Stable release of the 1.5 line (Home Presets, vehicle wheels tuning, center of m
 
 ---
 
-[Unreleased]: https://github.com/Gixx/snowrunner-tuning-shop/compare/v1.6.0...HEAD
+[Unreleased]: https://github.com/Gixx/snowrunner-tuning-shop/compare/v1.6.1...HEAD
+[1.6.1]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.6.1
 [1.6.0]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.6.0
 [1.5.1]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.5.1
 [1.5.0]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.5.0
