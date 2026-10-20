@@ -34,6 +34,8 @@ import shotVehicleLinux from "@/assets/shot-vehicle-linux.png";
 import shotTrailersLinux from "@/assets/shot-trailers-linux.png";
 import shotTrailerLinux from "@/assets/shot-trailer-linux.png";
 import shotSettingsLinux from "@/assets/shot-settings-linux.png";
+import storeDerrySavior from "@/assets/Store_derry_savior.png";
+import storeWortek250t from "@/assets/Store_wortek_250t.png";
 import {
   SITE_DESCRIPTION,
   SITE_TITLE,
@@ -125,8 +127,25 @@ const whatsNew = [
   },
   {
     icon: Archive,
-    title: "Season 19 catalogs",
-    body: "Wortek 250T, Derry \"Savior\", and the Telescope Lens semi join Vehicles and Trailers — plus the sound/CoM XML fix so truck saves stay valid.",
+    title: "Easy Mode & Anti-stress",
+    body: "Two locked starter presets ship with the app — a beginner-friendly Easy Mode and a chill Anti-stress Mode with AWD, winch, and softer fuel/ice defaults.",
+  },
+];
+
+const whatsNewVehicles = [
+  {
+    name: "Wortek 250T",
+    eyebrow: "Season 19 · Heavy",
+    body: "A modular heavy with one of the largest fuel tanks in the game. Tune fuel, steering, mass, and more like any other truck — now listed under Vehicles.",
+    image: storeWortek250t,
+    imageAlt: "Wortek 250T store portrait in a snowy alpine pass",
+  },
+  {
+    name: "Derry \"Savior\"",
+    eyebrow: "Season 19 · Heavy",
+    body: "An 8×8 heavy with three steering axles for steep Swiss climbs. Same per-truck tuning surface as the rest of the Heavy class, including center of mass and sounds.",
+    image: storeDerrySavior,
+    imageAlt: "Derry Savior store portrait driving through deep snow",
   },
 ];
 
@@ -159,15 +178,15 @@ const features = [
   {
     icon: Layers,
     title: "Base game + 49 DLC packs",
-    body: "Reads all 11 700+ XML entries, 118 vehicles and every DLC package straight out of the archive.",
+    body: "Reads all 11 700+ XML entries, 120 vehicles and every DLC package straight out of the archive.",
   },
 ];
 
 const stats: [string, string][] = [
-  ["118", "vehicles"],
+  ["120", "vehicles"],
   ["125", "engines"],
   ["214", "suspensions"],
-  ["49", "DLC packs"],
+  ["50", "DLC packs"],
 ];
 
 const windowsShots: GalleryShot[] = [
@@ -193,13 +212,13 @@ const windowsShots: GalleryShot[] = [
   },
   {
     src: shotVehicles,
-    alt: "Grid of 118 SnowRunner vehicles filtered by class",
-    label: "Vehicles — 118 trucks",
+    alt: "Grid of 120 SnowRunner vehicles filtered by class",
+    label: "Vehicles — 120 trucks",
   },
   {
     src: shotTrailers,
     alt: "Trailer catalog grid filtered by hitch, with per-trailer photos",
-    label: "Trailers — 67 trailers",
+    label: "Trailers — 68 trailers",
   },
   {
     src: shotVehicle,
@@ -237,12 +256,12 @@ const linuxShots: GalleryShot[] = [
   {
     src: shotVehiclesLinux,
     alt: "Linux Avalonia vehicle catalog grid filtered by class",
-    label: "Vehicles — 118 trucks",
+    label: "Vehicles — 120 trucks",
   },
   {
     src: shotTrailersLinux,
     alt: "Linux Avalonia trailer catalog grid filtered by hitch",
-    label: "Trailers — 67 trailers",
+    label: "Trailers — 68 trailers",
   },
   {
     src: shotVehicleLinux,
@@ -320,7 +339,7 @@ function PlatformShowcase({
             WHAT&apos;S NEW IN VERSION {APP_VERSION_STABLE}
           </h2>
           <p className="mt-4 max-w-2xl text-muted-foreground">
-            A bundled chill-drive preset, bulk tire-type friction edits, and safer handling of shipped packs.
+            Season 19 trucks on the catalog, two new starter presets, safer sound saves, and clearer bug reports.
           </p>
         </Reveal>
         <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -330,6 +349,38 @@ function PlatformShowcase({
                 <item.icon className="size-7 text-ice transition-colors group-hover:text-primary" aria-hidden />
                 <h3 className="mt-5 font-display text-2xl tracking-wide">{item.title}</h3>
                 <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{item.body}</p>
+              </article>
+            </Reveal>
+          ))}
+        </div>
+        <div className="mt-8 grid gap-6 md:grid-cols-2">
+          {whatsNewVehicles.map((truck, i) => (
+            <Reveal key={truck.name} delay={i * 120}>
+              <article className="group overflow-hidden rounded-md border border-border bg-card/60 transition-colors duration-300 hover:border-primary/60 hover:bg-card">
+                <div className="relative aspect-[3/4] max-h-[28rem] w-full overflow-hidden bg-black/40 md:max-h-none md:aspect-[4/5]">
+                  <img
+                    src={truck.image}
+                    alt={truck.imageAlt}
+                    width={423}
+                    height={602}
+                    className="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-[1.03]"
+                  />
+                  <div
+                    className="pointer-events-none absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-black/85 via-black/40 to-transparent"
+                    aria-hidden
+                  />
+                  <div className="absolute inset-x-0 bottom-0 p-6 md:p-7">
+                    <p className="text-xs font-semibold uppercase tracking-[0.24em] text-ice">
+                      {truck.eyebrow}
+                    </p>
+                    <h3 className="mt-2 font-display text-3xl tracking-wide text-white md:text-4xl">
+                      {truck.name}
+                    </h3>
+                    <p className="mt-3 max-w-md text-sm leading-relaxed text-white/80">
+                      {truck.body}
+                    </p>
+                  </div>
+                </div>
               </article>
             </Reveal>
           ))}
@@ -563,7 +614,9 @@ function Index() {
               <span className="shine-text">GET THE TUNING SHOP</span>
             </h2>
             <p className="mt-5 text-muted-foreground">
-              Stable {APP_VERSION_STABLE} · Beta {APP_VERSION_BETA} · free forever · no account, no telemetry.
+              {APP_VERSION_BETA !== APP_VERSION_STABLE
+                ? `Stable ${APP_VERSION_STABLE} · Beta ${APP_VERSION_BETA} · free forever · no account, no telemetry.`
+                : `Version ${APP_VERSION_STABLE} · free forever · no account, no telemetry.`}
             </p>
             <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
               <a
@@ -586,8 +639,8 @@ function Index() {
               </a>
             </div>
             <p className="mt-4 text-xs text-muted-foreground">
-              Grab the Windows Setup from the latest Stable release, or the{" "}
-              <code className="rounded-sm bg-card px-1 py-0.5 text-ice">.flatpak</code> asset from Stable/Beta on{" "}
+              Grab the Windows Setup or the{" "}
+              <code className="rounded-sm bg-card px-1 py-0.5 text-ice">.flatpak</code> asset from the latest release on{" "}
               <a href={RELEASES_URL} target="_blank" rel="noreferrer" className="underline-offset-2 hover:text-ice hover:underline">
                 GitHub Releases
               </a>
