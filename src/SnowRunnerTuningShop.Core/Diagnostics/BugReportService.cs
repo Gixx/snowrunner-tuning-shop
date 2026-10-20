@@ -132,7 +132,14 @@ public static class BugReportService
 
         if (string.IsNullOrWhiteSpace(pakPath) || !File.Exists(pakPath))
         {
+            // Keep the same labels as the ready path so CI / empty-workspace reports stay parseable.
             builder.AppendLine("Working pak: (not available)");
+            builder.AppendLine("Workspace health: not ready");
+            builder.AppendLine("Working matches baseline: (n/a)");
+            builder.AppendLine("Tuning Shop marker present: (n/a)");
+            builder.AppendLine("Saved profile entries: (n/a)");
+            builder.AppendLine("Likely external/other-tool edits: unknown (workspace not ready)");
+            builder.AppendLine("Real Life mod: (n/a)");
             return;
         }
 

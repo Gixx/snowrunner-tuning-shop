@@ -24,11 +24,9 @@ public sealed class BugReportServiceTests
     public void BuildMessageBody_includes_working_pak_diagnostics()
     {
         var body = BugReportService.BuildMessageBody("Something broke");
+        Assert.Contains("Workspace health:", body, StringComparison.Ordinal);
         Assert.Contains("Likely external/other-tool edits:", body, StringComparison.Ordinal);
         Assert.Contains("Real Life mod:", body, StringComparison.Ordinal);
-        Assert.True(
-            body.Contains("Working pak: (not available)", StringComparison.Ordinal)
-            || body.Contains("Workspace health:", StringComparison.Ordinal));
     }
 
     [Fact]
