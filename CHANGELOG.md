@@ -11,6 +11,10 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ## [Unreleased]
 
+---
+
+## [1.6.2] — 2026-10-24
+
 ### Added
 - **Vehicles → Fast tuning:** list accordion with Lower center of mass, Better turning curve, Faster steering, Larger tires, and Always-on diff lock / AWD (moved from Global multipliers). Applies from each truck’s baseline and skips fields already customized; checkboxes reset after Apply.
 
@@ -515,7 +519,8 @@ Stable release of the 1.5 line (Home Presets, vehicle wheels tuning, center of m
 
 ---
 
-[Unreleased]: https://github.com/Gixx/snowrunner-tuning-shop/compare/v1.6.1...HEAD
+[Unreleased]: https://github.com/Gixx/snowrunner-tuning-shop/compare/v1.6.2...HEAD
+[1.6.2]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.6.2
 [1.6.1]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.6.1
 [1.6.0]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.6.0
 [1.5.1]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.5.1

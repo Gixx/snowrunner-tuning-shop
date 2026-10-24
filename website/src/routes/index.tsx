@@ -339,7 +339,7 @@ function PlatformShowcase({
             WHAT&apos;S NEW IN VERSION {APP_VERSION_STABLE}
           </h2>
           <p className="mt-4 max-w-2xl text-muted-foreground">
-            Season 19 trucks on the catalog, two new starter presets, safer vehicle saves (including nested Body XML), and clearer bug reports.
+            Vehicles Fast tuning, success toasts after Apply/Save, restore-then-apply presets, and safer XML rewrite checks.
           </p>
         </Reveal>
         <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
