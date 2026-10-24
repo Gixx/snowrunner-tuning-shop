@@ -79,11 +79,7 @@ public partial class BugReportWindow : Window
         try
         {
             await BugReportService.SendAsync(description, includeProfile);
-            MessageBox.Show(
-                UiText.BugReport.SendSucceeded,
-                UiText.BugReport.Title,
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
+            UiFeedback.ShowSuccess(UiText.BugReport.SendSucceeded, UiText.BugReport.Title);
             DialogResult = true;
             Close();
         }

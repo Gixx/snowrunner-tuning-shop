@@ -1,6 +1,8 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media.Animation;
+using System.Windows.Threading;
 using SnowRunnerTuningShop.Core.Config;
 using SnowRunnerTuningShop.Core.Diagnostics;
 using SnowRunnerTuningShop.Core.Profile;
@@ -10,8 +12,12 @@ namespace SnowRunnerTuningShop;
 
 public partial class MainWindow : Window
 {
+    private static readonly TimeSpan ToastVisibleDuration = TimeSpan.FromSeconds(3.2);
+    private static readonly Duration ToastFadeDuration = new(TimeSpan.FromMilliseconds(180));
+
     private readonly AppSession _session = new();
     private readonly GameRunningMonitor _gameRunningMonitor;
+    private readonly DispatcherTimer _toastHideTimer;
     private bool _navOpen;
     private bool _sidebarPinned;
     private bool _suppressPinHandler;
@@ -19,6 +25,13 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+
+        _toastHideTimer = new DispatcherTimer { Interval = ToastVisibleDuration };
+        _toastHideTimer.Tick += (_, _) =>
+        {
+            _toastHideTimer.Stop();
+            FadeToast(toVisible: false);
+        };
 
         TuningProfileService.ProfileSynced += OnProfileSynced;
 
@@ -241,5 +254,42 @@ public partial class MainWindow : Window
         {
             HomeView.RefreshPresetsFromOutside();
         }
+    }
+
+    /// <summary>Bottom-center snackbar for successful writes (non-modal).</summary>
+    public void ShowToast(string message)
+    {
+        if (string.IsNullOrWhiteSpace(message))
+        {
+            return;
+        }
+
+        ToastText.Text = UiFeedback.FormatToastMessage(message);
+        ToastHost.Visibility = Visibility.Visible;
+        FadeToast(toVisible: true);
+        _toastHideTimer.Stop();
+        _toastHideTimer.Start();
+    }
+
+    private void FadeToast(bool toVisible)
+    {
+        var anim = new DoubleAnimation
+        {
+            To = toVisible ? 1 : 0,
+            Duration = ToastFadeDuration,
+            FillBehavior = FillBehavior.HoldEnd,
+        };
+        if (!toVisible)
+        {
+            anim.Completed += (_, _) =>
+            {
+                if (ToastHost.Opacity <= 0.01)
+                {
+                    ToastHost.Visibility = Visibility.Collapsed;
+                }
+            };
+        }
+
+        ToastHost.BeginAnimation(OpacityProperty, anim);
     }
 }

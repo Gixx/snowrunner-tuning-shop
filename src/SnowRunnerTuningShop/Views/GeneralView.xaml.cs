@@ -151,6 +151,7 @@ public partial class GeneralView : UserControl
                 StatusText.Text = result.UpdatedFiles <= 0
                     ? UiText.General.NoChangesToSave
                     : UiText.General.CameraSaved(result.UpdatedFiles);
+                UiFeedback.ShowSuccess(StatusText.Text, UiText.General.SaveSuccessTitle);
             }
             catch (Exception ex)
             {
@@ -205,6 +206,7 @@ public partial class GeneralView : UserControl
                 StatusText.Text = result.UpdatedFiles <= 0
                     ? UiText.General.NoChangesToSave
                     : UiText.General.RockSaved(result.UpdatedFiles);
+                UiFeedback.ShowSuccess(StatusText.Text, UiText.General.SaveSuccessTitle);
             }
             catch (Exception ex)
             {
@@ -255,6 +257,7 @@ public partial class GeneralView : UserControl
                 StatusText.Text = result.UpdatedFiles <= 0
                     ? UiText.General.NoChangesToSave
                     : UiText.General.WeakPlantWinchSaved(result.UpdatedFiles);
+                UiFeedback.ShowSuccess(StatusText.Text, UiText.General.SaveSuccessTitle);
             }
             catch (Exception ex)
             {

@@ -1,4 +1,4 @@
-{
+﻿{
   "AddonCapacity.Apply": "Käytä",
   "AddonCapacity.CategoryColumn": "Luokka",
   "AddonCapacity.ConfirmRestoreMessage": "Tämä palauttaa kaikki lisäosien XML-tiedostot peruspakistasi (polttoaine, vesi, korjausosat, vararenkaat ja hinta). Jatketaanko?",
@@ -206,7 +206,7 @@
   "Main.BaselineReadyStatus": "Perusarvo OK: {0} ({1}, {2:yyyy-MM-dd HH:mm}).",
   "Main.BaselineReadyTitle": "Perusarvo valmis",
   "Main.PresetApply": "Käytä",
-  "Main.PresetApplyConfirm": "Käytetäänkö esiasetusta “{0}” työ-initial.pak-tiedostoon?\n\nTyö-pakin on vastattava perustasoa (päivitä ensin pelistä tarvittaessa).",
+  "Main.PresetApplyConfirm": "Apply preset “{0}” to the working initial.pak?\n\nThis restores the working pak to the baseline first (discarding current tuning), then applies the preset.",
   "Main.PresetApplyConfirmTitle": "Käytä esiasetusta?",
   "Main.PresetApplySuccess": "Esiasetus “{0}” käytetty.\n\nPäivitetyt kohteet: {1}",
   "Main.PresetApplySuccessTitle": "Esiasetus käytetty",

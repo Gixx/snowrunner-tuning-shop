@@ -1,4 +1,4 @@
-{
+﻿{
   "AddonCapacity.Apply": "Appliquer",
   "AddonCapacity.CategoryColumn": "Catégorie",
   "AddonCapacity.ConfirmRestoreMessage": "Cela restaure chaque XML de module depuis votre pak de référence (carburant, eau, pièces de réparation, roues de secours et prix). Continuer ?",
@@ -206,7 +206,7 @@
   "Main.BaselineReadyStatus": "Référence OK pour {0} ({1}, {2:yyyy-MM-dd HH:mm}).",
   "Main.BaselineReadyTitle": "Prêt pour la ligne de base",
   "Main.PresetApply": "Appliquer",
-  "Main.PresetApplyConfirm": "Appliquer le préréglage « {0} » au initial.pak de travail ?\n\nLe pak de travail doit correspondre à la référence (actualisez d’abord depuis le jeu si besoin).",
+  "Main.PresetApplyConfirm": "Apply preset “{0}” to the working initial.pak?\n\nThis restores the working pak to the baseline first (discarding current tuning), then applies the preset.",
   "Main.PresetApplyConfirmTitle": "Appliquer le préréglage ?",
   "Main.PresetApplySuccess": "Préréglage « {0} » appliqué.\n\nEntrées mises à jour : {1}",
   "Main.PresetApplySuccessTitle": "Préréglage appliqué",

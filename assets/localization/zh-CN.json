@@ -1,4 +1,4 @@
-{
+﻿{
   "AddonCapacity.Apply": "应用",
   "AddonCapacity.CategoryColumn": "类别",
   "AddonCapacity.ConfirmRestoreMessage": "这将从基准 pak 恢复所有附加组件 XML（燃料、水、维修零件、备胎和价格）。继续？",
@@ -206,7 +206,7 @@
   "Main.BaselineReadyStatus": "{0} 的基准正常（{1}，{2:yyyy-MM-dd HH:mm}）。",
   "Main.BaselineReadyTitle": "基准已就绪",
   "Main.PresetApply": "应用",
-  "Main.PresetApplyConfirm": "将预设“{0}”应用到工作 initial.pak？\n\n工作 pak 必须与基线一致（如有需要请先从游戏刷新）。",
+  "Main.PresetApplyConfirm": "Apply preset “{0}” to the working initial.pak?\n\nThis restores the working pak to the baseline first (discarding current tuning), then applies the preset.",
   "Main.PresetApplyConfirmTitle": "应用预设？",
   "Main.PresetApplySuccess": "已应用预设“{0}”。\n\n更新条目：{1}",
   "Main.PresetApplySuccessTitle": "预设已应用",

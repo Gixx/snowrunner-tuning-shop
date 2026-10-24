@@ -221,7 +221,7 @@ public static class UiText
         public static string PresetApplyConfirm(string name) =>
             StringResources.Format(
                 "Main.PresetApplyConfirm",
-                "Apply preset “{0}” to the working initial.pak?\n\nThe working pak must match the baseline (refresh from game first if needed).",
+                "Apply preset “{0}” to the working initial.pak?\n\nThis restores the working pak to the baseline first (discarding current tuning), then applies the preset.",
                 name);
         public static string PresetApplySuccess(string name, int count) =>
             StringResources.Format(
@@ -610,7 +610,7 @@ public static class UiText
         public static string PriceMultiplierDefault => StringResources.Get("Vehicles.PriceMultiplierDefault", "Store price: 1 (baseline)");
         public static string MassMultiplierDefault => StringResources.Get("Vehicles.MassMultiplierDefault", "Mass: 1 (baseline)");
         public static string ApplyGlobalMultipliers => StringResources.Get("Vehicles.ApplyGlobalMultipliers", "Apply to all vehicles");
-        public static string GlobalMultipliersHint => StringResources.Get("Vehicles.GlobalMultipliersHint", "Fuel tank, store price, responsiveness, and mass scale from baseline. Always-on diff lock and AWD, when checked, are forced on every truck. Independent of the category filter below.");
+        public static string GlobalMultipliersHint => StringResources.Get("Vehicles.GlobalMultipliersHint", "Fuel tank, store price, responsiveness, and mass scale from baseline. Independent of the category filter below.");
         public static string AlwaysOnDiffLock => StringResources.Get("Vehicles.AlwaysOnDiffLock", "Always on diff lock");
         public static string AlwaysOnAwd => StringResources.Get("Vehicles.AlwaysOnAwd", "Always on AWD");
         public static string StoreUnlocksTitle => StringResources.Get("Vehicles.StoreUnlocksTitle", "Store unlocks (all vehicles)");
@@ -638,6 +638,32 @@ public static class UiText
                 changedTrucks,
                 updatedFiles);
         public static string StoreUnlocksNothingSelected => StringResources.Get("Vehicles.StoreUnlocksNothingSelected", "Select at least one store unlock option before applying.");
+        public static string FastTuningTitle => StringResources.Get("Vehicles.FastTuningTitle", "Fast tuning (all vehicles)");
+        public static string FastTuningHint => StringResources.Get(
+            "Vehicles.FastTuningHint",
+            "Quick presets relative to each truck’s baseline (CoM, steering, tires, always-on diff lock / AWD). Fields you already customized on a vehicle are left alone. Independent of the category filter below.");
+        public static string FastTuningLowerCenterOfMass => StringResources.Get(
+            "Vehicles.FastTuningLowerCenterOfMass",
+            "Lower center of mass (cabin CoM Y × 0.5)");
+        public static string FastTuningBetterTurningCurve => StringResources.Get(
+            "Vehicles.FastTuningBetterTurningCurve",
+            "Better turning curve (front 45° / second front 38°)");
+        public static string FastTuningFasterSteering => StringResources.Get(
+            "Vehicles.FastTuningFasterSteering",
+            "Faster steering (steer & back-steer 0.05)");
+        public static string FastTuningLargerTires => StringResources.Get(
+            "Vehicles.FastTuningLargerTires",
+            "Larger tires (+1 size, disable suspension restriction)");
+        public static string ApplyFastTuning => StringResources.Get("Vehicles.ApplyFastTuning", "Apply fast tuning");
+        public static string FastTuningNothingSelected => StringResources.Get(
+            "Vehicles.FastTuningNothingSelected",
+            "Select at least one fast tuning option before applying.");
+        public static string FastTuningSavedMessage(int changedTrucks, int updatedFiles) =>
+            StringResources.Format(
+                "Vehicles.FastTuningSavedMessage",
+                "Fast tuning applied to {0} truck(s) ({1} file(s) updated).",
+                changedTrucks,
+                updatedFiles);
         public static string TuningTitle => StringResources.Get("Vehicles.TuningTitle", "Vehicle tuning");
         public static string FuelTankLabel => StringResources.Get("Vehicles.FuelTankLabel", "Fuel tank");
         public static string FuelUnit => StringResources.Get("Vehicles.FuelUnit", "L");
@@ -1713,6 +1739,8 @@ public static class UiText
         public static string RepairsColumn => StringResources.Get("AddonCapacity.RepairsColumn", "Repairs");
         public static string WheelsColumn => StringResources.Get("AddonCapacity.WheelsColumn", "Spare wheels");
         public static string LoadPakFirst => StringResources.Get("AddonCapacity.LoadPakFirst", "Load an initial.pak file first.");
+        public static string SaveSuccessTitle => StringResources.Get("AddonCapacity.SaveSuccessTitle", "Saved successfully");
+        public static string RestoreAddonsSuccessTitle => StringResources.Get("AddonCapacity.RestoreAddonsSuccessTitle", "Add-ons restored");
         public static string SaveErrorTitle => StringResources.Get("AddonCapacity.SaveErrorTitle", "Save error");
         public static string LoadErrorTitle => StringResources.Get("AddonCapacity.LoadErrorTitle", "Load error");
         public static string ConfirmRestoreTitle => StringResources.Get("AddonCapacity.ConfirmRestoreTitle", "Restore add-ons?");

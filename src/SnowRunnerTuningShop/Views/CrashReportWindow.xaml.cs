@@ -73,11 +73,7 @@ public partial class CrashReportWindow : Window
         try
         {
             Clipboard.SetText(_report.FullText);
-            MessageBox.Show(
-                UiText.CrashReport.Copied,
-                UiText.CrashReport.Title,
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
+            UiFeedback.ShowSuccess(UiText.CrashReport.Copied, UiText.CrashReport.Title);
         }
         catch (Exception ex)
         {

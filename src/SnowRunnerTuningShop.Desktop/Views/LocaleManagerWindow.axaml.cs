@@ -136,7 +136,7 @@ public partial class LocaleManagerWindow : Window
             }
             else
             {
-                await AppDialogs.ShowInfo(this, UiText.LocalePack.ApplySuccess, UiText.LocalePack.Title);
+                AppDialogs.ShowSuccess(UiText.LocalePack.ApplySuccess, UiText.LocalePack.Title);
             }
         }
         catch (Exception ex)

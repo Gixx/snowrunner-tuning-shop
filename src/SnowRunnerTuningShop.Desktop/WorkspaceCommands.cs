@@ -52,10 +52,7 @@ internal static class WorkspaceCommands
                 ReloadPak(session, pakPath);
             }
 
-            await AppDialogs.ShowInfo(
-                owner,
-                UiText.Main.PresetNewSuccessMessage,
-                UiText.Main.PresetNewSuccessTitle);
+            AppDialogs.ShowSuccess(UiText.Main.PresetNewSuccessMessage, UiText.Main.PresetNewSuccessTitle);
             return true;
         }
         catch (Exception ex)
@@ -101,10 +98,7 @@ internal static class WorkspaceCommands
                 ReloadPak(session, pakPath);
             }
 
-            await AppDialogs.ShowInfo(
-                owner,
-                UiText.Main.RestoreFullBaselineMessage,
-                UiText.Main.RestoreFullBaselineSuccessTitle);
+            AppDialogs.ShowSuccess(UiText.Main.RestoreFullBaselineMessage, UiText.Main.RestoreFullBaselineSuccessTitle);
             return true;
         }
         catch (Exception ex)
@@ -147,10 +141,7 @@ internal static class WorkspaceCommands
                 session.NotifyBaselineChanged();
             }
 
-            await AppDialogs.ShowInfo(
-                owner,
-                UiText.Workspace.RefreshBaselineSuccessMessage,
-                UiText.Workspace.RefreshBaselineTitle);
+            AppDialogs.ShowSuccess(UiText.Workspace.RefreshBaselineSuccessMessage, UiText.Workspace.RefreshBaselineTitle);
             return true;
         }
         catch (Exception ex)
@@ -200,10 +191,7 @@ internal static class WorkspaceCommands
             }
 
             ReloadPak(session, session.PakPath);
-            await AppDialogs.ShowInfo(
-                owner,
-                UiText.Workspace.ReapplyReport(result),
-                UiText.Workspace.ReapplySuccessTitle);
+            AppDialogs.ShowSuccess(UiText.Workspace.ReapplyReport(result), UiText.Workspace.ReapplySuccessTitle);
             return true;
         }
         catch (Exception ex)

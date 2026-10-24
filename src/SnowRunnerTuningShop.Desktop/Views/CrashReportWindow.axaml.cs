@@ -85,7 +85,7 @@ public partial class CrashReportWindow : Window
                 await Clipboard.SetTextAsync(_report.FullText);
             }
 
-            await AppDialogs.ShowInfo(this, UiText.CrashReport.Copied, UiText.CrashReport.Title);
+            AppDialogs.ShowSuccess(UiText.CrashReport.Copied, UiText.CrashReport.Title);
         }
         catch (Exception ex)
         {

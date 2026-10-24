@@ -1,5 +1,7 @@
 using System.Diagnostics;
+using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Layout;
 using Avalonia.Media;
 using SnowRunnerTuningShop.Localization;
@@ -8,6 +10,50 @@ namespace SnowRunnerTuningShop.Desktop;
 
 internal static class AppDialogs
 {
+    /// <summary>
+    /// Non-blocking success snackbar on the main window. Prefer this over <see cref="ShowInfo"/> after writes.
+    /// </summary>
+    public static void ShowSuccess(string message, string? title = null)
+    {
+        var text = FormatToastMessage(message);
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return;
+        }
+
+        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            if (desktop.MainWindow is MainWindow main)
+            {
+                main.ShowToast(text);
+                return;
+            }
+
+            if (desktop.MainWindow is { } owner)
+            {
+                _ = ShowInfo(
+                    owner,
+                    text,
+                    string.IsNullOrWhiteSpace(title) ? "SnowRunner Tuning Shop" : title);
+            }
+        }
+    }
+
+    /// <summary>Collapse multi-line dialog copy into a snackbar-friendly paragraph.</summary>
+    public static string FormatToastMessage(string message)
+    {
+        if (string.IsNullOrWhiteSpace(message))
+        {
+            return "";
+        }
+
+        return message
+            .Replace("\r\n", "\n", StringComparison.Ordinal)
+            .Replace("\n\n", " — ", StringComparison.Ordinal)
+            .Replace('\n', ' ')
+            .Trim();
+    }
+
     public static Task ShowInfo(Window owner, string message, string title) =>
         Show(owner, message, title, confirmOnly: true);
 

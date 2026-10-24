@@ -118,6 +118,7 @@ public partial class SuspensionTuningView : UserControl
                 ReportStatus(UiText.Suspension.MultipliersAppliedStatus(
                     result.ChangedSuspensions,
                     result.UpdatedFiles));
+                AppDialogs.ShowSuccess(UiText.Suspension.RestoreSuspensionsMessage(result.ChangedSuspensions, result.UpdatedFiles), UiText.Suspension.RestoreSuspensionsSuccessTitle);
             }
             catch (Exception ex)
             {
@@ -157,6 +158,7 @@ public partial class SuspensionTuningView : UserControl
                 ReportStatus(UiText.Suspension.MultipliersAppliedStatus(
                     result.ChangedSuspensions,
                     result.UpdatedFiles));
+                AppDialogs.ShowSuccess(UiText.Suspension.MultipliersSavedMessage(result.ChangedSuspensions, result.UpdatedFiles), UiText.Suspension.SaveSuccessTitle);
             }
             catch (Exception ex)
             {
@@ -190,6 +192,7 @@ public partial class SuspensionTuningView : UserControl
                 var result = await Task.Run(() => SuspensionService.SaveSuspensionChanges(path, suspensions));
                 ReloadSuspensions();
                 ReportStatus(UiText.Suspension.IndividualSavedStatus(result.ChangedSuspensions, result.UpdatedFiles));
+                AppDialogs.ShowSuccess(UiText.Suspension.IndividualSavedMessage(result.ChangedSuspensions), UiText.Suspension.SaveSuccessTitle);
             }
             catch (Exception ex)
             {

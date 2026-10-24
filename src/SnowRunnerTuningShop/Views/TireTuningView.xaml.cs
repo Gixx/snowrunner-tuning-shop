@@ -104,6 +104,9 @@ public partial class TireTuningView : UserControl
                 ReportStatus(UiText.Tires.MultipliersAppliedStatus(
                     result.ChangedTires,
                     result.UpdatedFiles));
+                UiFeedback.ShowSuccess(
+                    UiText.Tires.RestoreTiresMessage(result.ChangedTires, result.UpdatedFiles),
+                    UiText.Tires.RestoreTiresSuccessTitle);
             }
             catch (Exception ex)
             {
@@ -143,6 +146,9 @@ public partial class TireTuningView : UserControl
                 ReportStatus(UiText.Tires.MultipliersAppliedStatus(
                     result.ChangedTires,
                     result.UpdatedFiles));
+                UiFeedback.ShowSuccess(
+                    UiText.Tires.MultipliersSavedMessage(result.ChangedTires, result.UpdatedFiles),
+                    UiText.Tires.SaveSuccessTitle);
             }
             catch (Exception ex)
             {
@@ -176,9 +182,11 @@ public partial class TireTuningView : UserControl
                     ReadFrictionPreset(CategoryMudCombo));
 
                 ReloadTires();
-                ReportStatus(UiText.Tires.CategoryFrictionAppliedStatus(
+                var categoryFrictionStatus = UiText.Tires.CategoryFrictionAppliedStatus(
                     result.ChangedTires,
-                    result.UpdatedFiles));
+                    result.UpdatedFiles);
+                ReportStatus(categoryFrictionStatus);
+                UiFeedback.ShowSuccess(categoryFrictionStatus, UiText.Tires.SaveSuccessTitle);
             }
             catch (Exception ex)
             {
@@ -213,6 +221,9 @@ public partial class TireTuningView : UserControl
                 var result = TireService.SaveTireChanges(PakPath, tires);
                 ReloadTires();
                 ReportStatus(UiText.Tires.IndividualSavedStatus(result.ChangedTires, result.UpdatedFiles));
+                UiFeedback.ShowSuccess(
+                    UiText.Tires.IndividualSavedMessage(result.ChangedTires),
+                    UiText.Tires.SaveSuccessTitle);
             }
             catch (Exception ex)
             {

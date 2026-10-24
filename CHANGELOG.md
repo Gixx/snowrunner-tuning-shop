@@ -11,6 +11,16 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ## [Unreleased]
 
+### Added
+- **Vehicles → Fast tuning:** list accordion with Lower center of mass, Better turning curve, Faster steering, Larger tires, and Always-on diff lock / AWD (moved from Global multipliers). Applies from each truck’s baseline and skips fields already customized; checkboxes reset after Apply.
+
+### Changed
+- **Apply / Save / Restore:** successful write actions show a non-blocking toast/snackbar with how many items/files were updated (Vehicles, Trailers, Parts, General, Photo Mode, presets), in addition to the status line. Errors and confirmations stay as modal dialogs.
+- **Home → Presets → Apply:** if the working pak has diverged from the baseline (e.g. Active – changed), Apply restores the baseline first, then applies the preset. Confirm dialog text updated accordingly.
+
+### Fixed
+- **Vehicles save / Fast tuning:** rewrite safety no longer mis-reads XML comments that contain `>` (e.g. Western Star 6900XD Twin commented IKBone trees), which previously blocked applies with a false “Orphan close tag” error.
+
 ---
 
 ## [1.6.1] — 2026-10-20

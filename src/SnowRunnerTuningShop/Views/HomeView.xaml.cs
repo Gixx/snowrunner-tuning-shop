@@ -361,11 +361,9 @@ public partial class HomeView : UserControl
                     locked: false);
             }
 
-            MessageBox.Show(
+            UiFeedback.ShowSuccess(
                 UiText.Main.PresetExportSuccess(dialog.FileName),
-                UiText.Main.PresetExportSuccessTitle,
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
+                UiText.Main.PresetExportSuccessTitle);
         }
         catch (Exception ex)
         {
@@ -436,13 +434,21 @@ public partial class HomeView : UserControl
             }
 
             LoadWorkingPak(_session.PakPath);
-            MessageBox.Show(
-                UiText.Main.PresetApplySuccess(row.DisplayName, result.AppliedCount),
-                UiText.Main.PresetApplySuccessTitle,
-                MessageBoxButton.OK,
-                result.MissingEntryPaths.Count > 0 || result.FailedEntryPaths.Count > 0
-                    ? MessageBoxImage.Warning
-                    : MessageBoxImage.Information);
+            var applyMessage = UiText.Main.PresetApplySuccess(row.DisplayName, result.AppliedCount);
+            var applyTitle = UiText.Main.PresetApplySuccessTitle;
+            if (result.MissingEntryPaths.Count > 0 || result.FailedEntryPaths.Count > 0)
+            {
+                MessageBox.Show(
+                    applyMessage,
+                    applyTitle,
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+            }
+            else
+            {
+                UiFeedback.ShowSuccess(applyMessage, applyTitle);
+            }
+
             RefreshPresetsList(selectId: row.Id);
         }
         catch (Exception ex)
@@ -495,11 +501,9 @@ public partial class HomeView : UserControl
                 author: dialog.PresetAuthor,
                 description: dialog.PresetDescription);
             TuningPresetLibrary.SetActivePreset(saved.Id, TuningPresetSource.User);
-            MessageBox.Show(
+            UiFeedback.ShowSuccess(
                 UiText.Main.PresetSaveAsSuccess(saved.Name),
-                UiText.Main.PresetSaveAsTitle,
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
+                UiText.Main.PresetSaveAsTitle);
             RefreshPresetsList(selectId: saved.Id);
         }
         catch (Exception ex)
@@ -578,13 +582,11 @@ public partial class HomeView : UserControl
         try
         {
             TuningPresetLibrary.DeleteFromLibrary(row.ToInfo());
-            MessageBox.Show(
+            UiFeedback.ShowSuccess(
                 restoreBaseline
                     ? UiText.Main.PresetDeleteSuccessBaseline(row.DisplayName)
                     : UiText.Main.PresetDeleteSuccessKept(row.DisplayName),
-                UiText.Main.PresetDeleteSuccessTitle,
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
+                UiText.Main.PresetDeleteSuccessTitle);
             RefreshPresetsList();
         }
         catch (Exception ex)

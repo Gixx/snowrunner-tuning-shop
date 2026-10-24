@@ -59,11 +59,9 @@ internal static class WorkspaceCommands
                 ReloadPak(session, pakPath);
             }
 
-            MessageBox.Show(
+            UiFeedback.ShowSuccess(
                 UiText.Main.PresetNewSuccessMessage,
-                UiText.Main.PresetNewSuccessTitle,
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
+                UiText.Main.PresetNewSuccessTitle);
             return true;
         }
         catch (Exception ex)
@@ -119,11 +117,9 @@ internal static class WorkspaceCommands
                 ReloadPak(session, pakPath);
             }
 
-            MessageBox.Show(
+            UiFeedback.ShowSuccess(
                 UiText.Main.RestoreFullBaselineMessage,
-                UiText.Main.RestoreFullBaselineSuccessTitle,
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
+                UiText.Main.RestoreFullBaselineSuccessTitle);
             return true;
         }
         catch (Exception ex)
@@ -232,14 +228,21 @@ internal static class WorkspaceCommands
 
             ReloadPak(session, session.PakPath);
 
-            var image = result.MissingEntryPaths.Count > 0 || result.FailedEntryPaths.Count > 0
-                ? MessageBoxImage.Warning
-                : MessageBoxImage.Information;
-            MessageBox.Show(
-                UiText.Workspace.ReapplyReport(result),
-                UiText.Workspace.ReapplySuccessTitle,
-                MessageBoxButton.OK,
-                image);
+            var reapplyMessage = UiText.Workspace.ReapplyReport(result);
+            var reapplyTitle = UiText.Workspace.ReapplySuccessTitle;
+            if (result.MissingEntryPaths.Count > 0 || result.FailedEntryPaths.Count > 0)
+            {
+                MessageBox.Show(
+                    reapplyMessage,
+                    reapplyTitle,
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+            }
+            else
+            {
+                UiFeedback.ShowSuccess(reapplyMessage, reapplyTitle);
+            }
+
             return true;
         }
         catch (Exception ex)

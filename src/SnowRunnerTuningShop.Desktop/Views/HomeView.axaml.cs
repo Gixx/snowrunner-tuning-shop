@@ -167,8 +167,7 @@ public partial class HomeView : UserControl
             _session.NotifyBaselineChanged();
             RefreshWorkspaceUi();
 
-            await AppDialogs.ShowInfo(
-                owner,
+            AppDialogs.ShowSuccess(
                 changeLocation
                     ? UiText.Main.LocationChangedMessage(
                         result.EditionDisplayName,
@@ -417,10 +416,7 @@ public partial class HomeView : UserControl
                     locked: false);
             }
 
-            await AppDialogs.ShowInfo(
-                owner,
-                UiText.Main.PresetExportSuccess(path),
-                UiText.Main.PresetExportSuccessTitle);
+            AppDialogs.ShowSuccess(UiText.Main.PresetExportSuccess(path), UiText.Main.PresetExportSuccessTitle);
         }
         catch (Exception ex)
         {
@@ -478,10 +474,7 @@ public partial class HomeView : UserControl
             }
 
             LoadWorkingPak(_session.PakPath);
-            await AppDialogs.ShowInfo(
-                owner,
-                UiText.Main.PresetApplySuccess(row.DisplayName, result.AppliedCount),
-                UiText.Main.PresetApplySuccessTitle);
+            AppDialogs.ShowSuccess(UiText.Main.PresetApplySuccess(row.DisplayName, result.AppliedCount), UiText.Main.PresetApplySuccessTitle);
             RefreshPresetsList(selectId: row.Id);
         }
         catch (Exception ex)
@@ -533,10 +526,7 @@ public partial class HomeView : UserControl
                 author: dialog.PresetAuthor,
                 description: dialog.PresetDescription);
             TuningPresetLibrary.SetActivePreset(saved.Id, TuningPresetSource.User);
-            await AppDialogs.ShowInfo(
-                owner,
-                UiText.Main.PresetSaveAsSuccess(saved.Name),
-                UiText.Main.PresetSaveAsTitle);
+            AppDialogs.ShowSuccess(UiText.Main.PresetSaveAsSuccess(saved.Name), UiText.Main.PresetSaveAsTitle);
             RefreshPresetsList(selectId: saved.Id);
         }
         catch (Exception ex)
@@ -610,8 +600,7 @@ public partial class HomeView : UserControl
         try
         {
             TuningPresetLibrary.DeleteFromLibrary(row.ToInfo());
-            await AppDialogs.ShowInfo(
-                owner,
+            AppDialogs.ShowSuccess(
                 restoreBaseline
                     ? UiText.Main.PresetDeleteSuccessBaseline(row.DisplayName)
                     : UiText.Main.PresetDeleteSuccessKept(row.DisplayName),
@@ -647,10 +636,7 @@ public partial class HomeView : UserControl
 
         if (!quietSuccess)
         {
-            await AppDialogs.ShowInfo(
-                owner,
-                UiText.Main.PresetImportSuccess(imported.Info.Name),
-                UiText.Main.PresetImportTitle);
+            AppDialogs.ShowSuccess(UiText.Main.PresetImportSuccess(imported.Info.Name), UiText.Main.PresetImportTitle);
         }
 
         RefreshPresetsList(selectId: imported.Info.Id);

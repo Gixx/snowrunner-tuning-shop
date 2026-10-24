@@ -80,7 +80,7 @@ public partial class BugReportWindow : Window
         try
         {
             await BugReportService.SendAsync(description, includeProfile);
-            await AppDialogs.ShowInfo(this, UiText.BugReport.SendSucceeded, UiText.BugReport.Title);
+            AppDialogs.ShowSuccess(UiText.BugReport.SendSucceeded, UiText.BugReport.Title);
             Close();
         }
         catch (Exception ex)

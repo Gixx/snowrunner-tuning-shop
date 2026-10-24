@@ -109,5 +109,23 @@
         </StackPanel>
       </DockPanel>
     </Border>
+
+    <Border x:Name="ToastHost"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Bottom"
+            Margin="24,0,24,28"
+            Padding="16,12"
+            MaxWidth="520"
+            CornerRadius="8"
+            ZIndex="200"
+            IsVisible="False"
+            Opacity="0"
+            Background="{DynamicResource AppSuccessStrokeBrush}"
+            IsHitTestVisible="False">
+      <TextBlock x:Name="ToastText"
+                 TextWrapping="Wrap"
+                 FontSize="13"
+                 Foreground="White"/>
+    </Border>
   </Grid>
 </Window>

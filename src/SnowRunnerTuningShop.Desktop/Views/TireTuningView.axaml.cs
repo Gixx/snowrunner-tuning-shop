@@ -141,6 +141,7 @@ public partial class TireTuningView : UserControl
                 ReportStatus(UiText.Tires.MultipliersAppliedStatus(
                     result.ChangedTires,
                     result.UpdatedFiles));
+                AppDialogs.ShowSuccess(UiText.Tires.RestoreTiresMessage(result.ChangedTires, result.UpdatedFiles), UiText.Tires.RestoreTiresSuccessTitle);
             }
             catch (Exception ex)
             {
@@ -187,6 +188,7 @@ public partial class TireTuningView : UserControl
                 ReportStatus(UiText.Tires.MultipliersAppliedStatus(
                     result.ChangedTires,
                     result.UpdatedFiles));
+                AppDialogs.ShowSuccess(UiText.Tires.MultipliersSavedMessage(result.ChangedTires, result.UpdatedFiles), UiText.Tires.SaveSuccessTitle);
             }
             catch (Exception ex)
             {
@@ -227,9 +229,11 @@ public partial class TireTuningView : UserControl
                     TireService.ApplyCategoryFriction(path, categories, onRoad, offRoad, mud));
 
                 ReloadTires();
-                ReportStatus(UiText.Tires.CategoryFrictionAppliedStatus(
+                var categoryFrictionStatus = UiText.Tires.CategoryFrictionAppliedStatus(
                     result.ChangedTires,
-                    result.UpdatedFiles));
+                    result.UpdatedFiles);
+                ReportStatus(categoryFrictionStatus);
+                AppDialogs.ShowSuccess(categoryFrictionStatus, UiText.Tires.SaveSuccessTitle);
             }
             catch (Exception ex)
             {
@@ -268,6 +272,7 @@ public partial class TireTuningView : UserControl
                 var result = await Task.Run(() => TireService.SaveTireChanges(path, tires));
                 ReloadTires();
                 ReportStatus(UiText.Tires.IndividualSavedStatus(result.ChangedTires, result.UpdatedFiles));
+                AppDialogs.ShowSuccess(UiText.Tires.IndividualSavedMessage(result.ChangedTires), UiText.Tires.SaveSuccessTitle);
             }
             catch (Exception ex)
             {

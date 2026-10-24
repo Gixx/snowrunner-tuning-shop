@@ -118,6 +118,7 @@ public partial class GearboxTuningView : UserControl
                 ReportStatus(UiText.Gearbox.MultipliersAppliedStatus(
                     result.ChangedGearboxes,
                     result.UpdatedFiles));
+                AppDialogs.ShowSuccess(UiText.Gearbox.RestoreGearboxesMessage(result.ChangedGearboxes, result.UpdatedFiles), UiText.Gearbox.RestoreGearboxesSuccessTitle);
             }
             catch (Exception ex)
             {
@@ -157,6 +158,7 @@ public partial class GearboxTuningView : UserControl
                 ReportStatus(UiText.Gearbox.MultipliersAppliedStatus(
                     result.ChangedGearboxes,
                     result.UpdatedFiles));
+                AppDialogs.ShowSuccess(UiText.Gearbox.MultipliersSavedMessage(result.ChangedGearboxes, result.UpdatedFiles), UiText.Gearbox.SaveSuccessTitle);
             }
             catch (Exception ex)
             {
@@ -190,6 +192,7 @@ public partial class GearboxTuningView : UserControl
                 var result = await Task.Run(() => GearboxService.SaveGearboxChanges(path, gearboxes));
                 ReloadGearboxes();
                 ReportStatus(UiText.Gearbox.IndividualSavedStatus(result.ChangedGearboxes, result.UpdatedFiles));
+                AppDialogs.ShowSuccess(UiText.Gearbox.IndividualSavedMessage(result.ChangedGearboxes), UiText.Gearbox.SaveSuccessTitle);
             }
             catch (Exception ex)
             {

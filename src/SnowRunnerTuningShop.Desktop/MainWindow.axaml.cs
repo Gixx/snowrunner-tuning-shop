@@ -14,15 +14,26 @@ namespace SnowRunnerTuningShop.Desktop;
 
 public partial class MainWindow : Window
 {
+    private static readonly TimeSpan ToastVisibleDuration = TimeSpan.FromSeconds(3.2);
+
     private readonly AppSession _session = new();
     private readonly GameRunningMonitor _gameRunningMonitor;
+    private readonly DispatcherTimer _toastHideTimer;
     private bool _navOpen;
     private bool _sidebarPinned;
     private bool _suppressPinHandler;
+    private CancellationTokenSource? _toastFadeCts;
 
     public MainWindow()
     {
         InitializeComponent();
+
+        _toastHideTimer = new DispatcherTimer { Interval = ToastVisibleDuration };
+        _toastHideTimer.Tick += (_, _) =>
+        {
+            _toastHideTimer.Stop();
+            _ = FadeToastAsync(toVisible: false);
+        };
 
         TuningProfileService.ProfileSynced += OnProfileSynced;
 
@@ -236,6 +247,50 @@ public partial class MainWindow : Window
         if (ReferenceEquals(page, HomeView))
         {
             HomeView.RefreshPresetsFromOutside();
+        }
+    }
+
+    /// <summary>Bottom-center snackbar for successful writes (non-modal).</summary>
+    public void ShowToast(string message)
+    {
+        if (string.IsNullOrWhiteSpace(message))
+        {
+            return;
+        }
+
+        ToastText.Text = AppDialogs.FormatToastMessage(message);
+        ToastHost.IsVisible = true;
+        _ = FadeToastAsync(toVisible: true);
+        _toastHideTimer.Stop();
+        _toastHideTimer.Start();
+    }
+
+    private async Task FadeToastAsync(bool toVisible)
+    {
+        _toastFadeCts?.Cancel();
+        _toastFadeCts = new CancellationTokenSource();
+        var token = _toastFadeCts.Token;
+        var from = ToastHost.Opacity;
+        var to = toVisible ? 1.0 : 0.0;
+        const int steps = 8;
+        var stepMs = 180 / steps;
+        try
+        {
+            for (var i = 1; i <= steps; i++)
+            {
+                token.ThrowIfCancellationRequested();
+                ToastHost.Opacity = from + ((to - from) * i / steps);
+                await Task.Delay(stepMs, token);
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            return;
+        }
+
+        if (!toVisible && ToastHost.Opacity <= 0.01)
+        {
+            ToastHost.IsVisible = false;
         }
     }
 }

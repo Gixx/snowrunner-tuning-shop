@@ -136,4 +136,28 @@ public sealed class TruckSoundsServiceTests
 
         Assert.True(XmlRewriteSafety.TryValidate(nested, out var failure), failure);
     }
+
+    [Fact]
+    public void XmlRewriteSafety_ignores_self_close_patterns_inside_xml_comments()
+    {
+        // Western Star 6900XD Twin (and others): commented IKBone trees contain ">" mid-comment.
+        const string withComment =
+            """
+            <Truck>
+              <PhysicsModel>
+                <Body ModelFrame="BoneChassis_cdt">
+                  <Constraint Name="Rack" />
+                </Body>
+              </PhysicsModel>
+              <!--        <IKBone _template="TieRod" ModelFrame="BoneTieRod_Hinge_L" >
+              			<IKBone
+              				AttachToFrame="BoneRackL1"
+              				ModelFrame="BoneTieRod_HingeEnd_L"
+              			/>
+              		</IKBone> -->
+            </Truck>
+            """;
+
+        Assert.True(XmlRewriteSafety.TryValidate(withComment, out var failure), failure);
+    }
 }

@@ -1,4 +1,4 @@
-{
+﻿{
   "AddonCapacity.Apply": "Применить",
   "AddonCapacity.CategoryColumn": "Категория",
   "AddonCapacity.ConfirmRestoreMessage": "Это восстановит все XML дополнений из базового pak (топливо, вода, запчасти, запасные колёса и цена). Продолжить?",
@@ -206,7 +206,7 @@
   "Main.BaselineReadyStatus": "Базовый уровень в порядке для {0} ({1}, {2:yyyy-MM-dd HH:mm}).",
   "Main.BaselineReadyTitle": "Базовый уровень готов",
   "Main.PresetApply": "Применить",
-  "Main.PresetApplyConfirm": "Применить пресет «{0}» к рабочему initial.pak?\n\nРабочий pak должен совпадать с эталоном (при необходимости сначала обновите из игры).",
+  "Main.PresetApplyConfirm": "Apply preset “{0}” to the working initial.pak?\n\nThis restores the working pak to the baseline first (discarding current tuning), then applies the preset.",
   "Main.PresetApplyConfirmTitle": "Применить пресет?",
   "Main.PresetApplySuccess": "Пресет «{0}» применён.\n\nОбновлено записей: {1}",
   "Main.PresetApplySuccessTitle": "Пресет применён",

@@ -115,6 +115,7 @@ public partial class CraneTuningView : UserControl
                 ReportStatus(UiText.Crane.MultipliersAppliedStatus(
                     result.ChangedCranes,
                     result.UpdatedFiles));
+                AppDialogs.ShowSuccess(UiText.Crane.RestoreCranesMessage(result.ChangedCranes, result.UpdatedFiles), UiText.Crane.RestoreCranesSuccessTitle);
             }
             catch (Exception ex)
             {
@@ -152,6 +153,7 @@ public partial class CraneTuningView : UserControl
                 ReportStatus(UiText.Crane.MultipliersAppliedStatus(
                     result.ChangedCranes,
                     result.UpdatedFiles));
+                AppDialogs.ShowSuccess(UiText.Crane.MultipliersSavedMessage(result.ChangedCranes, result.UpdatedFiles), UiText.Crane.SaveSuccessTitle);
             }
             catch (Exception ex)
             {
@@ -185,6 +187,7 @@ public partial class CraneTuningView : UserControl
                 var result = await Task.Run(() => CraneService.SaveCraneChanges(path, cranes));
                 ReloadCranes();
                 ReportStatus(UiText.Crane.IndividualSavedMessage(result.ChangedCranes));
+                AppDialogs.ShowSuccess(UiText.Crane.IndividualSavedMessage(result.ChangedCranes), UiText.Crane.SaveSuccessTitle);
             }
             catch (Exception ex)
             {

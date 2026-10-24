@@ -278,7 +278,7 @@ public static class TuningProfileService
         if (!PakFingerprintService.FingerprintsMatch(workingFingerprint, baselineFingerprint))
         {
             throw new InvalidOperationException(
-                "The working pak does not match the baseline. Refresh the baseline from the game first, then reapply.");
+                "The working pak does not match the baseline. Restore the full baseline (or refresh the baseline after a game update), then try again.");
         }
 
         var replacements = new Dictionary<string, byte[]>(StringComparer.Ordinal);

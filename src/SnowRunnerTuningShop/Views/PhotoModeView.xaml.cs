@@ -446,6 +446,7 @@ public partial class PhotoModeView : UserControl
                     : reapplySaved
                         ? UiText.PhotoMode.ReappliedSaved(result.UpdatedEntries)
                         : UiText.PhotoMode.Saved(result.UpdatedEntries);
+                UiFeedback.ShowSuccess(StatusText.Text, UiText.PhotoMode.SaveSuccessTitle);
             }
             catch (Exception ex)
             {

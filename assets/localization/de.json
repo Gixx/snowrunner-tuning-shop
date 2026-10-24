@@ -1,4 +1,4 @@
-{
+﻿{
   "AddonCapacity.Apply": "Anwenden",
   "AddonCapacity.CategoryColumn": "Kategorie",
   "AddonCapacity.ConfirmRestoreMessage": "Damit werden alle Add-on-XMLs aus Ihrem Basis-pak wiederhergestellt (Kraftstoff, Wasser, Reparaturteile, Reserveräder und Preis). Fortfahren?",
@@ -206,7 +206,7 @@
   "Main.BaselineReadyStatus": "Basiswert OK für {0} ({1}, {2:yyyy-MM-dd HH:mm}).",
   "Main.BaselineReadyTitle": "Grundlinie bereit",
   "Main.PresetApply": "Anwenden",
-  "Main.PresetApplyConfirm": "Preset „{0}“ auf die Arbeits-initial.pak anwenden?\n\nDie Arbeits-pak muss mit der Baseline übereinstimmen (bei Bedarf zuerst aus dem Spiel aktualisieren).",
+  "Main.PresetApplyConfirm": "Apply preset “{0}” to the working initial.pak?\n\nThis restores the working pak to the baseline first (discarding current tuning), then applies the preset.",
   "Main.PresetApplyConfirmTitle": "Preset anwenden?",
   "Main.PresetApplySuccess": "Preset „{0}“ angewendet.\n\nAktualisierte Einträge: {1}",
   "Main.PresetApplySuccessTitle": "Preset angewendet",

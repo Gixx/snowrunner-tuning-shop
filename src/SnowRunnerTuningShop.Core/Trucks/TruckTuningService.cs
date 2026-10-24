@@ -27,6 +27,15 @@ public static class TruckTuningService
     /// <summary>Saber default when TruckData BackSteerSpeed is omitted from XML.</summary>
     public const double DefaultTruckBackSteerSpeed = 0.015;
 
+    /// <summary>Primary front steered axle target for Fast tuning Better turning curve.</summary>
+    public const double FastTuningFrontSteerDegrees = 45;
+
+    /// <summary>Second front steered axle (positive baseline) for Better turning curve.</summary>
+    public const double FastTuningSecondFrontSteerDegrees = 38;
+
+    /// <summary>SteerSpeed and BackSteerSpeed target for Fast tuning Faster steering.</summary>
+    public const double FastTuningSteerSpeed = 0.05;
+
     private static readonly Regex TruckDataOpenRegex = new(
         @"<TruckData\b(?<attrs>[^<>]*)>",
         RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
@@ -162,6 +171,47 @@ public static class TruckTuningService
             });
     }
 
+    /// <summary>
+    /// List-page Fast tuning: optional CoM / steer / tire tweaks applied from baseline values,
+    /// skipping fields the user already customized on the working pak.
+    /// </summary>
+    public static TruckTuningSaveResult ApplyFastTuning(string pakPath, TruckFastTuningOptions options)
+    {
+        ArgumentNullException.ThrowIfNull(options);
+        if (!options.AnySelected)
+        {
+            return new TruckTuningSaveResult(0);
+        }
+
+        return MutateDirectTrucksWithBaseline(
+            pakPath,
+            (workingArchive, entryPath, workingText, baselineText) =>
+            {
+                var truckId = Path.GetFileNameWithoutExtension(entryPath);
+                var updated = ApplyFastTuningToText(
+                    workingText,
+                    baselineText,
+                    options,
+                    workingArchive,
+                    truckId);
+                if (!string.Equals(workingText, updated, StringComparison.Ordinal))
+                {
+                    XmlRewriteSafety.EnsureSafe(updated, "fast tuning");
+                }
+
+                return updated;
+            });
+    }
+
+    /// <summary>Test hook: Fast tuning rewrite against working + baseline truck XML.</summary>
+    internal static string ApplyFastTuningToTextForTests(
+        string workingXml,
+        string baselineXml,
+        TruckFastTuningOptions options,
+        ZipArchive? workingArchive = null,
+        string truckId = "test") =>
+        ApplyFastTuningToText(workingXml, baselineXml, options, workingArchive, truckId);
+
     public static TruckTuningSaveResult RestoreGlobalTuningFromBaseline(string pakPath) =>
         RestoreAllVehiclesFromBaseline(pakPath);
 
@@ -289,6 +339,303 @@ public static class TruckTuningService
             : InitialPakWriter.ReplaceEntries(pakPath, replacements);
         return new TruckTuningSaveResult(updatedFiles, changedTrucks);
     }
+
+    private static TruckTuningSaveResult MutateDirectTrucksWithBaseline(
+        string pakPath,
+        Func<ZipArchive, string, string, string, string> transformWorkingWithBaseline)
+    {
+        var baselinePath = PakBaselineService.RequireBaseline(pakPath);
+
+        Dictionary<string, byte[]> replacements;
+        var changedTrucks = 0;
+
+        using (var baselineArchive = ZipFile.OpenRead(baselinePath))
+        using (var currentArchive = ZipFile.OpenRead(pakPath))
+        {
+            replacements = new Dictionary<string, byte[]>(StringComparer.Ordinal);
+
+            foreach (var entry in currentArchive.Entries)
+            {
+                var entryPath = entry.FullName.Replace('\\', '/');
+                if (!IsTruckEntry(entryPath))
+                {
+                    continue;
+                }
+
+                var baselineEntry = PakEntryLocator.FindEntry(baselineArchive, entryPath);
+                if (baselineEntry is null)
+                {
+                    continue;
+                }
+
+                var workingText = PartXmlHelpers.ReadEntryUtf8(entry);
+                if (!GameDataOpenRegex.IsMatch(workingText))
+                {
+                    continue;
+                }
+
+                var baselineText = PartXmlHelpers.ReadEntryUtf8(baselineEntry);
+                var updatedText = transformWorkingWithBaseline(
+                    currentArchive,
+                    entryPath,
+                    workingText,
+                    baselineText);
+                if (!string.Equals(workingText, updatedText, StringComparison.Ordinal))
+                {
+                    replacements[entryPath] = Encoding.UTF8.GetBytes(updatedText);
+                    changedTrucks++;
+                }
+            }
+        }
+
+        var updatedFiles = replacements.Count == 0
+            ? 0
+            : InitialPakWriter.ReplaceEntries(pakPath, replacements);
+        return new TruckTuningSaveResult(updatedFiles, changedTrucks);
+    }
+
+    private static string ApplyFastTuningToText(
+        string workingXml,
+        string baselineXml,
+        TruckFastTuningOptions options,
+        ZipArchive? workingArchive,
+        string truckId)
+    {
+        var updated = workingXml;
+
+        if (options.LowerCenterOfMass)
+        {
+            updated = ApplyFastTuningLowerCenterOfMass(updated, baselineXml);
+        }
+
+        if (options.BetterTurningCurve)
+        {
+            updated = ApplyFastTuningBetterTurningCurve(updated, baselineXml);
+        }
+
+        if (options.FasterSteering)
+        {
+            updated = ApplyFastTuningFasterSteering(updated, baselineXml);
+        }
+
+        if (options.LargerTires)
+        {
+            updated = ApplyFastTuningLargerTires(updated, baselineXml);
+        }
+
+        if (options.AlwaysOnDiffLock || options.AlwaysOnAwd)
+        {
+            updated = ApplyFastTuningDriveFlags(
+                updated,
+                baselineXml,
+                workingArchive,
+                truckId,
+                options.AlwaysOnDiffLock,
+                options.AlwaysOnAwd);
+        }
+
+        return updated;
+    }
+
+    private static string ApplyFastTuningDriveFlags(
+        string workingXml,
+        string baselineXml,
+        ZipArchive? workingArchive,
+        string truckId,
+        bool alwaysOnDiffLock,
+        bool alwaysOnAwd)
+    {
+        var updated = workingXml;
+
+        if (alwaysOnDiffLock)
+        {
+            var baselineDiff = VehicleGameDataXml.TryGetTruckDataAttribute(
+                baselineXml,
+                "DiffLockType",
+                out var baselineDiffRaw)
+                ? baselineDiffRaw
+                : "";
+            var workingDiff = VehicleGameDataXml.TryGetTruckDataAttribute(
+                workingXml,
+                "DiffLockType",
+                out var workingDiffRaw)
+                ? workingDiffRaw
+                : "";
+            if (string.Equals(workingDiff, baselineDiff, StringComparison.OrdinalIgnoreCase)
+                && !workingDiff.Equals("Always", StringComparison.OrdinalIgnoreCase))
+            {
+                updated = workingArchive is not null
+                    ? TruckDiffLockXml.ApplyAlwaysOnDiffLock(workingArchive, updated, truckId)
+                    : VehicleGameDataXml.SetTruckDataAttribute(updated, "DiffLockType", "Always");
+            }
+        }
+
+        if (alwaysOnAwd)
+        {
+            var baselineDrive = InferDriveLayout(baselineXml);
+            var workingDrive = InferDriveLayout(workingXml);
+            if (workingDrive == baselineDrive && workingDrive != TruckDriveLayout.AlwaysAwd)
+            {
+                updated = ApplyDriveLayout(updated, TruckDriveLayout.AlwaysAwd);
+            }
+        }
+
+        return updated;
+    }
+
+    private static string ApplyFastTuningLowerCenterOfMass(string workingXml, string baselineXml)
+    {
+        if (!VehicleCabinCenterOfMassXml.TryReadCabinY(baselineXml, out var baselineY))
+        {
+            return workingXml;
+        }
+
+        if (!VehicleCabinCenterOfMassXml.TryReadCabinY(workingXml, out var workingY))
+        {
+            return workingXml;
+        }
+
+        if (!ValuesEqual(workingY, baselineY))
+        {
+            return workingXml;
+        }
+
+        var target = Math.Clamp(baselineY * 0.5, VehicleCabinCenterOfMassXml.MinY, VehicleCabinCenterOfMassXml.MaxY);
+        if (ValuesEqual(workingY, target))
+        {
+            return workingXml;
+        }
+
+        return VehicleCabinCenterOfMassXml.ApplyCabinY(workingXml, target);
+    }
+
+    private static string ApplyFastTuningBetterTurningCurve(string workingXml, string baselineXml)
+    {
+        var axles = TruckSteerXml.ParseSteerAxles(workingXml, baselineXml);
+        if (!TruckSteerXml.HasBaselineFrontSteer(axles))
+        {
+            return workingXml;
+        }
+
+        // Frontmost steered axles with a positive baseline angle (excludes articulated CAT/Atom, etc.).
+        var frontSteered = axles
+            .Where(a => a.HadSteerInBaseline
+                        && a.BaselineAngle is > 0
+                        && TruckSteerXml.ClassifyAxleGroup(a) == 0)
+            .OrderBy(a => a.DisplayOrder)
+            .ToList();
+        if (frontSteered.Count == 0)
+        {
+            return workingXml;
+        }
+
+        var changed = false;
+        if (IsAngleAtBaseline(frontSteered[0]))
+        {
+            frontSteered[0].Angle = FastTuningFrontSteerDegrees;
+            changed = true;
+        }
+
+        if (frontSteered.Count >= 2
+            && frontSteered[1].BaselineAngle is > 0
+            && IsAngleAtBaseline(frontSteered[1]))
+        {
+            frontSteered[1].Angle = FastTuningSecondFrontSteerDegrees;
+            changed = true;
+        }
+
+        return changed ? TruckSteerXml.ApplySteerAxles(workingXml, axles) : workingXml;
+    }
+
+    private static string ApplyFastTuningFasterSteering(string workingXml, string baselineXml)
+    {
+        var baselineSteer = ReadBaselineDouble(baselineXml, baselineXml, "SteerSpeed", DefaultTruckSteerSpeed);
+        var baselineBack = ReadBaselineDouble(baselineXml, baselineXml, "BackSteerSpeed", DefaultTruckBackSteerSpeed);
+        var workingSteer = ReadBaselineDouble(workingXml, workingXml, "SteerSpeed", DefaultTruckSteerSpeed);
+        var workingBack = ReadBaselineDouble(workingXml, workingXml, "BackSteerSpeed", DefaultTruckBackSteerSpeed);
+
+        var updated = workingXml;
+        if (ValuesEqual(workingSteer, baselineSteer) && !ValuesEqual(workingSteer, FastTuningSteerSpeed))
+        {
+            updated = VehicleGameDataXml.SetTruckDataAttribute(
+                updated,
+                "SteerSpeed",
+                FormatUnitInterval(FastTuningSteerSpeed));
+        }
+
+        if (ValuesEqual(workingBack, baselineBack) && !ValuesEqual(workingBack, FastTuningSteerSpeed))
+        {
+            updated = VehicleGameDataXml.SetTruckDataAttribute(
+                updated,
+                "BackSteerSpeed",
+                FormatUnitInterval(FastTuningSteerSpeed));
+        }
+
+        return updated;
+    }
+
+    private static string ApplyFastTuningLargerTires(string workingXml, string baselineXml)
+    {
+        TruckWheelSizesSnapshot snapshot;
+        try
+        {
+            snapshot = TruckCompatibleWheelsService.BuildSizesSnapshotForTests(workingXml, baselineXml);
+        }
+        catch
+        {
+            return workingXml;
+        }
+
+        if (!snapshot.HasCompatibleWheels)
+        {
+            return workingXml;
+        }
+
+        var extrasEnabled = snapshot.Sizes.Any(s => !s.IsVanilla && s.IsEnabled);
+        if (extrasEnabled)
+        {
+            return workingXml;
+        }
+
+        var plusOne = snapshot.Sizes.FirstOrDefault(s => !s.IsVanilla);
+        if (plusOne is null)
+        {
+            return workingXml;
+        }
+
+        // Preserve a custom MaxWheelRadiusWithoutSuspension that is neither baseline nor already disabled.
+        if (snapshot.HasSuspensionWheelRestriction
+            && snapshot.HasBaselineSuspensionWheelRestriction
+            && !ValuesEqual(
+                snapshot.CurrentMaxWheelRadiusWithoutSuspension,
+                snapshot.BaselineMaxWheelRadiusWithoutSuspension)
+            && !snapshot.SuspensionRestrictionDisabled)
+        {
+            return workingXml;
+        }
+
+        try
+        {
+            return TruckCompatibleWheelsService.ApplySizesToTextForTests(
+                workingXml,
+                baselineXml,
+                [plusOne.Scale],
+                offsets: [],
+                disableSuspensionRestriction: true);
+        }
+        catch
+        {
+            return workingXml;
+        }
+    }
+
+    private static bool IsAngleAtBaseline(TruckSteerAxle axle) =>
+        axle.BaselineAngle is { } baseline
+        && axle.Angle is { } current
+        && ValuesEqual(current, baseline);
+
+    private static bool ValuesEqual(double a, double b) =>
+        Math.Abs(a - b) < 1e-6;
 
     public static TruckTuningSaveResult SaveTruckChanges(string pakPath, TruckTuningDefinition truck)
     {

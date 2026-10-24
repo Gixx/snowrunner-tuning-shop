@@ -4,7 +4,7 @@
              Focusable="True"
              KeyDown="View_KeyDown">
   <Grid>
-    <Grid x:Name="ListPanel" RowDefinitions="Auto,Auto,Auto,Auto,*">
+    <Grid x:Name="ListPanel" RowDefinitions="Auto,Auto,Auto,Auto,Auto,*">
       <Expander x:Name="GlobalMultipliersExpander"
                 Grid.Row="0"
                 Margin="0,0,0,12"
@@ -63,20 +63,6 @@
                     IsEnabled="False"
                     PropertyChanged="GlobalMultiplierSlider_PropertyChanged"/>
           </StackPanel>
-
-          <CheckBox x:Name="AlwaysOnDiffLockCheckBox"
-                    Grid.Row="2"
-                    Grid.Column="1"
-                    VerticalAlignment="Center"
-                    Margin="12,12,12,0"
-                    IsEnabled="False"/>
-
-          <CheckBox x:Name="AlwaysOnAwdCheckBox"
-                    Grid.Row="2"
-                    Grid.Column="2"
-                    VerticalAlignment="Center"
-                    Margin="12,12,12,0"
-                    IsEnabled="False"/>
         </Grid>
       </Expander>
 
@@ -110,7 +96,41 @@
         </Grid>
       </Expander>
 
-      <Grid Grid.Row="2" ColumnDefinitions="*,Auto,260" Margin="0,0,0,12">
+      <Expander x:Name="FastTuningExpander"
+                Grid.Row="2"
+                Margin="0,0,0,12"
+                HorizontalAlignment="Stretch"
+                Width="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}}">
+        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+          <TextBlock x:Name="FastTuningHintText"
+                     Grid.Row="0"
+                     Grid.ColumnSpan="2"
+                     TextWrapping="Wrap"
+                     FontSize="11"
+                     Foreground="{DynamicResource AppMutedBrush}"
+                     Margin="0,0,0,12"/>
+
+          <StackPanel Grid.Row="1" Grid.Column="0" Spacing="8">
+            <CheckBox x:Name="FastTuningLowerComCheckBox" IsEnabled="False"/>
+            <CheckBox x:Name="FastTuningBetterTurningCheckBox" IsEnabled="False"/>
+            <CheckBox x:Name="FastTuningFasterSteeringCheckBox" IsEnabled="False"/>
+            <CheckBox x:Name="FastTuningLargerTiresCheckBox" IsEnabled="False"/>
+            <CheckBox x:Name="AlwaysOnDiffLockCheckBox" IsEnabled="False"/>
+            <CheckBox x:Name="AlwaysOnAwdCheckBox" IsEnabled="False"/>
+          </StackPanel>
+
+          <Button x:Name="ApplyFastTuningButton"
+                  Grid.Row="1"
+                  Grid.Column="1"
+                  Padding="14,8"
+                  VerticalAlignment="Center"
+                  Margin="16,0,0,0"
+                  IsEnabled="False"
+                  Click="ApplyFastTuningButton_Click"/>
+        </Grid>
+      </Expander>
+
+      <Grid Grid.Row="3" ColumnDefinitions="*,Auto,260" Margin="0,0,0,12">
         <WrapPanel VerticalAlignment="Center">
           <RadioButton x:Name="FilterAll"
                        GroupName="VehicleFilter"
@@ -159,11 +179,11 @@
       </Grid>
 
       <TextBlock x:Name="CountTextBlock"
-                 Grid.Row="3"
+                 Grid.Row="4"
                  Margin="0,0,0,8"
                  Foreground="{DynamicResource AppMutedBrush}"/>
 
-      <ScrollViewer Grid.Row="4" VerticalScrollBarVisibility="Auto">
+      <ScrollViewer Grid.Row="5" VerticalScrollBarVisibility="Auto">
         <ItemsControl x:Name="VehiclesItems">
           <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>

@@ -212,6 +212,7 @@ public partial class TrailersView : UserControl
                 TuningStatusText.Text = UiText.Trailers.GlobalMultipliersSavedMessage(
                     result.ChangedTrailers,
                     result.UpdatedFiles);
+                UiFeedback.ShowSuccess(TuningStatusText.Text, UiText.Trailers.SaveSuccessTitle);
             }
             catch (Exception ex)
             {
@@ -265,6 +266,7 @@ public partial class TrailersView : UserControl
                 TuningStatusText.Text = UiText.Trailers.StoreUnlocksSavedMessage(
                     result.ChangedTrailers,
                     result.UpdatedFiles);
+                UiFeedback.ShowSuccess(TuningStatusText.Text, UiText.Trailers.SaveSuccessTitle);
             }
             catch (Exception ex)
             {
@@ -331,6 +333,7 @@ public partial class TrailersView : UserControl
                 TuningStatusText.Text = UiText.Trailers.RestoreAllTrailersSavedMessage(
                     result.ChangedTrailers,
                     result.UpdatedFiles);
+                UiFeedback.ShowSuccess(TuningStatusText.Text, UiText.Trailers.RestoreAllTrailersSuccessTitle);
             }
             catch (Exception ex)
             {
@@ -724,6 +727,7 @@ public partial class TrailersView : UserControl
                 TuningStatusText.Text = result.UpdatedFiles <= 0
                     ? UiText.Trailers.NoChangesToSave
                     : UiText.Trailers.SavedMessage();
+                UiFeedback.ShowSuccess(TuningStatusText.Text, UiText.Trailers.SaveSuccessTitle);
             }
             catch (Exception ex)
             {
@@ -766,6 +770,7 @@ public partial class TrailersView : UserControl
                 TuningStatusText.Text = result.UpdatedFiles <= 0
                     ? UiText.Trailers.NoChangesToSave
                     : UiText.Trailers.RestoredMessage();
+                UiFeedback.ShowSuccess(TuningStatusText.Text, UiText.Trailers.RestoreSuccessTitle);
             }
             catch (Exception ex)
             {

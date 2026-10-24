@@ -154,5 +154,24 @@
                 </StackPanel>
             </DockPanel>
         </Border>
+
+        <!-- Non-blocking success snackbar (bottom center). -->
+        <Border x:Name="ToastHost"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
+                Margin="24,0,24,28"
+                Padding="16,12"
+                MaxWidth="520"
+                CornerRadius="8"
+                Panel.ZIndex="200"
+                Visibility="Collapsed"
+                Opacity="0"
+                Background="{DynamicResource AccentFillColorDefaultBrush}"
+                IsHitTestVisible="False">
+            <TextBlock x:Name="ToastText"
+                       TextWrapping="Wrap"
+                       FontSize="13"
+                       Foreground="White"/>
+        </Border>
     </Grid>
 </Window>

@@ -92,6 +92,9 @@ public partial class EngineTuningView : UserControl
                 ReportStatus(UiText.Engine.MultipliersAppliedStatus(
                     result.ChangedEngines,
                     result.UpdatedFiles));
+                UiFeedback.ShowSuccess(
+                    UiText.Engine.RestoreEnginesMessage(result.ChangedEngines, result.UpdatedFiles),
+                    UiText.Engine.RestoreEnginesSuccessTitle);
             }
             catch (Exception ex)
             {
@@ -125,6 +128,9 @@ public partial class EngineTuningView : UserControl
                 ReportStatus(UiText.Engine.MultipliersAppliedStatus(
                     result.ChangedEngines,
                     result.UpdatedFiles));
+                UiFeedback.ShowSuccess(
+                    UiText.Engine.MultipliersSavedMessage(result.ChangedEngines, result.UpdatedFiles),
+                    UiText.Engine.SaveSuccessTitle);
             }
             catch (Exception ex)
             {
@@ -155,6 +161,9 @@ public partial class EngineTuningView : UserControl
                 var result = EngineService.SaveEngineChanges(PakPath, engines);
                 ReloadEngines();
                 ReportStatus(UiText.Engine.IndividualSavedStatus(result.ChangedEngines, result.UpdatedFiles));
+                UiFeedback.ShowSuccess(
+                    UiText.Engine.IndividualSavedMessage(result.ChangedEngines),
+                    UiText.Engine.SaveSuccessTitle);
             }
             catch (Exception ex)
             {

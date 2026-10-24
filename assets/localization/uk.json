@@ -1,4 +1,4 @@
-{
+﻿{
   "AddonCapacity.Apply": "Застосувати",
   "AddonCapacity.CategoryColumn": "Категорія",
   "AddonCapacity.ConfirmRestoreMessage": "Це відновить усі XML додатків із базового pak (паливо, вода, запчастини, запасні колеса та ціна). Продовжити?",
@@ -206,7 +206,7 @@
   "Main.BaselineReadyStatus": "Базова лінія в порядку для {0} ({1}, {2:yyyy-MM-dd HH:mm}).",
   "Main.BaselineReadyTitle": "Базова лінія готова",
   "Main.PresetApply": "Застосувати",
-  "Main.PresetApplyConfirm": "Застосувати пресет «{0}» до робочого initial.pak?\n\nРобочий pak має збігатися з еталоном (за потреби спочатку оновіть з гри).",
+  "Main.PresetApplyConfirm": "Apply preset “{0}” to the working initial.pak?\n\nThis restores the working pak to the baseline first (discarding current tuning), then applies the preset.",
   "Main.PresetApplyConfirmTitle": "Застосувати пресет?",
   "Main.PresetApplySuccess": "Пресет «{0}» застосовано.\n\nОновлених записів: {1}",
   "Main.PresetApplySuccessTitle": "Пресет застосовано",

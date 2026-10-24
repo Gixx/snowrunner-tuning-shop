@@ -1,3 +1,6 @@
+using SnowRunnerTuningShop.Core.Backup;
+using SnowRunnerTuningShop.Core.Config;
+using SnowRunnerTuningShop.Core.Pak;
 using SnowRunnerTuningShop.Core.Profile;
 
 namespace SnowRunnerTuningShop.Core.Presets;
@@ -10,6 +13,7 @@ public static class TuningPresetApplyService
         IProgress<TuningProfileReapplyProgress>? progress = null)
     {
         ArgumentNullException.ThrowIfNull(package);
+        EnsureCleanBaselineWorkingPak(workingPakPath, progress);
         var result = TuningProfileService.ApplyEntries(
             workingPakPath,
             package.Settings.Entries,
@@ -30,6 +34,7 @@ public static class TuningPresetApplyService
         }
 
         var package = TuningPresetLibrary.LoadPackage(info);
+        EnsureCleanBaselineWorkingPak(workingPakPath, progress);
         var result = TuningProfileService.ApplyEntries(
             workingPakPath,
             package.Settings.Entries,
@@ -37,6 +42,44 @@ public static class TuningPresetApplyService
 
         TuningPresetLibrary.SetActivePreset(info.Id, info.Source);
         return result;
+    }
+
+    /// <summary>
+    /// Preset Apply always starts from vanilla: if the working pak diverges from the baseline
+    /// (e.g. Active – changed), restore it first so entries are not layered on dirty XML.
+    /// </summary>
+    private static void EnsureCleanBaselineWorkingPak(
+        string workingPakPath,
+        IProgress<TuningProfileReapplyProgress>? progress)
+    {
+        var baselinePath = PakBaselineService.RequireBaseline(workingPakPath);
+        var editionId = WorkspaceConfigStore.TryResolveEditionId(workingPakPath);
+        EditionConfig? edition = null;
+        if (!string.IsNullOrWhiteSpace(editionId))
+        {
+            WorkspaceConfigStore.Load().Editions.TryGetValue(editionId, out edition);
+        }
+
+        var workingFingerprint = PakFingerprintService.GetFreshFingerprint(
+            workingPakPath,
+            edition?.LastKnownWorkingFingerprint);
+        var baselineFingerprint = PakFingerprintService.GetFreshFingerprint(
+            baselinePath,
+            edition?.BaselineFingerprint);
+
+        if (PakFingerprintService.FingerprintsMatch(workingFingerprint, baselineFingerprint))
+        {
+            return;
+        }
+
+        progress?.Report(
+            new TuningProfileReapplyProgress(
+                TuningProfileReapplyPhase.Preparing,
+                Current: 0,
+                Total: 1,
+                EntryPath: "baseline-restore"));
+
+        PakBaselineService.RestorePakFromBaseline(workingPakPath);
     }
 
     private static TuningPresetSource ResolveSourceAfterApply(string presetId)

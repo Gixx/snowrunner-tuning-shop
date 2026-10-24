@@ -1,4 +1,4 @@
-{
+﻿{
   "AddonCapacity.Apply": "套用",
   "AddonCapacity.CategoryColumn": "類別",
   "AddonCapacity.ConfirmRestoreMessage": "這會從基準 pak 還原所有附加元件 XML（燃料、水、維修零件、備用輪胎與價格）。繼續？",
@@ -206,7 +206,7 @@
   "Main.BaselineReadyStatus": "{0} 的基準正常（{1}，{2:yyyy-MM-dd HH:mm}）。",
   "Main.BaselineReadyTitle": "基準已就緒",
   "Main.PresetApply": "套用",
-  "Main.PresetApplyConfirm": "要將預設「{0}」套用到工作 initial.pak 嗎？\n\n工作 pak 必須與基準一致（必要時請先從遊戲重新整理）。",
+  "Main.PresetApplyConfirm": "Apply preset “{0}” to the working initial.pak?\n\nThis restores the working pak to the baseline first (discarding current tuning), then applies the preset.",
   "Main.PresetApplyConfirmTitle": "套用預設？",
   "Main.PresetApplySuccess": "已套用預設「{0}」。\n\n更新項目：{1}",
   "Main.PresetApplySuccessTitle": "預設已套用",

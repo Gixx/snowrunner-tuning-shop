@@ -143,16 +143,22 @@ public partial class VehiclesView : UserControl
         ResponsivenessMultiplierSlider.IsEnabled = canApply;
         PriceMultiplierSlider.IsEnabled = canApply;
         MassMultiplierSlider.IsEnabled = canApply;
-        AlwaysOnDiffLockCheckBox.IsEnabled = canApply;
-        AlwaysOnAwdCheckBox.IsEnabled = canApply;
         ReleaseRegionLockCheckBox.IsEnabled = canApply;
         UnlockAllVehiclesCheckBox.IsEnabled = canApply;
         ApplyStoreUnlocksButton.IsEnabled = canApply;
+        FastTuningLowerComCheckBox.IsEnabled = canApply;
+        FastTuningBetterTurningCheckBox.IsEnabled = canApply;
+        FastTuningFasterSteeringCheckBox.IsEnabled = canApply;
+        FastTuningLargerTiresCheckBox.IsEnabled = canApply;
+        AlwaysOnDiffLockCheckBox.IsEnabled = canApply;
+        AlwaysOnAwdCheckBox.IsEnabled = canApply;
+        ApplyFastTuningButton.IsEnabled = canApply;
         RestoreAllVehiclesButton.IsEnabled = canApply;
 
         if (!canApply)
         {
             ResetGlobalMultiplierSlidersToBaseline();
+            ResetFastTuningCheckBoxes();
         }
 
         UpdateGlobalMultiplierLabels();
@@ -164,6 +170,16 @@ public partial class VehiclesView : UserControl
         ResponsivenessMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
         PriceMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
         MassMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
+    }
+
+    private void ResetFastTuningCheckBoxes()
+    {
+        FastTuningLowerComCheckBox.IsChecked = false;
+        FastTuningBetterTurningCheckBox.IsChecked = false;
+        FastTuningFasterSteeringCheckBox.IsChecked = false;
+        FastTuningLargerTiresCheckBox.IsChecked = false;
+        AlwaysOnDiffLockCheckBox.IsChecked = false;
+        AlwaysOnAwdCheckBox.IsChecked = false;
     }
 
     private void GlobalMultiplierSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -234,6 +250,7 @@ public partial class VehiclesView : UserControl
         using (PakWriteUi.BeginBusyWrite(
                    ApplyGlobalMultipliersButton,
                    ApplyStoreUnlocksButton,
+                   ApplyFastTuningButton,
                    RestoreAllVehiclesButton))
         {
             try
@@ -245,9 +262,7 @@ public partial class VehiclesView : UserControl
                     TruckRearSteerGlobalMode.Baseline,
                     GetMultiplier(ResponsivenessMultiplierSlider),
                     GetMultiplier(PriceMultiplierSlider),
-                    GetMassMultiplier(MassMultiplierSlider),
-                    AlwaysOnDiffLockCheckBox.IsChecked == true,
-                    AlwaysOnAwdCheckBox.IsChecked == true);
+                    GetMassMultiplier(MassMultiplierSlider));
 
                 _trucksPakPath = null;
                 if (_currentCard is not null && DetailPanel.Visibility == Visibility.Visible)
@@ -258,6 +273,9 @@ public partial class VehiclesView : UserControl
                 TuningStatusText.Text = UiText.Vehicles.GlobalMultipliersAppliedStatus(
                     result.ChangedTrucks,
                     result.UpdatedFiles);
+                UiFeedback.ShowSuccess(
+                    UiText.Vehicles.GlobalMultipliersSavedMessage(result.ChangedTrucks, result.UpdatedFiles),
+                    UiText.Vehicles.SaveSuccessTitle);
             }
             catch (Exception ex)
             {
@@ -309,6 +327,7 @@ public partial class VehiclesView : UserControl
         using (PakWriteUi.BeginBusyWrite(
                    ApplyGlobalMultipliersButton,
                    ApplyStoreUnlocksButton,
+                   ApplyFastTuningButton,
                    RestoreAllVehiclesButton))
         {
             try
@@ -327,6 +346,83 @@ public partial class VehiclesView : UserControl
                 TuningStatusText.Text = UiText.Vehicles.StoreUnlocksSavedMessage(
                     result.ChangedTrucks,
                     result.UpdatedFiles);
+                UiFeedback.ShowSuccess(TuningStatusText.Text, UiText.Vehicles.SaveSuccessTitle);
+            }
+            catch (Exception ex)
+            {
+                TuningStatusText.Text = UiText.Main.ErrorStatus(ex.Message);
+                MessageBox.Show(ex.Message, UiText.Vehicles.SaveErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+    }
+
+    private void ApplyFastTuningButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (!PakWriteUi.TryProceed(_session))
+        {
+            return;
+        }
+
+        if (_session?.HasPak != true || string.IsNullOrWhiteSpace(_session.PakPath))
+        {
+            MessageBox.Show(
+                UiText.Vehicles.LoadPakForGlobalHint,
+                UiText.Vehicles.SaveErrorTitle,
+                MessageBoxButton.OK,
+                MessageBoxImage.Warning);
+            return;
+        }
+
+        if (!PakBaselineService.HasBaseline(_session.PakPath))
+        {
+            MessageBox.Show(
+                UiText.Main.BaselineMissingShort,
+                UiText.Main.BaselineTitle,
+                MessageBoxButton.OK,
+                MessageBoxImage.Warning);
+            return;
+        }
+
+        var options = new TruckFastTuningOptions
+        {
+            LowerCenterOfMass = FastTuningLowerComCheckBox.IsChecked == true,
+            BetterTurningCurve = FastTuningBetterTurningCheckBox.IsChecked == true,
+            FasterSteering = FastTuningFasterSteeringCheckBox.IsChecked == true,
+            LargerTires = FastTuningLargerTiresCheckBox.IsChecked == true,
+            AlwaysOnDiffLock = AlwaysOnDiffLockCheckBox.IsChecked == true,
+            AlwaysOnAwd = AlwaysOnAwdCheckBox.IsChecked == true,
+        };
+        if (!options.AnySelected)
+        {
+            MessageBox.Show(
+                UiText.Vehicles.FastTuningNothingSelected,
+                UiText.Vehicles.SaveErrorTitle,
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
+            return;
+        }
+
+        using (PakWriteUi.BeginBusyWrite(
+                   ApplyGlobalMultipliersButton,
+                   ApplyStoreUnlocksButton,
+                   ApplyFastTuningButton,
+                   RestoreAllVehiclesButton))
+        {
+            try
+            {
+                var result = TruckTuningService.ApplyFastTuning(_session.PakPath, options);
+
+                ResetFastTuningCheckBoxes();
+                _trucksPakPath = null;
+                if (_currentCard is not null && DetailPanel.Visibility == Visibility.Visible)
+                {
+                    _ = LoadTuningAsync(_currentCard);
+                }
+
+                TuningStatusText.Text = UiText.Vehicles.FastTuningSavedMessage(
+                    result.ChangedTrucks,
+                    result.UpdatedFiles);
+                UiFeedback.ShowSuccess(TuningStatusText.Text, UiText.Vehicles.SaveSuccessTitle);
             }
             catch (Exception ex)
             {
@@ -377,6 +473,7 @@ public partial class VehiclesView : UserControl
         using (PakWriteUi.BeginBusyWrite(
                    ApplyGlobalMultipliersButton,
                    ApplyStoreUnlocksButton,
+                   ApplyFastTuningButton,
                    RestoreAllVehiclesButton))
         {
             try
@@ -384,6 +481,7 @@ public partial class VehiclesView : UserControl
                 var result = TruckTuningService.RestoreAllVehiclesFromBaseline(_session.PakPath);
                 _trucksPakPath = null;
                 ResetGlobalMultiplierSlidersToBaseline();
+                ResetFastTuningCheckBoxes();
                 ReleaseRegionLockCheckBox.IsChecked = false;
                 UnlockAllVehiclesCheckBox.IsChecked = false;
                 UpdateGlobalMultiplierLabels();
@@ -391,6 +489,7 @@ public partial class VehiclesView : UserControl
                 TuningStatusText.Text = UiText.Vehicles.RestoreAllVehiclesSavedMessage(
                     result.ChangedTrucks,
                     result.UpdatedFiles);
+                UiFeedback.ShowSuccess(TuningStatusText.Text, UiText.Vehicles.RestoreAllVehiclesSuccessTitle);
             }
             catch (Exception ex)
             {
@@ -1123,6 +1222,7 @@ public partial class VehiclesView : UserControl
             }
 
             TuningStatusText.Text = UiText.Vehicles.EngineSetsSavedStatus;
+            UiFeedback.ShowSuccess(UiText.Vehicles.EngineSetsSavedStatus, UiText.Vehicles.SaveSuccessTitle);
             await LoadTuningAsync(_currentCard);
         }
         catch (Exception ex)
@@ -1180,6 +1280,7 @@ public partial class VehiclesView : UserControl
             }
 
             TuningStatusText.Text = UiText.Vehicles.WheelSetsSavedStatus;
+            UiFeedback.ShowSuccess(UiText.Vehicles.WheelSetsSavedStatus, UiText.Vehicles.SaveSuccessTitle);
             await LoadTuningAsync(_currentCard);
         }
         catch (Exception ex)
@@ -1273,6 +1374,7 @@ public partial class VehiclesView : UserControl
                 TuningStatusText.Text = updated <= 0
                     ? UiText.Vehicles.NoChangesToSave
                     : UiText.Vehicles.SavedMessage();
+                UiFeedback.ShowSuccess(TuningStatusText.Text, UiText.Vehicles.SaveSuccessTitle);
             }
             catch (Exception ex)
             {
@@ -1315,6 +1417,7 @@ public partial class VehiclesView : UserControl
                 TuningStatusText.Text = result.UpdatedFiles <= 0
                     ? UiText.Vehicles.NoChangesToSave
                     : UiText.Vehicles.RestoredMessage();
+                UiFeedback.ShowSuccess(TuningStatusText.Text, UiText.Vehicles.RestoreSuccessTitle);
             }
             catch (Exception ex)
             {

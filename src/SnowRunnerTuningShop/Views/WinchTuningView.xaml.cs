@@ -93,6 +93,9 @@ public partial class WinchTuningView : UserControl
                 ReportStatus(UiText.Winch.MultipliersAppliedStatus(
                     result.ChangedWinches,
                     result.UpdatedFiles));
+                UiFeedback.ShowSuccess(
+                    UiText.Winch.RestoreWinchesMessage(result.ChangedWinches, result.UpdatedFiles),
+                    UiText.Winch.RestoreWinchesSuccessTitle);
             }
             catch (Exception ex)
             {
@@ -125,6 +128,9 @@ public partial class WinchTuningView : UserControl
                 ReportStatus(UiText.Winch.MultipliersAppliedStatus(
                     result.ChangedWinches,
                     result.UpdatedFiles));
+                UiFeedback.ShowSuccess(
+                    UiText.Winch.MultipliersSavedMessage(result.ChangedWinches, result.UpdatedFiles),
+                    UiText.Winch.SaveSuccessTitle);
             }
             catch (Exception ex)
             {
@@ -155,6 +161,9 @@ public partial class WinchTuningView : UserControl
                 var result = WinchService.SaveWinchChanges(PakPath, winches);
                 ReloadWinches();
                 ReportStatus(UiText.Winch.IndividualSavedStatus(result.ChangedWinches, result.UpdatedFiles));
+                UiFeedback.ShowSuccess(
+                    UiText.Winch.IndividualSavedMessage(result.ChangedWinches),
+                    UiText.Winch.SaveSuccessTitle);
             }
             catch (Exception ex)
             {

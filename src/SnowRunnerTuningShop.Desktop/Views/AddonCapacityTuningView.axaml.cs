@@ -121,6 +121,7 @@ public partial class AddonCapacityTuningView : UserControl
                 ReportStatus(UiText.AddonCapacity.MultipliersAppliedStatus(
                     result.ChangedAddons,
                     result.UpdatedFiles));
+                AppDialogs.ShowSuccess(UiText.AddonCapacity.MultipliersAppliedStatus(result.ChangedAddons, result.UpdatedFiles), UiText.AddonCapacity.RestoreAddonsSuccessTitle);
             }
             catch (Exception ex)
             {
@@ -160,6 +161,7 @@ public partial class AddonCapacityTuningView : UserControl
                 ReportStatus(UiText.AddonCapacity.MultipliersAppliedStatus(
                     result.ChangedAddons,
                     result.UpdatedFiles));
+                AppDialogs.ShowSuccess(UiText.AddonCapacity.MultipliersAppliedStatus(result.ChangedAddons, result.UpdatedFiles), UiText.AddonCapacity.SaveSuccessTitle);
             }
             catch (Exception ex)
             {
@@ -193,6 +195,7 @@ public partial class AddonCapacityTuningView : UserControl
                 var result = await Task.Run(() => AddonCapacityService.SaveAddonChanges(path, addons));
                 ReloadAddons();
                 ReportStatus(UiText.AddonCapacity.IndividualSavedStatus(result.ChangedAddons, result.UpdatedFiles));
+                AppDialogs.ShowSuccess(UiText.AddonCapacity.IndividualSavedStatus(result.ChangedAddons, result.UpdatedFiles), UiText.AddonCapacity.SaveSuccessTitle);
             }
             catch (Exception ex)
             {

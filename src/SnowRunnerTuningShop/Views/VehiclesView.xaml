@@ -62,6 +62,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
@@ -154,22 +155,6 @@
                                 IsEnabled="False"
                                 ValueChanged="GlobalMultiplierSlider_ValueChanged"/>
                     </StackPanel>
-
-                    <CheckBox x:Name="AlwaysOnDiffLockCheckBox"
-                              Grid.Row="2"
-                              Grid.Column="1"
-                              Content="{x:Static loc:UiText+Vehicles.AlwaysOnDiffLock}"
-                              VerticalAlignment="Center"
-                              Margin="12,12,12,0"
-                              IsEnabled="False"/>
-
-                    <CheckBox x:Name="AlwaysOnAwdCheckBox"
-                              Grid.Row="2"
-                              Grid.Column="2"
-                              Content="{x:Static loc:UiText+Vehicles.AlwaysOnAwd}"
-                              VerticalAlignment="Center"
-                              Margin="12,12,12,0"
-                              IsEnabled="False"/>
                 </Grid>
             </Expander>
 
@@ -216,7 +201,66 @@
                 </Grid>
             </Expander>
 
-            <Grid Grid.Row="2" Margin="0,0,0,12">
+            <Expander Grid.Row="2"
+                      Style="{StaticResource CollapsibleCardExpanderStyle}"
+                      Header="{x:Static loc:UiText+Vehicles.FastTuningTitle}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0"
+                               Grid.ColumnSpan="2"
+                               Text="{x:Static loc:UiText+Vehicles.FastTuningHint}"
+                               TextWrapping="Wrap"
+                               FontSize="11"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                               Margin="0,0,0,12"/>
+
+                    <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Vertical">
+                        <CheckBox x:Name="FastTuningLowerComCheckBox"
+                                  Content="{x:Static loc:UiText+Vehicles.FastTuningLowerCenterOfMass}"
+                                  IsEnabled="False"
+                                  Margin="0,0,0,8"/>
+                        <CheckBox x:Name="FastTuningBetterTurningCheckBox"
+                                  Content="{x:Static loc:UiText+Vehicles.FastTuningBetterTurningCurve}"
+                                  IsEnabled="False"
+                                  Margin="0,0,0,8"/>
+                        <CheckBox x:Name="FastTuningFasterSteeringCheckBox"
+                                  Content="{x:Static loc:UiText+Vehicles.FastTuningFasterSteering}"
+                                  IsEnabled="False"
+                                  Margin="0,0,0,8"/>
+                        <CheckBox x:Name="FastTuningLargerTiresCheckBox"
+                                  Content="{x:Static loc:UiText+Vehicles.FastTuningLargerTires}"
+                                  IsEnabled="False"
+                                  Margin="0,0,0,8"/>
+                        <CheckBox x:Name="AlwaysOnDiffLockCheckBox"
+                                  Content="{x:Static loc:UiText+Vehicles.AlwaysOnDiffLock}"
+                                  IsEnabled="False"
+                                  Margin="0,0,0,8"/>
+                        <CheckBox x:Name="AlwaysOnAwdCheckBox"
+                                  Content="{x:Static loc:UiText+Vehicles.AlwaysOnAwd}"
+                                  IsEnabled="False"/>
+                    </StackPanel>
+
+                    <Button x:Name="ApplyFastTuningButton"
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Content="{x:Static loc:UiText+Vehicles.ApplyFastTuning}"
+                            Padding="14,8"
+                            VerticalAlignment="Center"
+                            Margin="16,0,0,0"
+                            IsEnabled="False"
+                            Click="ApplyFastTuningButton_Click"/>
+                </Grid>
+            </Expander>
+
+            <Grid Grid.Row="3" Margin="0,0,0,12">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
@@ -275,11 +319,11 @@
             </Grid>
 
             <TextBlock x:Name="CountTextBlock"
-                       Grid.Row="3"
+                       Grid.Row="4"
                        Margin="0,0,0,8"
                        Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
 
-            <ScrollViewer Grid.Row="4" VerticalScrollBarVisibility="Auto">
+            <ScrollViewer Grid.Row="5" VerticalScrollBarVisibility="Auto">
                 <ItemsControl x:Name="VehiclesItems">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>

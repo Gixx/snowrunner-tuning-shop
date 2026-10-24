@@ -131,11 +131,7 @@ public partial class LocaleManagerWindow : Window
             }
             else
             {
-                MessageBox.Show(
-                    UiText.LocalePack.ApplySuccess,
-                    UiText.LocalePack.Title,
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information);
+                UiFeedback.ShowSuccess(UiText.LocalePack.ApplySuccess, UiText.LocalePack.Title);
             }
         }
         catch (Exception ex)

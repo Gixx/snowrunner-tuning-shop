@@ -87,11 +87,11 @@ public static class XmlRewriteSafety
                 break;
             }
 
-            // Skip comments and processing instructions / declarations.
+            // Skip comments / CDATA / declarations / processing instructions.
+            // Comments often contain raw ">" inside (vanilla truck XML); do not stop at the first ">".
             if (lt + 1 < xml.Length && (xml[lt + 1] == '!' || xml[lt + 1] == '?'))
             {
-                var skipEnd = xml.IndexOf('>', lt + 2);
-                i = skipEnd < 0 ? xml.Length : skipEnd + 1;
+                i = SkipMarkupNoise(xml, lt);
                 continue;
             }
 
@@ -221,6 +221,38 @@ public static class XmlRewriteSafety
         }
 
         return -1;
+    }
+
+    /// <summary>
+    /// Advances past <c>&lt;!-- … --&gt;</c>, <c>&lt;![CDATA[ … ]]&gt;</c>, <c>&lt;!DOCTYPE …&gt;</c>,
+    /// or <c>&lt;? … ?&gt;</c>. Falls back to the next <c>&gt;</c> only when no known terminator exists.
+    /// </summary>
+    private static int SkipMarkupNoise(string xml, int lt)
+    {
+        if (lt + 3 < xml.Length
+            && xml[lt + 1] == '!'
+            && xml[lt + 2] == '-'
+            && xml[lt + 3] == '-')
+        {
+            var end = xml.IndexOf("-->", lt + 4, StringComparison.Ordinal);
+            return end < 0 ? xml.Length : end + 3;
+        }
+
+        if (lt + 8 < xml.Length
+            && xml.AsSpan(lt, 9).Equals("<![CDATA[", StringComparison.Ordinal))
+        {
+            var end = xml.IndexOf("]]>", lt + 9, StringComparison.Ordinal);
+            return end < 0 ? xml.Length : end + 3;
+        }
+
+        if (lt + 1 < xml.Length && xml[lt + 1] == '?')
+        {
+            var end = xml.IndexOf("?>", lt + 2, StringComparison.Ordinal);
+            return end < 0 ? xml.Length : end + 2;
+        }
+
+        var gt = xml.IndexOf('>', lt + 2);
+        return gt < 0 ? xml.Length : gt + 1;
     }
 
     private static string Snippet(string xml, int index)
