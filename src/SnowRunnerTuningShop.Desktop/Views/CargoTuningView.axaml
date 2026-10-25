@@ -1,0 +1,77 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="SnowRunnerTuningShop.Desktop.Views.CargoTuningView">
+  <Grid RowDefinitions="Auto,Auto,*,Auto">
+    <Expander x:Name="MultipliersExpander"
+              Grid.Row="0"
+              IsExpanded="True"
+              Margin="0,0,0,12"
+              HorizontalAlignment="Stretch"
+              Width="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}}">
+      <Grid ColumnDefinitions="*,*,Auto" HorizontalAlignment="Stretch">
+        <StackPanel Grid.Column="0" Margin="0,0,12,0">
+          <TextBlock x:Name="MassMultiplierLabel"/>
+          <Slider x:Name="MassMultiplierSlider"
+                  Minimum="0" Maximum="8" Value="7"
+                  TickFrequency="1" IsSnapToTickEnabled="True"
+                  PropertyChanged="MultiplierSlider_PropertyChanged"/>
+        </StackPanel>
+        <StackPanel Grid.Column="1" Margin="12,0,12,0">
+          <TextBlock x:Name="ComBiasLabel"/>
+          <Slider x:Name="ComBiasSlider"
+                  Minimum="0" Maximum="4" Value="2"
+                  TickFrequency="1" IsSnapToTickEnabled="True"
+                  PropertyChanged="MultiplierSlider_PropertyChanged"/>
+        </StackPanel>
+        <StackPanel Grid.Column="2" VerticalAlignment="Center">
+          <Button x:Name="ApplyMultipliersButton" Padding="14,8" Click="ApplyMultipliersButton_Click"/>
+        </StackPanel>
+      </Grid>
+    </Expander>
+
+    <Border Grid.Row="1"
+            Background="{DynamicResource AppCardBrush}"
+            BorderBrush="{DynamicResource AppCardStrokeBrush}"
+            BorderThickness="1"
+            CornerRadius="8"
+            Padding="12"
+            Margin="0,0,0,12">
+      <Grid ColumnDefinitions="*,280">
+        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+          <Button x:Name="SaveIndividualButton" Padding="14,8" Click="SaveIndividualButton_Click"/>
+          <Button x:Name="RestoreCargosButton" Padding="14,8" Click="RestoreCargosButton_Click"/>
+          <Button x:Name="ReloadButton" Padding="14,8" Click="ReloadButton_Click"/>
+        </StackPanel>
+        <TextBox x:Name="FilterTextBox"
+                 Grid.Column="1"
+                 Margin="16,0,0,0"
+                 VerticalAlignment="Center"
+                 TextChanged="FilterTextBox_TextChanged"/>
+      </Grid>
+    </Border>
+
+    <DataGrid x:Name="CargosGrid"
+              Grid.Row="2"
+              AutoGenerateColumns="False"
+              IsReadOnly="False"
+              HeadersVisibility="Column"
+              GridLinesVisibility="Horizontal"
+              CanUserReorderColumns="False"
+              CanUserResizeColumns="True"
+              CanUserSortColumns="True">
+      <DataGrid.Columns>
+        <DataGridTextColumn Binding="{Binding DisplayName}" Width="260" IsReadOnly="True"/>
+        <DataGridTextColumn Binding="{Binding Name}" Width="200" IsReadOnly="True"/>
+        <DataGridTextColumn Binding="{Binding TotalMass}" Width="100"/>
+        <DataGridTextColumn Binding="{Binding CenterOfMassY}" Width="110"/>
+        <DataGridTextColumn Binding="{Binding Friction}" Width="90"/>
+      </DataGrid.Columns>
+    </DataGrid>
+
+    <TextBlock x:Name="StatusText"
+               Grid.Row="3"
+               Margin="0,10,0,0"
+               TextWrapping="Wrap"
+               Foreground="{DynamicResource AppMutedBrush}"/>
+  </Grid>
+</UserControl>

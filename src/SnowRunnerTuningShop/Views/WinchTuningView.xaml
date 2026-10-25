@@ -34,8 +34,8 @@
                                Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
                     <Slider x:Name="LengthMultiplierSlider"
                             Minimum="0"
-                            Maximum="10"
-                            Value="6"
+                            Maximum="11"
+                            Value="7"
                             TickFrequency="1"
                             IsSnapToTickEnabled="True"
                             ValueChanged="LengthMultiplierSlider_ValueChanged"/>
@@ -47,8 +47,8 @@
                                Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
                     <Slider x:Name="StrengthMultiplierSlider"
                             Minimum="0"
-                            Maximum="10"
-                            Value="6"
+                            Maximum="11"
+                            Value="7"
                             TickFrequency="1"
                             IsSnapToTickEnabled="True"
                             ValueChanged="StrengthMultiplierSlider_ValueChanged"/>
@@ -60,8 +60,8 @@
                                Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
                     <Slider x:Name="PriceMultiplierSlider"
                             Minimum="0"
-                            Maximum="10"
-                            Value="6"
+                            Maximum="11"
+                            Value="7"
                             TickFrequency="1"
                             IsSnapToTickEnabled="True"
                             ValueChanged="LengthMultiplierSlider_ValueChanged"/>

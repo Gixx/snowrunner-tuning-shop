@@ -96,8 +96,8 @@
                                    Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
                         <Slider x:Name="FuelMultiplierSlider"
                                 Minimum="0"
-                                Maximum="10"
-                                Value="6"
+                                Maximum="11"
+                                Value="7"
                                 TickFrequency="1"
                                 IsSnapToTickEnabled="True"
                                 IsEnabled="False"
@@ -110,8 +110,8 @@
                                    Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
                         <Slider x:Name="ResponsivenessMultiplierSlider"
                                 Minimum="0"
-                                Maximum="10"
-                                Value="6"
+                                Maximum="11"
+                                Value="7"
                                 TickFrequency="1"
                                 IsSnapToTickEnabled="True"
                                 IsEnabled="False"
@@ -124,8 +124,8 @@
                                    Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
                         <Slider x:Name="PriceMultiplierSlider"
                                 Minimum="0"
-                                Maximum="10"
-                                Value="6"
+                                Maximum="11"
+                                Value="7"
                                 TickFrequency="1"
                                 IsSnapToTickEnabled="True"
                                 IsEnabled="False"
@@ -148,8 +148,8 @@
                                    Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
                         <Slider x:Name="MassMultiplierSlider"
                                 Minimum="0"
-                                Maximum="7"
-                                Value="6"
+                                Maximum="8"
+                                Value="7"
                                 TickFrequency="1"
                                 IsSnapToTickEnabled="True"
                                 IsEnabled="False"

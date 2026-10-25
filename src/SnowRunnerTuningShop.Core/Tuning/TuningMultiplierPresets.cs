@@ -4,6 +4,7 @@ public static class TuningMultiplierPresets
 {
     public static readonly double[] Values =
     [
+        0.1,
         0.2,
         0.25,
         1.0 / 3.0,
@@ -19,6 +20,7 @@ public static class TuningMultiplierPresets
 
     public static readonly string[] Labels =
     [
+        "1/10",
         "1/5",
         "1/4",
         "1/3",
@@ -32,12 +34,12 @@ public static class TuningMultiplierPresets
         "5x",
     ];
 
-    public const int BaselineIndex = 6;
+    public const int BaselineIndex = 7;
     public const int MinimumIndex = 0;
-    public const int MaximumIndex = 10;
+    public const int MaximumIndex = 11;
 
-    /// <summary>Index of 2x — upper bound for Mass sliders (1/5 … 2x).</summary>
-    public const int TwoTimesIndex = 7;
+    /// <summary>Index of 2x — upper bound for Mass sliders (1/10 … 2x).</summary>
+    public const int TwoTimesIndex = 8;
 
     public static int ClampIndex(int index) =>
         Math.Clamp(index, MinimumIndex, MaximumIndex);

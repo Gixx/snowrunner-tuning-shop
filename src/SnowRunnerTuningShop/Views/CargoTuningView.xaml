@@ -1,0 +1,150 @@
+<UserControl x:Class="SnowRunnerTuningShop.Views.CargoTuningView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:loc="clr-namespace:SnowRunnerTuningShop.Localization"
+             mc:Ignorable="d"
+             d:DesignHeight="560"
+             d:DesignWidth="900">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Expander Grid.Row="0"
+                  Style="{StaticResource CollapsibleCardExpanderStyle}"
+                  Header="{x:Static loc:UiText+Cargo.GlobalMultipliersTitle}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Margin="0,0,12,0">
+                    <TextBlock x:Name="MassMultiplierLabel"
+                               Text="{x:Static loc:UiText+Cargo.MassMultiplierDefault}"
+                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                    <Slider x:Name="MassMultiplierSlider"
+                            Minimum="0"
+                            Maximum="8"
+                            Value="7"
+                            TickFrequency="1"
+                            IsSnapToTickEnabled="True"
+                            ValueChanged="MultiplierSlider_ValueChanged"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Margin="12,0,12,0">
+                    <TextBlock x:Name="ComBiasLabel"
+                               Text="{x:Static loc:UiText+Cargo.ComBiasDefault}"
+                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                    <Slider x:Name="ComBiasSlider"
+                            Minimum="0"
+                            Maximum="4"
+                            Value="2"
+                            TickFrequency="1"
+                            IsSnapToTickEnabled="True"
+                            ValueChanged="MultiplierSlider_ValueChanged"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                    <Button x:Name="ApplyMultipliersButton"
+                            Content="{x:Static loc:UiText+Cargo.Apply}"
+                            Padding="14,8"
+                            Click="ApplyMultipliersButton_Click"/>
+                </StackPanel>
+            </Grid>
+        </Expander>
+
+        <Border Grid.Row="1"
+                Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="12"
+                Margin="0,0,0,12">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="280" MinWidth="180"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button x:Name="SaveIndividualButton"
+                            Content="{x:Static loc:UiText+Cargo.SaveIndividualChanges}"
+                            Padding="14,8"
+                            Margin="0,0,8,0"
+                            Click="SaveIndividualButton_Click"/>
+                    <Button x:Name="RestoreCargosButton"
+                            Content="{x:Static loc:UiText+Cargo.RestoreCargosToBaseline}"
+                            Padding="14,8"
+                            Margin="0,0,8,0"
+                            Click="RestoreCargosButton_Click"/>
+                    <Button Content="{x:Static loc:UiText+Cargo.RefreshList}"
+                            Padding="14,8"
+                            Click="ReloadButton_Click"/>
+                </StackPanel>
+
+                <Grid Grid.Column="1" Margin="16,0,0,0" VerticalAlignment="Center">
+                    <TextBox x:Name="FilterTextBox"
+                             Padding="10,7"
+                             VerticalContentAlignment="Center"
+                             TextChanged="FilterTextBox_TextChanged"/>
+                    <TextBlock x:Name="FilterPlaceholder"
+                               Text="{x:Static loc:UiText+Cargo.FilterPlaceholder}"
+                               Margin="14,0,0,0"
+                               VerticalAlignment="Center"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                               IsHitTestVisible="False"/>
+                </Grid>
+            </Grid>
+        </Border>
+
+        <DataGrid x:Name="CargosGrid"
+                  Grid.Row="2"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="False"
+                  CanUserDeleteRows="False"
+                  IsReadOnly="False"
+                  HeadersVisibility="Column"
+                  GridLinesVisibility="Horizontal">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="{x:Static loc:UiText+Cargo.NameColumn}"
+                                    Binding="{Binding DisplayName}"
+                                    Width="260"
+                                    IsReadOnly="True"
+                                    ElementStyle="{StaticResource TuningGridTextElementStyle}"/>
+                <DataGridTextColumn Header="{x:Static loc:UiText+Cargo.IdColumn}"
+                                    Binding="{Binding Name}"
+                                    Width="200"
+                                    IsReadOnly="True"
+                                    ElementStyle="{StaticResource TuningGridTextElementStyle}"/>
+                <DataGridTextColumn Header="{x:Static loc:UiText+Cargo.MassColumn}"
+                                    Binding="{Binding TotalMass, Converter={StaticResource InvariantDoubleConverter}, UpdateSourceTrigger=LostFocus}"
+                                    Width="100"
+                                    ElementStyle="{StaticResource TuningGridTextElementStyle}"
+                                    EditingElementStyle="{StaticResource TuningGridTextEditingStyle}"/>
+                <DataGridTextColumn Header="{x:Static loc:UiText+Cargo.CenterOfMassYColumn}"
+                                    Binding="{Binding CenterOfMassY, Converter={StaticResource InvariantDoubleConverter}, TargetNullValue='', UpdateSourceTrigger=LostFocus}"
+                                    Width="110"
+                                    ElementStyle="{StaticResource TuningGridTextElementStyle}"
+                                    EditingElementStyle="{StaticResource TuningGridTextEditingStyle}"/>
+                <DataGridTextColumn Header="{x:Static loc:UiText+Cargo.FrictionColumn}"
+                                    Binding="{Binding Friction, Converter={StaticResource InvariantDoubleConverter}, TargetNullValue='', UpdateSourceTrigger=LostFocus}"
+                                    Width="90"
+                                    ElementStyle="{StaticResource TuningGridTextElementStyle}"
+                                    EditingElementStyle="{StaticResource TuningGridTextEditingStyle}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <TextBlock x:Name="StatusText"
+                   Grid.Row="3"
+                   Margin="0,10,0,0"
+                   TextWrapping="Wrap"
+                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+    </Grid>
+</UserControl>

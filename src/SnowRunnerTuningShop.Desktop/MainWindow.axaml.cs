@@ -43,6 +43,7 @@ public partial class MainWindow : Window
         NavParts.Content = UiText.Nav.Parts;
         NavVehicles.Content = UiText.Nav.Vehicles;
         NavTrailers.Content = UiText.Nav.Trailers;
+        NavCargo.Content = UiText.Nav.Cargo;
         NavSettings.Content = UiText.Nav.Settings;
         ReportBugButton.Content = UiText.Nav.ReportBug;
         PinMenuCheckBox.Content = UiText.Nav.PinMenu;
@@ -54,6 +55,7 @@ public partial class MainWindow : Window
         PartsView.AttachSession(_session);
         VehiclesView.AttachSession(_session);
         TrailersView.AttachSession(_session);
+        CargoView.AttachSession(_session);
         SettingsView.AttachSession(_session);
         _gameRunningMonitor = new GameRunningMonitor(_session);
         _session.GameRunningChanged += (_, _) => UpdateGameRunningBanner();
@@ -211,6 +213,10 @@ public partial class MainWindow : Window
         {
             ShowPage(TrailersView);
         }
+        else if (ReferenceEquals(radio, NavCargo))
+        {
+            ShowPage(CargoView);
+        }
         else if (ReferenceEquals(radio, NavSettings))
         {
             ShowPage(SettingsView);
@@ -232,6 +238,7 @@ public partial class MainWindow : Window
             _ when ReferenceEquals(page, PartsView) => UiText.Nav.Parts,
             _ when ReferenceEquals(page, VehiclesView) => UiText.Nav.Vehicles,
             _ when ReferenceEquals(page, TrailersView) => UiText.Nav.Trailers,
+            _ when ReferenceEquals(page, CargoView) => UiText.Nav.Cargo,
             _ when ReferenceEquals(page, SettingsView) => UiText.Nav.Settings,
             _ => page.GetType().Name,
         });
@@ -241,6 +248,7 @@ public partial class MainWindow : Window
         PartsView.IsVisible = false;
         VehiclesView.IsVisible = false;
         TrailersView.IsVisible = false;
+        CargoView.IsVisible = false;
         SettingsView.IsVisible = false;
         page.IsVisible = true;
 

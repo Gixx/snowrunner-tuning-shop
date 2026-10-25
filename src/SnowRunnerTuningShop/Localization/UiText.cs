@@ -16,6 +16,7 @@ public static class UiText
         public static string Parts => StringResources.Get("Nav.Parts", "Parts");
         public static string Vehicles => StringResources.Get("Nav.Vehicles", "Vehicles");
         public static string Trailers => StringResources.Get("Nav.Trailers", "Trailers");
+        public static string Cargo => StringResources.Get("Nav.Cargo", "Cargo");
         public static string PhotoMode => StringResources.Get("Nav.PhotoMode", "Photo Mode");
         public static string Settings => StringResources.Get("Nav.Settings", "Settings");
         public static string ReportBug => StringResources.Get("Nav.ReportBug", "Report a bug");
@@ -1716,6 +1717,87 @@ public static class UiText
                 "Winch values were restored from the baseline.\n\nUpdated winches: {0}\nUpdated files: {1}",
                 changedWinches,
                 updatedFiles);
+    }
+
+    public static class Cargo
+    {
+        public static string GlobalMultipliersTitle => StringResources.Get(
+            "Cargo.GlobalMultipliersTitle",
+            "Global multipliers (relative to the baseline values)");
+        public static string MassMultiplierDefault => StringResources.Get(
+            "Cargo.MassMultiplierDefault",
+            "Mass: 1 (baseline)");
+        public static string ComBiasDefault => StringResources.Get(
+            "Cargo.ComBiasDefault",
+            "Center of mass: Baseline");
+        public static string Apply => StringResources.Get("Cargo.Apply", "Apply");
+        public static string SaveIndividualChanges => StringResources.Get(
+            "Cargo.SaveIndividualChanges",
+            "Save individual changes");
+        public static string RestoreCargosToBaseline => StringResources.Get(
+            "Cargo.RestoreCargosToBaseline",
+            "Restore cargo to baseline");
+        public static string RefreshList => StringResources.Get("Cargo.RefreshList", "Refresh list");
+        public static string FilterPlaceholder => StringResources.Get(
+            "Cargo.FilterPlaceholder",
+            "Filter name, id…");
+        public static string NameColumn => StringResources.Get("Cargo.NameColumn", "Name");
+        public static string IdColumn => StringResources.Get("Cargo.IdColumn", "Id");
+        public static string MassColumn => StringResources.Get("Cargo.MassColumn", "Mass");
+        public static string CenterOfMassYColumn => StringResources.Get(
+            "Cargo.CenterOfMassYColumn",
+            "CoM Y");
+        public static string FrictionColumn => StringResources.Get("Cargo.FrictionColumn", "Friction");
+        public static string LoadPakFirst => StringResources.Get(
+            "Cargo.LoadPakFirst",
+            "Load an initial.pak file first.");
+        public static string SaveSuccessTitle => StringResources.Get(
+            "Cargo.SaveSuccessTitle",
+            "Saved successfully");
+        public static string RestoreCargosSuccessTitle => StringResources.Get(
+            "Cargo.RestoreCargosSuccessTitle",
+            "Cargo restored");
+        public static string SaveErrorTitle => StringResources.Get("Cargo.SaveErrorTitle", "Save error");
+        public static string LoadErrorTitle => StringResources.Get("Cargo.LoadErrorTitle", "Load error");
+        public static string ConfirmRestoreTitle => StringResources.Get(
+            "Cargo.ConfirmRestoreTitle",
+            "Restore cargo?");
+        public static string ConfirmRestoreMessage => StringResources.Get(
+            "Cargo.ConfirmRestoreMessage",
+            "This restores every cargo XML from your baseline pak (mass, center of mass, and friction). Continue?");
+
+        public static string LoadedStatus(int count) =>
+            StringResources.Format("Cargo.LoadedStatus", "Loaded {0} cargo entries.", count);
+
+        public static string MultipliersAppliedStatus(int changedCargos, int updatedFiles) =>
+            StringResources.Format(
+                "Cargo.MultipliersAppliedStatus",
+                "Multipliers applied. Updated cargo: {0}, files: {1}.",
+                changedCargos,
+                updatedFiles);
+
+        public static string IndividualSavedStatus(int changedCargos, int updatedFiles) =>
+            StringResources.Format(
+                "Cargo.IndividualSavedStatus",
+                "Individual changes saved. Cargo: {0}, files: {1}.",
+                changedCargos,
+                updatedFiles);
+
+        public static string ComBiasCaption(int biasIndex) =>
+            StringResources.Format(
+                "Cargo.ComBiasCaption",
+                "Center of mass: {0}",
+                ComBiasLabel(biasIndex));
+
+        public static string ComBiasLabel(int biasIndex) =>
+            Math.Clamp(biasIndex, 0, 4) switch
+            {
+                0 => StringResources.Get("Cargo.ComBiasLow", "Low"),
+                1 => StringResources.Get("Cargo.ComBiasLower", "Lower"),
+                2 => StringResources.Get("Cargo.ComBiasBaseline", "Baseline"),
+                3 => StringResources.Get("Cargo.ComBiasHigher", "Higher"),
+                _ => StringResources.Get("Cargo.ComBiasHigh", "High"),
+            };
     }
 
     public static class AddonCapacity

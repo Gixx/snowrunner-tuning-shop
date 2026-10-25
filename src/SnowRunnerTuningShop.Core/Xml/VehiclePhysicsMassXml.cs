@@ -51,6 +51,48 @@ public static class VehiclePhysicsMassXml
         return false;
     }
 
+    /// <summary>Sum of every <c>Mass</c> under each <c>PhysicsModel</c>.</summary>
+    public static bool TryReadTotalMass(string text, out double totalMass)
+    {
+        totalMass = 0;
+        var found = false;
+        foreach (Match block in PhysicsModelBlockRegex.Matches(text))
+        {
+            foreach (Match massMatch in MassAttributeRegex.Matches(block.Groups["inner"].Value))
+            {
+                if (!TryParseMass(massMatch.Groups["value"].Value, out var mass) || mass <= 0)
+                {
+                    continue;
+                }
+
+                totalMass += mass;
+                found = true;
+            }
+        }
+
+        return found;
+    }
+
+    /// <summary>
+    /// Scales every <c>Mass</c> so the PhysicsModel total equals <paramref name="newTotalMass"/>.
+    /// </summary>
+    public static string ApplyTotalMass(string text, double newTotalMass)
+    {
+        var clamped = Math.Clamp(newTotalMass, MinMass, MaxMass);
+        if (!TryReadTotalMass(text, out var current) || current <= 0)
+        {
+            return text;
+        }
+
+        var ratio = clamped / current;
+        if (Math.Abs(ratio - 1.0) < 1e-12)
+        {
+            return text;
+        }
+
+        return ScaleAllMasses(text, ratio);
+    }
+
     /// <summary>
     /// Sets primary chassis mass and scales every other <c>Mass</c> in <c>PhysicsModel</c> by the same ratio.
     /// </summary>

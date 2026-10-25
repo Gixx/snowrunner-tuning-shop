@@ -57,6 +57,7 @@
         <views:PartsView x:Name="PartsView" IsVisible="False"/>
         <views:VehiclesView x:Name="VehiclesView" IsVisible="False"/>
         <views:TrailersView x:Name="TrailersView" IsVisible="False"/>
+        <views:CargoTuningView x:Name="CargoView" IsVisible="False"/>
         <views:SettingsView x:Name="SettingsView" IsVisible="False"/>
       </Grid>
     </Grid>
@@ -105,6 +106,7 @@
           <RadioButton x:Name="NavParts" GroupName="MainNav" Classes="nav" IsCheckedChanged="Nav_IsCheckedChanged"/>
           <RadioButton x:Name="NavVehicles" GroupName="MainNav" Classes="nav" IsCheckedChanged="Nav_IsCheckedChanged"/>
           <RadioButton x:Name="NavTrailers" GroupName="MainNav" Classes="nav" IsCheckedChanged="Nav_IsCheckedChanged"/>
+          <RadioButton x:Name="NavCargo" GroupName="MainNav" Classes="nav" IsCheckedChanged="Nav_IsCheckedChanged"/>
           <RadioButton x:Name="NavSettings" GroupName="MainNav" Classes="nav" IsCheckedChanged="Nav_IsCheckedChanged"/>
         </StackPanel>
       </DockPanel>

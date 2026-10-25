@@ -36,8 +36,8 @@
                                Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
                     <Slider x:Name="TorqueMultiplierSlider"
                             Minimum="0"
-                            Maximum="10"
-                            Value="6"
+                            Maximum="11"
+                            Value="7"
                             TickFrequency="1"
                             IsSnapToTickEnabled="True"
                             ValueChanged="MultiplierSlider_ValueChanged"/>
@@ -49,8 +49,8 @@
                                Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
                     <Slider x:Name="FuelMultiplierSlider"
                             Minimum="0"
-                            Maximum="10"
-                            Value="6"
+                            Maximum="11"
+                            Value="7"
                             TickFrequency="1"
                             IsSnapToTickEnabled="True"
                             ValueChanged="MultiplierSlider_ValueChanged"/>
@@ -62,8 +62,8 @@
                                Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
                     <Slider x:Name="DamageMultiplierSlider"
                             Minimum="0"
-                            Maximum="10"
-                            Value="6"
+                            Maximum="11"
+                            Value="7"
                             TickFrequency="1"
                             IsSnapToTickEnabled="True"
                             ValueChanged="MultiplierSlider_ValueChanged"/>
@@ -75,8 +75,8 @@
                                Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
                     <Slider x:Name="ResponsivenessMultiplierSlider"
                             Minimum="0"
-                            Maximum="10"
-                            Value="6"
+                            Maximum="11"
+                            Value="7"
                             TickFrequency="1"
                             IsSnapToTickEnabled="True"
                             ValueChanged="MultiplierSlider_ValueChanged"/>
@@ -88,8 +88,8 @@
                                Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
                     <Slider x:Name="PriceMultiplierSlider"
                             Minimum="0"
-                            Maximum="10"
-                            Value="6"
+                            Maximum="11"
+                            Value="7"
                             TickFrequency="1"
                             IsSnapToTickEnabled="True"
                             ValueChanged="MultiplierSlider_ValueChanged"/>

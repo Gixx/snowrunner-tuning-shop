@@ -11,6 +11,12 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ## [Unreleased]
 
+### Added
+- **Cargo page:** top-level Cargo nav with global Mass (1/10×–2×, all Body masses) and Center of mass (Low→Baseline→High) multipliers, plus a per-cargo table for Mass, CoM Y, and Friction. The Name column uses the same `UI_CARGO_*` strings as the game (e.g. Medium Logs).
+
+### Changed
+- **Mass multipliers:** shared preset range now starts at **1/10×** (was 1/5×) through 2× on Vehicles / Trailers / Cargo mass sliders.
+
 ---
 
 ## [1.6.2] — 2026-10-24
