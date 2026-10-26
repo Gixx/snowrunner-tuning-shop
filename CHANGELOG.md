@@ -11,11 +11,16 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ## [Unreleased]
 
+---
+
+## [1.6.3] — 2026-10-26
+
 ### Added
 - **Cargo page:** top-level Cargo nav with global Mass (1/10×–2×, all Body masses) and Center of mass (Low→Baseline→High) multipliers, plus a per-cargo table for Mass, CoM Y, and Friction. The Name column uses the same `UI_CARGO_*` strings as the game (e.g. Medium Logs).
 
 ### Changed
 - **Mass multipliers:** shared preset range now starts at **1/10×** (was 1/5×) through 2× on Vehicles / Trailers / Cargo mass sliders.
+- **Bundled presets:** Easy Mode and Anti-stress Mode descriptions list the concrete multipliers and flags applied vs baseline (engine, gearbox, winch, tires, rocks, weak plant winch, and more).
 
 ---
 
@@ -525,7 +530,8 @@ Stable release of the 1.5 line (Home Presets, vehicle wheels tuning, center of m
 
 ---
 
-[Unreleased]: https://github.com/Gixx/snowrunner-tuning-shop/compare/v1.6.2...HEAD
+[Unreleased]: https://github.com/Gixx/snowrunner-tuning-shop/compare/v1.6.3...HEAD
+[1.6.3]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.6.3
 [1.6.2]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.6.2
 [1.6.1]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.6.1
 [1.6.0]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.6.0

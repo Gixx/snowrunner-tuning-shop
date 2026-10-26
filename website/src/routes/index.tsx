@@ -339,7 +339,7 @@ function PlatformShowcase({
             WHAT&apos;S NEW IN VERSION {APP_VERSION_STABLE}
           </h2>
           <p className="mt-4 max-w-2xl text-muted-foreground">
-            Vehicles Fast tuning, success toasts after Apply/Save, restore-then-apply presets, and safer XML rewrite checks.
+            Cargo page with mass and center-of-mass globals, finer mass multipliers down to 1/10×, and clearer Easy / Anti-stress preset descriptions.
           </p>
         </Reveal>
         <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
