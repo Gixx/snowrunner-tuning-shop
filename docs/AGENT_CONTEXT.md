@@ -58,7 +58,7 @@ Shared session: `AppSession`. Shell: `MainWindow.*`.
 | Page | View / Core | Role |
 |------|-------------|------|
 | Home | `Views/HomeView.*` | Baseline, install location, restore, refresh after game update, reapply profile, workspace health, updates, **Presets** (.tsa import/export/apply) |
-| General | `Views/GeneralView.*`, `Core/General/GeneralService.cs`, `PlantWinchSocketXml` | Camera clip; trail rock scale (mod assets in `assets/general/no-stones`); optional strip of `WinchSocket` on weak plants (SmallTree/bush) |
+| General | `Views/GeneralView.*`, `Core/General/GeneralService.cs`, `PlantWinchSocketXml`, `CargoUnitSocketXml` | Camera clip; trail rock scale (mod assets in `assets/general/no-stones`); optional strip of `WinchSocket` on weak plants (SmallTree/bush); winchable cargo + cranable logs on `cargo_unit_*` models |
 | Parts | `Views/PartsView.*` + Winch/Engine/Gearbox/Suspension/Tire/Add-ons/Crane tabs | Global multipliers + per-row edits; Used-by; restore category |
 | Vehicles | `Views/VehiclesView.*`, `Core/Trucks/TruckTuningService.cs`, `TruckSteerXml`, `TruckCompatibleWheelsService`, `TruckEngineSetsService`, `VehicleCabinCenterOfMassXml`, `VehicleLongitudinalBalanceXml` | Catalog + per-truck edit (steer, engine/wheel sets, optional larger wheel scales ≤0.99 + OffsetZ, optional disable of `MaxWheelRadiusWithoutSuspension`, cabin CoM Y Low–High, longitudinal weight balance Front–Rear) + global vehicle multipliers / unlocks |
 | Trailers | `Views/TrailersView.*`, `Core/Trailers/TrailerTuningService.cs` | Catalog + capacities/price/quest; global multipliers |
@@ -78,6 +78,7 @@ Sidebar also has **Report a bug** (`Views/BugReportWindow.*`, `Core/Diagnostics/
   - `baselines/initial.baseline.{editionId}.pak`
   - `profiles/tuning-profile.{editionId}.json`
   - `photo-mode/photo-mode.{editionId}.json` (excluded from main reapply)
+  - `global-multiplier-ui.json` — last global-multiplier box UI state per active preset (`GlobalMultiplierUiStore`); also optional entry inside `.tsa` presets
   - `localization/` — downloaded overlays
   - `logs/` — crash reports
 - **Marker in working pak:** `[media]/_tuning_shop/marker.xml` (`TuningProfileMarker`) for update detection / reapply (`WorkspaceHealthService`).

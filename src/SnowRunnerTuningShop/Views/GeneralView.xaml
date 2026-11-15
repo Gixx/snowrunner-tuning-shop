@@ -7,7 +7,8 @@
              mc:Ignorable="d"
              d:DesignHeight="560"
              d:DesignWidth="900">
-    <Grid>
+    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Disabled">
         <StackPanel>
             <TextBlock Text="{x:Static loc:UiText+General.Title}"
                        FontSize="22"
@@ -133,6 +134,42 @@
                 </StackPanel>
             </Border>
 
+            <Border Background="{DynamicResource CardBackgroundFillColorSecondaryBrush}"
+                    BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="16"
+                    Margin="0,0,0,12">
+                <StackPanel>
+                    <TextBlock Text="{x:Static loc:UiText+General.CargoHandlingTitle}"
+                               FontWeight="SemiBold"
+                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                               Margin="0,0,0,8"/>
+                    <TextBlock Text="{x:Static loc:UiText+General.CargoHandlingHint}"
+                               TextWrapping="Wrap"
+                               FontSize="11"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                               Margin="0,0,0,12"/>
+                    <CheckBox x:Name="WinchableCargoCheckBox"
+                              Content="{x:Static loc:UiText+General.WinchableCargoCheckbox}"
+                              Margin="0,0,0,8"/>
+                    <CheckBox x:Name="CranableLogsCheckBox"
+                              Content="{x:Static loc:UiText+General.CranableLogsCheckbox}"
+                              Margin="0,0,0,12"/>
+                    <StackPanel Orientation="Horizontal">
+                        <Button x:Name="ApplyCargoHandlingButton"
+                                Content="{x:Static loc:UiText+General.ApplyCargoHandling}"
+                                Padding="14,8"
+                                Margin="0,0,8,0"
+                                Click="ApplyCargoHandlingButton_Click"/>
+                        <Button x:Name="RestoreCargoHandlingButton"
+                                Content="{x:Static loc:UiText+General.RestoreCargoHandlingBaseline}"
+                                Padding="14,8"
+                                Click="RestoreCargoHandlingButton_Click"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
             <TextBlock x:Name="StatusText"
                        Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                        TextWrapping="Wrap"/>
@@ -142,5 +179,5 @@
                        TextWrapping="Wrap"
                        Visibility="Collapsed"/>
         </StackPanel>
-    </Grid>
+    </ScrollViewer>
 </UserControl>

@@ -4,6 +4,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
+using Avalonia.Threading;
 using SnowRunnerTuningShop;
 using SnowRunnerTuningShop.Core.Backup;
 using SnowRunnerTuningShop.Core.Cargo;
@@ -17,16 +18,24 @@ public partial class CargoTuningView : UserControl
 {
     private readonly ObservableCollection<CargoRowViewModel> _cargos = [];
     private AppSession? _session;
+    private AccordionDirtyHeader? _globalDirty;
+    private bool _suppressDirty;
 
     public CargoTuningView()
     {
         InitializeComponent();
         ApplyStaticText();
+        _globalDirty = new AccordionDirtyHeader(MultipliersExpander, UiText.Cargo.GlobalMultipliersTitle);
         RefreshFilter();
-        ResetMultiplierSlidersToBaseline();
+        RestoreMultiplierSlidersFromStore();
+        GlobalMultiplierUiStore.ActivePresetChanged += OnActivePresetChanged;
+        Unloaded += (_, _) => GlobalMultiplierUiStore.ActivePresetChanged -= OnActivePresetChanged;
     }
 
     private Window? OwnerWindow => TopLevel.GetTopLevel(this) as Window;
+
+    private void OnActivePresetChanged(object? sender, EventArgs e) =>
+        Dispatcher.UIThread.Post(RestoreMultiplierSlidersFromStore);
 
     public void AttachSession(AppSession session)
     {
@@ -43,7 +52,6 @@ public partial class CargoTuningView : UserControl
 
     private void ApplyStaticText()
     {
-        MultipliersExpander.Header = UiText.Cargo.GlobalMultipliersTitle;
         ApplyMultipliersButton.Content = UiText.Cargo.Apply;
         SaveIndividualButton.Content = UiText.Cargo.SaveIndividualChanges;
         RestoreCargosButton.Content = UiText.Cargo.RestoreCargosToBaseline;
@@ -90,7 +98,8 @@ public partial class CargoTuningView : UserControl
             {
                 var path = _session!.PakPath!;
                 var result = await Task.Run(() => CargoService.RestoreCargosFromBaseline(path));
-                ResetMultiplierSlidersToBaseline();
+                GlobalMultiplierUiStore.ResetCargo();
+                RestoreMultiplierSlidersFromStore();
                 ReloadCargos();
                 var status = UiText.Cargo.MultipliersAppliedStatus(result.ChangedCargos, result.UpdatedFiles);
                 ReportStatus(status);
@@ -124,6 +133,8 @@ public partial class CargoTuningView : UserControl
                 var mass = GetMassMultiplier();
                 var bias = GetComBiasIndex();
                 var result = await Task.Run(() => CargoService.ApplyGlobal(path, mass, bias));
+                SaveMultiplierSlidersToStore();
+                _globalDirty?.ClearDirty();
                 ReloadCargos();
                 var status = UiText.Cargo.MultipliersAppliedStatus(result.ChangedCargos, result.UpdatedFiles);
                 ReportStatus(status);
@@ -260,6 +271,10 @@ public partial class CargoTuningView : UserControl
         }
 
         UpdateMultiplierLabels();
+        if (!_suppressDirty)
+        {
+            _globalDirty?.MarkDirty();
+        }
     }
 
     private void FilterTextBox_TextChanged(object? sender, TextChangedEventArgs e) =>
@@ -275,12 +290,29 @@ public partial class CargoTuningView : UserControl
                 row.Name,
                 row.CargoType));
 
-    private void ResetMultiplierSlidersToBaseline()
+    private void RestoreMultiplierSlidersFromStore()
     {
-        MassMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
-        ComBiasSlider.Value = CargoService.ComBiasBaselineIndex;
-        UpdateMultiplierLabels();
+        _suppressDirty = true;
+        try
+        {
+            var state = GlobalMultiplierUiStore.GetCargo();
+            MassMultiplierSlider.Value = TuningMultiplierPresets.ClampMassIndex(state.MassIndex);
+            ComBiasSlider.Value = Math.Clamp(state.ComBiasIndex, CargoService.ComBiasLowIndex, CargoService.ComBiasHighIndex);
+            UpdateMultiplierLabels();
+            _globalDirty?.ClearDirty();
+        }
+        finally
+        {
+            _suppressDirty = false;
+        }
     }
+
+    private void SaveMultiplierSlidersToStore() =>
+        GlobalMultiplierUiStore.SetCargo(new CargoGlobalUiState
+        {
+            MassIndex = GetMassMultiplierIndex(),
+            ComBiasIndex = GetComBiasIndex(),
+        });
 
     private void UpdateMultiplierLabels()
     {

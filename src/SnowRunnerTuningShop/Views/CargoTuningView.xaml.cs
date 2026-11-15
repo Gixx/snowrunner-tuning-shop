@@ -16,6 +16,8 @@ public partial class CargoTuningView : UserControl
     private readonly ObservableCollection<CargoRowViewModel> _cargos = [];
     private readonly ICollectionView _cargosView;
     private AppSession? _session;
+    private AccordionDirtyHeader? _globalDirty;
+    private bool _suppressDirty;
 
     public CargoTuningView()
     {
@@ -23,7 +25,10 @@ public partial class CargoTuningView : UserControl
         _cargosView = CollectionViewSource.GetDefaultView(_cargos);
         _cargosView.Filter = MatchesFilter;
         CargosGrid.ItemsSource = _cargosView;
-        ResetMultiplierSlidersToBaseline();
+        _globalDirty = new AccordionDirtyHeader(GlobalMultipliersExpander, UiText.Cargo.GlobalMultipliersTitle);
+        RestoreMultiplierSlidersFromStore();
+        GlobalMultiplierUiStore.ActivePresetChanged += OnActivePresetChanged;
+        Unloaded += (_, _) => GlobalMultiplierUiStore.ActivePresetChanged -= OnActivePresetChanged;
     }
 
     public void AttachSession(AppSession session)
@@ -38,6 +43,9 @@ public partial class CargoTuningView : UserControl
         _session.GameRunningChanged += (_, _) => RefreshWriteButtons();
         ReloadCargos();
     }
+
+    private void OnActivePresetChanged(object? sender, EventArgs e) =>
+        Dispatcher.Invoke(RestoreMultiplierSlidersFromStore);
 
     private void ReloadButton_Click(object sender, RoutedEventArgs e)
     {
@@ -68,7 +76,8 @@ public partial class CargoTuningView : UserControl
             try
             {
                 var result = CargoService.RestoreCargosFromBaseline(_session!.PakPath!);
-                ResetMultiplierSlidersToBaseline();
+                GlobalMultiplierUiStore.ResetCargo();
+                RestoreMultiplierSlidersFromStore();
                 ReloadCargos();
                 var status = UiText.Cargo.MultipliersAppliedStatus(result.ChangedCargos, result.UpdatedFiles);
                 ReportStatus(status);
@@ -98,6 +107,8 @@ public partial class CargoTuningView : UserControl
                     GetMassMultiplier(),
                     GetComBiasIndex());
 
+                SaveMultiplierSlidersToStore();
+                _globalDirty?.ClearDirty();
                 ReloadCargos();
                 var status = UiText.Cargo.MultipliersAppliedStatus(result.ChangedCargos, result.UpdatedFiles);
                 ReportStatus(status);
@@ -216,8 +227,14 @@ public partial class CargoTuningView : UserControl
             RestoreCargosButton);
     }
 
-    private void MultiplierSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) =>
+    private void MultiplierSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
         UpdateMultiplierLabels();
+        if (!_suppressDirty)
+        {
+            _globalDirty?.MarkDirty();
+        }
+    }
 
     private void FilterTextBox_TextChanged(object sender, TextChangedEventArgs e)
     {
@@ -233,12 +250,32 @@ public partial class CargoTuningView : UserControl
             row.Name,
             row.CargoType);
 
-    private void ResetMultiplierSlidersToBaseline()
+    private void RestoreMultiplierSlidersFromStore()
     {
-        MassMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
-        ComBiasSlider.Value = CargoService.ComBiasBaselineIndex;
-        UpdateMultiplierLabels();
+        _suppressDirty = true;
+        try
+        {
+            var state = GlobalMultiplierUiStore.GetCargo();
+            MassMultiplierSlider.Value = TuningMultiplierPresets.ClampMassIndex(state.MassIndex);
+            ComBiasSlider.Value = Math.Clamp(
+                state.ComBiasIndex,
+                CargoService.ComBiasLowIndex,
+                CargoService.ComBiasHighIndex);
+            UpdateMultiplierLabels();
+            _globalDirty?.ClearDirty();
+        }
+        finally
+        {
+            _suppressDirty = false;
+        }
     }
+
+    private void SaveMultiplierSlidersToStore() =>
+        GlobalMultiplierUiStore.SetCargo(new CargoGlobalUiState
+        {
+            MassIndex = GetMassMultiplierIndex(),
+            ComBiasIndex = GetComBiasIndex(),
+        });
 
     private void UpdateMultiplierLabels()
     {

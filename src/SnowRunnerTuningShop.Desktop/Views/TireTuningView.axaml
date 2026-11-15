@@ -8,45 +8,29 @@
               Margin="0,0,0,12"
               HorizontalAlignment="Stretch"
               Width="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}}">
-      <Grid ColumnDefinitions="*,*,*,Auto,Auto" RowDefinitions="Auto,Auto" HorizontalAlignment="Stretch">
-        <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,12,8">
-          <TextBlock x:Name="OnRoadFrictionMultiplierLabel"/>
-          <Slider x:Name="OnRoadFrictionMultiplierSlider"
-                  Minimum="0" Maximum="11" Value="7" TickFrequency="1" IsSnapToTickEnabled="True"
+      <Grid ColumnDefinitions="*,*,Auto,Auto" HorizontalAlignment="Stretch">
+        <StackPanel Grid.Column="0" Margin="0,0,12,0">
+          <TextBlock x:Name="DamageMultiplierLabel"/>
+          <Slider x:Name="DamageMultiplierSlider"
+                  Minimum="0" Maximum="22" Value="9" TickFrequency="1" IsSnapToTickEnabled="True"
                   PropertyChanged="MultiplierSlider_PropertyChanged"/>
         </StackPanel>
-        <StackPanel Grid.Row="0" Grid.Column="1" Margin="12,0,12,8">
-          <TextBlock x:Name="OffRoadFrictionMultiplierLabel"/>
-          <Slider x:Name="OffRoadFrictionMultiplierSlider"
-                  Minimum="0" Maximum="11" Value="7" TickFrequency="1" IsSnapToTickEnabled="True"
-                  PropertyChanged="MultiplierSlider_PropertyChanged"/>
-        </StackPanel>
-        <StackPanel Grid.Row="0" Grid.Column="2" Margin="12,0,12,8">
-          <TextBlock x:Name="MudFrictionMultiplierLabel"/>
-          <Slider x:Name="MudFrictionMultiplierSlider"
-                  Minimum="0" Maximum="11" Value="7" TickFrequency="1" IsSnapToTickEnabled="True"
+        <StackPanel Grid.Column="1" Margin="12,0,12,0">
+          <TextBlock x:Name="PriceMultiplierLabel"/>
+          <Slider x:Name="PriceMultiplierSlider"
+                  Minimum="0" Maximum="22" Value="9" TickFrequency="1" IsSnapToTickEnabled="True"
                   PropertyChanged="MultiplierSlider_PropertyChanged"/>
         </StackPanel>
         <CheckBox x:Name="GlobalIgnoreIceCheckBox"
-                  Grid.Row="0"
-                  Grid.Column="3"
+                  Grid.Column="2"
                   VerticalAlignment="Center"
-                  Margin="12,0,16,8"/>
-        <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,12,0">
-          <TextBlock x:Name="DamageMultiplierLabel"/>
-          <Slider x:Name="DamageMultiplierSlider"
-                  Minimum="0" Maximum="11" Value="7" TickFrequency="1" IsSnapToTickEnabled="True"
-                  PropertyChanged="MultiplierSlider_PropertyChanged"/>
-        </StackPanel>
-        <StackPanel Grid.Row="1" Grid.Column="1" Margin="12,0,12,0">
-          <TextBlock x:Name="PriceMultiplierLabel"/>
-          <Slider x:Name="PriceMultiplierSlider"
-                  Minimum="0" Maximum="11" Value="7" TickFrequency="1" IsSnapToTickEnabled="True"
-                  PropertyChanged="MultiplierSlider_PropertyChanged"/>
-        </StackPanel>
-        <StackPanel Grid.Row="0" Grid.RowSpan="2" Grid.Column="4" VerticalAlignment="Center">
-          <Button x:Name="ApplyMultipliersButton" Padding="14,8" Click="ApplyMultipliersButton_Click"/>
-        </StackPanel>
+                  Margin="12,0,16,0"
+                  IsCheckedChanged="GlobalIgnoreIceCheckBox_IsCheckedChanged"/>
+        <Button x:Name="ApplyMultipliersButton"
+                Grid.Column="3"
+                Padding="14,8"
+                VerticalAlignment="Center"
+                Click="ApplyMultipliersButton_Click"/>
       </Grid>
     </Expander>
 

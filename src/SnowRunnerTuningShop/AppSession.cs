@@ -23,6 +23,9 @@ public sealed class AppSession
     /// <summary>Raised when the edition tuning profile is synced after a pak write.</summary>
     public event EventHandler? TuningChanged;
 
+    /// <summary>Raised when the Home active preset changes (global multiplier UI store key).</summary>
+    public event EventHandler? ActivePresetChanged;
+
     public void SetPak(string pakPath, PakSummary summary)
     {
         PakPath = pakPath;
@@ -42,6 +45,9 @@ public sealed class AppSession
 
     public void NotifyTuningChanged() =>
         TuningChanged?.Invoke(this, EventArgs.Empty);
+
+    public void NotifyActivePresetChanged() =>
+        ActivePresetChanged?.Invoke(this, EventArgs.Empty);
 
     public void SetGameRunning(bool isRunning)
     {

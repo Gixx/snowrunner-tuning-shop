@@ -116,6 +116,6 @@ public class CargoServiceTests
         Assert.Equal(0.1, TuningMultiplierPresets.GetValue(TuningMultiplierPresets.MinimumIndex));
         Assert.Equal(1.0, TuningMultiplierPresets.GetValue(TuningMultiplierPresets.BaselineIndex));
         Assert.Equal(2.0, TuningMultiplierPresets.GetValue(TuningMultiplierPresets.TwoTimesIndex));
-        Assert.Equal("1/10", TuningMultiplierPresets.GetLabel(0));
+        Assert.Equal("0.1x", TuningMultiplierPresets.GetLabel(0));
     }
 }

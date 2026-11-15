@@ -446,6 +446,29 @@ public static class UiText
                 "General.WeakPlantWinchSaved",
                 "Weak plant winch points updated in {0} pak file(s). Reload the game to test.",
                 files);
+        public static string CargoHandlingTitle => StringResources.Get(
+            "General.CargoHandlingTitle",
+            "Cargo handling");
+        public static string CargoHandlingHint => StringResources.Get(
+            "General.CargoHandlingHint",
+            "Winchable cargo duplicates each cargo CraneSocket as a WinchSocket so packs can be towed. Cranable logs add conventional crane points to short/medium/long (and burnt) log units that normally need a log grabber.");
+        public static string WinchableCargoCheckbox => StringResources.Get(
+            "General.WinchableCargoCheckbox",
+            "Make cargo winchable");
+        public static string CranableLogsCheckbox => StringResources.Get(
+            "General.CranableLogsCheckbox",
+            "Make logs cranable with a normal crane");
+        public static string ApplyCargoHandling => StringResources.Get(
+            "General.ApplyCargoHandling",
+            "Apply cargo handling");
+        public static string RestoreCargoHandlingBaseline => StringResources.Get(
+            "General.RestoreCargoHandlingBaseline",
+            "Restore cargo handling baseline");
+        public static string CargoHandlingSaved(int files) =>
+            StringResources.Format(
+                "General.CargoHandlingSaved",
+                "Cargo handling updated in {0} pak file(s). Reload the game to test.",
+                files);
         public static string NoChangesToSave => StringResources.Get("General.NoChangesToSave", "No general changes were detected to save.");
         public static string SaveSuccessTitle => StringResources.Get("General.SaveSuccessTitle", "Saved successfully");
         public static string SaveErrorTitle => StringResources.Get("General.SaveErrorTitle", "Save error");
@@ -453,15 +476,26 @@ public static class UiText
             StringResources.Format("General.CameraSaved", "Camera collisions updated in {0} model file(s). Reload the game to test.", files);
         public static string RockSaved(int files) =>
             StringResources.Format("General.RockSaved", "Trail rock settings updated in {0} pak file(s). Reload the game to test.", files);
-        public static string LoadedStatus(int cameraModels, double rockScale, bool weakPlantWinchRemoved) =>
+        public static string LoadedStatus(
+            int cameraModels,
+            double rockScale,
+            bool weakPlantWinchRemoved,
+            bool winchableCargoEnabled,
+            bool cranableLogsEnabled) =>
             StringResources.Format(
                 "General.LoadedStatus",
-                "Detected {0} camera-eligible models; reference rock scale {1:0%}; weak plant winch points {2}.",
+                "Detected {0} camera-eligible models; reference rock scale {1:0%}; weak plant winch points {2}; winchable cargo {3}; cranable logs {4}.",
                 cameraModels,
                 rockScale,
                 weakPlantWinchRemoved
                     ? StringResources.Get("General.WeakPlantWinchStatusRemoved", "removed")
-                    : StringResources.Get("General.WeakPlantWinchStatusPresent", "present"));
+                    : StringResources.Get("General.WeakPlantWinchStatusPresent", "present"),
+                winchableCargoEnabled
+                    ? StringResources.Get("General.CargoHandlingStatusOn", "on")
+                    : StringResources.Get("General.CargoHandlingStatusOff", "off"),
+                cranableLogsEnabled
+                    ? StringResources.Get("General.CargoHandlingStatusOn", "on")
+                    : StringResources.Get("General.CargoHandlingStatusOff", "off"));
 
         public static string RockPhysicsCaption(int percent)
         {

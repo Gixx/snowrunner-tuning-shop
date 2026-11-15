@@ -50,6 +50,12 @@ public partial class GeneralView : UserControl
         WeakPlantWinchCheckBox.Content = UiText.General.WeakPlantWinchCheckbox;
         ApplyWeakPlantWinchButton.Content = UiText.General.ApplyWeakPlantWinch;
         RestoreWeakPlantWinchButton.Content = UiText.General.RestoreWeakPlantWinchBaseline;
+        CargoHandlingTitleText.Text = UiText.General.CargoHandlingTitle;
+        CargoHandlingHintText.Text = UiText.General.CargoHandlingHint;
+        WinchableCargoCheckBox.Content = UiText.General.WinchableCargoCheckbox;
+        CranableLogsCheckBox.Content = UiText.General.CranableLogsCheckbox;
+        ApplyCargoHandlingButton.Content = UiText.General.ApplyCargoHandling;
+        RestoreCargoHandlingButton.Content = UiText.General.RestoreCargoHandlingBaseline;
     }
 
     private void BindCameraModes()
@@ -72,9 +78,11 @@ public partial class GeneralView : UserControl
             ApplyCameraButton.IsEnabled = false;
             ApplyRockSizeButton.IsEnabled = false;
             ApplyWeakPlantWinchButton.IsEnabled = false;
+            ApplyCargoHandlingButton.IsEnabled = false;
             RestoreCameraButton.IsEnabled = false;
             RestoreRockSizeButton.IsEnabled = false;
             RestoreWeakPlantWinchButton.IsEnabled = false;
+            RestoreCargoHandlingButton.IsEnabled = false;
             return;
         }
 
@@ -97,10 +105,14 @@ public partial class GeneralView : UserControl
             _suppressRockSlider = false;
             RefreshRockSizeLabel();
             WeakPlantWinchCheckBox.IsChecked = settings.WeakPlantWinchSocketsRemoved;
+            WinchableCargoCheckBox.IsChecked = settings.WinchableCargoEnabled;
+            CranableLogsCheckBox.IsChecked = settings.CranableLogsEnabled;
             StatusText.Text = UiText.General.LoadedStatus(
                 settings.CameraEligibleModels,
                 settings.RockSizeScale,
-                settings.WeakPlantWinchSocketsRemoved);
+                settings.WeakPlantWinchSocketsRemoved,
+                settings.WinchableCargoEnabled,
+                settings.CranableLogsEnabled);
         }
         catch (Exception ex)
         {
@@ -117,9 +129,11 @@ public partial class GeneralView : UserControl
             ApplyCameraButton.IsEnabled = false;
             ApplyRockSizeButton.IsEnabled = false;
             ApplyWeakPlantWinchButton.IsEnabled = false;
+            ApplyCargoHandlingButton.IsEnabled = false;
             RestoreCameraButton.IsEnabled = false;
             RestoreRockSizeButton.IsEnabled = false;
             RestoreWeakPlantWinchButton.IsEnabled = false;
+            RestoreCargoHandlingButton.IsEnabled = false;
             return;
         }
 
@@ -128,9 +142,11 @@ public partial class GeneralView : UserControl
         ApplyCameraButton.IsEnabled = canWrite;
         ApplyRockSizeButton.IsEnabled = canWrite;
         ApplyWeakPlantWinchButton.IsEnabled = canWrite;
+        ApplyCargoHandlingButton.IsEnabled = canWrite;
         RestoreCameraButton.IsEnabled = hasBaseline && canWrite;
         RestoreRockSizeButton.IsEnabled = hasBaseline && canWrite;
         RestoreWeakPlantWinchButton.IsEnabled = hasBaseline && canWrite;
+        RestoreCargoHandlingButton.IsEnabled = hasBaseline && canWrite;
     }
 
     private async void ApplyCameraButton_Click(object? sender, RoutedEventArgs e) =>
@@ -288,6 +304,63 @@ public partial class GeneralView : UserControl
                 StatusText.Text = result.UpdatedFiles <= 0
                     ? UiText.General.NoChangesToSave
                     : UiText.General.WeakPlantWinchSaved(result.UpdatedFiles);
+                AppDialogs.ShowSuccess(StatusText.Text, UiText.General.SaveSuccessTitle);
+            }
+            catch (Exception ex)
+            {
+                StatusText.Text = UiText.Main.ErrorStatus(ex.Message);
+                await AppDialogs.ShowError(owner, ex.Message, UiText.General.SaveErrorTitle);
+            }
+        }
+    }
+
+    private async void ApplyCargoHandlingButton_Click(object? sender, RoutedEventArgs e) =>
+        await ApplyCargoHandlingAsync(
+            winchableCargo: WinchableCargoCheckBox.IsChecked == true,
+            cranableLogs: CranableLogsCheckBox.IsChecked == true);
+
+    private async void RestoreCargoHandlingButton_Click(object? sender, RoutedEventArgs e)
+    {
+        WinchableCargoCheckBox.IsChecked = false;
+        CranableLogsCheckBox.IsChecked = false;
+        await ApplyCargoHandlingAsync(winchableCargo: false, cranableLogs: false);
+    }
+
+    private async Task ApplyCargoHandlingAsync(bool winchableCargo, bool cranableLogs)
+    {
+        if (OwnerWindow is not { } owner)
+        {
+            return;
+        }
+
+        if (!await PakWriteUi.TryProceed(owner, _session))
+        {
+            return;
+        }
+
+        if (_session is null || string.IsNullOrWhiteSpace(_session.PakPath))
+        {
+            StatusText.Text = UiText.General.LoadPakHint;
+            return;
+        }
+
+        if (!PakBaselineService.HasBaseline(_session.PakPath))
+        {
+            await AppDialogs.ShowWarning(owner, UiText.Main.BaselineMissingShort, UiText.Main.BaselineTitle);
+            return;
+        }
+
+        using (PakWriteUi.BeginBusyWrite(owner, ApplyCargoHandlingButton, RestoreCargoHandlingButton))
+        {
+            try
+            {
+                var pakPath = _session.PakPath;
+                var result = await Task.Run(() =>
+                    GeneralService.ApplyCargoHandling(pakPath, winchableCargo, cranableLogs));
+                ReloadFromPak();
+                StatusText.Text = result.UpdatedFiles <= 0
+                    ? UiText.General.NoChangesToSave
+                    : UiText.General.CargoHandlingSaved(result.UpdatedFiles);
                 AppDialogs.ShowSuccess(StatusText.Text, UiText.General.SaveSuccessTitle);
             }
             catch (Exception ex)

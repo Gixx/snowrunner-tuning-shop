@@ -16,6 +16,8 @@ public partial class GearboxTuningView : UserControl
     private readonly ICollectionView _gearboxesView;
     private bool _pakWritesAllowed = true;
     private AppSession? _session;
+    private AccordionDirtyHeader? _globalDirty;
+    private bool _suppressDirty;
 
     public GearboxTuningView()
     {
@@ -23,7 +25,10 @@ public partial class GearboxTuningView : UserControl
         _gearboxesView = CollectionViewSource.GetDefaultView(_gearboxes);
         _gearboxesView.Filter = MatchesFilter;
         GearboxesGrid.ItemsSource = _gearboxesView;
-        ResetMultiplierSlidersToBaseline();
+        _globalDirty = new AccordionDirtyHeader(GlobalMultipliersExpander, UiText.Gearbox.GlobalMultipliersTitle);
+        RestoreMultiplierSlidersFromStore();
+        GlobalMultiplierUiStore.ActivePresetChanged += OnActivePresetChanged;
+        Unloaded += (_, _) => GlobalMultiplierUiStore.ActivePresetChanged -= OnActivePresetChanged;
     }
 
     public event EventHandler<string>? StatusChanged;
@@ -31,6 +36,9 @@ public partial class GearboxTuningView : UserControl
     public string? PakPath { get; private set; }
 
     public void AttachSession(AppSession session) => _session = session;
+
+    private void OnActivePresetChanged(object? sender, EventArgs e) =>
+        Dispatcher.Invoke(RestoreMultiplierSlidersFromStore);
 
     public void SetPakWritesAllowed(bool allowed)
     {
@@ -87,7 +95,8 @@ public partial class GearboxTuningView : UserControl
             try
             {
                 var result = GearboxService.RestoreGearboxesFromBaseline(PakPath);
-                ResetMultiplierSlidersToBaseline();
+                GlobalMultiplierUiStore.ResetGearboxes();
+                RestoreMultiplierSlidersFromStore();
                 ReloadGearboxes();
                 ReportStatus(UiText.Gearbox.MultipliersAppliedStatus(
                     result.ChangedGearboxes,
@@ -124,6 +133,8 @@ public partial class GearboxTuningView : UserControl
                     GetMultiplier(DamageMultiplierSlider),
                     GetMultiplier(PriceMultiplierSlider));
 
+                SaveMultiplierSlidersToStore();
+                _globalDirty?.ClearDirty();
                 ReloadGearboxes();
                 ReportStatus(UiText.Gearbox.MultipliersAppliedStatus(
                     result.ChangedGearboxes,
@@ -228,8 +239,14 @@ public partial class GearboxTuningView : UserControl
         }
     }
 
-    private void MultiplierSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) =>
+    private void MultiplierSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
         UpdateMultiplierLabels();
+        if (!_suppressDirty)
+        {
+            _globalDirty?.MarkDirty();
+        }
+    }
 
     private void FilterTextBox_TextChanged(object sender, TextChangedEventArgs e)
     {
@@ -249,15 +266,35 @@ public partial class GearboxTuningView : UserControl
             row.UsedBy,
             row.UsedByTooltip);
 
-    private void ResetMultiplierSlidersToBaseline()
+    private void RestoreMultiplierSlidersFromStore()
     {
-        FuelMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
-        IdleMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
-        AwdMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
-        DamageMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
-        PriceMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
-        UpdateMultiplierLabels();
+        _suppressDirty = true;
+        try
+        {
+            var state = GlobalMultiplierUiStore.GetGearboxes();
+            FuelMultiplierSlider.Value = TuningMultiplierPresets.ClampIndex(state.FuelIndex);
+            IdleMultiplierSlider.Value = TuningMultiplierPresets.ClampIndex(state.IdleIndex);
+            AwdMultiplierSlider.Value = TuningMultiplierPresets.ClampIndex(state.AwdIndex);
+            DamageMultiplierSlider.Value = TuningMultiplierPresets.ClampIndex(state.DamageIndex);
+            PriceMultiplierSlider.Value = TuningMultiplierPresets.ClampIndex(state.PriceIndex);
+            UpdateMultiplierLabels();
+            _globalDirty?.ClearDirty();
+        }
+        finally
+        {
+            _suppressDirty = false;
+        }
     }
+
+    private void SaveMultiplierSlidersToStore() =>
+        GlobalMultiplierUiStore.SetGearboxes(new GearboxGlobalUiState
+        {
+            FuelIndex = GetMultiplierIndex(FuelMultiplierSlider),
+            IdleIndex = GetMultiplierIndex(IdleMultiplierSlider),
+            AwdIndex = GetMultiplierIndex(AwdMultiplierSlider),
+            DamageIndex = GetMultiplierIndex(DamageMultiplierSlider),
+            PriceIndex = GetMultiplierIndex(PriceMultiplierSlider),
+        });
 
     private void UpdateMultiplierLabels()
     {

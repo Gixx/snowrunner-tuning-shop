@@ -6,6 +6,7 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media.Imaging;
+using Avalonia.Threading;
 using SnowRunnerTuningShop;
 using SnowRunnerTuningShop.Core.Backup;
 using SnowRunnerTuningShop.Core.Diagnostics;
@@ -34,13 +35,20 @@ public partial class TrailersView : UserControl
     private bool _suppressUnlockRankSync;
     private int _loadVersion;
     private CancellationTokenSource? _loadCts;
+    private AccordionDirtyHeader? _globalDirty;
+    private bool _suppressAccordionDirty;
 
     public TrailersView()
     {
         InitializeComponent();
         TrailersItems.ItemsSource = _visible;
         ApplyStaticText();
+        _ = new AccordionExclusiveGroup(GlobalMultipliersExpander, StoreUnlocksExpander);
+        _globalDirty = new AccordionDirtyHeader(GlobalMultipliersExpander, UiText.Trailers.GlobalMultipliersTitle);
+        RestoreGlobalMultiplierSlidersFromStore();
         Loaded += TrailersView_Loaded;
+        GlobalMultiplierUiStore.ActivePresetChanged += OnActivePresetChanged;
+        Unloaded += (_, _) => GlobalMultiplierUiStore.ActivePresetChanged -= OnActivePresetChanged;
     }
 
     private Window? OwnerWindow => TopLevel.GetTopLevel(this) as Window;
@@ -62,9 +70,11 @@ public partial class TrailersView : UserControl
         OnPakChanged();
     }
 
+    private void OnActivePresetChanged(object? sender, EventArgs e) =>
+        Dispatcher.UIThread.Post(RestoreGlobalMultiplierSlidersFromStore);
+
     private void ApplyStaticText()
     {
-        GlobalMultipliersExpander.Header = UiText.Trailers.GlobalMultipliersTitle;
         GlobalMultipliersHintText.Text = UiText.Trailers.GlobalMultipliersHint;
         ApplyGlobalMultipliersButton.Content = UiText.Trailers.ApplyGlobalMultipliers;
         FuelMultiplierLabel.Text = UiText.Trailers.FuelMultiplierDefault;
@@ -120,6 +130,7 @@ public partial class TrailersView : UserControl
         _ready = true;
         FilterAll.IsChecked = true;
         LoadCatalog();
+        RestoreGlobalMultiplierSlidersFromStore();
         RefreshGlobalMultipliersPanel();
     }
 
@@ -154,22 +165,38 @@ public partial class TrailersView : UserControl
         RestoreAllTrailersButton.IsEnabled = canApply;
         MakeMissionTrailersPurchasableButton.IsEnabled = canApply;
 
-        if (!canApply)
-        {
-            ResetGlobalMultiplierSlidersToBaseline();
-        }
-
         UpdateGlobalMultiplierLabels();
     }
 
-    private void ResetGlobalMultiplierSlidersToBaseline()
+    private void RestoreGlobalMultiplierSlidersFromStore()
     {
-        FuelMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
-        RepairsMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
-        WheelsMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
-        PriceMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
-        MassMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
+        _suppressAccordionDirty = true;
+        try
+        {
+            var state = GlobalMultiplierUiStore.GetTrailers();
+            FuelMultiplierSlider.Value = TuningMultiplierPresets.ClampIndex(state.FuelIndex);
+            RepairsMultiplierSlider.Value = TuningMultiplierPresets.ClampIndex(state.RepairsIndex);
+            WheelsMultiplierSlider.Value = TuningMultiplierPresets.ClampIndex(state.WheelsIndex);
+            PriceMultiplierSlider.Value = TuningMultiplierPresets.ClampIndex(state.PriceIndex);
+            MassMultiplierSlider.Value = TuningMultiplierPresets.ClampMassIndex(state.MassIndex);
+            UpdateGlobalMultiplierLabels();
+            _globalDirty?.ClearDirty();
+        }
+        finally
+        {
+            _suppressAccordionDirty = false;
+        }
     }
+
+    private void SaveGlobalMultiplierSlidersToStore() =>
+        GlobalMultiplierUiStore.SetTrailers(new TrailerGlobalUiState
+        {
+            FuelIndex = GetMultiplierIndex(FuelMultiplierSlider),
+            RepairsIndex = GetMultiplierIndex(RepairsMultiplierSlider),
+            WheelsIndex = GetMultiplierIndex(WheelsMultiplierSlider),
+            PriceIndex = GetMultiplierIndex(PriceMultiplierSlider),
+            MassIndex = GetMassMultiplierIndex(MassMultiplierSlider),
+        });
 
     private void GlobalMultiplierSlider_PropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
     {
@@ -179,6 +206,10 @@ public partial class TrailersView : UserControl
         }
 
         UpdateGlobalMultiplierLabels();
+        if (!_suppressAccordionDirty)
+        {
+            _globalDirty?.MarkDirty();
+        }
     }
 
     private void UpdateGlobalMultiplierLabels()
@@ -262,6 +293,8 @@ public partial class TrailersView : UserControl
                     price,
                     mass));
 
+                SaveGlobalMultiplierSlidersToStore();
+                _globalDirty?.ClearDirty();
                 _trailersPakPath = null;
                 if (_currentCard is not null && DetailPanel.IsVisible)
                 {
@@ -382,8 +415,8 @@ public partial class TrailersView : UserControl
                 var pakPath = _session!.PakPath!;
                 var result = await Task.Run(() => TrailerTuningService.RestoreAllTrailersFromBaseline(pakPath));
                 _trailersPakPath = null;
-                ResetGlobalMultiplierSlidersToBaseline();
-                UpdateGlobalMultiplierLabels();
+                GlobalMultiplierUiStore.ResetTrailers();
+                RestoreGlobalMultiplierSlidersFromStore();
                 if (_currentCard is not null && DetailPanel.IsVisible)
                 {
                     _ = LoadTuningAsync(_currentCard);

@@ -18,6 +18,9 @@ public partial class TireTuningView : UserControl
     private readonly ICollectionView _tiresView;
     private bool _pakWritesAllowed = true;
     private AppSession? _session;
+    private AccordionDirtyHeader? _globalDirty;
+    private AccordionDirtyHeader? _categoryDirty;
+    private bool _suppressDirty;
 
     public TireTuningView()
     {
@@ -25,8 +28,14 @@ public partial class TireTuningView : UserControl
         _tiresView = CollectionViewSource.GetDefaultView(_tires);
         _tiresView.Filter = MatchesFilter;
         TiresGrid.ItemsSource = _tiresView;
-        ResetMultiplierSlidersToBaseline();
+        _ = new AccordionExclusiveGroup(GlobalMultipliersExpander, CategoryFrictionExpander);
+        _globalDirty = new AccordionDirtyHeader(GlobalMultipliersExpander, UiText.Tires.GlobalMultipliersTitle);
+        _categoryDirty = new AccordionDirtyHeader(CategoryFrictionExpander, UiText.Tires.CategoryFrictionTitle);
+        RestoreMultiplierSlidersFromStore();
         InitCategoryFrictionCombos();
+        WireCategoryFrictionDirtyHandlers();
+        GlobalMultiplierUiStore.ActivePresetChanged += OnActivePresetChanged;
+        Unloaded += (_, _) => GlobalMultiplierUiStore.ActivePresetChanged -= OnActivePresetChanged;
     }
 
     public event EventHandler<string>? StatusChanged;
@@ -34,6 +43,13 @@ public partial class TireTuningView : UserControl
     public string? PakPath { get; private set; }
 
     public void AttachSession(AppSession session) => _session = session;
+
+    private void OnActivePresetChanged(object? sender, EventArgs e) =>
+        Dispatcher.Invoke(() =>
+        {
+            RestoreMultiplierSlidersFromStore();
+            _categoryDirty?.ClearDirty();
+        });
 
     public void SetPakWritesAllowed(bool allowed)
     {
@@ -98,8 +114,9 @@ public partial class TireTuningView : UserControl
             try
             {
                 var result = TireService.RestoreTiresFromBaseline(PakPath);
-                ResetMultiplierSlidersToBaseline();
-                GlobalIgnoreIceCheckBox.IsChecked = false;
+                GlobalMultiplierUiStore.ResetTires();
+                RestoreMultiplierSlidersFromStore();
+                _categoryDirty?.ClearDirty();
                 ReloadTires();
                 ReportStatus(UiText.Tires.MultipliersAppliedStatus(
                     result.ChangedTires,
@@ -134,15 +151,16 @@ public partial class TireTuningView : UserControl
             {
                 var result = TireService.ApplyGlobalMultipliers(
                     PakPath,
-                    GetMultiplier(OnRoadFrictionMultiplierSlider),
-                    GetMultiplier(OffRoadFrictionMultiplierSlider),
-                    GetMultiplier(MudFrictionMultiplierSlider),
+                    onRoadMultiplier: 1.0,
+                    offRoadMultiplier: 1.0,
+                    mudMultiplier: 1.0,
                     GlobalIgnoreIceCheckBox.IsChecked == true ? true : null,
                     GetMultiplier(DamageMultiplierSlider),
                     GetMultiplier(PriceMultiplierSlider));
 
+                SaveMultiplierSlidersToStore();
+                _globalDirty?.ClearDirty();
                 ReloadTires();
-                GlobalIgnoreIceCheckBox.IsChecked = false;
                 ReportStatus(UiText.Tires.MultipliersAppliedStatus(
                     result.ChangedTires,
                     result.UpdatedFiles));
@@ -182,6 +200,7 @@ public partial class TireTuningView : UserControl
                     ReadFrictionPreset(CategoryMudCombo));
 
                 ReloadTires();
+                _categoryDirty?.ClearDirty();
                 var categoryFrictionStatus = UiText.Tires.CategoryFrictionAppliedStatus(
                     result.ChangedTires,
                     result.UpdatedFiles);
@@ -317,9 +336,6 @@ public partial class TireTuningView : UserControl
             .ThenBy(row => row.DisplayName, StringComparer.OrdinalIgnoreCase);
     }
 
-    private void MultiplierSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) =>
-        UpdateMultiplierLabels();
-
     private void FilterTextBox_TextChanged(object sender, TextChangedEventArgs e)
     {
         TuningListFilter.UpdatePlaceholderVisibility(FilterTextBox, FilterPlaceholder);
@@ -352,25 +368,82 @@ public partial class TireTuningView : UserControl
         return TuningListFilter.Matches(FilterTextBox.Text, fields.ToArray());
     }
 
-    private void ResetMultiplierSlidersToBaseline()
+    private void RestoreMultiplierSlidersFromStore()
     {
-        OnRoadFrictionMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
-        OffRoadFrictionMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
-        MudFrictionMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
-        DamageMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
-        PriceMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
-        UpdateMultiplierLabels();
+        _suppressDirty = true;
+        try
+        {
+            var state = GlobalMultiplierUiStore.GetTires();
+            DamageMultiplierSlider.Value = TuningMultiplierPresets.ClampIndex(state.DamageIndex);
+            PriceMultiplierSlider.Value = TuningMultiplierPresets.ClampIndex(state.PriceIndex);
+            GlobalIgnoreIceCheckBox.IsChecked = state.IgnoreIceAll;
+            UpdateMultiplierLabels();
+            _globalDirty?.ClearDirty();
+        }
+        finally
+        {
+            _suppressDirty = false;
+        }
     }
+
+    private void SaveMultiplierSlidersToStore() =>
+        GlobalMultiplierUiStore.SetTires(new TireGlobalUiState
+        {
+            DamageIndex = GetMultiplierIndex(DamageMultiplierSlider),
+            PriceIndex = GetMultiplierIndex(PriceMultiplierSlider),
+            IgnoreIceAll = GlobalIgnoreIceCheckBox.IsChecked == true,
+        });
 
     private void InitCategoryFrictionCombos()
     {
-        var options = BuildFrictionPresetOptions();
-        CategoryOnRoadCombo.ItemsSource = options;
-        CategoryOffRoadCombo.ItemsSource = options;
-        CategoryMudCombo.ItemsSource = options;
-        CategoryOnRoadCombo.SelectedIndex = 0;
-        CategoryOffRoadCombo.SelectedIndex = 0;
-        CategoryMudCombo.SelectedIndex = 0;
+        _suppressDirty = true;
+        try
+        {
+            var options = BuildFrictionPresetOptions();
+            CategoryOnRoadCombo.ItemsSource = options;
+            CategoryOffRoadCombo.ItemsSource = options;
+            CategoryMudCombo.ItemsSource = options;
+            CategoryOnRoadCombo.SelectedIndex = 0;
+            CategoryOffRoadCombo.SelectedIndex = 0;
+            CategoryMudCombo.SelectedIndex = 0;
+        }
+        finally
+        {
+            _suppressDirty = false;
+        }
+    }
+
+    private void WireCategoryFrictionDirtyHandlers()
+    {
+        void Mark()
+        {
+            if (!_suppressDirty)
+            {
+                _categoryDirty?.MarkDirty();
+            }
+        }
+
+        CategoryHighwayCheckBox.Checked += (_, _) => Mark();
+        CategoryHighwayCheckBox.Unchecked += (_, _) => Mark();
+        CategoryAllTerrainCheckBox.Checked += (_, _) => Mark();
+        CategoryAllTerrainCheckBox.Unchecked += (_, _) => Mark();
+        CategoryOffroadCheckBox.Checked += (_, _) => Mark();
+        CategoryOffroadCheckBox.Unchecked += (_, _) => Mark();
+        CategoryMudCheckBox.Checked += (_, _) => Mark();
+        CategoryMudCheckBox.Unchecked += (_, _) => Mark();
+        CategoryChainedCheckBox.Checked += (_, _) => Mark();
+        CategoryChainedCheckBox.Unchecked += (_, _) => Mark();
+        CategoryOnRoadCombo.SelectionChanged += (_, _) => Mark();
+        CategoryOffRoadCombo.SelectionChanged += (_, _) => Mark();
+        CategoryMudCombo.SelectionChanged += (_, _) => Mark();
+    }
+
+    private void GlobalIgnoreIceCheckBox_Changed(object sender, RoutedEventArgs e)
+    {
+        if (!_suppressDirty)
+        {
+            _globalDirty?.MarkDirty();
+        }
     }
 
     private static FrictionPresetOption[] BuildFrictionPresetOptions()
@@ -425,26 +498,22 @@ public partial class TireTuningView : UserControl
 
     private sealed record FrictionPresetOption(string Label, double? Value);
 
+    private void MultiplierSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        UpdateMultiplierLabels();
+        if (!_suppressDirty)
+        {
+            _globalDirty?.MarkDirty();
+        }
+    }
+
     private void UpdateMultiplierLabels()
     {
-        if (OnRoadFrictionMultiplierLabel is null
-            || OffRoadFrictionMultiplierLabel is null
-            || MudFrictionMultiplierLabel is null
-            || DamageMultiplierLabel is null
-            || PriceMultiplierLabel is null)
+        if (DamageMultiplierLabel is null || PriceMultiplierLabel is null)
         {
             return;
         }
 
-        OnRoadFrictionMultiplierLabel.Text = UiText.Slider.Caption(
-            UiText.Slider.OnRoad,
-            GetMultiplierIndex(OnRoadFrictionMultiplierSlider));
-        OffRoadFrictionMultiplierLabel.Text = UiText.Slider.Caption(
-            UiText.Slider.OffRoad,
-            GetMultiplierIndex(OffRoadFrictionMultiplierSlider));
-        MudFrictionMultiplierLabel.Text = UiText.Slider.Caption(
-            UiText.Slider.Mud,
-            GetMultiplierIndex(MudFrictionMultiplierSlider));
         DamageMultiplierLabel.Text = UiText.Slider.Caption(
             UiText.Slider.DamageCapacity,
             GetMultiplierIndex(DamageMultiplierSlider));

@@ -16,6 +16,8 @@ public partial class WinchTuningView : UserControl
     private readonly ICollectionView _winchesView;
     private bool _pakWritesAllowed = true;
     private AppSession? _session;
+    private AccordionDirtyHeader? _globalDirty;
+    private bool _suppressDirty;
 
     public WinchTuningView()
     {
@@ -23,7 +25,12 @@ public partial class WinchTuningView : UserControl
         _winchesView = CollectionViewSource.GetDefaultView(_winches);
         _winchesView.Filter = MatchesFilter;
         WinchesGrid.ItemsSource = _winchesView;
-        ResetMultiplierSlidersToBaseline();
+        _globalDirty = new AccordionDirtyHeader(GlobalMultipliersExpander, UiText.Winch.GlobalMultipliersTitle);
+        AutonomousAllCheckBox.Checked += (_, _) => { if (!_suppressDirty) _globalDirty?.MarkDirty(); };
+        AutonomousAllCheckBox.Unchecked += (_, _) => { if (!_suppressDirty) _globalDirty?.MarkDirty(); };
+        RestoreMultiplierSlidersFromStore();
+        GlobalMultiplierUiStore.ActivePresetChanged += OnActivePresetChanged;
+        Unloaded += (_, _) => GlobalMultiplierUiStore.ActivePresetChanged -= OnActivePresetChanged;
     }
 
     public event EventHandler<string>? StatusChanged;
@@ -31,6 +38,9 @@ public partial class WinchTuningView : UserControl
     public string? PakPath { get; private set; }
 
     public void AttachSession(AppSession session) => _session = session;
+
+    private void OnActivePresetChanged(object? sender, EventArgs e) =>
+        Dispatcher.Invoke(RestoreMultiplierSlidersFromStore);
 
     public void SetPakWritesAllowed(bool allowed)
     {
@@ -87,8 +97,8 @@ public partial class WinchTuningView : UserControl
             try
             {
                 var result = WinchService.RestoreWinchesFromBaseline(PakPath);
-                ResetMultiplierSlidersToBaseline();
-                AutonomousAllCheckBox.IsChecked = false;
+                GlobalMultiplierUiStore.ResetWinches();
+                RestoreMultiplierSlidersFromStore();
                 ReloadWinches();
                 ReportStatus(UiText.Winch.MultipliersAppliedStatus(
                     result.ChangedWinches,
@@ -124,6 +134,8 @@ public partial class WinchTuningView : UserControl
                     AutonomousAllCheckBox.IsChecked == true,
                     GetPriceMultiplier());
 
+                SaveMultiplierSlidersToStore();
+                _globalDirty?.ClearDirty();
                 ReloadWinches();
                 ReportStatus(UiText.Winch.MultipliersAppliedStatus(
                     result.ChangedWinches,
@@ -231,11 +243,19 @@ public partial class WinchTuningView : UserControl
     private void LengthMultiplierSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
         UpdateMultiplierLabels();
+        if (!_suppressDirty)
+        {
+            _globalDirty?.MarkDirty();
+        }
     }
 
     private void StrengthMultiplierSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
         UpdateMultiplierLabels();
+        if (!_suppressDirty)
+        {
+            _globalDirty?.MarkDirty();
+        }
     }
 
     private void FilterTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -252,13 +272,33 @@ public partial class WinchTuningView : UserControl
             row.DisplayName,
             row.Name);
 
-    private void ResetMultiplierSlidersToBaseline()
+    private void RestoreMultiplierSlidersFromStore()
     {
-        LengthMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
-        StrengthMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
-        PriceMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
-        UpdateMultiplierLabels();
+        _suppressDirty = true;
+        try
+        {
+            var state = GlobalMultiplierUiStore.GetWinches();
+            LengthMultiplierSlider.Value = TuningMultiplierPresets.ClampIndex(state.LengthIndex);
+            StrengthMultiplierSlider.Value = TuningMultiplierPresets.ClampIndex(state.StrengthIndex);
+            PriceMultiplierSlider.Value = TuningMultiplierPresets.ClampIndex(state.PriceIndex);
+            AutonomousAllCheckBox.IsChecked = state.AutonomousAll;
+            UpdateMultiplierLabels();
+            _globalDirty?.ClearDirty();
+        }
+        finally
+        {
+            _suppressDirty = false;
+        }
     }
+
+    private void SaveMultiplierSlidersToStore() =>
+        GlobalMultiplierUiStore.SetWinches(new WinchGlobalUiState
+        {
+            LengthIndex = GetLengthMultiplierIndex(),
+            StrengthIndex = GetStrengthMultiplierIndex(),
+            PriceIndex = GetPriceMultiplierIndex(),
+            AutonomousAll = AutonomousAllCheckBox.IsChecked == true,
+        });
 
     private void UpdateMultiplierLabels()
     {

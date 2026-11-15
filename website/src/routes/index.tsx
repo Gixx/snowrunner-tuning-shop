@@ -339,7 +339,7 @@ function PlatformShowcase({
             WHAT&apos;S NEW IN VERSION {APP_VERSION_STABLE}
           </h2>
           <p className="mt-4 max-w-2xl text-muted-foreground">
-            Cargo page with mass and center-of-mass globals, finer mass multipliers down to 1/10×, and clearer Easy / Anti-stress preset descriptions.
+            1.6.4 is in progress — release highlights will land here as features ship. See the changelog for the latest notes.
           </p>
         </Reveal>
         <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">

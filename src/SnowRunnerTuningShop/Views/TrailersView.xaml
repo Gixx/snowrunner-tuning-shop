@@ -65,7 +65,8 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <Expander Grid.Row="0"
+            <Expander x:Name="GlobalMultipliersExpander"
+                      Grid.Row="0"
                       Style="{StaticResource CollapsibleCardExpanderStyle}"
                       Header="{x:Static loc:UiText+Trailers.GlobalMultipliersTitle}">
                 <Grid>
@@ -95,8 +96,8 @@
                                    Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
                         <Slider x:Name="FuelMultiplierSlider"
                                 Minimum="0"
-                                Maximum="11"
-                                Value="7"
+                                Maximum="22"
+                                Value="9"
                                 TickFrequency="1"
                                 IsSnapToTickEnabled="True"
                                 IsEnabled="False"
@@ -109,8 +110,8 @@
                                    Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
                         <Slider x:Name="RepairsMultiplierSlider"
                                 Minimum="0"
-                                Maximum="11"
-                                Value="7"
+                                Maximum="22"
+                                Value="9"
                                 TickFrequency="1"
                                 IsSnapToTickEnabled="True"
                                 IsEnabled="False"
@@ -123,8 +124,8 @@
                                    Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
                         <Slider x:Name="WheelsMultiplierSlider"
                                 Minimum="0"
-                                Maximum="11"
-                                Value="7"
+                                Maximum="22"
+                                Value="9"
                                 TickFrequency="1"
                                 IsSnapToTickEnabled="True"
                                 IsEnabled="False"
@@ -147,8 +148,8 @@
                                    Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
                         <Slider x:Name="PriceMultiplierSlider"
                                 Minimum="0"
-                                Maximum="11"
-                                Value="7"
+                                Maximum="22"
+                                Value="9"
                                 TickFrequency="1"
                                 IsSnapToTickEnabled="True"
                                 IsEnabled="False"
@@ -161,8 +162,8 @@
                                    Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
                         <Slider x:Name="MassMultiplierSlider"
                                 Minimum="0"
-                                Maximum="8"
-                                Value="7"
+                                Maximum="14"
+                                Value="9"
                                 TickFrequency="1"
                                 IsSnapToTickEnabled="True"
                                 IsEnabled="False"
@@ -171,7 +172,8 @@
                 </Grid>
             </Expander>
 
-            <Expander Grid.Row="1"
+            <Expander x:Name="StoreUnlocksExpander"
+                      Grid.Row="1"
                       Style="{StaticResource CollapsibleCardExpanderStyle}"
                       Header="{x:Static loc:UiText+Trailers.StoreUnlocksTitle}">
                 <Grid>

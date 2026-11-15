@@ -18,11 +18,11 @@ namespace SnowRunnerTuningShop.Tests;
 /// </summary>
 public sealed class XmlRewriteMatrixTests
 {
-    /// <summary>1 (baseline skip), ⅓ (fraction), 2× (scale-up).</summary>
+    /// <summary>1 (baseline skip), 0.5× (fraction), 2× (scale-up).</summary>
     public static TheoryData<double> MultiplierShapes { get; } =
     [
         TuningMultiplierPresets.Values[TuningMultiplierPresets.BaselineIndex],
-        TuningMultiplierPresets.Values[2], // 1/3
+        0.5,
         TuningMultiplierPresets.Values[TuningMultiplierPresets.TwoTimesIndex],
     ];
 

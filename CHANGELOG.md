@@ -13,6 +13,23 @@ Releases are published from `v*` git tags via GitHub Actions ([Releases](https:/
 
 ---
 
+## [1.6.4] — 2026-11-15
+
+### Added
+- **General → Cargo handling:** toggles for winchable cargo (duplicate each `CraneSocket` as `WinchSocket`) and cranable logs (conventional crane points on short/medium/long and burnt log units). Apply rebuilds from baseline; Restore clears both.
+- **Global multiplier UI memory:** last slider/checkbox values in each global-multiplier box are stored per active Home preset (`%LocalAppData%\SnowRunnerTuningShop\global-multiplier-ui.json`) and restored independently of individual vehicle/part/trailer edits. Save as new / export embeds the snapshot in `.tsa` (`global-multiplier-ui.json`); Apply restores it for that preset.
+
+### Changed
+- **Global multipliers:** finer hybrid stops — **0.1–1.0 @ 0.1**, **1–2 @ 0.2**, **2–3 @ 0.25**, **3–5 @ 0.5** (was 12 coarse presets). Mass sliders still cap at 2×.
+- **Tires global box:** only Damage, Price, and Ignore ice remain; On-road / Off-road / Mud multipliers moved to Category friction only.
+- **Accordions:** at most one expander open per page group; unapplied edits show `*` on the expander title until Apply.
+- **Bundled presets:** Easy Mode and Anti-stress Mode refreshed for 1.6.4 (descriptions, cargo handling, global-multiplier UI snapshot).
+
+### Fixed
+- **New preset:** untitled workspace resets global-multiplier UI to baseline instead of keeping the previous preset’s slider state.
+
+---
+
 ## [1.6.3] — 2026-10-26
 
 ### Added
@@ -530,7 +547,8 @@ Stable release of the 1.5 line (Home Presets, vehicle wheels tuning, center of m
 
 ---
 
-[Unreleased]: https://github.com/Gixx/snowrunner-tuning-shop/compare/v1.6.3...HEAD
+[Unreleased]: https://github.com/Gixx/snowrunner-tuning-shop/compare/v1.6.4...HEAD
+[1.6.4]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.6.4
 [1.6.3]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.6.3
 [1.6.2]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.6.2
 [1.6.1]: https://github.com/Gixx/snowrunner-tuning-shop/releases/tag/v1.6.1

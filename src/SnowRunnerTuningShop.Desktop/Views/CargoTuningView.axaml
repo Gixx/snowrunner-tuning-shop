@@ -12,7 +12,7 @@
         <StackPanel Grid.Column="0" Margin="0,0,12,0">
           <TextBlock x:Name="MassMultiplierLabel"/>
           <Slider x:Name="MassMultiplierSlider"
-                  Minimum="0" Maximum="8" Value="7"
+                  Minimum="0" Maximum="14" Value="9"
                   TickFrequency="1" IsSnapToTickEnabled="True"
                   PropertyChanged="MultiplierSlider_PropertyChanged"/>
         </StackPanel>

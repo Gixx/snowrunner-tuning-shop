@@ -4,6 +4,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
+using Avalonia.Threading;
 using SnowRunnerTuningShop;
 using SnowRunnerTuningShop.Core.Engine;
 using SnowRunnerTuningShop.Core.Models;
@@ -17,16 +18,24 @@ public partial class EngineTuningView : UserControl
     private readonly ObservableCollection<EngineRowViewModel> _engines = [];
     private bool _pakWritesAllowed = true;
     private AppSession? _session;
+    private AccordionDirtyHeader? _globalDirty;
+    private bool _suppressDirty;
 
     public EngineTuningView()
     {
         InitializeComponent();
         ApplyStaticText();
+        _globalDirty = new AccordionDirtyHeader(MultipliersExpander, UiText.Engine.GlobalMultipliersTitle);
         RefreshFilter();
-        ResetMultiplierSlidersToBaseline();
+        RestoreMultiplierSlidersFromStore();
+        GlobalMultiplierUiStore.ActivePresetChanged += OnActivePresetChanged;
+        Unloaded += (_, _) => GlobalMultiplierUiStore.ActivePresetChanged -= OnActivePresetChanged;
     }
 
     public event EventHandler<string>? StatusChanged;
+
+    private void OnActivePresetChanged(object? sender, EventArgs e) =>
+        Dispatcher.UIThread.Post(RestoreMultiplierSlidersFromStore);
 
     public string? PakPath { get; private set; }
 
@@ -66,7 +75,6 @@ public partial class EngineTuningView : UserControl
 
     private void ApplyStaticText()
     {
-        MultipliersExpander.Header = UiText.Engine.GlobalMultipliersTitle;
         ApplyMultipliersButton.Content = UiText.Engine.Apply;
         SaveIndividualButton.Content = UiText.Engine.SaveIndividualChanges;
         RestoreEnginesButton.Content = UiText.Engine.RestoreEnginesToBaseline;
@@ -111,7 +119,8 @@ public partial class EngineTuningView : UserControl
             {
                 var path = PakPath!;
                 var result = await Task.Run(() => EngineService.RestoreEnginesFromBaseline(path));
-                ResetMultiplierSlidersToBaseline();
+                GlobalMultiplierUiStore.ResetEngines();
+                RestoreMultiplierSlidersFromStore();
                 ReloadEngines();
                 ReportStatus(UiText.Engine.MultipliersAppliedStatus(
                     result.ChangedEngines,
@@ -152,6 +161,8 @@ public partial class EngineTuningView : UserControl
                 var result = await Task.Run(() => EngineService.ApplyGlobalMultipliers(
                     path, torque, fuel, damage, responsiveness, price));
 
+                SaveMultiplierSlidersToStore();
+                _globalDirty?.ClearDirty();
                 ReloadEngines();
                 ReportStatus(UiText.Engine.MultipliersAppliedStatus(
                     result.ChangedEngines,
@@ -270,6 +281,10 @@ public partial class EngineTuningView : UserControl
         }
 
         UpdateMultiplierLabels();
+        if (!_suppressDirty)
+        {
+            _globalDirty?.MarkDirty();
+        }
     }
 
     private void FilterTextBox_TextChanged(object? sender, TextChangedEventArgs e) =>
@@ -289,15 +304,35 @@ public partial class EngineTuningView : UserControl
                 row.UsedBy,
                 row.UsedByTooltip));
 
-    private void ResetMultiplierSlidersToBaseline()
+    private void RestoreMultiplierSlidersFromStore()
     {
-        TorqueMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
-        FuelMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
-        DamageMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
-        ResponsivenessMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
-        PriceMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
-        UpdateMultiplierLabels();
+        _suppressDirty = true;
+        try
+        {
+            var state = GlobalMultiplierUiStore.GetEngines();
+            TorqueMultiplierSlider.Value = TuningMultiplierPresets.ClampIndex(state.TorqueIndex);
+            FuelMultiplierSlider.Value = TuningMultiplierPresets.ClampIndex(state.FuelIndex);
+            DamageMultiplierSlider.Value = TuningMultiplierPresets.ClampIndex(state.DamageIndex);
+            ResponsivenessMultiplierSlider.Value = TuningMultiplierPresets.ClampIndex(state.ResponsivenessIndex);
+            PriceMultiplierSlider.Value = TuningMultiplierPresets.ClampIndex(state.PriceIndex);
+            UpdateMultiplierLabels();
+            _globalDirty?.ClearDirty();
+        }
+        finally
+        {
+            _suppressDirty = false;
+        }
     }
+
+    private void SaveMultiplierSlidersToStore() =>
+        GlobalMultiplierUiStore.SetEngines(new EngineGlobalUiState
+        {
+            TorqueIndex = GetMultiplierIndex(TorqueMultiplierSlider),
+            FuelIndex = GetMultiplierIndex(FuelMultiplierSlider),
+            DamageIndex = GetMultiplierIndex(DamageMultiplierSlider),
+            ResponsivenessIndex = GetMultiplierIndex(ResponsivenessMultiplierSlider),
+            PriceIndex = GetMultiplierIndex(PriceMultiplierSlider),
+        });
 
     private void UpdateMultiplierLabels()
     {

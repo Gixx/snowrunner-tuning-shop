@@ -5,6 +5,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
+using Avalonia.Threading;
 using SnowRunnerTuningShop;
 using SnowRunnerTuningShop.Core.Models;
 using SnowRunnerTuningShop.Core.Suspension;
@@ -18,16 +19,24 @@ public partial class SuspensionTuningView : UserControl
     private readonly ObservableCollection<SuspensionRowViewModel> _suspensions = [];
     private bool _pakWritesAllowed = true;
     private AppSession? _session;
+    private AccordionDirtyHeader? _globalDirty;
+    private bool _suppressDirty;
 
     public SuspensionTuningView()
     {
         InitializeComponent();
         ApplyStaticText();
+        _globalDirty = new AccordionDirtyHeader(MultipliersExpander, UiText.Suspension.GlobalMultipliersTitle);
         RefreshFilter();
-        ResetMultiplierSlidersToBaseline();
+        RestoreMultiplierSlidersFromStore();
+        GlobalMultiplierUiStore.ActivePresetChanged += OnActivePresetChanged;
+        Unloaded += (_, _) => GlobalMultiplierUiStore.ActivePresetChanged -= OnActivePresetChanged;
     }
 
     public event EventHandler<string>? StatusChanged;
+
+    private void OnActivePresetChanged(object? sender, EventArgs e) =>
+        Dispatcher.UIThread.Post(RestoreMultiplierSlidersFromStore);
 
     public string? PakPath { get; private set; }
 
@@ -67,7 +76,6 @@ public partial class SuspensionTuningView : UserControl
 
     private void ApplyStaticText()
     {
-        MultipliersExpander.Header = UiText.Suspension.GlobalMultipliersTitle;
         ApplyMultipliersButton.Content = UiText.Suspension.Apply;
         SaveIndividualButton.Content = UiText.Suspension.SaveIndividualChanges;
         RestoreSuspensionsButton.Content = UiText.Suspension.RestoreSuspensionsToBaseline;
@@ -113,7 +121,8 @@ public partial class SuspensionTuningView : UserControl
             {
                 var path = PakPath!;
                 var result = await Task.Run(() => SuspensionService.RestoreSuspensionsFromBaseline(path));
-                ResetMultiplierSlidersToBaseline();
+                GlobalMultiplierUiStore.ResetSuspensions();
+                RestoreMultiplierSlidersFromStore();
                 ReloadSuspensions();
                 ReportStatus(UiText.Suspension.MultipliersAppliedStatus(
                     result.ChangedSuspensions,
@@ -154,6 +163,8 @@ public partial class SuspensionTuningView : UserControl
                 var result = await Task.Run(() => SuspensionService.ApplyGlobalMultipliers(
                     path, height, strength, damping, damage, price));
 
+                SaveMultiplierSlidersToStore();
+                _globalDirty?.ClearDirty();
                 ReloadSuspensions();
                 ReportStatus(UiText.Suspension.MultipliersAppliedStatus(
                     result.ChangedSuspensions,
@@ -272,6 +283,10 @@ public partial class SuspensionTuningView : UserControl
         }
 
         UpdateMultiplierLabels();
+        if (!_suppressDirty)
+        {
+            _globalDirty?.MarkDirty();
+        }
     }
 
     private void FilterTextBox_TextChanged(object? sender, TextChangedEventArgs e) =>
@@ -291,15 +306,35 @@ public partial class SuspensionTuningView : UserControl
                 row.UsedBy,
                 row.UsedByTooltip));
 
-    private void ResetMultiplierSlidersToBaseline()
+    private void RestoreMultiplierSlidersFromStore()
     {
-        HeightMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
-        StrengthMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
-        DampingMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
-        DamageMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
-        PriceMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
-        UpdateMultiplierLabels();
+        _suppressDirty = true;
+        try
+        {
+            var state = GlobalMultiplierUiStore.GetSuspensions();
+            HeightMultiplierSlider.Value = TuningMultiplierPresets.ClampIndex(state.HeightIndex);
+            StrengthMultiplierSlider.Value = TuningMultiplierPresets.ClampIndex(state.StrengthIndex);
+            DampingMultiplierSlider.Value = TuningMultiplierPresets.ClampIndex(state.DampingIndex);
+            DamageMultiplierSlider.Value = TuningMultiplierPresets.ClampIndex(state.DamageIndex);
+            PriceMultiplierSlider.Value = TuningMultiplierPresets.ClampIndex(state.PriceIndex);
+            UpdateMultiplierLabels();
+            _globalDirty?.ClearDirty();
+        }
+        finally
+        {
+            _suppressDirty = false;
+        }
     }
+
+    private void SaveMultiplierSlidersToStore() =>
+        GlobalMultiplierUiStore.SetSuspensions(new SuspensionGlobalUiState
+        {
+            HeightIndex = GetMultiplierIndex(HeightMultiplierSlider),
+            StrengthIndex = GetMultiplierIndex(StrengthMultiplierSlider),
+            DampingIndex = GetMultiplierIndex(DampingMultiplierSlider),
+            DamageIndex = GetMultiplierIndex(DamageMultiplierSlider),
+            PriceIndex = GetMultiplierIndex(PriceMultiplierSlider),
+        });
 
     private void UpdateMultiplierLabels()
     {

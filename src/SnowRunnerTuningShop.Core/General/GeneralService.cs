@@ -77,6 +77,7 @@ public static class GeneralService
         var camera = AnalyzeCameraCollisions(archive);
         var rockScale = EstimateRockSizeScale(pakPath, noStonesAssetsDirectory);
         var weakWinch = AnalyzeWeakPlantWinchSockets(pakPath);
+        var cargoHandling = AnalyzeCargoHandling(archive);
 
         return new GeneralSettings
         {
@@ -87,6 +88,10 @@ public static class GeneralService
             WeakPlantWinchSocketsRemoved = weakWinch.Removed,
             WeakPlantWinchBaselineCount = weakWinch.BaselineWithWinch,
             WeakPlantWinchCurrentCount = weakWinch.CurrentWithWinch,
+            WinchableCargoEnabled = cargoHandling.WinchableEnabled,
+            WinchableCargoEligibleUnits = cargoHandling.WinchableEligible,
+            CranableLogsEnabled = cargoHandling.CranableEnabled,
+            CranableLogUnits = cargoHandling.CranableLogUnits,
         };
     }
 
@@ -163,6 +168,131 @@ public static class GeneralService
 
     public static GeneralSaveResult RestoreWeakPlantWinchSocketsFromBaseline(string pakPath) =>
         ApplyWeakPlantWinchSockets(pakPath, removeSockets: false);
+
+    /// <summary>
+    /// Enables/disables winchable cargo (duplicate <c>CraneSocket</c> → <c>WinchSocket</c>) and
+    /// cranable logs (add conventional crane points on dynamic log units). Desired state is rebuilt
+    /// from baseline for each cargo-unit model so toggles stay idempotent.
+    /// </summary>
+    public static GeneralSaveResult ApplyCargoHandling(
+        string pakPath,
+        bool winchableCargo,
+        bool cranableLogs)
+    {
+        var baselinePath = PakBaselineService.RequireBaseline(pakPath);
+        Dictionary<string, byte[]> replacements;
+
+        using (var currentArchive = ZipFile.OpenRead(pakPath))
+        using (var baselineArchive = ZipFile.OpenRead(baselinePath))
+        {
+            replacements = BuildCargoHandlingReplacements(
+                currentArchive,
+                baselineArchive,
+                winchableCargo,
+                cranableLogs);
+        }
+
+        var updatedFiles = replacements.Count == 0
+            ? 0
+            : InitialPakWriter.ReplaceEntries(pakPath, replacements);
+        return new GeneralSaveResult(updatedFiles);
+    }
+
+    public static GeneralSaveResult RestoreCargoHandlingFromBaseline(string pakPath) =>
+        ApplyCargoHandling(pakPath, winchableCargo: false, cranableLogs: false);
+
+    private static Dictionary<string, byte[]> BuildCargoHandlingReplacements(
+        ZipArchive currentArchive,
+        ZipArchive baselineArchive,
+        bool winchableCargo,
+        bool cranableLogs)
+    {
+        var replacements = new Dictionary<string, byte[]>(StringComparer.Ordinal);
+        foreach (var entryPath in ListCargoUnitEntryPaths(baselineArchive))
+        {
+            var baselineEntry = PakEntryLocator.FindEntry(baselineArchive, entryPath);
+            if (baselineEntry is null)
+            {
+                continue;
+            }
+
+            var currentEntry = PakEntryLocator.FindEntry(currentArchive, entryPath);
+            if (currentEntry is null)
+            {
+                continue;
+            }
+
+            var baselineText = ReadEntryText(baselineEntry);
+            var currentText = ReadEntryText(currentEntry);
+            var desired = CargoUnitSocketXml.BuildDesired(
+                baselineText,
+                entryPath,
+                cranableLogs,
+                winchableCargo);
+
+            if (!string.Equals(currentText, desired, StringComparison.Ordinal))
+            {
+                replacements[entryPath] = Encoding.UTF8.GetBytes(desired);
+            }
+        }
+
+        return replacements;
+    }
+
+    private static (bool WinchableEnabled, int WinchableEligible, bool CranableEnabled, int CranableLogUnits)
+        AnalyzeCargoHandling(ZipArchive archive)
+    {
+        var winchableEligible = 0;
+        var winchableMatched = 0;
+        var logUnits = 0;
+        var logsWithCrane = 0;
+
+        foreach (var entryPath in ListCargoUnitEntryPaths(archive))
+        {
+            var entry = PakEntryLocator.FindEntry(archive, entryPath);
+            if (entry is null)
+            {
+                continue;
+            }
+
+            var text = ReadEntryText(entry);
+            if (CargoUnitSocketXml.HasCraneSocket(text))
+            {
+                winchableEligible++;
+                if (CargoUnitSocketXml.HasMatchingWinchSocketsForCranes(text))
+                {
+                    winchableMatched++;
+                }
+            }
+
+            if (!CargoUnitSocketXml.IsDynamicLogCargoUnit(entryPath))
+            {
+                continue;
+            }
+
+            logUnits++;
+            if (CargoUnitSocketXml.HasCraneSocket(text))
+            {
+                logsWithCrane++;
+            }
+        }
+
+        var winchableEnabled = winchableEligible > 0 && winchableMatched == winchableEligible;
+        var cranableEnabled = logUnits > 0 && logsWithCrane == logUnits;
+        return (winchableEnabled, winchableEligible, cranableEnabled, logUnits);
+    }
+
+    private static IEnumerable<string> ListCargoUnitEntryPaths(ZipArchive archive)
+    {
+        foreach (var entry in archive.Entries)
+        {
+            var entryPath = PartPakPipeline.NormalizeEntryPath(entry.FullName);
+            if (CargoUnitSocketXml.IsCargoUnitEntry(entryPath))
+            {
+                yield return entryPath;
+            }
+        }
+    }
 
     private static Dictionary<string, byte[]> BuildWeakPlantWinchReplacements(
         ZipArchive currentArchive,

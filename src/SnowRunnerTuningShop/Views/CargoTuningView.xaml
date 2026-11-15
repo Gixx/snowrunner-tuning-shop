@@ -15,7 +15,8 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Expander Grid.Row="0"
+        <Expander x:Name="GlobalMultipliersExpander"
+                  Grid.Row="0"
                   Style="{StaticResource CollapsibleCardExpanderStyle}"
                   Header="{x:Static loc:UiText+Cargo.GlobalMultipliersTitle}">
             <Grid>
@@ -31,8 +32,8 @@
                                Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
                     <Slider x:Name="MassMultiplierSlider"
                             Minimum="0"
-                            Maximum="8"
-                            Value="7"
+                            Maximum="14"
+                            Value="9"
                             TickFrequency="1"
                             IsSnapToTickEnabled="True"
                             ValueChanged="MultiplierSlider_ValueChanged"/>

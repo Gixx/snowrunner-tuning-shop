@@ -2,6 +2,7 @@ using SnowRunnerTuningShop.Core.Backup;
 using SnowRunnerTuningShop.Core.Config;
 using SnowRunnerTuningShop.Core.Pak;
 using SnowRunnerTuningShop.Core.Profile;
+using SnowRunnerTuningShop.Core.Tuning;
 
 namespace SnowRunnerTuningShop.Core.Presets;
 
@@ -19,6 +20,7 @@ public static class TuningPresetApplyService
             package.Settings.Entries,
             progress);
 
+        ImportGlobalMultiplierUi(package);
         TuningPresetLibrary.SetActivePreset(package.Manifest.Id, ResolveSourceAfterApply(package.Manifest.Id));
         return result;
     }
@@ -40,8 +42,19 @@ public static class TuningPresetApplyService
             package.Settings.Entries,
             progress);
 
+        ImportGlobalMultiplierUi(package);
         TuningPresetLibrary.SetActivePreset(info.Id, info.Source);
         return result;
+    }
+
+    private static void ImportGlobalMultiplierUi(TuningPresetPackage package)
+    {
+        if (package.GlobalMultiplierUi is null)
+        {
+            return;
+        }
+
+        GlobalMultiplierUiStore.ReplaceForPreset(package.Manifest.Id, package.GlobalMultiplierUi);
     }
 
     /// <summary>

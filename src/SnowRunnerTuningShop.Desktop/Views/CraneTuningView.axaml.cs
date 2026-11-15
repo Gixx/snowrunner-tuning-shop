@@ -4,6 +4,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
+using Avalonia.Threading;
 using SnowRunnerTuningShop;
 using SnowRunnerTuningShop.Core.Crane;
 using SnowRunnerTuningShop.Core.Models;
@@ -17,16 +18,24 @@ public partial class CraneTuningView : UserControl
     private readonly ObservableCollection<CraneRowViewModel> _cranes = [];
     private bool _pakWritesAllowed = true;
     private AppSession? _session;
+    private AccordionDirtyHeader? _globalDirty;
+    private bool _suppressDirty;
 
     public CraneTuningView()
     {
         InitializeComponent();
         ApplyStaticText();
+        _globalDirty = new AccordionDirtyHeader(MultipliersExpander, UiText.Crane.GlobalMultipliersTitle);
         RefreshFilter();
-        ResetMultiplierSlidersToBaseline();
+        RestoreMultiplierSlidersFromStore();
+        GlobalMultiplierUiStore.ActivePresetChanged += OnActivePresetChanged;
+        Unloaded += (_, _) => GlobalMultiplierUiStore.ActivePresetChanged -= OnActivePresetChanged;
     }
 
     public event EventHandler<string>? StatusChanged;
+
+    private void OnActivePresetChanged(object? sender, EventArgs e) =>
+        Dispatcher.UIThread.Post(RestoreMultiplierSlidersFromStore);
 
     public string? PakPath { get; private set; }
 
@@ -66,7 +75,6 @@ public partial class CraneTuningView : UserControl
 
     private void ApplyStaticText()
     {
-        MultipliersExpander.Header = UiText.Crane.GlobalMultipliersTitle;
         ApplyMultipliersButton.Content = UiText.Crane.Apply;
         SaveIndividualButton.Content = UiText.Crane.SaveIndividualChanges;
         RestoreCranesButton.Content = UiText.Crane.RestoreCranesToBaseline;
@@ -110,7 +118,8 @@ public partial class CraneTuningView : UserControl
             {
                 var path = PakPath!;
                 var result = await Task.Run(() => CraneService.RestoreCranesFromBaseline(path));
-                ResetMultiplierSlidersToBaseline();
+                GlobalMultiplierUiStore.ResetCranes();
+                RestoreMultiplierSlidersFromStore();
                 ReloadCranes();
                 ReportStatus(UiText.Crane.MultipliersAppliedStatus(
                     result.ChangedCranes,
@@ -149,6 +158,8 @@ public partial class CraneTuningView : UserControl
                 var result = await Task.Run(() => CraneService.ApplyGlobalMultipliers(
                     path, armForce, movementSpeed, price));
 
+                SaveMultiplierSlidersToStore();
+                _globalDirty?.ClearDirty();
                 ReloadCranes();
                 ReportStatus(UiText.Crane.MultipliersAppliedStatus(
                     result.ChangedCranes,
@@ -267,6 +278,10 @@ public partial class CraneTuningView : UserControl
         }
 
         UpdateMultiplierLabels();
+        if (!_suppressDirty)
+        {
+            _globalDirty?.MarkDirty();
+        }
     }
 
     private void FilterTextBox_TextChanged(object? sender, TextChangedEventArgs e) =>
@@ -283,13 +298,31 @@ public partial class CraneTuningView : UserControl
                 row.Name,
                 row.AddonType));
 
-    private void ResetMultiplierSlidersToBaseline()
+    private void RestoreMultiplierSlidersFromStore()
     {
-        ArmForceMultiplierSlider.Value = CraneMultiplierPresets.BaselineIndex;
-        MovementSpeedMultiplierSlider.Value = CraneMultiplierPresets.BaselineIndex;
-        PriceMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
-        UpdateMultiplierLabels();
+        _suppressDirty = true;
+        try
+        {
+            var state = GlobalMultiplierUiStore.GetCranes();
+            ArmForceMultiplierSlider.Value = CraneMultiplierPresets.ClampArmForceIndex(state.ArmForceIndex);
+            MovementSpeedMultiplierSlider.Value = CraneMultiplierPresets.ClampMovementSpeedIndex(state.MovementSpeedIndex);
+            PriceMultiplierSlider.Value = TuningMultiplierPresets.ClampIndex(state.PriceIndex);
+            UpdateMultiplierLabels();
+            _globalDirty?.ClearDirty();
+        }
+        finally
+        {
+            _suppressDirty = false;
+        }
     }
+
+    private void SaveMultiplierSlidersToStore() =>
+        GlobalMultiplierUiStore.SetCranes(new CraneGlobalUiState
+        {
+            ArmForceIndex = GetArmForceMultiplierIndex(),
+            MovementSpeedIndex = GetMovementSpeedMultiplierIndex(),
+            PriceIndex = GetPriceMultiplierIndex(),
+        });
 
     private void UpdateMultiplierLabels()
     {

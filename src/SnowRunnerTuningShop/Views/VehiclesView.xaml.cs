@@ -53,6 +53,10 @@ public partial class VehiclesView : UserControl
     private string? _soundCatalogPakPath;
     private readonly TruckSoundPreviewPlayer _soundPreview = new();
     private bool _suppressSoundComboSync;
+    private AccordionDirtyHeader? _globalDirty;
+    private AccordionDirtyHeader? _storeUnlocksDirty;
+    private AccordionDirtyHeader? _fastTuningDirty;
+    private bool _suppressAccordionDirty;
 
     public VehiclesView()
     {
@@ -80,6 +84,49 @@ public partial class VehiclesView : UserControl
         HornSoundPlayButton.Content = UiText.Vehicles.SoundPlay;
         EngineIdlePlayButton.Content = UiText.Vehicles.SoundPlay;
         EngineHighPlayButton.Content = UiText.Vehicles.SoundPlay;
+        _ = new AccordionExclusiveGroup(GlobalMultipliersExpander, StoreUnlocksExpander, FastTuningExpander);
+        _globalDirty = new AccordionDirtyHeader(GlobalMultipliersExpander, UiText.Vehicles.GlobalMultipliersTitle);
+        _storeUnlocksDirty = new AccordionDirtyHeader(StoreUnlocksExpander, UiText.Vehicles.StoreUnlocksTitle);
+        _fastTuningDirty = new AccordionDirtyHeader(FastTuningExpander, UiText.Vehicles.FastTuningTitle);
+        WireAccordionDirtyHandlers();
+        GlobalMultiplierUiStore.ActivePresetChanged += OnActivePresetChanged;
+        Unloaded += (_, _) => GlobalMultiplierUiStore.ActivePresetChanged -= OnActivePresetChanged;
+    }
+
+    private void WireAccordionDirtyHandlers()
+    {
+        void MarkStore()
+        {
+            if (!_suppressAccordionDirty)
+            {
+                _storeUnlocksDirty?.MarkDirty();
+            }
+        }
+
+        void MarkFast()
+        {
+            if (!_suppressAccordionDirty)
+            {
+                _fastTuningDirty?.MarkDirty();
+            }
+        }
+
+        ReleaseRegionLockCheckBox.Checked += (_, _) => MarkStore();
+        ReleaseRegionLockCheckBox.Unchecked += (_, _) => MarkStore();
+        UnlockAllVehiclesCheckBox.Checked += (_, _) => MarkStore();
+        UnlockAllVehiclesCheckBox.Unchecked += (_, _) => MarkStore();
+        FastTuningLowerComCheckBox.Checked += (_, _) => MarkFast();
+        FastTuningLowerComCheckBox.Unchecked += (_, _) => MarkFast();
+        FastTuningBetterTurningCheckBox.Checked += (_, _) => MarkFast();
+        FastTuningBetterTurningCheckBox.Unchecked += (_, _) => MarkFast();
+        FastTuningFasterSteeringCheckBox.Checked += (_, _) => MarkFast();
+        FastTuningFasterSteeringCheckBox.Unchecked += (_, _) => MarkFast();
+        FastTuningLargerTiresCheckBox.Checked += (_, _) => MarkFast();
+        FastTuningLargerTiresCheckBox.Unchecked += (_, _) => MarkFast();
+        AlwaysOnDiffLockCheckBox.Checked += (_, _) => MarkFast();
+        AlwaysOnDiffLockCheckBox.Unchecked += (_, _) => MarkFast();
+        AlwaysOnAwdCheckBox.Checked += (_, _) => MarkFast();
+        AlwaysOnAwdCheckBox.Unchecked += (_, _) => MarkFast();
     }
 
     public void AttachSession(AppSession session)
@@ -99,6 +146,9 @@ public partial class VehiclesView : UserControl
         OnPakChanged();
     }
 
+    private void OnActivePresetChanged(object? sender, EventArgs e) =>
+        Dispatcher.Invoke(RestoreGlobalUiFromStore);
+
     private void VehiclesView_Loaded(object sender, RoutedEventArgs e)
     {
         if (_ready)
@@ -110,6 +160,7 @@ public partial class VehiclesView : UserControl
         FilterAll.IsChecked = true;
         LoadCatalog();
         UpdateSearchPlaceholder();
+        RestoreGlobalUiFromStore();
         RefreshGlobalMultipliersPanel();
     }
 
@@ -155,32 +206,54 @@ public partial class VehiclesView : UserControl
         ApplyFastTuningButton.IsEnabled = canApply;
         RestoreAllVehiclesButton.IsEnabled = canApply;
 
-        if (!canApply)
-        {
-            ResetGlobalMultiplierSlidersToBaseline();
-            ResetFastTuningCheckBoxes();
-        }
-
         UpdateGlobalMultiplierLabels();
     }
 
-    private void ResetGlobalMultiplierSlidersToBaseline()
+    private void RestoreGlobalUiFromStore()
     {
-        FuelMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
-        ResponsivenessMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
-        PriceMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
-        MassMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
+        _suppressAccordionDirty = true;
+        try
+        {
+            var state = GlobalMultiplierUiStore.GetVehicles();
+            FuelMultiplierSlider.Value = TuningMultiplierPresets.ClampIndex(state.FuelIndex);
+            ResponsivenessMultiplierSlider.Value = TuningMultiplierPresets.ClampIndex(state.ResponsivenessIndex);
+            PriceMultiplierSlider.Value = TuningMultiplierPresets.ClampIndex(state.PriceIndex);
+            MassMultiplierSlider.Value = TuningMultiplierPresets.ClampMassIndex(state.MassIndex);
+            ReleaseRegionLockCheckBox.IsChecked = state.ReleaseRegionLock;
+            UnlockAllVehiclesCheckBox.IsChecked = state.UnlockAllVehicles;
+            FastTuningLowerComCheckBox.IsChecked = state.FastTuningLowerCom;
+            FastTuningBetterTurningCheckBox.IsChecked = state.FastTuningBetterTurning;
+            FastTuningFasterSteeringCheckBox.IsChecked = state.FastTuningFasterSteering;
+            FastTuningLargerTiresCheckBox.IsChecked = state.FastTuningLargerTires;
+            AlwaysOnDiffLockCheckBox.IsChecked = state.AlwaysOnDiffLock;
+            AlwaysOnAwdCheckBox.IsChecked = state.AlwaysOnAwd;
+            UpdateGlobalMultiplierLabels();
+            _globalDirty?.ClearDirty();
+            _storeUnlocksDirty?.ClearDirty();
+            _fastTuningDirty?.ClearDirty();
+        }
+        finally
+        {
+            _suppressAccordionDirty = false;
+        }
     }
 
-    private void ResetFastTuningCheckBoxes()
-    {
-        FastTuningLowerComCheckBox.IsChecked = false;
-        FastTuningBetterTurningCheckBox.IsChecked = false;
-        FastTuningFasterSteeringCheckBox.IsChecked = false;
-        FastTuningLargerTiresCheckBox.IsChecked = false;
-        AlwaysOnDiffLockCheckBox.IsChecked = false;
-        AlwaysOnAwdCheckBox.IsChecked = false;
-    }
+    private void SaveGlobalUiToStore() =>
+        GlobalMultiplierUiStore.SetVehicles(new VehicleGlobalUiState
+        {
+            FuelIndex = GetMultiplierIndex(FuelMultiplierSlider),
+            ResponsivenessIndex = GetMultiplierIndex(ResponsivenessMultiplierSlider),
+            PriceIndex = GetMultiplierIndex(PriceMultiplierSlider),
+            MassIndex = GetMassMultiplierIndex(MassMultiplierSlider),
+            ReleaseRegionLock = ReleaseRegionLockCheckBox.IsChecked == true,
+            UnlockAllVehicles = UnlockAllVehiclesCheckBox.IsChecked == true,
+            FastTuningLowerCom = FastTuningLowerComCheckBox.IsChecked == true,
+            FastTuningBetterTurning = FastTuningBetterTurningCheckBox.IsChecked == true,
+            FastTuningFasterSteering = FastTuningFasterSteeringCheckBox.IsChecked == true,
+            FastTuningLargerTires = FastTuningLargerTiresCheckBox.IsChecked == true,
+            AlwaysOnDiffLock = AlwaysOnDiffLockCheckBox.IsChecked == true,
+            AlwaysOnAwd = AlwaysOnAwdCheckBox.IsChecked == true,
+        });
 
     private void GlobalMultiplierSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
@@ -190,6 +263,10 @@ public partial class VehiclesView : UserControl
         }
 
         UpdateGlobalMultiplierLabels();
+        if (!_suppressAccordionDirty)
+        {
+            _globalDirty?.MarkDirty();
+        }
     }
 
     private void UpdateGlobalMultiplierLabels()
@@ -264,6 +341,8 @@ public partial class VehiclesView : UserControl
                     GetMultiplier(PriceMultiplierSlider),
                     GetMassMultiplier(MassMultiplierSlider));
 
+                SaveGlobalUiToStore();
+                _globalDirty?.ClearDirty();
                 _trucksPakPath = null;
                 if (_currentCard is not null && DetailPanel.Visibility == Visibility.Visible)
                 {
@@ -337,6 +416,8 @@ public partial class VehiclesView : UserControl
                     releaseRegionLock,
                     unlockAll);
 
+                SaveGlobalUiToStore();
+                _storeUnlocksDirty?.ClearDirty();
                 _trucksPakPath = null;
                 if (_currentCard is not null && DetailPanel.Visibility == Visibility.Visible)
                 {
@@ -412,7 +493,8 @@ public partial class VehiclesView : UserControl
             {
                 var result = TruckTuningService.ApplyFastTuning(_session.PakPath, options);
 
-                ResetFastTuningCheckBoxes();
+                SaveGlobalUiToStore();
+                _fastTuningDirty?.ClearDirty();
                 _trucksPakPath = null;
                 if (_currentCard is not null && DetailPanel.Visibility == Visibility.Visible)
                 {
@@ -480,11 +562,8 @@ public partial class VehiclesView : UserControl
             {
                 var result = TruckTuningService.RestoreAllVehiclesFromBaseline(_session.PakPath);
                 _trucksPakPath = null;
-                ResetGlobalMultiplierSlidersToBaseline();
-                ResetFastTuningCheckBoxes();
-                ReleaseRegionLockCheckBox.IsChecked = false;
-                UnlockAllVehiclesCheckBox.IsChecked = false;
-                UpdateGlobalMultiplierLabels();
+                GlobalMultiplierUiStore.ResetVehicles();
+                RestoreGlobalUiFromStore();
 
                 TuningStatusText.Text = UiText.Vehicles.RestoreAllVehiclesSavedMessage(
                     result.ChangedTrucks,

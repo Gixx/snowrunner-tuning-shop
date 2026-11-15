@@ -2,6 +2,7 @@ using System.IO.Compression;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using SnowRunnerTuningShop.Core.Tuning;
 using SnowRunnerTuningShop.Core.Updates;
 
 namespace SnowRunnerTuningShop.Core.Presets;
@@ -11,6 +12,7 @@ public static class TuningPresetArchive
     public const string Extension = ".tsa";
     public const string ManifestFileName = "manifest.json";
     public const string SettingsFileName = "settings.json";
+    public const string GlobalMultiplierUiFileName = "global-multiplier-ui.json";
     public const string FileFilter = "Tuning Shop archive (*.tsa)|*.tsa|All files (*.*)|*.*";
 
     public static readonly JsonSerializerOptions JsonOptions = new()
@@ -73,7 +75,22 @@ public static class TuningPresetArchive
                 }
             }
 
-            return new TuningPresetPackage(manifest, settings, iconBytes);
+            GlobalMultiplierUiPresetState? globalMultiplierUi = null;
+            var uiEntry = FindEntry(archive, GlobalMultiplierUiFileName);
+            if (uiEntry is not null)
+            {
+                try
+                {
+                    globalMultiplierUi = JsonSerializer.Deserialize<GlobalMultiplierUiPresetState>(
+                        ReadUtf8(uiEntry), JsonOptions);
+                }
+                catch
+                {
+                    globalMultiplierUi = null;
+                }
+            }
+
+            return new TuningPresetPackage(manifest, settings, iconBytes, globalMultiplierUi);
         }
         catch (InvalidDataException)
         {
@@ -109,6 +126,11 @@ public static class TuningPresetArchive
             {
                 WriteJsonEntry(archive, ManifestFileName, package.Manifest);
                 WriteJsonEntry(archive, SettingsFileName, package.Settings);
+
+                if (package.GlobalMultiplierUi is not null)
+                {
+                    WriteJsonEntry(archive, GlobalMultiplierUiFileName, package.GlobalMultiplierUi);
+                }
 
                 if (package.IconBytes is { Length: > 0 }
                     && !string.IsNullOrWhiteSpace(package.Manifest.Icon))

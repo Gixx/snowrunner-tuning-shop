@@ -1,6 +1,7 @@
 using System.IO.Compression;
 using System.Text;
 using SnowRunnerTuningShop.Core.Presets;
+using SnowRunnerTuningShop.Core.Tuning;
 
 namespace SnowRunnerTuningShop.Tests;
 
@@ -30,6 +31,11 @@ public sealed class TuningPresetArchiveTests
                     {
                         ["[media]/classes/engines/e.xml"] = Convert.ToBase64String(Encoding.UTF8.GetBytes("<Engine/>")),
                     },
+                },
+                GlobalMultiplierUi: new GlobalMultiplierUiPresetState
+                {
+                    Engines = new EngineGlobalUiState { TorqueIndex = 14, FuelIndex = 3 },
+                    Winches = new WinchGlobalUiState { AutonomousAll = true },
                 });
 
             TuningPresetArchive.Write(path, package);
@@ -42,6 +48,47 @@ public sealed class TuningPresetArchiveTests
             Assert.Equal("Tester", loaded.Manifest.Author);
             Assert.Single(loaded.Settings.Entries);
             Assert.True(loaded.Settings.Entries.ContainsKey("[media]/classes/engines/e.xml"));
+            Assert.NotNull(loaded.GlobalMultiplierUi);
+            Assert.Equal(14, loaded.GlobalMultiplierUi!.Engines!.TorqueIndex);
+            Assert.Equal(3, loaded.GlobalMultiplierUi.Engines.FuelIndex);
+            Assert.True(loaded.GlobalMultiplierUi.Winches!.AutonomousAll);
+        }
+        finally
+        {
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+        }
+    }
+
+    [Fact]
+    public void Read_accepts_legacy_archive_without_global_multiplier_ui()
+    {
+        var path = Path.Combine(Path.GetTempPath(), $"tsa-legacy-{Guid.NewGuid():N}.tsa");
+        try
+        {
+            using (var stream = File.Create(path))
+            using (var zip = new ZipArchive(stream, ZipArchiveMode.Create))
+            {
+                void Write(string name, string json)
+                {
+                    var entry = zip.CreateEntry(name);
+                    using var writer = new StreamWriter(entry.Open());
+                    writer.Write(json);
+                }
+
+                Write(
+                    "manifest.json",
+                    """{"schemaVersion":1,"id":"legacy","name":"Legacy","version":"1.0.0"}""");
+                Write(
+                    "settings.json",
+                    """{"schemaVersion":1,"entries":{}}""");
+            }
+
+            var loaded = TuningPresetArchive.Read(path);
+            Assert.Equal("legacy", loaded.Manifest.Id);
+            Assert.Null(loaded.GlobalMultiplierUi);
         }
         finally
         {

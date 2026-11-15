@@ -76,6 +76,10 @@ public static class TuningPresetLibrary
     /// </summary>
     public static void ClearToUntitledWorkspace(string? editionId)
     {
+        // Untitled workspace starts with baseline global-multiplier UI (not leftover slider state).
+        Tuning.GlobalMultiplierUiStore.ReplaceForPreset(
+            Tuning.GlobalMultiplierUiStore.NonePresetKey,
+            new Tuning.GlobalMultiplierUiPresetState());
         SetActivePreset(null, null);
         if (!string.IsNullOrWhiteSpace(editionId))
         {
@@ -192,6 +196,7 @@ public static class TuningPresetLibrary
         }
 
         var id = Guid.NewGuid().ToString("N");
+        var uiSnapshot = Tuning.GlobalMultiplierUiStore.CaptureCurrentSnapshot();
         var package = new TuningPresetPackage(
             new TuningPresetManifest
             {
@@ -208,10 +213,12 @@ public static class TuningPresetLibrary
             {
                 SchemaVersion = 1,
                 Entries = new Dictionary<string, string>(entries, StringComparer.OrdinalIgnoreCase),
-            });
+            },
+            GlobalMultiplierUi: uiSnapshot);
 
         var destPath = Path.Combine(GetUserPresetsDirectory(), id + TuningPresetArchive.Extension);
         TuningPresetArchive.Write(destPath, package);
+        Tuning.GlobalMultiplierUiStore.ReplaceForPreset(id, uiSnapshot);
         return ToInfo(package.Manifest, TuningPresetSource.User, destPath);
     }
 
@@ -246,7 +253,8 @@ public static class TuningPresetLibrary
             {
                 SchemaVersion = 1,
                 Entries = new Dictionary<string, string>(entries, StringComparer.OrdinalIgnoreCase),
-            });
+            },
+            GlobalMultiplierUi: Tuning.GlobalMultiplierUiStore.CaptureCurrentSnapshot());
 
         TuningPresetArchive.Write(destinationPath, package);
     }
@@ -329,12 +337,14 @@ public static class TuningPresetLibrary
         if (string.IsNullOrWhiteSpace(presetId) || IsSynthetic(presetId) || source is null or TuningPresetSource.Synthetic)
         {
             WorkspaceConfigStore.SetActivePreset(null, null);
+            Tuning.GlobalMultiplierUiStore.NotifyActivePresetChanged();
             return;
         }
 
         WorkspaceConfigStore.SetActivePreset(
             presetId.Trim(),
             source == TuningPresetSource.Bundled ? BundledSourceKey : UserSourceKey);
+        Tuning.GlobalMultiplierUiStore.NotifyActivePresetChanged();
     }
 
     public static TuningPresetDirtyState GetDirtyState(string? editionId)

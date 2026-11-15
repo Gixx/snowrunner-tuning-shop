@@ -26,7 +26,7 @@ internal static class Program
 {
     private static readonly double[] Multipliers =
     [
-        TuningMultiplierPresets.Values[2], // 1/3
+        0.5,
         TuningMultiplierPresets.Values[TuningMultiplierPresets.TwoTimesIndex],
     ];
 

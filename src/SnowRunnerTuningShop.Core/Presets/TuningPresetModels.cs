@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using SnowRunnerTuningShop.Core.Tuning;
 
 namespace SnowRunnerTuningShop.Core.Presets;
 
@@ -54,7 +55,9 @@ public sealed record TuningPresetInfo(
 public sealed record TuningPresetPackage(
     TuningPresetManifest Manifest,
     TuningPresetSettings Settings,
-    byte[]? IconBytes = null);
+    byte[]? IconBytes = null,
+    /// <summary>Optional last-used global multiplier UI box state shipped with the preset.</summary>
+    GlobalMultiplierUiPresetState? GlobalMultiplierUi = null);
 
 public sealed class TuningPresetImportResult
 {

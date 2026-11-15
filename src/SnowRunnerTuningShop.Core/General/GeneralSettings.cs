@@ -16,6 +16,16 @@ public sealed class GeneralSettings
     public int WeakPlantWinchBaselineCount { get; init; }
 
     public int WeakPlantWinchCurrentCount { get; init; }
+
+    /// <summary>True when cargo units with crane sockets also have matching winch sockets.</summary>
+    public bool WinchableCargoEnabled { get; init; }
+
+    public int WinchableCargoEligibleUnits { get; init; }
+
+    /// <summary>True when dynamic log cargo units expose conventional <c>CraneSocket</c> points.</summary>
+    public bool CranableLogsEnabled { get; init; }
+
+    public int CranableLogUnits { get; init; }
 }
 
 public sealed record GeneralSaveResult(int UpdatedFiles);

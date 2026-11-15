@@ -16,6 +16,8 @@ public partial class AddonCapacityTuningView : UserControl
     private readonly ICollectionView _addonsView;
     private bool _pakWritesAllowed = true;
     private AppSession? _session;
+    private AccordionDirtyHeader? _globalDirty;
+    private bool _suppressDirty;
 
     public AddonCapacityTuningView()
     {
@@ -23,7 +25,10 @@ public partial class AddonCapacityTuningView : UserControl
         _addonsView = CollectionViewSource.GetDefaultView(_addons);
         _addonsView.Filter = MatchesFilter;
         AddonsGrid.ItemsSource = _addonsView;
-        ResetMultiplierSlidersToBaseline();
+        _globalDirty = new AccordionDirtyHeader(GlobalMultipliersExpander, UiText.AddonCapacity.GlobalMultipliersTitle);
+        RestoreMultiplierSlidersFromStore();
+        GlobalMultiplierUiStore.ActivePresetChanged += OnActivePresetChanged;
+        Unloaded += (_, _) => GlobalMultiplierUiStore.ActivePresetChanged -= OnActivePresetChanged;
     }
 
     public event EventHandler<string>? StatusChanged;
@@ -31,6 +36,9 @@ public partial class AddonCapacityTuningView : UserControl
     public string? PakPath { get; private set; }
 
     public void AttachSession(AppSession session) => _session = session;
+
+    private void OnActivePresetChanged(object? sender, EventArgs e) =>
+        Dispatcher.Invoke(RestoreMultiplierSlidersFromStore);
 
     public void SetPakWritesAllowed(bool allowed)
     {
@@ -98,7 +106,8 @@ public partial class AddonCapacityTuningView : UserControl
             try
             {
                 var result = AddonCapacityService.RestoreAddonsFromBaseline(PakPath);
-                ResetMultiplierSlidersToBaseline();
+                GlobalMultiplierUiStore.ResetAddons();
+                RestoreMultiplierSlidersFromStore();
                 ReloadAddons();
                 ReportStatus(UiText.AddonCapacity.MultipliersAppliedStatus(
                     result.ChangedAddons,
@@ -135,6 +144,8 @@ public partial class AddonCapacityTuningView : UserControl
                     GetMultiplier(WheelsMultiplierSlider),
                     GetMultiplier(PriceMultiplierSlider));
 
+                SaveMultiplierSlidersToStore();
+                _globalDirty?.ClearDirty();
                 ReloadAddons();
                 ReportStatus(UiText.AddonCapacity.MultipliersAppliedStatus(
                     result.ChangedAddons,
@@ -240,8 +251,14 @@ public partial class AddonCapacityTuningView : UserControl
         }
     }
 
-    private void MultiplierSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) =>
+    private void MultiplierSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
         UpdateMultiplierLabels();
+        if (!_suppressDirty)
+        {
+            _globalDirty?.MarkDirty();
+        }
+    }
 
     private void FilterTextBox_TextChanged(object sender, TextChangedEventArgs e)
     {
@@ -257,15 +274,35 @@ public partial class AddonCapacityTuningView : UserControl
             row.DisplayName,
             row.Name);
 
-    private void ResetMultiplierSlidersToBaseline()
+    private void RestoreMultiplierSlidersFromStore()
     {
-        FuelMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
-        WaterMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
-        RepairsMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
-        WheelsMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
-        PriceMultiplierSlider.Value = TuningMultiplierPresets.BaselineIndex;
-        UpdateMultiplierLabels();
+        _suppressDirty = true;
+        try
+        {
+            var state = GlobalMultiplierUiStore.GetAddons();
+            FuelMultiplierSlider.Value = TuningMultiplierPresets.ClampIndex(state.FuelIndex);
+            WaterMultiplierSlider.Value = TuningMultiplierPresets.ClampIndex(state.WaterIndex);
+            RepairsMultiplierSlider.Value = TuningMultiplierPresets.ClampIndex(state.RepairsIndex);
+            WheelsMultiplierSlider.Value = TuningMultiplierPresets.ClampIndex(state.WheelsIndex);
+            PriceMultiplierSlider.Value = TuningMultiplierPresets.ClampIndex(state.PriceIndex);
+            UpdateMultiplierLabels();
+            _globalDirty?.ClearDirty();
+        }
+        finally
+        {
+            _suppressDirty = false;
+        }
     }
+
+    private void SaveMultiplierSlidersToStore() =>
+        GlobalMultiplierUiStore.SetAddons(new AddonGlobalUiState
+        {
+            FuelIndex = GetMultiplierIndex(FuelMultiplierSlider),
+            WaterIndex = GetMultiplierIndex(WaterMultiplierSlider),
+            RepairsIndex = GetMultiplierIndex(RepairsMultiplierSlider),
+            WheelsIndex = GetMultiplierIndex(WheelsMultiplierSlider),
+            PriceIndex = GetMultiplierIndex(PriceMultiplierSlider),
+        });
 
     private void UpdateMultiplierLabels()
     {

@@ -1,6 +1,8 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="SnowRunnerTuningShop.Desktop.Views.GeneralView">
+  <ScrollViewer VerticalScrollBarVisibility="Auto"
+                HorizontalScrollBarVisibility="Disabled">
   <StackPanel Spacing="12">
     <TextBlock x:Name="TitleText" FontSize="22" FontWeight="SemiBold"/>
 
@@ -78,7 +80,29 @@
       </StackPanel>
     </Border>
 
+    <Border Background="{DynamicResource AppCardBrush}"
+            BorderBrush="{DynamicResource AppCardStrokeBrush}"
+            BorderThickness="1"
+            CornerRadius="8"
+            Padding="16">
+      <StackPanel Spacing="8">
+        <TextBlock x:Name="CargoHandlingTitleText" FontWeight="SemiBold"/>
+        <TextBlock x:Name="CargoHandlingHintText" TextWrapping="Wrap" FontSize="11" Opacity="0.8"/>
+        <CheckBox x:Name="WinchableCargoCheckBox"/>
+        <CheckBox x:Name="CranableLogsCheckBox"/>
+        <StackPanel Orientation="Horizontal" Spacing="8">
+          <Button x:Name="ApplyCargoHandlingButton"
+                  Padding="14,8"
+                  Click="ApplyCargoHandlingButton_Click"/>
+          <Button x:Name="RestoreCargoHandlingButton"
+                  Padding="14,8"
+                  Click="RestoreCargoHandlingButton_Click"/>
+        </StackPanel>
+      </StackPanel>
+    </Border>
+
     <TextBlock x:Name="StatusText" Opacity="0.8" TextWrapping="Wrap"/>
     <TextBlock x:Name="HintText" Opacity="0.8" TextWrapping="Wrap" IsVisible="False"/>
   </StackPanel>
+  </ScrollViewer>
 </UserControl>
